@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import BlasterScene from './blasterScene'
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -11,20 +12,15 @@ renderer.setSize(width, height);
 
 const mainCamera = new THREE.PerspectiveCamera(60, width/height, 0.1, 100);
 
-const scene = new THREE.Scene();
+const scene = new BlasterScene();
+scene.initialize();
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshPhongMaterial({color: 0xFFAD00});
 
-const cube = new THREE.Mesh(geometry, material);
-cube.position.z = -5;
-cube.position.y = 1;
 
-scene.add(cube);
+function tick() {
+  scene.update();
+  renderer.render(scene, mainCamera);
+  requestAnimationFrame(tick);
+}
 
-const light = new THREE.DirectionalLight(0xFFFFFF, 1);
-light.position.set(0, 4, 2);
-
-scene.add(light);
-
-renderer.render(scene, mainCamera);
+tick();
