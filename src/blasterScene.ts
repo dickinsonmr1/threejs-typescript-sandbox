@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import Bullet from './bullet';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -12,7 +13,11 @@ export default class BlasterScene extends THREE.Scene {
     private readonly keyDown = new Set<string>();
 
     private blaster?: THREE.Group;
+    private bulletMtl?: MTLLoader.MaterialCreator;
     private directionVector = new THREE.Vector3();
+
+    private bullets: Bullet[] = [];
+    private targets: THREE.Group[] = [];
 
     constructor(camera: THREE.PerspectiveCamera) {
         super();
@@ -24,6 +29,9 @@ export default class BlasterScene extends THREE.Scene {
         // load a shared MTL (Material Template Library) for the targets
         const targetMtl = await this.mtlLoader.loadAsync('assets/targetA.mtl');
         targetMtl.preload();
+
+        this.bulletMtl = await this.mtlLoader.loadAsync('assets/foamBulletB.mtl');
+        this.bulletMtl.preload();
         
         // create 4 targets
         const t1 = await this.createTarget(targetMtl);
@@ -43,7 +51,7 @@ export default class BlasterScene extends THREE.Scene {
         t4.position.z = -3;
 
         this.add(t1, t2, t3, t4);
-
+        this.targets.push(t1, t2, t3, t4);
         this.blaster = await this.createBlaster();
         this.add(this.blaster);
         this.blaster.position.z = -1;
@@ -79,7 +87,7 @@ export default class BlasterScene extends THREE.Scene {
 
 		if (event.key === ' ')
 		{
-			//this.createBullet()
+			this.createBullet();
 		}
 	}
 
@@ -148,8 +156,79 @@ export default class BlasterScene extends THREE.Scene {
         return modelRoot;
     }
 
+    private async createBullet() {
+        if(!this.blaster) 
+            return;
+        else if (this.bulletMtl) {
+            this.objLoader.setMaterials(this.bulletMtl);
+        }
+
+        const bulletModel = await this.objLoader.loadAsync('assets/foamBulletB.obj');
+
+        this.camera.getWorldDirection(this.directionVector);
+
+        //axis-aligned bounding box
+        const aabb = new THREE.Box3().setFromObject(this.blaster);
+        const size = aabb.getSize(new THREE.Vector3());
+
+        const vec = this.blaster.position.clone();
+        vec.y += 0.06;
+
+        bulletModel.position.add(
+            vec.add(
+                this.directionVector.clone().multiplyScalar(size.z * 0.5)
+            )
+        );
+
+        // rotate children to match gun for simplicity
+        bulletModel.children.forEach(child => child.rotateX(Math.PI * -0.5));
+
+        // use the same rotation as the gun
+        bulletModel.rotation.copy(this.blaster.rotation);
+
+        this.add(bulletModel);
+
+        const b = new Bullet(bulletModel);
+        b.setVelocity(
+            this.directionVector.x * 0.2,
+            this.directionVector.y * 0.2,
+            this.directionVector.z * 0.2
+        );
+
+        this.bullets.push(b);
+    }
+
+    private updateBullets() {
+        for(let i = 0; i < this.bullets.length; i++) {
+            const b = this.bullets[i];
+            b.update();
+
+            if(b.shouldRemove) {
+                this.remove(b.group);
+                this.bullets.splice(i, 1);
+                i--;
+            }
+            else {
+                for(let j = 0; j < this.targets.length; j++) {
+                    const target = this.targets[j];
+                    if(target.position.distanceToSquared(b.group.position) < 0.05) {
+                        this.remove(b.group);
+                        this.bullets.splice(i, 1);
+                        i--;
+
+                        target.visible = false;
+                        setTimeout(() => {
+                            target.visible = true
+                        }, 1000);
+                    }
+                }
+            }
+        }
+    }
+
     update() {
         // update
         this.updateInput();
+        this.updateBullets();
     }
 }
