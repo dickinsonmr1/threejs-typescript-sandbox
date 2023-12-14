@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import BlasterScene from './blasterScene'
+import BlasterScene from './scenes/blasterScene'
 
 const width = window.innerWidth;
 const height = window.innerHeight;

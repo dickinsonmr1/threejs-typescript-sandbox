@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
-import Bullet from './bullet';
+import Bullet from '../gameobjects/bullet';
+import * as CANNON from 'cannon-es'
+import { GroundObject } from '../gameobjects/groundObject';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -19,6 +21,12 @@ export default class BlasterScene extends THREE.Scene {
     private bullets: Bullet[] = [];
     private targets: THREE.Group[] = [];
 
+    world: CANNON.World = new CANNON.World({
+        gravity: new CANNON.Vec3(0, -9.81, 0)
+    });;
+
+    ground?: GroundObject;
+
     constructor(camera: THREE.PerspectiveCamera) {
         super();
         
@@ -26,6 +34,7 @@ export default class BlasterScene extends THREE.Scene {
     }
 
     async initialize() {
+
         // load a shared MTL (Material Template Library) for the targets
         const targetMtl = await this.mtlLoader.loadAsync('assets/targetA.mtl');
         targetMtl.preload();
@@ -68,6 +77,8 @@ export default class BlasterScene extends THREE.Scene {
         cube.position.z = -5;
         cube.position.y = 1;
         this.add(cube);
+
+        this.ground = new GroundObject(this, 200, 200, 0xffffff, this.world);
 
         const light = new THREE.DirectionalLight(0xFFFFFF, 1);
         light.position.set(0, 4, 2);
