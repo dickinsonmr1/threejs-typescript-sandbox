@@ -74,9 +74,21 @@ export default class BlasterScene extends THREE.Scene {
         this.camera.position.z = 1;
         this.camera.position.y = 0.5;
 
-        this.ground = new GroundObject(this, 200, 200, 0xffffff, this.world);
-        this.cube = new CubeObject(this, 5, 5, 5, new THREE.Vector3(20, 5, 20), 0xffff00, this.world);
-        this.sphere = new SphereObject(this, 10, new THREE.Vector3(-20, 5, -20), 0x00ff00, this.world);
+        var groundMaterial = new CANNON.Material();
+        this.ground = new GroundObject(this, 200, 200, 0xffffff, this.world, groundMaterial);
+        
+        var objectMaterial = new CANNON.Material();
+        this.cube = new CubeObject(this, 5, 5, 5, new THREE.Vector3(20, 5, 20), 0xffff00, this.world, objectMaterial);
+        this.sphere = new SphereObject(this, 10, new THREE.Vector3(-20, 5, -20), 0x00ff00, this.world, objectMaterial);
+
+        var groundCubeContactMaterial = new CANNON.ContactMaterial(
+            this.ground.getPhysicsMaterial(),
+            this.cube.getPhysicsMaterial(),
+            {
+                friction: 0
+            }            
+        );
+        this.world.addContactMaterial(groundCubeContactMaterial);
 
         const light = new THREE.DirectionalLight(0xFFFFFF, 1);
         light.position.set(0, 4, 2);
@@ -237,7 +249,15 @@ export default class BlasterScene extends THREE.Scene {
 
     update() {
         // update
+
+        if(this.world != null)
+            this.world.fixedStep();
+
         this.updateInput();
         this.updateBullets();
+
+        this.cube?.update();
+        this.sphere?.update();
+
     }
 }

@@ -5,6 +5,8 @@ import { Utility } from "../utility";
 export class CubeObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
+
+    physicsMaterial?: CANNON.Material;
     /**
      *
      */
@@ -12,7 +14,8 @@ export class CubeObject {
         height: number, width: number, depth: number,
         position: THREE.Vector3,
         color: number = 0xffffff,
-        world?: CANNON.World) {
+        world?: CANNON.World,
+        material?: CANNON.Material) {
 
         this.mesh = new THREE.Mesh(
             new THREE.BoxGeometry( height, width, depth ),
@@ -30,16 +33,28 @@ export class CubeObject {
         scene.add(this.mesh);
         
         if(world != null) {
+
+            this.physicsMaterial = material ?? new CANNON.Material();
+
             this.body = new CANNON.Body({
                 shape: new CANNON.Box(new CANNON.Vec3(height, width, depth)),
                 position: new CANNON.Vec3(position.x, position.y, position.z),
                 //type: CANNON.Body.STATIC,
-                //material: groundPhysMat,
+                material: this.physicsMaterial,
+                angularVelocity: new CANNON.Vec3(0, 10, 0),
                 mass: 1
             });
-            this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
-            world.addBody(this.body)
+            //this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+            world.addBody(this.body);
         }
+    }
+
+    getPhysicsMaterial(): CANNON.Material {
+        
+        if(this.physicsMaterial != null)
+            return this.physicsMaterial;
+        else
+            throw new Error("No physics material set!")
     }
 
     update() {
