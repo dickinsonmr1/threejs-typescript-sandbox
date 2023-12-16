@@ -4,6 +4,8 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import Bullet from '../gameobjects/bullet';
 import * as CANNON from 'cannon-es'
 import { GroundObject } from '../gameobjects/groundObject';
+import { CubeObject } from '../gameobjects/cubeObject';
+import { SphereObject } from '../gameobjects/sphereObject';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -26,6 +28,8 @@ export default class BlasterScene extends THREE.Scene {
     });;
 
     ground?: GroundObject;
+    cube?: CubeObject;
+    sphere?: SphereObject;
 
     constructor(camera: THREE.PerspectiveCamera) {
         super();
@@ -70,15 +74,9 @@ export default class BlasterScene extends THREE.Scene {
         this.camera.position.z = 1;
         this.camera.position.y = 0.5;
 
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshPhongMaterial({color: 0xFFAD00});
-
-        const cube = new THREE.Mesh(geometry, material);
-        cube.position.z = -5;
-        cube.position.y = 1;
-        this.add(cube);
-
         this.ground = new GroundObject(this, 200, 200, 0xffffff, this.world);
+        this.cube = new CubeObject(this, 5, 5, 5, new THREE.Vector3(20, 5, 20), 0xffff00, this.world);
+        this.sphere = new SphereObject(this, 10, new THREE.Vector3(-20, 5, -20), 0x00ff00, this.world);
 
         const light = new THREE.DirectionalLight(0xFFFFFF, 1);
         light.position.set(0, 4, 2);
