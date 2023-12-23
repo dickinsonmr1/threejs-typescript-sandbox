@@ -9,6 +9,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 
 renderer.setSize(width, height);
+renderer.shadowMap.enabled = true;
 
 const mainCamera = new THREE.PerspectiveCamera(60, width/height, 0.1, 100);
 

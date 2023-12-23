@@ -6,6 +6,7 @@ export class SphereObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
 
+    meshMaterial: THREE.Material;
     physicsMaterial?: CANNON.Material;
     /**
      *
@@ -14,27 +15,30 @@ export class SphereObject {
         radius: number,
         position: THREE.Vector3,
         color: number = 0xffffff,
+        meshMaterial?: THREE.Material,
         world?: CANNON.World,
-        material?: CANNON.Material) {
+        physicsMaterial?: CANNON.Material) {
 
+        this.meshMaterial = meshMaterial ?? new THREE.MeshBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide,
+            wireframe: false
+        })
+        
         this.mesh = new THREE.Mesh(
-            new THREE.SphereGeometry(radius),
-            //new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } 
-            new THREE.MeshBasicMaterial({
-                color: color,
-                //side: THREE.DoubleSide,
-                wireframe: false
-            })
+            new THREE.SphereGeometry(radius),            
+            this.meshMaterial
         );
         this.mesh.position.set(position.x, position.y, position.z);
-        //this.mesh.rotation.x = - Math.PI / 2;
+        
+        this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;  
         
         scene.add(this.mesh);
         
         if(world != null) {
 
-            this.physicsMaterial = material ?? new CANNON.Material();
+            this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
             
             this.body = new CANNON.Body({
                 shape: new CANNON.Sphere(radius),
@@ -44,8 +48,7 @@ export class SphereObject {
                 material: this.physicsMaterial,
                 mass: 1
             });
-            //this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
-            world.addBody(this.body)
+            world.addBody(this.body);
         }
     }
 

@@ -6,6 +6,7 @@ export class CubeObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
 
+    meshMaterial: THREE.Material;
     physicsMaterial?: CANNON.Material;
     /**
      *
@@ -14,34 +15,41 @@ export class CubeObject {
         height: number, width: number, depth: number,
         position: THREE.Vector3,
         color: number = 0xffffff,
+        meshMaterial?: THREE.Material,
         world?: CANNON.World,
-        material?: CANNON.Material) {
+        physicsMaterial?: CANNON.Material) {
+
+        this.meshMaterial = meshMaterial ?? new THREE.MeshBasicMaterial({
+            color: color,
+            side: THREE.DoubleSide,
+            wireframe: true
+        })
 
         this.mesh = new THREE.Mesh(
-            new THREE.BoxGeometry( height, width, depth ),
+            
+            new THREE.BoxGeometry( height, width, depth),            
             //new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } 
-            new THREE.MeshBasicMaterial({
-                color: color,
-                side: THREE.DoubleSide,
-                wireframe: false
-            })
+            this.meshMaterial
         );
-        this.mesh.position.set(position.x, position.y, position.z);
-        //this.mesh.rotation.x = - Math.PI / 2;
-        this.mesh.receiveShadow = true;  
+        //this.mesh.position.set(position.x, position.y, position.z);
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
         
         scene.add(this.mesh);
         
         if(world != null) {
 
-            this.physicsMaterial = material ?? new CANNON.Material();
+            this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
 
             this.body = new CANNON.Body({
-                shape: new CANNON.Box(new CANNON.Vec3(height, width, depth)),
+                // https://stackoverflow.com/questions/26183492/cannonjs-and-three-js-one-unit-off
+                shape: new CANNON.Box(new CANNON.Vec3(height / 2, width / 2, depth / 2)),
                 position: new CANNON.Vec3(position.x, position.y, position.z),
-                //type: CANNON.Body.STATIC,
+                type: CANNON.Body.DYNAMIC,
                 material: this.physicsMaterial,
                 angularVelocity: new CANNON.Vec3(0, 10, 0),
+                angularDamping: 0.5,
+                linearDamping: 0.7,
                 mass: 1
             });
             //this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)

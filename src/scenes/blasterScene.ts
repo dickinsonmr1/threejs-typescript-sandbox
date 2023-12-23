@@ -6,8 +6,11 @@ import * as CANNON from 'cannon-es'
 import { GroundObject } from '../gameobjects/groundObject';
 import { CubeObject } from '../gameobjects/cubeObject';
 import { SphereObject } from '../gameobjects/sphereObject';
+import Stats from 'three/addons/libs/stats.module.js';
 
 export default class BlasterScene extends THREE.Scene {
+
+    private stats: Stats = new Stats();
 
     private readonly mtlLoader = new MTLLoader();
     private readonly objLoader = new OBJLoader();
@@ -25,7 +28,7 @@ export default class BlasterScene extends THREE.Scene {
 
     world: CANNON.World = new CANNON.World({
         gravity: new CANNON.Vec3(0, -9.81, 0)
-    });;
+    });
 
     ground?: GroundObject;
     cube?: CubeObject;
@@ -74,12 +77,41 @@ export default class BlasterScene extends THREE.Scene {
         this.camera.position.z = 1;
         this.camera.position.y = 0.5;
 
+
+        /*
+            // Create a slippery material (friction coefficient = 0.0)
+            var physicsMaterial = new CANNON.Material('physics')
+            const physics_physics = new CANNON.ContactMaterial(physicsMaterial, physicsMaterial, {
+            friction: 0.0,
+            restitution: 0.3,
+            });
+
+            this.world.addContactMaterial(physics_physics);
+
+            // Create the user collision sphere (attached to camera)
+            const radius = 1.3
+            var sphereShape = new CANNON.Sphere(radius)
+            var sphereBody = new CANNON.Body({ mass: 5, material: physicsMaterial })
+            sphereBody.addShape(sphereShape)
+            sphereBody.position.set(0, 5, 0);
+            sphereBody.linearDamping = 0.9;
+            this.world.addBody(sphereBody)
+        */
+
         var groundMaterial = new CANNON.Material();
-        this.ground = new GroundObject(this, 200, 200, 0xffffff, this.world, groundMaterial);
+        this.ground = new GroundObject(this, 100, 100, 0x111111,
+            new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: true }),
+            this.world, groundMaterial);
         
         var objectMaterial = new CANNON.Material();
-        this.cube = new CubeObject(this, 5, 5, 5, new THREE.Vector3(20, 5, 20), 0xffff00, this.world, objectMaterial);
-        this.sphere = new SphereObject(this, 10, new THREE.Vector3(-20, 5, -20), 0x00ff00, this.world, objectMaterial);
+    
+        this.cube = new CubeObject(this, 1,1,1, new THREE.Vector3(0, 20, -9.5), 0xffff00,
+                        new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
+                        this.world, objectMaterial);
+
+        this.sphere = new SphereObject(this, 1, new THREE.Vector3(0.5, 5, -10), 0x00ff00,
+                        new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
+                        this.world, objectMaterial);
 
         var groundCubeContactMaterial = new CANNON.ContactMaterial(
             this.ground.getPhysicsMaterial(),
@@ -90,9 +122,32 @@ export default class BlasterScene extends THREE.Scene {
         );
         this.world.addContactMaterial(groundCubeContactMaterial);
 
-        const light = new THREE.DirectionalLight(0xFFFFFF, 1);
-        light.position.set(0, 4, 2);
-        this.add(light);
+        //const light = new THREE.DirectionalLight(0xFFFFFF, 1);
+        //light.position.set(0, 20, 2);
+        //this.add(light);
+
+        const spotlight = new THREE.SpotLight(0xffffff, 0.9, 10, Math.PI / 4, 1)
+        spotlight.position.set(0, 2, -10)
+        spotlight.target.position.set(0, 0, -10)
+
+        spotlight.castShadow = true;
+
+        spotlight.shadow.camera.near = 0.5
+        spotlight.shadow.camera.far = 10
+        spotlight.shadow.camera.fov = 30
+
+        // spotlight.shadow.bias = -0.0001
+        spotlight.shadow.mapSize.width = 2048
+        spotlight.shadow.mapSize.height = 2048
+        this.add(spotlight.target);
+
+        const helper = new THREE.CameraHelper( spotlight.shadow.camera );
+        this.add( helper );
+
+        const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
+        this.add(ambientLight);
+
+        document.body.appendChild(this.stats.dom);
 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -256,8 +311,10 @@ export default class BlasterScene extends THREE.Scene {
         this.updateInput();
         this.updateBullets();
 
+        this.ground?.update();
         this.cube?.update();
         this.sphere?.update();
-
+        
+        this.stats.update();
     }
 }
