@@ -60,6 +60,10 @@ export class SphereObject {
             throw new Error("No physics material set!")
     }
 
+    getPosition() {
+        return this.mesh?.position;
+    }
+
     update() {
         if(this.body != null) {
             this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));

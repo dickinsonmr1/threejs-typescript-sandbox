@@ -7,6 +7,8 @@ import { GroundObject } from '../gameobjects/groundObject';
 import { CubeObject } from '../gameobjects/cubeObject';
 import { SphereObject } from '../gameobjects/sphereObject';
 import Stats from 'three/addons/libs/stats.module.js';
+import { SpotlightObject } from '../gameobjects/spotlightObject';
+import { randFloat } from 'three/src/math/MathUtils.js';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -23,6 +25,7 @@ export default class BlasterScene extends THREE.Scene {
     private bulletMtl?: MTLLoader.MaterialCreator;
     private directionVector = new THREE.Vector3();
 
+    private cubes: CubeObject[] = [];
     private bullets: Bullet[] = [];
     private targets: THREE.Group[] = [];
 
@@ -32,12 +35,20 @@ export default class BlasterScene extends THREE.Scene {
 
     ground?: GroundObject;
     cube?: CubeObject;
+    cube2?: CubeObject;
+
     sphere?: SphereObject;
+
+    spotlight?: SpotlightObject;
+
+    //spotlight?: THREE.SpotLight;
+    //spotlightHelper?: THREE.SpotLightHelper;
 
     constructor(camera: THREE.PerspectiveCamera) {
         super();
         
         this.camera = camera;
+        this.background = new THREE.Color(0xB1E1FF);
     }
 
     async initialize() {
@@ -77,7 +88,6 @@ export default class BlasterScene extends THREE.Scene {
         this.camera.position.z = 1;
         this.camera.position.y = 0.5;
 
-
         /*
             // Create a slippery material (friction coefficient = 0.0)
             var physicsMaterial = new CANNON.Material('physics')
@@ -99,7 +109,7 @@ export default class BlasterScene extends THREE.Scene {
         */
 
         var groundMaterial = new CANNON.Material();
-        this.ground = new GroundObject(this, 100, 100, 0x111111,
+        this.ground = new GroundObject(this, 100, 100, 0x444444,
             new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: true }),
             this.world, groundMaterial);
         
@@ -109,10 +119,26 @@ export default class BlasterScene extends THREE.Scene {
                         new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
                         this.world, objectMaterial);
 
+        this.cube2 = new CubeObject(this, 1,1,1, new THREE.Vector3(0, 20, -8), 0xffff00,
+                        new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
+                        this.world, objectMaterial);
+
         this.sphere = new SphereObject(this, 1, new THREE.Vector3(0.5, 5, -10), 0x00ff00,
                         new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
                         this.world, objectMaterial);
 
+        // bounding box to show shadows
+        const cubeSize = 30;
+        const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+        const cubeMat = new THREE.MeshPhongMaterial({
+            color: '#CCC',
+            side: THREE.BackSide,
+        });
+        const mesh = new THREE.Mesh(cubeGeo, cubeMat);
+        mesh.receiveShadow = true;
+        mesh.position.set(0, cubeSize / 2 - 0.1, 0);
+        this.add(mesh);
+        
         var groundCubeContactMaterial = new CANNON.ContactMaterial(
             this.ground.getPhysicsMaterial(),
             this.cube.getPhysicsMaterial(),
@@ -125,24 +151,16 @@ export default class BlasterScene extends THREE.Scene {
         //const light = new THREE.DirectionalLight(0xFFFFFF, 1);
         //light.position.set(0, 20, 2);
         //this.add(light);
+        const color = new THREE.Color('white');
+        const intensity = 1;
+        const distance = 30;
+        const angle = Math.PI / 8;
+        const penumbra = 0.25;
+        const decay = 0.5;
 
-        const spotlight = new THREE.SpotLight(0xffffff, 0.9, 10, Math.PI / 4, 1)
-        spotlight.position.set(0, 2, -10)
-        spotlight.target.position.set(0, 0, -10)
-
-        spotlight.castShadow = true;
-
-        spotlight.shadow.camera.near = 0.5
-        spotlight.shadow.camera.far = 10
-        spotlight.shadow.camera.fov = 30
-
-        // spotlight.shadow.bias = -0.0001
-        spotlight.shadow.mapSize.width = 2048
-        spotlight.shadow.mapSize.height = 2048
-        this.add(spotlight.target);
-
-        const helper = new THREE.CameraHelper( spotlight.shadow.camera );
-        this.add( helper );
+        this.spotlight = new SpotlightObject(this, color, intensity, distance, angle, penumbra, decay,
+            new THREE.Vector3(0,0,0),
+            this.cube2.mesh);
 
         const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         this.add(ambientLight);
@@ -164,6 +182,11 @@ export default class BlasterScene extends THREE.Scene {
 		if (event.key === ' ')
 		{
 			this.createBullet();
+            this.generateRandomCube();
+		}
+        if (event.key === 'ctrl')
+		{
+			//this.generateRandomCube();
 		}
 	}
 
@@ -274,6 +297,23 @@ export default class BlasterScene extends THREE.Scene {
         this.bullets.push(b);
     }
 
+    private async generateRandomCube() {
+
+        let randPosition = new THREE.Vector3(randFloat(-5, 5), randFloat(5, 15), randFloat(-5.5, -10.5));
+        let randCubeSize = randFloat(0.5, 2);
+
+        let randColor = THREE.MathUtils.randInt(0, 0xffffff)
+
+        const cube = new CubeObject(this,
+            randCubeSize, randCubeSize, randCubeSize,
+            randPosition,
+            randColor,
+            new THREE.MeshPhongMaterial( { color: randColor, depthWrite: true }),
+            this.world);
+
+        this.cubes.push(cube);
+    }
+
     private updateBullets() {
         for(let i = 0; i < this.bullets.length; i++) {
             const b = this.bullets[i];
@@ -313,8 +353,19 @@ export default class BlasterScene extends THREE.Scene {
 
         this.ground?.update();
         this.cube?.update();
+        this.cube2?.update();
         this.sphere?.update();
-        
+
+        this.cubes.forEach(x => x.update());
+
+        if(this.cube != null) 
+        {
+            //this.spotlight?.setPosition(this.cube?.mesh.position);
+
+        }
+
+        this.spotlight?.update();
+       
         this.stats.update();
     }
 }

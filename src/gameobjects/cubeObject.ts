@@ -64,6 +64,10 @@ export class CubeObject {
         else
             throw new Error("No physics material set!")
     }
+    
+    getPosition() {
+        return this.mesh?.position;
+    }
 
     update() {
         if(this.body != null) {
