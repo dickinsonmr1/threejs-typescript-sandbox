@@ -7,8 +7,9 @@ import { GroundObject } from '../gameobjects/groundObject';
 import { CubeObject } from '../gameobjects/cubeObject';
 import { SphereObject } from '../gameobjects/sphereObject';
 import Stats from 'three/addons/libs/stats.module.js';
-import { SpotlightObject } from '../gameobjects/spotlightObject';
+import SpotlightObject from '../gameobjects/spotlightObject';
 import { randFloat } from 'three/src/math/MathUtils.js';
+import { PointLightObject } from '../gameobjects/pointLightObject';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -40,6 +41,7 @@ export default class BlasterScene extends THREE.Scene {
     sphere?: SphereObject;
 
     spotlight?: SpotlightObject;
+    pointLight?: PointLightObject;
 
     //spotlight?: THREE.SpotLight;
     //spotlightHelper?: THREE.SpotLightHelper;
@@ -162,6 +164,8 @@ export default class BlasterScene extends THREE.Scene {
             new THREE.Vector3(0,0,0),
             this.cube2.mesh);
 
+        this.pointLight = new PointLightObject(this, new THREE.Color('white'), 0.5, 1, 0.5, new THREE.Vector3(0, 0.5, 0));
+
         const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         this.add(ambientLight);
 
@@ -169,7 +173,6 @@ export default class BlasterScene extends THREE.Scene {
 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
-
     }
 
     private handleKeyDown = (event: KeyboardEvent) => {

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export class SpotlightObject {
+export default class SpotlightObject {
 
     spotlight?: THREE.SpotLight;
     spotlightHelper?: THREE.SpotLightHelper;
