@@ -9,7 +9,6 @@ import { SphereObject } from '../gameobjects/sphereObject';
 import Stats from 'three/addons/libs/stats.module.js';
 import SpotlightObject from '../gameobjects/spotlightObject';
 import { randFloat } from 'three/src/math/MathUtils.js';
-import { PointLightObject } from '../gameobjects/pointLightObject';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -41,10 +40,6 @@ export default class BlasterScene extends THREE.Scene {
     sphere?: SphereObject;
 
     spotlight?: SpotlightObject;
-    pointLight?: PointLightObject;
-
-    //spotlight?: THREE.SpotLight;
-    //spotlightHelper?: THREE.SpotLightHelper;
 
     constructor(camera: THREE.PerspectiveCamera) {
         super();
@@ -163,8 +158,6 @@ export default class BlasterScene extends THREE.Scene {
         this.spotlight = new SpotlightObject(this, color, intensity, distance, angle, penumbra, decay,
             new THREE.Vector3(0,0,0),
             this.cube2.mesh);
-
-        this.pointLight = new PointLightObject(this, new THREE.Color('white'), 0.5, 1, 0.5, new THREE.Vector3(0, 0.5, 0));
 
         const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         this.add(ambientLight);
@@ -290,7 +283,7 @@ export default class BlasterScene extends THREE.Scene {
 
         this.add(bulletModel);
 
-        const b = new Bullet(bulletModel);
+        const b = new Bullet(this, bulletModel);
         b.setVelocity(
             this.directionVector.x * 0.2,
             this.directionVector.y * 0.2,
@@ -323,7 +316,9 @@ export default class BlasterScene extends THREE.Scene {
             b.update();
 
             if(b.shouldRemove) {
+                b.removeLight();
                 this.remove(b.group);
+
                 this.bullets.splice(i, 1);
                 i--;
             }
@@ -331,7 +326,9 @@ export default class BlasterScene extends THREE.Scene {
                 for(let j = 0; j < this.targets.length; j++) {
                     const target = this.targets[j];
                     if(target.position.distanceToSquared(b.group.position) < 0.05) {
+                        b.removeLight();
                         this.remove(b.group);
+
                         this.bullets.splice(i, 1);
                         i--;
 

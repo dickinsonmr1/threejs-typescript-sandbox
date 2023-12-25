@@ -15,15 +15,8 @@ export class PointLightObject {
         this.pointLight = new THREE.PointLight(color, intensity, distance, decay);
         this.pointLight.position.set(position.x, position.y, position.z);
         
-        this.pointLight.castShadow = true;
+        this.pointLight.castShadow = false;
 
-        this.pointLight.shadow.camera.near = 0.5;
-        this.pointLight.shadow.camera.far = 20;
-        this.pointLight.shadow.camera.fov = 0;
-
-        // spotlight.shadow.bias = -0.0001
-        this.pointLight.shadow.mapSize.width = 128;
-        this.pointLight.shadow.mapSize.height = 128;
         this.pointLightHelper = new THREE.PointLightHelper(this.pointLight)
         this.pointLight.add(this.pointLightHelper);
         
@@ -34,11 +27,23 @@ export class PointLightObject {
         return this.pointLight?.position;
     }
 
+    // only use if pointLight is not already attached to another object
     setPosition(position: THREE.Vector3) {
         this.pointLight?.position.set(position.x, position.y, position.z);
+        //this.pointLightHelper?.position.set(position.x, position.y, position.z);
     }
 
     update() {
         this.pointLightHelper?.update();
+    }
+
+    remove() {
+
+        if(this.pointLight != null) {
+            this.pointLight.visible = false;
+            this.pointLight.remove();
+        }
+
+        this.pointLightHelper?.remove();
     }
 }
