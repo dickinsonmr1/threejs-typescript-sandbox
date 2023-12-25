@@ -9,6 +9,7 @@ import { SphereObject } from '../gameobjects/sphereObject';
 import Stats from 'three/addons/libs/stats.module.js';
 import SpotlightObject from '../gameobjects/spotlightObject';
 import { randFloat } from 'three/src/math/MathUtils.js';
+import { ExplosionObject } from '../gameobjects/explosionObject';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -16,6 +17,8 @@ export default class BlasterScene extends THREE.Scene {
 
     private readonly mtlLoader = new MTLLoader();
     private readonly objLoader = new OBJLoader();
+
+    private readonly textureLoader = new THREE.TextureLoader();
 
     private readonly camera: THREE.PerspectiveCamera;
 
@@ -28,6 +31,9 @@ export default class BlasterScene extends THREE.Scene {
     private cubes: CubeObject[] = [];
     private bullets: Bullet[] = [];
     private targets: THREE.Group[] = [];
+
+    private explosions: ExplosionObject[] = [];
+    private explosionTexture?: THREE.Texture;
 
     world: CANNON.World = new CANNON.World({
         gravity: new CANNON.Vec3(0, -9.81, 0)
@@ -162,6 +168,8 @@ export default class BlasterScene extends THREE.Scene {
         const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         this.add(ambientLight);
 
+        this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
+
         document.body.appendChild(this.stats.dom);
 
         document.addEventListener('keydown', this.handleKeyDown);
@@ -179,6 +187,7 @@ export default class BlasterScene extends THREE.Scene {
 		{
 			this.createBullet();
             this.generateRandomCube();
+            //this.generateRandomExplosion();
 		}
         if (event.key === 'ctrl')
 		{
@@ -298,7 +307,7 @@ export default class BlasterScene extends THREE.Scene {
         let randPosition = new THREE.Vector3(randFloat(-5, 5), randFloat(5, 15), randFloat(-5.5, -10.5));
         let randCubeSize = randFloat(0.5, 2);
 
-        let randColor = THREE.MathUtils.randInt(0, 0xffffff)
+        let randColor = THREE.MathUtils.randInt(0, 0xffffff);
 
         const cube = new CubeObject(this,
             randCubeSize, randCubeSize, randCubeSize,
@@ -308,6 +317,27 @@ export default class BlasterScene extends THREE.Scene {
             this.world);
 
         this.cubes.push(cube);
+    }
+
+    private async generateRandomExplosion(position?: THREE.Vector3) {
+
+        if(this.explosionTexture != null) {
+            //let randPosition = new THREE.Vector3(randFloat(-5, 5), randFloat(5, 15), randFloat(-5.5, -10.5));
+            if(position == null)
+                position = new THREE.Vector3(0, 1, 0);
+
+            let randColorR = THREE.MathUtils.randInt(0, 255);
+            let randColorG = THREE.MathUtils.randInt(0, 255);
+            let randColorB = THREE.MathUtils.randInt(0, 255);
+
+            let color = new THREE.Color(randColorR, randColorG, randColorB);
+
+            this.explosions.push(new ExplosionObject(this, this.explosionTexture,
+                color,
+                position,
+                100,
+                0.05));
+        }
     }
 
     private updateBullets() {
@@ -326,6 +356,9 @@ export default class BlasterScene extends THREE.Scene {
                 for(let j = 0; j < this.targets.length; j++) {
                     const target = this.targets[j];
                     if(target.position.distanceToSquared(b.group.position) < 0.05) {
+
+                        this.generateRandomExplosion(b.group.position);
+
                         b.removeLight();
                         this.remove(b.group);
 
@@ -335,7 +368,7 @@ export default class BlasterScene extends THREE.Scene {
                         target.visible = false;
                         setTimeout(() => {
                             target.visible = true
-                        }, 1000);
+                        }, 1000);                        
                     }
                 }
             }
@@ -365,6 +398,11 @@ export default class BlasterScene extends THREE.Scene {
         }
 
         this.spotlight?.update();
+
+        this.explosions.forEach(x => {
+            x.update();
+        });
+        this.explosions = this.explosions.filter(x => x.isActive);
        
         this.stats.update();
     }
