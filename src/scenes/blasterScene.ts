@@ -10,6 +10,8 @@ import Stats from 'three/addons/libs/stats.module.js';
 import SpotlightObject from '../gameobjects/spotlightObject';
 import { randFloat } from 'three/src/math/MathUtils.js';
 import { ExplosionObject } from '../gameobjects/explosionObject';
+import { GltfObject } from '../gameobjects/gltfObject';
+import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -17,6 +19,9 @@ export default class BlasterScene extends THREE.Scene {
 
     private readonly mtlLoader = new MTLLoader();
     private readonly objLoader = new OBJLoader();
+
+    private readonly gltfLoader = new GLTFLoader();
+    private vehicle2?: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
 
@@ -43,6 +48,8 @@ export default class BlasterScene extends THREE.Scene {
     cube?: CubeObject;
     cube2?: CubeObject;
 
+    vehicle?: GltfObject;
+
     sphere?: SphereObject;
 
     spotlight?: SpotlightObject;
@@ -62,6 +69,8 @@ export default class BlasterScene extends THREE.Scene {
 
         this.bulletMtl = await this.mtlLoader.loadAsync('assets/foamBulletB.mtl');
         this.bulletMtl.preload();
+
+        this.vehicle2 = await this.gltfLoader.loadAsync('assets/kenney-vehicles/taxi.glb')
         
         // create 4 targets
         const t1 = await this.createTarget(targetMtl);
@@ -130,6 +139,17 @@ export default class BlasterScene extends THREE.Scene {
                         new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
                         this.world, objectMaterial);
 
+        this.vehicle = new GltfObject(this,
+            this.vehicle2,
+            //'assets/kenney-vehicles/taxi.glb',
+            new THREE.Vector3(2, 2, -2), // position
+            new THREE.Vector3(0.5, 0.5, 0.5), // scale
+            new THREE.Vector3(0.5, 0.5, 1), // bounding box size,
+            new THREE.Vector3(0, -0.25, 0), // physics offset,
+            //new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
+            this.world,
+            objectMaterial);
+
         // bounding box to show shadows
         const cubeSize = 30;
         const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
@@ -140,7 +160,7 @@ export default class BlasterScene extends THREE.Scene {
         const mesh = new THREE.Mesh(cubeGeo, cubeMat);
         mesh.receiveShadow = true;
         mesh.position.set(0, cubeSize / 2 - 0.1, 0);
-        this.add(mesh);
+        //this.add(mesh);
         
         var groundCubeContactMaterial = new CANNON.ContactMaterial(
             this.ground.getPhysicsMaterial(),
@@ -165,8 +185,11 @@ export default class BlasterScene extends THREE.Scene {
             new THREE.Vector3(0,0,0),
             this.cube2.mesh);
 
-        const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
-        this.add(ambientLight);
+        //const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
+        //this.add(ambientLight);
+
+        const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+        this.add( light );
 
         this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
 
@@ -388,6 +411,8 @@ export default class BlasterScene extends THREE.Scene {
         this.cube?.update();
         this.cube2?.update();
         this.sphere?.update();
+
+        this.vehicle?.update();
 
         this.cubes.forEach(x => x.update());
 
