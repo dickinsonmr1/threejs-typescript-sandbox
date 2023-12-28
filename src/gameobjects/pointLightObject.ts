@@ -44,6 +44,9 @@ export class PointLightObject {
             this.pointLight.remove();
         }
 
-        this.pointLightHelper?.remove();
+        if(this.pointLightHelper != null) {
+            this.pointLightHelper.visible = false;
+            this.pointLightHelper.remove(); 
+        }
     }
 }

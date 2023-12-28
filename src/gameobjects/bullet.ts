@@ -17,8 +17,11 @@ export default class Bullet
 		this.pointLight = new PointLightObject(scene, new THREE.Color('white'), 0.9, 1, 0.1, 
 			new THREE.Vector3(0, 0, 0));
 
-		if(this.pointLight.pointLight != null)
+		if(this.pointLight.pointLight != null) 
 			this.group.add(this.pointLight.pointLight);
+
+		if(this.pointLight.pointLightHelper != null) 
+			this.group.add(this.pointLight.pointLightHelper);
 
 		setTimeout(() => {
 			this.isDead = true
@@ -33,7 +36,7 @@ export default class Bullet
 	setVelocity(x: number, y: number, z: number)
 	{
 		this.velocity.set(x, y, z);
-	}
+	}	
 
 	removeLight() {
 		this.pointLight?.remove();
@@ -47,7 +50,7 @@ export default class Bullet
  
 		if(this.pointLight != null) {
 			//this.pointLight?.setPosition(this.group.position);
-			//this.pointLight?.update();
+			this.pointLight?.update();
 		}
 		
 	}

@@ -12,6 +12,8 @@ import { randFloat } from 'three/src/math/MathUtils.js';
 import { ExplosionObject } from '../gameobjects/explosionObject';
 import { GltfObject } from '../gameobjects/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
+import { Utility } from '../utility';
+import { Projectile } from '../gameobjects/projectile';
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -21,7 +23,10 @@ export default class BlasterScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
 
     private readonly gltfLoader = new GLTFLoader();
-    private vehicle2?: GLTF;
+    private taxiModel?: GLTF;
+    private policeModel?: GLTF;
+    private ambulanceModel?: GLTF;
+    private trashTruckModel?: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
 
@@ -37,6 +42,9 @@ export default class BlasterScene extends THREE.Scene {
     private bullets: Bullet[] = [];
     private targets: THREE.Group[] = [];
 
+    private projectiles: Projectile[] = [];
+    projectileSpeed: number = 0.5;
+
     private explosions: ExplosionObject[] = [];
     private explosionTexture?: THREE.Texture;
 
@@ -48,7 +56,12 @@ export default class BlasterScene extends THREE.Scene {
     cube?: CubeObject;
     cube2?: CubeObject;
 
-    vehicle?: GltfObject;
+    private allPlayers: GltfObject[] = [];
+
+    vehiclePlayer1?: GltfObject;
+    vehiclePlayer2?: GltfObject;
+    vehiclePlayer3?: GltfObject;
+    vehiclePlayer4?: GltfObject;
 
     sphere?: SphereObject;
 
@@ -70,8 +83,11 @@ export default class BlasterScene extends THREE.Scene {
         this.bulletMtl = await this.mtlLoader.loadAsync('assets/foamBulletB.mtl');
         this.bulletMtl.preload();
 
-        this.vehicle2 = await this.gltfLoader.loadAsync('assets/kenney-vehicles/taxi.glb')
-        
+        this.taxiModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/taxi.glb');
+        this.policeModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/police.glb');
+        this.ambulanceModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/ambulance.glb');
+        this.trashTruckModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/garbageTruck.glb');
+                
         // create 4 targets
         const t1 = await this.createTarget(targetMtl);
         t1.position.x = -1;
@@ -139,16 +155,46 @@ export default class BlasterScene extends THREE.Scene {
                         new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
                         this.world, objectMaterial);
 
-        this.vehicle = new GltfObject(this,
-            this.vehicle2,
+        this.vehiclePlayer1 = new GltfObject(this,
+            this.taxiModel,
             //'assets/kenney-vehicles/taxi.glb',
             new THREE.Vector3(2, 2, -2), // position
             new THREE.Vector3(0.5, 0.5, 0.5), // scale
             new THREE.Vector3(0.5, 0.5, 1), // bounding box size,
             new THREE.Vector3(0, -0.25, 0), // physics offset,
-            //new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
             this.world,
             objectMaterial);
+        this.allPlayers.push(this.vehiclePlayer1);
+
+        this.vehiclePlayer2 = new GltfObject(this,
+            this.policeModel,
+            new THREE.Vector3(-2, 2, -2), // position
+            new THREE.Vector3(0.5, 0.5, 0.5), // scale
+            new THREE.Vector3(0.5, 0.5, 1), // bounding box size,
+            new THREE.Vector3(0, -0.25, 0), // physics offset,
+            this.world,
+            objectMaterial);
+        this.allPlayers.push(this.vehiclePlayer2);
+
+        this.vehiclePlayer3 = new GltfObject(this,
+            this.trashTruckModel,
+            new THREE.Vector3(-6, 2, -2), // position
+            new THREE.Vector3(0.5, 0.5, 0.5), // scale
+            new THREE.Vector3(1, 1, 1.5), // bounding box size,
+            new THREE.Vector3(0, -0.5, 0), // physics offset,
+            this.world,
+            objectMaterial);
+        this.allPlayers.push(this.vehiclePlayer3);
+
+        this.vehiclePlayer4 = new GltfObject(this,
+            this.ambulanceModel,
+            new THREE.Vector3(-3, 5, -2), // position
+            new THREE.Vector3(0.5, 0.5, 0.5), // scale
+            new THREE.Vector3(1, 1, 1.5), // bounding box size,
+            new THREE.Vector3(0, -0.5, 0), // physics offset,
+            this.world,
+            objectMaterial);
+        this.allPlayers.push(this.vehiclePlayer4);
 
         // bounding box to show shadows
         const cubeSize = 30;
@@ -188,7 +234,7 @@ export default class BlasterScene extends THREE.Scene {
         //const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         //this.add(ambientLight);
 
-        const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+        const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.5 );
         this.add( light );
 
         this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
@@ -208,13 +254,14 @@ export default class BlasterScene extends THREE.Scene {
 
 		if (event.key === ' ')
 		{
-			this.createBullet();
-            this.generateRandomCube();
+			//this.createBullet();
+            this.createProjectile();
+            //this.generateRandomCube();
             //this.generateRandomExplosion();
 		}
-        if (event.key === 'ctrl')
+        if (event.key === 'x')
 		{
-			//this.generateRandomCube();
+			this.generateRandomCube();
 		}
 	}
 
@@ -299,13 +346,17 @@ export default class BlasterScene extends THREE.Scene {
         const size = aabb.getSize(new THREE.Vector3());
 
         const vec = this.blaster.position.clone();
-        vec.y += 0.06;
+        
+        // distance off ground
+        vec.y += 0.25;
 
         bulletModel.position.add(
             vec.add(
                 this.directionVector.clone().multiplyScalar(size.z * 0.5)
             )
         );
+
+        bulletModel.scale.set(5, 5, 5);
 
         // rotate children to match gun for simplicity
         bulletModel.children.forEach(child => child.rotateX(Math.PI * -0.5));
@@ -323,6 +374,37 @@ export default class BlasterScene extends THREE.Scene {
         );
 
         this.bullets.push(b);
+    }
+
+    private async createProjectile() {
+        
+        if(!this.blaster) 
+            return;
+
+        let projectileLaunchVector = new THREE.Vector3;
+        this.camera.getWorldDirection(projectileLaunchVector);
+
+        //axis-aligned bounding box
+        const aabb = new THREE.Box3().setFromObject(this.blaster);
+        const size = aabb.getSize(new THREE.Vector3());
+
+        const vec = this.blaster.position.clone();
+        
+        // distance off ground
+        vec.y += 0.25;
+
+        // offset to front of gun
+        var tempPosition = vec.add(
+                this.directionVector.clone().multiplyScalar(size.z * 0.5)
+            );
+
+        var tempProjectile = new Projectile(this, 0.05, tempPosition,
+            projectileLaunchVector,
+            this.projectileSpeed,
+            0xff0000,
+            new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }));      
+
+        this.projectiles.push(tempProjectile);
     }
 
     private async generateRandomCube() {
@@ -376,6 +458,24 @@ export default class BlasterScene extends THREE.Scene {
                 i--;
             }
             else {
+
+
+                for(let j = 0; j < this.allPlayers.length; j++) {
+                    const otherPlayerBody = this.allPlayers[j].body;
+                    if(otherPlayerBody != null) {
+                        if(otherPlayerBody.position.distanceTo(Utility.ThreeVec3ToCannonVec3(b.group.position)) < 1) {
+                            this.generateRandomExplosion(b.group.position);
+
+                            b.removeLight();
+                            this.remove(b.group);
+
+                            this.bullets.splice(i, 1);
+                            i--;                        
+                        }
+                    }
+                }
+                    
+                /*
                 for(let j = 0; j < this.targets.length; j++) {
                     const target = this.targets[j];
                     if(target.position.distanceToSquared(b.group.position) < 0.05) {
@@ -394,8 +494,28 @@ export default class BlasterScene extends THREE.Scene {
                         }, 1000);                        
                     }
                 }
+                */
             }
         }
+    }
+
+    private checkProjectilesForCollision() { 
+        this.projectiles.forEach(projectile => {
+            if(projectile.shouldRemove) {
+                projectile.kill();
+                this.remove(projectile.mesh);                
+            }
+            else {
+                this.allPlayers.forEach(player => {
+                    if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
+                        this.generateRandomExplosion(projectile.getPosition());
+                        projectile.kill();
+                        this.remove(projectile.mesh);
+                    }
+                })
+            }
+            
+        });
     }
 
     update() {
@@ -406,15 +526,22 @@ export default class BlasterScene extends THREE.Scene {
 
         this.updateInput();
         this.updateBullets();
+        
 
         this.ground?.update();
         this.cube?.update();
         this.cube2?.update();
         this.sphere?.update();
 
-        this.vehicle?.update();
+        this.vehiclePlayer1?.update();
+        this.vehiclePlayer2?.update();
+        this.vehiclePlayer3?.update();
+        this.vehiclePlayer4?.update();
 
         this.cubes.forEach(x => x.update());
+
+        this.projectiles.forEach(x => x.update());
+        this.checkProjectilesForCollision();
 
         if(this.cube != null) 
         {

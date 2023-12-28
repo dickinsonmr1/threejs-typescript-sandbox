@@ -92,6 +92,8 @@ export class GltfObject {
 
     update() {
         if(this.body != null) {
+
+            this.body.velocity.x = 0.1;
             
             this.model.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position).add(this.physicsPositionOffset));
             this.model.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
