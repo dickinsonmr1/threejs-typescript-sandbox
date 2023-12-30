@@ -14,6 +14,10 @@ import { GltfObject } from '../gameobjects/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Utility } from '../utility';
 import { Projectile } from '../gameobjects/projectile';
+import { CylinderObject } from '../gameobjects/cylinderObject';
+import { RaycastVehicleObject } from '../gameobjects/raycastVehicleObject';
+
+// https://www.youtube.com/watch?v=8J5xl9oijR8&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=3
 
 export default class BlasterScene extends THREE.Scene {
 
@@ -51,10 +55,11 @@ export default class BlasterScene extends THREE.Scene {
     world: CANNON.World = new CANNON.World({
         gravity: new CANNON.Vec3(0, -9.81, 0)
     });
-
+    
     ground?: GroundObject;
     cube?: CubeObject;
     cube2?: CubeObject;
+    cylinder?: CylinderObject;
 
     private allPlayers: GltfObject[] = [];
 
@@ -62,6 +67,8 @@ export default class BlasterScene extends THREE.Scene {
     vehiclePlayer2?: GltfObject;
     vehiclePlayer3?: GltfObject;
     vehiclePlayer4?: GltfObject;
+
+    raycastVehicleObject?: RaycastVehicleObject;
 
     sphere?: SphereObject;
 
@@ -136,11 +143,93 @@ export default class BlasterScene extends THREE.Scene {
             this.world.addBody(sphereBody)
         */
 
+        // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
+
+
+        this.world.broadphase = new CANNON.SAPBroadphase(this.world);
         var groundMaterial = new CANNON.Material();
         this.ground = new GroundObject(this, 100, 100, 0x444444,
             new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: true }),
             this.world, groundMaterial);
-        
+
+            
+        var wheelMaterial = new CANNON.Material("wheenMaterial");
+        var wheelGroundContactMaterial = new CANNON.ContactMaterial(
+            wheelMaterial,
+            groundMaterial,{
+                friction: 0.3, restitution: 0, contactEquationStiffness: 1000
+            }
+        );
+        this.world.addContactMaterial(wheelGroundContactMaterial);
+
+        /*
+        const chassisShape = new CANNON.Box(new CANNON.Vec3(1, 0.5, 2));
+        const chassisBody = new CANNON.Body({ mass: 150 });
+        chassisBody.addShape(chassisShape);
+        chassisBody.position.set(0, 4, 0);
+        // this.help.addVisual(chassisBody, 'car');
+
+        const options = {
+            radius: 0.5,
+            directionLocal: new CANNON.Vec3(0, -1, 0),
+            suspensionStiffness: 30,
+            suspensionRestLength: 0.3,
+            frictionSlip: 5,
+            dampingRelaxation: 2.3,
+            dampingCompression: 4.4,
+            maxSuspensionForce: 100000,
+            rollInfluence: 0.01,
+            axleLocal: new CANNON.Vec3(-1, 0, 0),
+            chassisConnectionPointLocal: new CANNON.Vec3(1, 1, 0),
+            maxSuspensionTravel: 0.3,
+            customSlidingRotationalSpeed: -30,
+            useCustomSlidingRotationalSpeed: true
+        };
+
+        const vehicle = new CANNON.RaycastVehicle({
+            chassisBody: chassisBody,
+            indexRightAxis: 0,
+            indexUpAxis: 1,
+            indexForwardAxis: 2
+        });
+
+        options.chassisConnectionPointLocal.set(1, 0, -1);
+        vehicle.addWheel(options);
+        options.chassisConnectionPointLocal.set(-1, 0, -1);
+        vehicle.addWheel(options);
+        options.chassisConnectionPointLocal.set(1, 0, 1);
+        vehicle.addWheel(options);
+        options.chassisConnectionPointLocal.set(-1, 0, 1);
+        vehicle.addWheel(options);
+
+        vehicle.addToWorld(this.world);
+
+		var wheelBodies: CANNON.Body[] = [];    
+
+		vehicle.wheelInfos.forEach(wheel => {
+			const cylinderShape = new CANNON.Cylinder(wheel.radius, wheel.radius, wheel.radius / 2, 20);
+
+			const wheelBody = new CANNON.Body({ mass: 1, material: wheelMaterial });
+			const q = new CANNON.Quaternion();
+			q.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
+			wheelBody.addShape(cylinderShape, new CANNON.Vec3(), q);
+			wheelBodies.push(wheelBody);
+			//game.helper.addVisual(wheelBody, 'wheel');
+		});
+
+		// Update wheels
+		this.world.addEventListener('postStep', function(){
+			let index = 0;
+			vehicle.wheelInfos.forEach(wheel => {
+            	vehicle.updateWheelTransform(index);
+                const t = wheel.worldTransform;
+                wheelBodies[index].position.copy(t.position);
+                wheelBodies[index].quaternion.copy(t.quaternion);
+				index++; 
+			});
+		});        
+        */
+
         var objectMaterial = new CANNON.Material();
     
         this.cube = new CubeObject(this, 1,1,1, new THREE.Vector3(0, 20, -9.5), 0xffff00,
@@ -154,6 +243,12 @@ export default class BlasterScene extends THREE.Scene {
         this.sphere = new SphereObject(this, 1, new THREE.Vector3(0.5, 5, -10), 0x00ff00,
                         new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
                         this.world, objectMaterial);
+
+        this.cylinder = new CylinderObject(this, 1, 0.25, new THREE.Vector3(0, 3, -12), 0x00ff00,
+            new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
+            this.world, objectMaterial);
+
+        this.raycastVehicleObject = new RaycastVehicleObject(this, new THREE.Vector3(5, 1, -5), 0x00ff00, this.world, objectMaterial, wheelMaterial);
 
         this.vehiclePlayer1 = new GltfObject(this,
             this.taxiModel,
@@ -532,11 +627,14 @@ export default class BlasterScene extends THREE.Scene {
         this.cube?.update();
         this.cube2?.update();
         this.sphere?.update();
+        this.cylinder?.update();
 
         this.vehiclePlayer1?.update();
         this.vehiclePlayer2?.update();
         this.vehiclePlayer3?.update();
         this.vehiclePlayer4?.update();
+
+        this.raycastVehicleObject?.update();
 
         this.cubes.forEach(x => x.update());
 

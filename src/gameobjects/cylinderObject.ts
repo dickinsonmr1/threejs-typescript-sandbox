@@ -2,9 +2,9 @@ import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../utility";
 
-export class CubeObject {
+export class CylinderObject {
     mesh: THREE.Mesh;
-    body: CANNON.Body = new CANNON.Body();
+    body?: CANNON.Body;
 
     meshMaterial: THREE.Material;
     physicsMaterial?: CANNON.Material;
@@ -12,48 +12,43 @@ export class CubeObject {
      *
      */
     constructor(scene: THREE.Scene,
-        height: number, width: number, depth: number,
+        radius: number,
+        height: number,
         position: THREE.Vector3,
         color: number = 0xffffff,
         meshMaterial?: THREE.Material,
         world?: CANNON.World,
-        physicsMaterial?: CANNON.Material,
-        mass?: number) {
+        physicsMaterial?: CANNON.Material) {
 
         this.meshMaterial = meshMaterial ?? new THREE.MeshBasicMaterial({
             color: color,
             side: THREE.DoubleSide,
-            wireframe: true
+            wireframe: false
         })
-
+        
         this.mesh = new THREE.Mesh(
-            
-            new THREE.BoxGeometry( height, width, depth),            
-            //new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } 
+            new THREE.CylinderGeometry(radius, radius, height),    
             this.meshMaterial
         );
-        //this.mesh.position.set(position.x, position.y, position.z);
+        this.mesh.position.set(position.x, position.y, position.z);
+        
         this.mesh.castShadow = true;
-        this.mesh.receiveShadow = true;
+        this.mesh.receiveShadow = true;  
         
         scene.add(this.mesh);
         
         if(world != null) {
 
             this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
-
+            
             this.body = new CANNON.Body({
-                // https://stackoverflow.com/questions/26183492/cannonjs-and-three-js-one-unit-off
-                shape: new CANNON.Box(new CANNON.Vec3(height / 2, width / 2, depth / 2)),
+                shape: new CANNON.Cylinder(radius, radius, height, 20),
                 position: new CANNON.Vec3(position.x, position.y, position.z),
-                type: CANNON.Body.DYNAMIC,
+                //type: CANNON.Body.STATIC,    
+                //linearDamping: 0.31,            
                 material: this.physicsMaterial,
-                angularVelocity: new CANNON.Vec3(0, 10, 0),
-                angularDamping: 0.5,
-                linearDamping: 0.7,
-                mass: mass
+                mass: 1
             });
-            //this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
             world.addBody(this.body);
         }
     }
@@ -65,7 +60,7 @@ export class CubeObject {
         else
             throw new Error("No physics material set!")
     }
-    
+
     getPosition() {
         return this.mesh?.position;
     }
