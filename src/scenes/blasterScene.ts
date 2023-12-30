@@ -4,7 +4,7 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import Bullet from '../gameobjects/bullet';
 import * as CANNON from 'cannon-es'
 import { GroundObject } from '../gameobjects/groundObject';
-import { CubeObject } from '../gameobjects/cubeObject';
+import { BoxObject } from '../gameobjects/boxObject';
 import { SphereObject } from '../gameobjects/sphereObject';
 import Stats from 'three/addons/libs/stats.module.js';
 import SpotlightObject from '../gameobjects/spotlightObject';
@@ -37,12 +37,13 @@ export default class BlasterScene extends THREE.Scene {
     private readonly camera: THREE.PerspectiveCamera;
 
     private readonly keyDown = new Set<string>();
+    private readonly keyUp = new Set<string>();
 
     private blaster?: THREE.Group;
     private bulletMtl?: MTLLoader.MaterialCreator;
     private directionVector = new THREE.Vector3();
 
-    private cubes: CubeObject[] = [];
+    private cubes: BoxObject[] = [];
     private bullets: Bullet[] = [];
     private targets: THREE.Group[] = [];
 
@@ -57,8 +58,8 @@ export default class BlasterScene extends THREE.Scene {
     });
     
     ground?: GroundObject;
-    cube?: CubeObject;
-    cube2?: CubeObject;
+    cube?: BoxObject;
+    cube2?: BoxObject;
     cylinder?: CylinderObject;
 
     private allPlayers: GltfObject[] = [];
@@ -147,16 +148,18 @@ export default class BlasterScene extends THREE.Scene {
 
 
         this.world.broadphase = new CANNON.SAPBroadphase(this.world);
-        var groundMaterial = new CANNON.Material();
+
+        var groundMaterial = new CANNON.Material("groundMaterial");
         this.ground = new GroundObject(this, 100, 100, 0x444444,
             new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: true }),
             this.world, groundMaterial);
 
             
-        var wheelMaterial = new CANNON.Material("wheenMaterial");
+        var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
             wheelMaterial,
-            groundMaterial,{
+            groundMaterial,
+            {
                 friction: 0.3, restitution: 0, contactEquationStiffness: 1000
             }
         );
@@ -232,11 +235,11 @@ export default class BlasterScene extends THREE.Scene {
 
         var objectMaterial = new CANNON.Material();
     
-        this.cube = new CubeObject(this, 1,1,1, new THREE.Vector3(0, 20, -9.5), 0xffff00,
+        this.cube = new BoxObject(this, 1,1,1, new THREE.Vector3(0, 20, -9.5), 0xffff00,
                         new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
                         this.world, objectMaterial);
 
-        this.cube2 = new CubeObject(this, 1,1,1, new THREE.Vector3(0, 20, -8), 0xffff00,
+        this.cube2 = new BoxObject(this, 1,1,1, new THREE.Vector3(0, 20, -8), 0xffff00,
                         new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
                         this.world, objectMaterial);
 
@@ -248,7 +251,7 @@ export default class BlasterScene extends THREE.Scene {
             new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.world, objectMaterial);
 
-        this.raycastVehicleObject = new RaycastVehicleObject(this, new THREE.Vector3(5, 1, -5), 0x00ff00, this.world, objectMaterial, wheelMaterial);
+        this.raycastVehicleObject = new RaycastVehicleObject(this, new THREE.Vector3(0, 4, -15), 0x00ff00, this.world, wheelMaterial);
 
         this.vehiclePlayer1 = new GltfObject(this,
             this.taxiModel,
@@ -358,6 +361,24 @@ export default class BlasterScene extends THREE.Scene {
 		{
 			this.generateRandomCube();
 		}
+
+        if(event.key === 'w') {
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(0, 2);
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(0, 3);
+        }
+        else if(event.key === 's') {
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(0, 2);
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(0, 3);
+        }
+
+        if(event.key === 'a') {
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 0);
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 1);
+        }
+        else if(event.key === 'd') {
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 0);
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 1);
+        }
 	}
 
     private updateInput() {
@@ -367,10 +388,10 @@ export default class BlasterScene extends THREE.Scene {
 
         const shiftKey = this.keyDown.has('shift');
         if(!shiftKey){
-            if(this.keyDown.has('a') || this.keyDown.has('arrowleft')) {
+            if(this.keyDown.has('arrowleft')) {
                 this.blaster.rotateY(0.02);
             }
-            else if(this.keyDown.has('d') || this.keyDown.has('arrowright')) {
+            else if(this.keyDown.has('arrowright')) {
                 this.blaster.rotateY(-0.02);
             }
         }
@@ -380,10 +401,33 @@ export default class BlasterScene extends THREE.Scene {
         this.camera.getWorldDirection(dir);
         const speed = 0.1;
 
-        if(this.keyDown.has('w') || this.keyDown.has('arrowup')) {
+        const maxSteerVal = 0.5;
+        const maxForce = 1000;
+        const brakeForce = 1000000;
+
+        
+        if(this.keyDown.has('w')) {
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 2);
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 3);
+        }
+        else if(this.keyDown.has('s')) {
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(maxForce, 2);
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(maxForce, 3);
+        }
+
+        if(this.keyDown.has('a')) {
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(maxSteerVal, 0);
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(maxSteerVal, 1);
+        }
+        else if(this.keyDown.has('d')) {
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 0);
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 1);
+        }
+        
+        if(this.keyDown.has('arrowup')) {
             this.blaster.position.add(dir.clone().multiplyScalar(speed));
         }
-        else if(this.keyDown.has('s') || this.keyDown.has('arrowdown')) {
+        else if(this.keyDown.has('arrowdown')) {
             this.blaster.position.add(dir.clone().multiplyScalar(-speed));
         }
 
@@ -391,18 +435,36 @@ export default class BlasterScene extends THREE.Scene {
             const strafeDir = dir.clone();
             const upVector = new THREE.Vector3(0, 1, 0);
 
-            if(this.keyDown.has('a') || this.keyDown.has('arrowleft')) {
+            if(this.keyDown.has('arrowleft')) {
                 this.blaster.position.add(
                     strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
                         .multiplyScalar(speed)
                 );
             }
-            else if(this.keyDown.has('d') || this.keyDown.has('arrowright')) {
+            else if(this.keyDown.has('arrowright')) {
                 this.blaster.position.add(
                     strafeDir.applyAxisAngle(upVector, -Math.PI * 0.5)
                         .multiplyScalar(speed)
                 );
             }
+        }
+
+        if(this.keyDown.has('w')) {
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 2);
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 3);
+        }
+        else if(this.keyDown.has('s')) {
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(maxForce, 2);
+            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(maxForce, 3);
+        }
+
+        if(this.keyDown.has('a')) {
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(maxSteerVal, 0);
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(maxSteerVal, 1);
+        }
+        else if(this.keyDown.has('d')) {
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 0);
+            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 1);
         }
     }
 
@@ -509,7 +571,7 @@ export default class BlasterScene extends THREE.Scene {
 
         let randColor = THREE.MathUtils.randInt(0, 0xffffff);
 
-        const cube = new CubeObject(this,
+        const cube = new BoxObject(this,
             randCubeSize, randCubeSize, randCubeSize,
             randPosition,
             randColor,

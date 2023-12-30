@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../utility";
 
-export class CubeObject {
+export class BoxObject {
     mesh: THREE.Mesh;
     body: CANNON.Body = new CANNON.Body();
 
