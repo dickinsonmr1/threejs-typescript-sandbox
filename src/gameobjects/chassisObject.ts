@@ -12,13 +12,15 @@ export class ChassisObject {
      *
      */
     constructor(scene: THREE.Scene,
+        chassisDimensions: CANNON.Vec3,
         //height: number, width: number, depth: number,
         position: THREE.Vector3,
         //color: number = 0xffffff,
         //meshMaterial?: THREE.Material,
         world: CANNON.World,
         physicsMaterial: CANNON.Material,
-        mass: number) {
+        mass: number,
+        centerOfMassAdjust?: CANNON.Vec3) {
 
         this.meshMaterial = new THREE.MeshBasicMaterial({
             color: 0x00ff00,
@@ -28,9 +30,9 @@ export class ChassisObject {
 
         this.physicsMaterial = physicsMaterial;
 
-        const chassisShape = new CANNON.Box(new CANNON.Vec3(1, 0.5, 2));
+        const chassisShape = new CANNON.Box(chassisDimensions);
         const chassisBody = new CANNON.Body({ mass: mass });
-        chassisBody.addShape(chassisShape);
+        chassisBody.addShape(chassisShape, centerOfMassAdjust);
         chassisBody.position.set(position.x, position.y, position.z);
         chassisBody.angularVelocity.set(0, 0.5, 0);
 

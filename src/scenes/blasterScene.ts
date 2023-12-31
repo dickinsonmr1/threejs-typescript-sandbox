@@ -15,7 +15,8 @@ import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Utility } from '../utility';
 import { Projectile } from '../gameobjects/projectile';
 import { CylinderObject } from '../gameobjects/cylinderObject';
-import { RaycastVehicleObject } from '../gameobjects/raycastVehicleObject';
+import { RaycastVehicleObject } from '../gameobjects/raycastVehicle/raycastVehicleObject';
+import { RigidVehicleObject } from '../gameobjects/rigidVehicle/rigidVehicleObject';
 
 // https://www.youtube.com/watch?v=8J5xl9oijR8&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=3
 
@@ -70,6 +71,7 @@ export default class BlasterScene extends THREE.Scene {
     vehiclePlayer4?: GltfObject;
 
     raycastVehicleObject?: RaycastVehicleObject;
+    rigidVehicleObject?: RaycastVehicleObject;
 
     sphere?: SphereObject;
 
@@ -251,7 +253,9 @@ export default class BlasterScene extends THREE.Scene {
             new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.world, objectMaterial);
 
-        this.raycastVehicleObject = new RaycastVehicleObject(this, new THREE.Vector3(0, 4, -15), 0x00ff00, this.world, wheelMaterial);
+        this.raycastVehicleObject = new RaycastVehicleObject(this, new THREE.Vector3(-5, 4, -15), 0x00ff00, this.world, wheelMaterial);
+
+        this.rigidVehicleObject = new RigidVehicleObject(this, new THREE.Vector3(0, 4, -15), 0x00ff00, this.world, wheelMaterial);
 
         this.vehiclePlayer1 = new GltfObject(this,
             this.taxiModel,
@@ -697,6 +701,7 @@ export default class BlasterScene extends THREE.Scene {
         this.vehiclePlayer4?.update();
 
         this.raycastVehicleObject?.update();
+        this.rigidVehicleObject?.update();
 
         this.cubes.forEach(x => x.update());
 

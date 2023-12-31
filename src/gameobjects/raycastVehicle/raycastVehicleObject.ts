@@ -1,14 +1,14 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
-import { Utility } from "../utility";
-import { BoxObject } from "./boxObject";
-import { CylinderObject } from "./cylinderObject";
-import { WheelObject } from "./wheelObject";
-import { ChassisObject } from "./chassisObject";
+import { Utility } from "../../utility";
+import { BoxObject } from "../boxObject";
+import { CylinderObject } from "../cylinderObject";
+import { RaycastWheelObject } from "./raycastWheelObject";
+import { ChassisObject } from "../chassisObject";
 
 export class RaycastVehicleObject {
     
-    wheels: WheelObject[] = [];
+    wheels: RaycastWheelObject[] = [];
     chassis: ChassisObject;
 
     raycastVehicle?: CANNON.RaycastVehicle;
@@ -27,7 +27,13 @@ export class RaycastVehicleObject {
         world: CANNON.World,
         wheelMaterial: CANNON.Material) {
 
-        this.chassis = new ChassisObject(scene, position, world, new CANNON.Material(), 150);
+        this.chassis = new ChassisObject(
+            scene,
+            new CANNON.Vec3(1, 0.5, 2),
+            position,
+            world,
+            new CANNON.Material(),
+            150);
 
         const wheelOptions = {
             radius: 0.5,
@@ -68,7 +74,7 @@ export class RaycastVehicleObject {
         this.raycastVehicle.addToWorld(world);
 
 		this.raycastVehicle.wheelInfos.forEach(wheel => {
-            const temp = new WheelObject(scene, wheel.radius, world, wheelMaterial);                    
+            const temp = new RaycastWheelObject(scene, wheel.radius, world, wheelMaterial);                    
             this.wheels.push(temp);
 		});
     }

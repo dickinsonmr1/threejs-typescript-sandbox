@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
-import { Utility } from "../utility";
+import { Utility } from "../../utility";
 
-export class WheelObject {
+export class SphereWheelObject {
     mesh: THREE.Mesh;
     wheelBody: CANNON.Body;
 
@@ -18,7 +18,8 @@ export class WheelObject {
         //color: number = 0xffffff,
         //meshMaterial?: THREE.Material,
         world: CANNON.World,
-        wheelMaterial: CANNON.Material) {
+        wheelMaterial: CANNON.Material,
+        mass: number) {
 
         this.meshMaterial = new THREE.MeshBasicMaterial({
             color: 0x00ff00,
@@ -27,39 +28,22 @@ export class WheelObject {
         })
         this.physicsMaterial = wheelMaterial;
 
-        const cylinderShape = new CANNON.Cylinder(radius, radius, radius / 2, 20);
+        const wheelShape = new CANNON.Sphere(radius);
         this.wheelBody = new CANNON.Body({
-          mass: 0,
-          material: wheelMaterial,
+            mass,
+            material: wheelMaterial,
+            angularDamping: 0.4
         });
-        this.wheelBody.type = CANNON.Body.KINEMATIC;
-        this.wheelBody.collisionFilterGroup = 0; // turn off collisions
-        
-        //const quaternion = new CANNON.Quaternion().setFromEuler(-Math.PI / 2, 0, 0);
-        const quaternion = new CANNON.Quaternion().setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 2);
-
-        this.wheelBody.addShape(cylinderShape, new CANNON.Vec3(), quaternion);
+        this.wheelBody.addShape(wheelShape);
         world.addBody(this.wheelBody);
                 
         // visual body
         this.mesh = new THREE.Mesh(
-            new THREE.CylinderGeometry(radius, radius, radius / 2, 20),                
+            new THREE.SphereGeometry(radius),
             //Utility.cylinderBodyToMesh(this.wheelBody, this.meshMaterial, radius, 20),
             this.meshMaterial
         );
-
-        // https://stackoverflow.com/questions/61017721/cannon-js-three-js-minimal-car-physics
-        this.mesh.geometry.rotateX(Math.PI/2);
-
-        //const offset = this.wheelBody.shapeOffsets[0];
-        //const orientation = this.wheelBody.shapeOrientations[0];
-
-        //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(offset));
-        //this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(orientation));
-
-        //this.mesh.quaternion.setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
-        //this.mesh.position.set(position.x, position.y, position.z);
-            
+        
         //this.mesh.castShadow = true;
         //this.mesh.receiveShadow = true;  
         
