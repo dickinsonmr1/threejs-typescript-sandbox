@@ -71,7 +71,7 @@ export default class BlasterScene extends THREE.Scene {
     vehiclePlayer4?: GltfObject;
 
     raycastVehicleObject?: RaycastVehicleObject;
-    rigidVehicleObject?: RaycastVehicleObject;
+    rigidVehicleObject?: RigidVehicleObject;
 
     sphere?: SphereObject;
 
@@ -383,6 +383,25 @@ export default class BlasterScene extends THREE.Scene {
             this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 0);
             this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 1);
         }
+
+        // rigid body vehicle
+        if(event.key === 't') {
+            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 2);
+            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 3);
+        }
+        else if(event.key === 'g') {
+            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 2);
+            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 3);
+        }
+
+        if(event.key === 'f') {
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 0);
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 1);
+        }
+        else if(event.key === 'h') {
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 0);
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 1);
+        }
 	}
 
     private updateInput() {
@@ -409,7 +428,7 @@ export default class BlasterScene extends THREE.Scene {
         const maxForce = 1000;
         const brakeForce = 1000000;
 
-        
+        // raycast vehicle controls
         if(this.keyDown.has('w')) {
             this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 2);
             this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 3);
@@ -427,7 +446,29 @@ export default class BlasterScene extends THREE.Scene {
             this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 0);
             this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 1);
         }
+
+        // rigid body vehicle controls
+        const maxForceRigidBodyVehicle = 10;
+        const rigidMaxSteerVal = Math.PI / 8;
+        if(this.keyDown.has('t')) {
+            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(-maxForceRigidBodyVehicle, 2);
+            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(-maxForceRigidBodyVehicle, 3);
+        }
+        else if(this.keyDown.has('g')) {
+            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(maxForceRigidBodyVehicle, 2);
+            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(maxForceRigidBodyVehicle, 3);
+        }
+
+        if(this.keyDown.has('f')) {
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 0);
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 1);
+        }
+        else if(this.keyDown.has('h')) {
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 0);
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 1);
+        }
         
+        // camera FPS controller
         if(this.keyDown.has('arrowup')) {
             this.blaster.position.add(dir.clone().multiplyScalar(speed));
         }
@@ -453,6 +494,7 @@ export default class BlasterScene extends THREE.Scene {
             }
         }
 
+        /*
         if(this.keyDown.has('w')) {
             this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 2);
             this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 3);
@@ -470,6 +512,7 @@ export default class BlasterScene extends THREE.Scene {
             this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 0);
             this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 1);
         }
+        */
     }
 
     private async createTarget(mtl: MTLLoader.MaterialCreator) {

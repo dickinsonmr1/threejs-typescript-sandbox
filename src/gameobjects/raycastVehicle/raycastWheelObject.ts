@@ -15,13 +15,13 @@ export class RaycastWheelObject {
         radius: number,
         //height: number,
         //position: THREE.Vector3,
-        //color: number = 0xffffff,
+        color: number = 0xffffff,
         //meshMaterial?: THREE.Material,
         world: CANNON.World,
         wheelMaterial: CANNON.Material) {
 
         this.meshMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00ff00,
+            color: color,
             side: THREE.DoubleSide,
             wireframe: true
         })

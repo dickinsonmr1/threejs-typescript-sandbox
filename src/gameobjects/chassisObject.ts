@@ -33,6 +33,7 @@ export class ChassisObject {
         const chassisShape = new CANNON.Box(chassisDimensions);
         const chassisBody = new CANNON.Body({ mass: mass });
         chassisBody.addShape(chassisShape, centerOfMassAdjust);
+
         chassisBody.position.set(position.x, position.y, position.z);
         chassisBody.angularVelocity.set(0, 0.5, 0);
 
@@ -41,7 +42,7 @@ export class ChassisObject {
 
         this.mesh = new THREE.Mesh(
             
-            new THREE.BoxGeometry( 1, 0.5, 2),            
+            new THREE.BoxGeometry( chassisDimensions.x, chassisDimensions.y, chassisDimensions.z),            
             //new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } 
             this.meshMaterial
         );

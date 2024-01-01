@@ -15,14 +15,14 @@ export class SphereWheelObject {
         radius: number,
         //height: number,
         //position: THREE.Vector3,
-        //color: number = 0xffffff,
+        color: number = 0xffffff,
         //meshMaterial?: THREE.Material,
         world: CANNON.World,
         wheelMaterial: CANNON.Material,
         mass: number) {
 
         this.meshMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00ff00,
+            color: color,
             side: THREE.DoubleSide,
             wireframe: true
         })
@@ -32,7 +32,7 @@ export class SphereWheelObject {
         this.wheelBody = new CANNON.Body({
             mass,
             material: wheelMaterial,
-            angularDamping: 0.4
+            angularDamping: 0.7
         });
         this.wheelBody.addShape(wheelShape);
         world.addBody(this.wheelBody);
@@ -63,25 +63,16 @@ export class SphereWheelObject {
     }
 
     update() {        
-
-        //this.wheelBody.sha
-        //const offset = this.wheelBody.shapeOffsets[0];
-        //const orientation = this.wheelBody.shapeOrientations[0];
-
-        //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(offset));
-        //this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(orientation));
-        
-        if(this.wheelBody.shapes[0].body != null) {
-            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.wheelBody.shapes[0].body.position));
-            //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.wheelBody.shapeOffsets[0]));
-
-            //this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.wheelBody.shapes[0].body.quaternion));
-            this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.wheelBody.shapeOrientations[0]));
+        if(this.wheelBody != null) {
+            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.wheelBody.position));
+            this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.wheelBody.quaternion));
         }
 
-        //var temp = new CANNON.Vec3();
-        //this.wheelBody.quaternion.toEuler(temp);
-        //this.mesh.quaternion.setFromEuler(new THREE.Euler(temp.x, temp.y, temp.z));
-        
+        /*
+        if(this.wheelBody.shapes[0].body != null) {
+            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.wheelBody.shapes[0].body.position));            
+            this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.wheelBody.shapeOrientations[0]));
+        }        
+        */
     }
 }

@@ -73,9 +73,16 @@ export class RaycastVehicleObject {
 
         this.raycastVehicle.addToWorld(world);
 
+        let i = 0;
+        let wheelColor = 0x00ff00;
 		this.raycastVehicle.wheelInfos.forEach(wheel => {
-            const temp = new RaycastWheelObject(scene, wheel.radius, world, wheelMaterial);                    
+            
+            if(i > 1)
+                wheelColor = 0xff0000;
+            
+            const temp = new RaycastWheelObject(scene, wheel.radius, wheelColor, world, wheelMaterial);                    
             this.wheels.push(temp);
+            i++;
 		});
     }
 
