@@ -255,7 +255,13 @@ export default class BlasterScene extends THREE.Scene {
 
         this.raycastVehicleObject = new RaycastVehicleObject(this, new THREE.Vector3(-5, 4, -15), 0x00ff00, this.world, wheelMaterial);
 
-        this.rigidVehicleObject = new RigidVehicleObject(this, new THREE.Vector3(0, 4, -15), 0x00ff00, this.world, wheelMaterial);
+        this.rigidVehicleObject = new RigidVehicleObject(
+            this,
+            new THREE.Vector3(0, 4, -15),
+            0x00ff00,
+            this.world,
+            wheelMaterial,
+            0.3);
 
         this.vehiclePlayer1 = new GltfObject(this,
             this.taxiModel,
@@ -723,8 +729,6 @@ export default class BlasterScene extends THREE.Scene {
     }
 
     update() {
-        // update
-
         if(this.world != null)
             this.world.fixedStep();
 
@@ -754,7 +758,6 @@ export default class BlasterScene extends THREE.Scene {
         if(this.cube != null) 
         {
             //this.spotlight?.setPosition(this.cube?.mesh.position);
-
         }
 
         this.spotlight?.update();

@@ -18,6 +18,13 @@ export class Utility {
     static ThreeVec3ToCannonVec3(position: THREE.Vector3): CANNON.Vec3 {
         return new CANNON.Vec3(position.x, position.y, position.z);
     }
+        
+    static CannonVec3Add(position1: CANNON.Vec3, position2: CANNON.Vec3): CANNON.Vec3 {
+      return new CANNON.Vec3(
+        position1.x + position2.x,
+        position1.y + position2.y,
+        position1.z + position2.z);
+    }
 
     static cylinderBodyToMesh(body: CANNON.Body, material: THREE.Material, radius: number, numSegments: number): THREE.Group {
         const group = new THREE.Group()

@@ -1,9 +1,5 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
-import { Utility } from "../../utility";
-import { BoxObject } from "../boxObject";
-import { CylinderObject } from "../cylinderObject";
-//import { WheelObject } from "./wheelObject";
 import { ChassisObject } from "../chassisObject";
 import { SphereWheelObject } from "./sphereWheelObject";
 
@@ -18,11 +14,12 @@ export class RigidVehicleObject {
         position: THREE.Vector3,
         color: number = 0xffffff,
         world: CANNON.World,
-        wheelMaterial: CANNON.Material) {
+        wheelMaterial: CANNON.Material,
+        wheelRadius: number) {
 
         const centerOfMassAdjust = new CANNON.Vec3(0, 0, 0);
 
-        var chassisDimensions = new CANNON.Vec3(1, 0.25, 0.25);
+        var chassisDimensions = new CANNON.Vec3(1, 0.20, 0.75);
 
         this.chassis = new ChassisObject(
             scene,
@@ -30,7 +27,7 @@ export class RigidVehicleObject {
             position,
             world,
             new CANNON.Material(), 
-            1,
+            10,
             centerOfMassAdjust
         );
 
@@ -38,11 +35,8 @@ export class RigidVehicleObject {
             chassisBody: this.chassis.body
         });
 
-        const wheelRadius = 0.3;
         const mass = 1;
-        const axisWidth = 1; //7;
-        //const wheelShape = new CANNON.Sphere(1.5);
-        //const wheelMaterial = new CANNON.Material('wheel');
+        const axisWidth = 0.75;
         const down = new CANNON.Vec3(0, -1, 0);
         
         const chassisHalfLength = chassisDimensions.x / 2;
@@ -65,7 +59,7 @@ export class RigidVehicleObject {
             axis: new CANNON.Vec3(0, 0, 1),
             direction: down,
         });
-        this.wheels.push(frontRightWheel);
+        this.wheels.push(frontRightWheel);        
         
         // rear left
         const rearLeftWheel = new SphereWheelObject(scene, wheelRadius, 0xff0000, world, wheelMaterial, mass);
@@ -85,14 +79,9 @@ export class RigidVehicleObject {
             axis: new CANNON.Vec3(0, 0, -1),
             direction: down,
         });
-        this.wheels.push(rearRightWheel);
+        this.wheels.push(rearRightWheel);        
       
         this.rigidVehicleObject.addToWorld(world);
-		/*
-        this.rigidVehicleObject.wheelBodies.forEach(wheel => {
-            //this.wheels.push();
-		});
-        */
     }
 
     getPosition() {
@@ -100,7 +89,6 @@ export class RigidVehicleObject {
     }
 
     update() {
-
         this.chassis.update();            
         this.wheels.forEach(x => x.update());           
     }

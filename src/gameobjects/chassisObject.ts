@@ -8,19 +8,15 @@ export class ChassisObject {
 
     meshMaterial: THREE.Material;
     physicsMaterial: CANNON.Material;
-    /**
-     *
-     */
+    centerOfMassAdjust: CANNON.Vec3;
+
     constructor(scene: THREE.Scene,
         chassisDimensions: CANNON.Vec3,
-        //height: number, width: number, depth: number,
         position: THREE.Vector3,
-        //color: number = 0xffffff,
-        //meshMaterial?: THREE.Material,
         world: CANNON.World,
         physicsMaterial: CANNON.Material,
         mass: number,
-        centerOfMassAdjust?: CANNON.Vec3) {
+        centerOfMassAdjust: CANNON.Vec3 = new CANNON.Vec3(0,0,0)) {
 
         this.meshMaterial = new THREE.MeshBasicMaterial({
             color: 0x00ff00,
@@ -29,6 +25,7 @@ export class ChassisObject {
         })
 
         this.physicsMaterial = physicsMaterial;
+        this.centerOfMassAdjust = centerOfMassAdjust;
 
         const chassisShape = new CANNON.Box(chassisDimensions);
         const chassisBody = new CANNON.Body({ mass: mass });
@@ -68,6 +65,7 @@ export class ChassisObject {
     update() {
         if(this.body != null) {
             this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
+            //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(Utility.Add(this.body.position, this.centerOfMassAdjust)));
             this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
         }
     }

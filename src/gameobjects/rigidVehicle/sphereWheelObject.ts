@@ -67,12 +67,5 @@ export class SphereWheelObject {
             this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.wheelBody.position));
             this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.wheelBody.quaternion));
         }
-
-        /*
-        if(this.wheelBody.shapes[0].body != null) {
-            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.wheelBody.shapes[0].body.position));            
-            this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.wheelBody.shapeOrientations[0]));
-        }        
-        */
     }
 }
