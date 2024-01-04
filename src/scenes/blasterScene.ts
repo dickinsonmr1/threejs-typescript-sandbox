@@ -18,6 +18,9 @@ import { CylinderObject } from '../gameobjects/cylinderObject';
 import { RaycastVehicleObject } from '../gameobjects/raycastVehicle/raycastVehicleObject';
 import { RigidVehicleObject } from '../gameobjects/rigidVehicle/rigidVehicleObject';
 
+// npm install cannon-es-debugger
+// https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
+
 // https://www.youtube.com/watch?v=8J5xl9oijR8&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=3
 
 export default class BlasterScene extends THREE.Scene {
@@ -253,15 +256,26 @@ export default class BlasterScene extends THREE.Scene {
             new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.world, objectMaterial);
 
-        this.raycastVehicleObject = new RaycastVehicleObject(this, new THREE.Vector3(-5, 4, -15), 0x00ff00, this.world, wheelMaterial);
+        this.raycastVehicleObject = new RaycastVehicleObject(
+            this,
+            new THREE.Vector3(-5, 4, -15),
+            0x00ff00,
+            this.world,
+            wheelMaterial);
 
         this.rigidVehicleObject = new RigidVehicleObject(
             this,
-            new THREE.Vector3(0, 4, -15),
+            new THREE.Vector3(0, 4, 0),   // position
             0x00ff00,
-            this.world,
+            this.world,            
+            new CANNON.Vec3(1, 0.25, 0.5), // chassis dimensions
+            new CANNON.Vec3(0, 0.2, 0),    // center of mass adjust
+            20,                            // chassis mass
             wheelMaterial,
-            0.3);
+            0.2,                           // wheel radius
+            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
+            1                              // wheel mass
+        );
 
         this.vehiclePlayer1 = new GltfObject(this,
             this.taxiModel,

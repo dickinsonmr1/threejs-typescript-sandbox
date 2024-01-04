@@ -38,12 +38,12 @@ export class ChassisObject {
         world.addBody(this.body);
 
         this.mesh = new THREE.Mesh(
-            
-            new THREE.BoxGeometry( chassisDimensions.x, chassisDimensions.y, chassisDimensions.z),            
+            // threeJS uses half extents
+            new THREE.BoxGeometry( chassisDimensions.x * 2, chassisDimensions.y * 2, chassisDimensions.z * 2),            
             //new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } 
             this.meshMaterial
         );
-        //this.mesh.position.set(position.x, position.y, position.z);
+        //this.mesh.position.set(centerOfMassAdjust.x, centerOfMassAdjust.y, centerOfMassAdjust.z);
         //this.mesh.castShadow = true;
         //this.mesh.receiveShadow = true;
         
@@ -64,8 +64,8 @@ export class ChassisObject {
 
     update() {
         if(this.body != null) {
-            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
-            //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(Utility.Add(this.body.position, this.centerOfMassAdjust)));
+            //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
+            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(Utility.CannonVec3Add(this.body.position, this.centerOfMassAdjust)));
             this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
         }
     }
