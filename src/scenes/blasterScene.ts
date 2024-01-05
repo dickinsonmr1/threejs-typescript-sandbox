@@ -256,26 +256,7 @@ export default class BlasterScene extends THREE.Scene {
             new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.world, objectMaterial);
 
-        this.raycastVehicleObject = new RaycastVehicleObject(
-            this,
-            new THREE.Vector3(-5, 4, -15),
-            0x00ff00,
-            this.world,
-            wheelMaterial);
-
-        this.rigidVehicleObject = new RigidVehicleObject(
-            this,
-            new THREE.Vector3(0, 4, 0),   // position
-            0x00ff00,
-            this.world,            
-            new CANNON.Vec3(1, 0.25, 0.5), // chassis dimensions
-            new CANNON.Vec3(0, 0.2, 0),    // center of mass adjust
-            20,                            // chassis mass
-            wheelMaterial,
-            0.2,                           // wheel radius
-            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
-            1                              // wheel mass
-        );
+      
 
         this.vehiclePlayer1 = new GltfObject(this,
             this.taxiModel,
@@ -317,6 +298,30 @@ export default class BlasterScene extends THREE.Scene {
             this.world,
             objectMaterial);
         this.allPlayers.push(this.vehiclePlayer4);
+
+        this.raycastVehicleObject = new RaycastVehicleObject(
+            this,
+            new THREE.Vector3(-5, 4, -15),
+            0x00ff00,
+            this.world,
+            wheelMaterial);
+
+        this.rigidVehicleObject = new RigidVehicleObject(
+            this,
+            new THREE.Vector3(0, 4, 0),   // position
+            0x00ff00,
+            this.world,            
+            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+            new CANNON.Vec3(0, 0.3, 0),    // center of mass adjust
+            20,                            // chassis mass
+            wheelMaterial,
+            0.2,                           // wheel radius
+            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
+            1,                              // wheel mass
+            this.ambulanceModel,             // model            
+            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+            new THREE.Vector3(0, -0.35, 0) // model offset
+        );
 
         // bounding box to show shadows
         const cubeSize = 30;

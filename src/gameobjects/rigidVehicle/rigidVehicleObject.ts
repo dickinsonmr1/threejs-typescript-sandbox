@@ -2,6 +2,9 @@ import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { ChassisObject } from "../chassisObject";
 import { SphereWheelObject } from "./sphereWheelObject";
+import { GltfObject } from "../gltfObject";
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { Utility } from "../../utility";
 
 export class RigidVehicleObject {
     
@@ -9,6 +12,9 @@ export class RigidVehicleObject {
     chassis: ChassisObject;
 
     rigidVehicleObject?: CANNON.RigidVehicle;
+
+    model?: THREE.Group;
+    modelOffset?: THREE.Vector3;
 
     constructor(scene: THREE.Scene,
         position: THREE.Vector3,
@@ -20,7 +26,10 @@ export class RigidVehicleObject {
         wheelMaterial: CANNON.Material,
         wheelRadius: number,
         wheelOffset: CANNON.Vec3,
-        wheelMass: number) {
+        wheelMass: number,
+        modelData?: GLTF,
+        modelScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1),
+        modelOffset: THREE.Vector3 = new THREE.Vector3(0, 0, 0)) {
 
         this.chassis = new ChassisObject(
             scene,
@@ -35,8 +44,7 @@ export class RigidVehicleObject {
         this.rigidVehicleObject = new CANNON.RigidVehicle({
             chassisBody: this.chassis.body
         });
-
-        const mass = 5;
+        
         const axisWidth = chassisDimensions.z * 2 //0.75;
         const down = new CANNON.Vec3(0, -1, 0);
         
@@ -112,6 +120,16 @@ export class RigidVehicleObject {
         this.wheels.push(rearRightWheel);        
       
         this.rigidVehicleObject.addToWorld(world);
+
+
+        if(modelData != null) {
+            this.model = modelData.scene;//.children[0];
+            this.modelOffset = modelOffset;
+
+            this.model.position.set(position.x + modelOffset.x, position.y + modelOffset.y, position.z + modelOffset.z);
+            this.model.scale.set(modelScale.x, modelScale.y, modelScale.z);         
+            this.model.rotateY(Math.PI / 2);
+        }
     }
 
     getPosition() {
@@ -120,6 +138,17 @@ export class RigidVehicleObject {
 
     update() {
         this.chassis.update();            
-        this.wheels.forEach(x => x.update());           
+        this.wheels.forEach(x => x.update());   
+        
+        if(this.model != null && this.modelOffset != null) {
+            this.model.position.copy(Utility.CannonVec3ToThreeVec3(this.chassis.body.position).add(this.modelOffset));
+            //this.model.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.chassis.body.quaternion));
+            
+            var temp = new THREE.Quaternion().multiplyQuaternions(
+                Utility.CannonQuaternionToThreeQuaternion(this.chassis.body.quaternion),
+                new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI/2)
+            );
+            this.model.quaternion.copy(temp);
+        }
     }
 }
