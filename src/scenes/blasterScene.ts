@@ -312,12 +312,12 @@ export default class BlasterScene extends THREE.Scene {
             0x00ff00,
             this.world,            
             new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-            new CANNON.Vec3(0, 0.3, 0),    // center of mass adjust
-            20,                            // chassis mass
+            new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+            30,                            // chassis mass
             wheelMaterial,
             0.2,                           // wheel radius
             new CANNON.Vec3(0, -0.2, 0),   // wheel offset
-            1,                              // wheel mass
+            2,                              // wheel mass
             this.ambulanceModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, -0.35, 0) // model offset
@@ -631,7 +631,8 @@ export default class BlasterScene extends THREE.Scene {
             projectileLaunchVector,
             this.projectileSpeed,
             0xff0000,
-            new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }));      
+            new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
+            this.explosionTexture);      
 
         this.projectiles.push(tempProjectile);
     }
@@ -666,11 +667,14 @@ export default class BlasterScene extends THREE.Scene {
 
             let color = new THREE.Color(randColorR, randColorG, randColorB);
 
-            this.explosions.push(new ExplosionObject(this, this.explosionTexture,
+            this.explosions.push(new ExplosionObject(
+                this,
+                this.explosionTexture,
                 color,
                 position,
                 100,
-                0.05));
+                0.05)
+            );
         }
     }
 
@@ -699,7 +703,7 @@ export default class BlasterScene extends THREE.Scene {
                             this.remove(b.group);
 
                             this.bullets.splice(i, 1);
-                            i--;                        
+                            i--;                   
                         }
                     }
                 }

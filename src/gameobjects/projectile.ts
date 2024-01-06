@@ -3,9 +3,11 @@ import { Utility } from "../utility";
 import { PointLightObject } from "./pointLightObject";
 import { SphereObject } from "./sphereObject";
 import * as CANNON from 'cannon-es'
+import { ParticleEmitterObject } from "./particleEmitterObject";
 export class Projectile extends SphereObject {
 
     pointLightObject?: PointLightObject;
+    particleEmitterObject?: ParticleEmitterObject;
 	private readonly velocity = new THREE.Vector3();    
 	private isDead = false;
 
@@ -17,18 +19,35 @@ export class Projectile extends SphereObject {
         launchVector: THREE.Vector3,
         projectileSpeed: number,
         color: number = 0xffffff,
-        meshMaterial?: THREE.Material) {
+        meshMaterial?: THREE.Material,
+        particleTexture?: THREE.Texture) {
         
         super(scene, radius, position, color, meshMaterial);
         
-        this.pointLightObject = new PointLightObject(scene, new THREE.Color('white'), 0.9, 1, 0.1, 
-        new THREE.Vector3(0, 0, 0));
+        this.pointLightObject = new PointLightObject(
+            scene,
+            new THREE.Color('white'),
+            0.9, 1, 0.1, 
+            new THREE.Vector3(0, 0, 0)
+        );
 
         if(this.pointLightObject.pointLight != null) 
             scene.add(this.pointLightObject.pointLight);
 
         if(this.pointLightObject.pointLightHelper != null) 
             scene.add(this.pointLightObject.pointLightHelper);
+
+        if(particleTexture != null) {
+            this.particleEmitterObject = new ParticleEmitterObject(
+                scene,
+                particleTexture,
+                new THREE.Color('white'),
+                position,
+                1,
+                20,
+                0
+            )
+        };
 
         setTimeout(() => {
             this.isDead = true
@@ -70,6 +89,12 @@ export class Projectile extends SphereObject {
 	kill() {
         this.isDead = true;
 		this.pointLightObject?.remove();
+        if(this.particleEmitterObject != null) {
+            this.particleEmitterObject.kill();
+        }
+        if(this.particleEmitterObject != null) {
+            this.particleEmitterObject.kill();
+        }
 	}
 
     update() {
@@ -88,5 +113,9 @@ export class Projectile extends SphereObject {
 
         if(this.mesh?.position != null)
             this.pointLightObject?.setPosition(this.mesh.position);
+
+        if(this.particleEmitterObject != null) {            
+            this.particleEmitterObject.update(this.getPosition());
+        }
     }
 }
