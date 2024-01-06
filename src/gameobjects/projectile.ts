@@ -1,10 +1,12 @@
 import * as THREE from "three";
-import { Utility } from "../utility";
 import { PointLightObject } from "./pointLightObject";
 import { SphereObject } from "./sphereObject";
 import * as CANNON from 'cannon-es'
-import { ParticleEmitterObject } from "./particleEmitterObject";
+import { ParticleEmitterObject, ParticleEmitterType } from "./particleEmitterObject";
 export class Projectile extends SphereObject {
+
+    private lightColor: THREE.Color;
+    private particleColor: THREE.Color;
 
     pointLightObject?: PointLightObject;
     particleEmitterObject?: ParticleEmitterObject;
@@ -18,16 +20,20 @@ export class Projectile extends SphereObject {
         position: THREE.Vector3,
         launchVector: THREE.Vector3,
         projectileSpeed: number,
-        color: number = 0xffffff,
+        lightColor: THREE.Color,
+        particleColor: THREE.Color,
         meshMaterial?: THREE.Material,
         particleTexture?: THREE.Texture) {
         
-        super(scene, radius, position, color, meshMaterial);
+        super(scene, radius, position, particleColor.getHex(), meshMaterial);
         
+        this.lightColor = lightColor;
+        this.particleColor = particleColor;
+
         this.pointLightObject = new PointLightObject(
             scene,
-            new THREE.Color('white'),
-            0.9, 1, 0.1, 
+            lightColor,//new THREE.Color('white'),
+            0.2, 2, 0.96, 
             new THREE.Vector3(0, 0, 0)
         );
 
@@ -40,8 +46,9 @@ export class Projectile extends SphereObject {
         if(particleTexture != null) {
             this.particleEmitterObject = new ParticleEmitterObject(
                 scene,
+                ParticleEmitterType.GlowingParticles,
                 particleTexture,
-                new THREE.Color('white'),
+                particleColor,//new THREE.Color('grey'),
                 position,
                 1,
                 20,
@@ -73,6 +80,14 @@ export class Projectile extends SphereObject {
 
     getPosition() {
         return this.mesh?.position;
+    }
+    
+    getLightColor(): THREE.Color {
+        return this.lightColor;
+    }
+
+    getParticleColor(): THREE.Color {
+        return this.particleColor;
     }
 
     get shouldRemove()

@@ -76,6 +76,8 @@ export default class BlasterScene extends THREE.Scene {
     raycastVehicleObject?: RaycastVehicleObject;
     rigidVehicleObject?: RigidVehicleObject;
 
+    private allRigidVehicleObjects: RigidVehicleObject[] = [];
+
     sphere?: SphereObject;
 
     spotlight?: SpotlightObject;
@@ -322,6 +324,7 @@ export default class BlasterScene extends THREE.Scene {
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, -0.35, 0) // model offset
         );
+        this.allRigidVehicleObjects.push(this.rigidVehicleObject);
 
         // bounding box to show shadows
         const cubeSize = 30;
@@ -627,10 +630,17 @@ export default class BlasterScene extends THREE.Scene {
                 this.directionVector.clone().multiplyScalar(size.z * 0.5)
             );
 
+        let r = THREE.MathUtils.randInt(0, 255);
+        let g = THREE.MathUtils.randInt(0, 255);
+        let b = THREE.MathUtils.randInt(0, 255);
+
+        let color = new THREE.Color(r, g, b);
+
         var tempProjectile = new Projectile(this, 0.05, tempPosition,
             projectileLaunchVector,
             this.projectileSpeed,
-            0xff0000,
+            color,
+            color,
             new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
             this.explosionTexture);      
 
@@ -654,81 +664,30 @@ export default class BlasterScene extends THREE.Scene {
         this.cubes.push(cube);
     }
 
-    private async generateRandomExplosion(position?: THREE.Vector3) {
+    private async generateRandomExplosion(position: THREE.Vector3, lightColor: THREE.Color, particleColor: THREE.Color) {
 
         if(this.explosionTexture != null) {
             //let randPosition = new THREE.Vector3(randFloat(-5, 5), randFloat(5, 15), randFloat(-5.5, -10.5));
-            if(position == null)
-                position = new THREE.Vector3(0, 1, 0);
 
-            let randColorR = THREE.MathUtils.randInt(0, 255);
-            let randColorG = THREE.MathUtils.randInt(0, 255);
-            let randColorB = THREE.MathUtils.randInt(0, 255);
+            /*
+            if(color == null) {
+                let randColorR = THREE.MathUtils.randInt(0, 255);
+                let randColorG = THREE.MathUtils.randInt(0, 255);
+                let randColorB = THREE.MathUtils.randInt(0, 255);
 
-            let color = new THREE.Color(randColorR, randColorG, randColorB);
+                color = new THREE.Color(randColorR, randColorG, randColorB);
+            }
+            */
 
             this.explosions.push(new ExplosionObject(
                 this,
                 this.explosionTexture,
-                color,
+                lightColor,
+                particleColor,
                 position,
                 100,
                 0.05)
             );
-        }
-    }
-
-    private updateBullets() {
-        for(let i = 0; i < this.bullets.length; i++) {
-            const b = this.bullets[i];
-            b.update();
-
-            if(b.shouldRemove) {
-                b.removeLight();
-                this.remove(b.group);
-
-                this.bullets.splice(i, 1);
-                i--;
-            }
-            else {
-
-
-                for(let j = 0; j < this.allPlayers.length; j++) {
-                    const otherPlayerBody = this.allPlayers[j].body;
-                    if(otherPlayerBody != null) {
-                        if(otherPlayerBody.position.distanceTo(Utility.ThreeVec3ToCannonVec3(b.group.position)) < 1) {
-                            this.generateRandomExplosion(b.group.position);
-
-                            b.removeLight();
-                            this.remove(b.group);
-
-                            this.bullets.splice(i, 1);
-                            i--;                   
-                        }
-                    }
-                }
-                    
-                /*
-                for(let j = 0; j < this.targets.length; j++) {
-                    const target = this.targets[j];
-                    if(target.position.distanceToSquared(b.group.position) < 0.05) {
-
-                        this.generateRandomExplosion(b.group.position);
-
-                        b.removeLight();
-                        this.remove(b.group);
-
-                        this.bullets.splice(i, 1);
-                        i--;
-
-                        target.visible = false;
-                        setTimeout(() => {
-                            target.visible = true
-                        }, 1000);                        
-                    }
-                }
-                */
-            }
         }
     }
 
@@ -741,12 +700,28 @@ export default class BlasterScene extends THREE.Scene {
             else {
                 this.allPlayers.forEach(player => {
                     if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
-                        this.generateRandomExplosion(projectile.getPosition());
+                        this.generateRandomExplosion(
+                            projectile.getPosition(),
+                            projectile.getLightColor(),
+                            projectile.getParticleColor()
+                        );
                         projectile.kill();
                         this.remove(projectile.mesh);
                     }
-                })
-            }
+                });
+
+                this.allRigidVehicleObjects.forEach(player => {
+                    if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
+                        this.generateRandomExplosion(
+                            projectile.getPosition(),
+                            projectile.getLightColor(),
+                            projectile.getParticleColor()
+                        );
+                        projectile.kill();
+                            this.remove(projectile.mesh);
+                    }
+                });
+            };
             
         });
     }
@@ -755,9 +730,7 @@ export default class BlasterScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
-        this.updateInput();
-        this.updateBullets();
-        
+        this.updateInput();       
 
         this.ground?.update();
         this.cube?.update();

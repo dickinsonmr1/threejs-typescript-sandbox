@@ -1,7 +1,14 @@
 import * as THREE from "three";
 
+export enum ParticleEmitterType {    
+    SmokeTrail,
+    SmokeEmit,
+    GlowingParticles
+}
+
 export class ParticleEmitterObject {
 
+    type: ParticleEmitterType;
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
     color: THREE.Color;
@@ -14,6 +21,7 @@ export class ParticleEmitterObject {
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
     constructor(scene: THREE.Scene,
+        type: ParticleEmitterType,
         particleTexture: THREE.Texture,
         color: THREE.Color,
         position: THREE.Vector3,
@@ -21,6 +29,7 @@ export class ParticleEmitterObject {
         maxParticles: number,
         velocity: number) {
                     
+        this.type = type;
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
         this.color = color;
@@ -47,6 +56,10 @@ export class ParticleEmitterObject {
         return null;
     }
 
+    getColor(): THREE.Color {
+        return this.color;
+    }
+
     setPosition(position: THREE.Vector3) {
     }
 
@@ -59,7 +72,15 @@ export class ParticleEmitterObject {
 
             let sprite = new THREE.Sprite(particleMaterial);
 
-            sprite.material.blending = THREE.AdditiveBlending;
+            switch(this.type) {
+                case ParticleEmitterType.SmokeTrail:
+                case ParticleEmitterType.SmokeEmit:
+                    sprite.material.blending = THREE.NormalBlending;
+                    break;
+                default:
+                    sprite.material.blending = THREE.AdditiveBlending;
+                    break;
+            }            
             
             sprite.userData.velocity = new THREE.Vector3(
                 Math.random() * this.velocity - this.velocity / 2,
@@ -70,7 +91,7 @@ export class ParticleEmitterObject {
 
             sprite.material.color = color;
 
-            sprite.material.opacity = Math.random() * 0.2 + 0.8;
+            sprite.material.opacity = Math.random() * 0.2 + 0.6;
 
             let size = 0.1;//Math.random() * 0.1 + 0.1;
             sprite.scale.set(size, size, size);
@@ -90,6 +111,10 @@ export class ParticleEmitterObject {
 
             item.position.add(child.userData.velocity);
             item.material.opacity -= 0.03;
+            
+            let scaleFactor = 0.015;
+            let scale = new THREE.Vector3(item.scale.x + scaleFactor, item.scale.y + scaleFactor, item.scale.z + scaleFactor);
+            item.scale.set(scale.x, scale.y, scale.z);
         });
 
         this.particleGroup.children = this.particleGroup.children

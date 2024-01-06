@@ -5,7 +5,8 @@ export class ExplosionObject {
 
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
-    color: THREE.Color;
+    lightColor: THREE.Color;
+    particleColor: THREE.Color;
     position: THREE.Vector3;
     numberParticles: number;
     velocity: number;
@@ -17,14 +18,16 @@ export class ExplosionObject {
 
     constructor(scene: THREE.Scene,
         particleTexture: THREE.Texture,
-        color: THREE.Color,
+        lightColor: THREE.Color,
+        particleColor: THREE.Color,
         position: THREE.Vector3,
         numberParticles: number,
         velocity: number) {
                     
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
-        this.color = color;
+        this.lightColor = lightColor;
+        this.particleColor = particleColor;
         this.position = position;
         this.numberParticles = numberParticles;
         this.velocity = velocity;
@@ -47,7 +50,7 @@ export class ExplosionObject {
             );
             sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
 
-            sprite.material.color = color;
+            sprite.material.color = particleColor;
 
             sprite.material.opacity = Math.random() * 0.2 + 0.8;
 
@@ -60,7 +63,7 @@ export class ExplosionObject {
         this.particleGroup.position.set(position.x, position.y, position.z);
 
         this.pointLightObject = new PointLightObject(scene,
-            color, 0.1, 2, 0.5, position);
+            lightColor, 0.1, 2, 0.5, position);
         /*
         this.particleGroup.position.set(
             Math.random() * 20 - 10,
