@@ -23,7 +23,7 @@ import { RigidVehicleObject } from '../gameobjects/rigidVehicle/rigidVehicleObje
 
 // https://www.youtube.com/watch?v=8J5xl9oijR8&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=3
 
-export default class BlasterScene extends THREE.Scene {
+export default class GameScene extends THREE.Scene {
 
     private stats: Stats = new Stats();
 

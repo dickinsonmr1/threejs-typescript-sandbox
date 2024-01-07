@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import BlasterScene from './scenes/blasterScene'
+import GameScene from './scenes/gameScene'
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import CannonDebugger from 'cannon-es-debugger';
 
@@ -21,7 +21,7 @@ const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 100);
 const environment = new RoomEnvironment( renderer );
 const pmremGenerator = new THREE.PMREMGenerator( renderer );
 
-const scene = new BlasterScene(mainCamera);
+const scene = new GameScene(mainCamera);
 scene.initialize();
 
 const cannonDebugger = CannonDebugger(scene, scene.world, {color: 0x0000ff });
