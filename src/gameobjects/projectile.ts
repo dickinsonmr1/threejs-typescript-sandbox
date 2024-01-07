@@ -3,6 +3,13 @@ import { PointLightObject } from "./pointLightObject";
 import { SphereObject } from "./sphereObject";
 import * as CANNON from 'cannon-es'
 import { ParticleEmitterObject, ParticleEmitterType } from "./particleEmitterObject";
+
+export enum ProjectileLaunchLocation {
+    Left,
+    Center,
+    Right
+}
+
 export class Projectile extends SphereObject {
 
     private lightColor: THREE.Color;
@@ -12,6 +19,8 @@ export class Projectile extends SphereObject {
     particleEmitterObject?: ParticleEmitterObject;
 	private readonly velocity = new THREE.Vector3();    
 	private isDead = false;
+
+    private maxLifespanInSeconds: number = 3;
 
     private expiryTimer: THREE.Clock;
 
@@ -56,9 +65,11 @@ export class Projectile extends SphereObject {
             )
         };
 
+        /*
         setTimeout(() => {
             this.isDead = true
         }, 1000);
+        */
 
         this.setVelocity(
             launchVector.x * projectileSpeed,
@@ -117,7 +128,7 @@ export class Projectile extends SphereObject {
         //this.body?.applyForce(new CANNON.Vec3(0, 9.81, 0)) // opposite of gravity 
         super.update();
 
-        if(this.expiryTimer.getElapsedTime() > 1) {
+        if(this.expiryTimer.getElapsedTime() > this.maxLifespanInSeconds) {
             this.kill();
             return;
         }

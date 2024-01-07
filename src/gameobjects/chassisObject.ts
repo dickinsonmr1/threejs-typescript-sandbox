@@ -64,9 +64,9 @@ export class ChassisObject {
 
     update() {
         if(this.body != null) {
-            //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
-            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(Utility.CannonVec3Add(this.body.position, this.centerOfMassAdjust)));
+            //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));            
             this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
+            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(Utility.CannonVec3Add(this.body.position, this.centerOfMassAdjust)));
         }
     }
 }

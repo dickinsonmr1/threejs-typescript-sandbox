@@ -13,7 +13,7 @@ import { ExplosionObject } from '../gameobjects/explosionObject';
 import { GltfObject } from '../gameobjects/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Utility } from '../utility';
-import { Projectile } from '../gameobjects/projectile';
+import { Projectile, ProjectileLaunchLocation } from '../gameobjects/projectile';
 import { CylinderObject } from '../gameobjects/cylinderObject';
 import { RaycastVehicleObject } from '../gameobjects/raycastVehicle/raycastVehicleObject';
 import { RigidVehicleObject } from '../gameobjects/rigidVehicle/rigidVehicleObject';
@@ -52,7 +52,7 @@ export default class GameScene extends THREE.Scene {
     private targets: THREE.Group[] = [];
 
     private projectiles: Projectile[] = [];
-    projectileSpeed: number = 0.5;
+    projectileSpeed: number = 0.3;//0.5;
 
     private explosions: ExplosionObject[] = [];
     private explosionTexture?: THREE.Texture;
@@ -104,6 +104,9 @@ export default class GameScene extends THREE.Scene {
         this.policeModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/police.glb');
         this.ambulanceModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/ambulance.glb');
         this.trashTruckModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/garbageTruck.glb');
+
+        this.ambulanceModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.ambulanceModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
                 
         // create 4 targets
         const t1 = await this.createTarget(targetMtl);
@@ -313,7 +316,6 @@ export default class GameScene extends THREE.Scene {
         this.rigidVehicleObject = new RigidVehicleObject(
             this,
             new THREE.Vector3(0, 4, 0),   // position
-            0x00ff00,
             this.world,            
             new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
             new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
@@ -324,7 +326,8 @@ export default class GameScene extends THREE.Scene {
             2,                              // wheel mass
             this.ambulanceModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-            new THREE.Vector3(0, -0.35, 0) // model offset
+            new THREE.Vector3(0, 0, 0) // model offset
+            //new THREE.Vector3(0, -0.35, 0) // model offset
         );
 
         //this.rigidVehicleObject.model?.add(this.camera);        
@@ -337,7 +340,7 @@ export default class GameScene extends THREE.Scene {
 		this.add(this.followCam);   
         
         this.rigidVehicleObject.model?.add(this.followCam);
-        this.followCam.position.set(0, 3, 5); // camera target offset related to car
+        this.followCam.position.set(5, 3, 0); // camera target offset related to car
 		//this.followCam.parent = this.rigidVehicleObject?.model;
 
         //this.camera.lookAt
@@ -403,13 +406,17 @@ export default class GameScene extends THREE.Scene {
 		if (event.key === ' ')
 		{
 			//this.createBullet();
-            this.createProjectile();
+            this.createProjectile(ProjectileLaunchLocation.Center);
             //this.generateRandomCube();
             //this.generateRandomExplosion();
 		}
         if (event.key === 'x')
 		{
 			this.generateRandomCube();
+		}
+        if (event.key === 'Escape')
+		{
+			this.rigidVehicleObject?.resetPosition();
 		}
 
         if(event.key === 'w') {
@@ -431,20 +438,20 @@ export default class GameScene extends THREE.Scene {
         }
 
         // rigid body vehicle
-        if(event.key === 't') {
+        if(event.key === 'ArrowUp') {
 
             // rear wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 3);
         }
-        else if(event.key === 'g') {
+        else if(event.key === 'ArrowDown') {
 
             // rear wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 3);
         }
 
-        if(event.key === 'f') {
+        if(event.key === 'ArrowLeft') {
             //front wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 0);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 1);
@@ -453,7 +460,7 @@ export default class GameScene extends THREE.Scene {
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 3);
         }
-        else if(event.key === 'h') {
+        else if(event.key === 'ArrowRight') {
             // front wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 0);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 1);
@@ -465,6 +472,8 @@ export default class GameScene extends THREE.Scene {
 	}
 
     private updateInput() {
+
+        /*
         if(!this.blaster) {
             return;
         }
@@ -478,6 +487,7 @@ export default class GameScene extends THREE.Scene {
                 this.blaster.rotateY(-0.02);
             }
         }
+        */
 
         const dir = this.directionVector;
 
@@ -510,20 +520,20 @@ export default class GameScene extends THREE.Scene {
         // rigid body vehicle controls
         const maxForceRigidBodyVehicle = 10;
         const rigidMaxSteerVal = Math.PI / 8;
-        if(this.keyDown.has('t')) {
+        if(this.keyDown.has('arrowup')) {
 
             // rear wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(-maxForceRigidBodyVehicle, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(-maxForceRigidBodyVehicle, 3);
         }
-        else if(this.keyDown.has('g')) {
+        else if(this.keyDown.has('arrowdown')) {
 
             // rear wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(maxForceRigidBodyVehicle, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(maxForceRigidBodyVehicle, 3);
         }
 
-        if(this.keyDown.has('f')) {
+        if(this.keyDown.has('arrowleft')) {
             // front wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 0);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 1);
@@ -532,7 +542,7 @@ export default class GameScene extends THREE.Scene {
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 3);
         }
-        else if(this.keyDown.has('h')) {
+        else if(this.keyDown.has('arrowright')) {
             // front wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 0);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 1);
@@ -541,33 +551,6 @@ export default class GameScene extends THREE.Scene {
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 3);
         }
-        
-        // camera FPS controller
-        if(this.keyDown.has('arrowup')) {
-            this.blaster.position.add(dir.clone().multiplyScalar(speed));
-        }
-        else if(this.keyDown.has('arrowdown')) {
-            this.blaster.position.add(dir.clone().multiplyScalar(-speed));
-        }
-
-        if(shiftKey) {
-            const strafeDir = dir.clone();
-            const upVector = new THREE.Vector3(0, 1, 0);
-
-            if(this.keyDown.has('arrowleft')) {
-                this.blaster.position.add(
-                    strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
-                        .multiplyScalar(speed)
-                );
-            }
-            else if(this.keyDown.has('arrowright')) {
-                this.blaster.position.add(
-                    strafeDir.applyAxisAngle(upVector, -Math.PI * 0.5)
-                        .multiplyScalar(speed)
-                );
-            }
-        }
-
         /*
         if(this.keyDown.has('w')) {
             this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 2);
@@ -616,72 +599,51 @@ export default class GameScene extends THREE.Scene {
         return modelRoot;
     }
 
-    private async createBullet() {
-        if(!this.blaster) 
-            return;
-        else if (this.bulletMtl) {
-            this.objLoader.setMaterials(this.bulletMtl);
-        }
-
-        const bulletModel = await this.objLoader.loadAsync('assets/foamBulletB.obj');
-
-        this.camera.getWorldDirection(this.directionVector);
-
-        //axis-aligned bounding box
-        const aabb = new THREE.Box3().setFromObject(this.blaster);
-        const size = aabb.getSize(new THREE.Vector3());
-
-        const vec = this.blaster.position.clone();
-        
-        // distance off ground
-        vec.y += 0.25;
-
-        bulletModel.position.add(
-            vec.add(
-                this.directionVector.clone().multiplyScalar(size.z * 0.5)
-            )
-        );
-
-        bulletModel.scale.set(5, 5, 5);
-
-        // rotate children to match gun for simplicity
-        bulletModel.children.forEach(child => child.rotateX(Math.PI * -0.5));
-
-        // use the same rotation as the gun
-        bulletModel.rotation.copy(this.blaster.rotation);
-
-        this.add(bulletModel);
-
-        const b = new Bullet(this, bulletModel);
-        b.setVelocity(
-            this.directionVector.x * 0.2,
-            this.directionVector.y * 0.2,
-            this.directionVector.z * 0.2
-        );
-
-        this.bullets.push(b);
-    }
-
-    private async createProjectile() {
+    private async createProjectile(side: ProjectileLaunchLocation) {
         
         if(!this.blaster) 
             return;
 
-        if(!this.rigidVehicleObject) return;
+        if(!this.rigidVehicleObject || !this.rigidVehicleObject.model) return;
 
-        let projectileLaunchVector = new THREE.Vector3;
+        /*
+        let projectileLaunchVector = new THREE.Vector3();//0, 0, -1);
 
         //this.camera.getWorldDirection(projectileLaunchVector);
-        this.rigidVehicleObject?.chassis.mesh.getWorldDirection(projectileLaunchVector);  
+        //this.rigidVehicleObject?.chassis.mesh.getWorldDirection(projectileLaunchVector);  
+        this.rigidVehicleObject.model.getWorldDirection(projectileLaunchVector);
+        
 
-        //var vector = new THREE.Vector3( 1, 0, 0 );
+        const quaternion = new THREE.Quaternion();
+        quaternion.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 2 );
 
-        var axis = new THREE.Vector3( 0, 1, 0 );
-        var angle = -Math.PI / 2;
-        projectileLaunchVector.applyAxisAngle( axis, angle );
+        //const vector = new THREE.Vector3( projectileLaunchVector.x, projectileLaunchVector.y, projectileLaunchVector.z);
+        projectileLaunchVector.applyQuaternion( quaternion );
 
+        //var axis = new THREE.Vector3( 0, projectileLaunchVector.y, 0 );
+        //var angle = Math.PI / 2;
+        //projectileLaunchVector. applyAxisAngle( axis, angle );
+        */
+
+        let forwardVector = new THREE.Vector3(-2, 0, 0);
+        forwardVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
+        let projectileLaunchVector = forwardVector;
 
         //projectileLaunchVector.z += Math.PI/2;      
+
+        let sideVector = new THREE.Vector3();
+        switch(side) {
+            case ProjectileLaunchLocation.Left:
+                sideVector = new THREE.Vector3(0, 0, 5);
+                break;
+            case ProjectileLaunchLocation.Center:
+                sideVector = new THREE.Vector3(0, 0, 0);
+                break;                
+            case ProjectileLaunchLocation.Right:
+                sideVector = new THREE.Vector3(0, 0, -5);
+                break;
+        }
+        sideVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
 
         //axis-aligned bounding box
         const aabb = new THREE.Box3().setFromObject(this.rigidVehicleObject.chassis.mesh);
@@ -689,24 +651,24 @@ export default class GameScene extends THREE.Scene {
         const size = aabb.getSize(new THREE.Vector3());
 
         //const vec = this.blaster.position.clone();
-        const vec = this.rigidVehicleObject?.model?.position.clone();
+        const vec = new THREE.Vector3();
+        this.rigidVehicleObject.model.getWorldPosition(vec) ;//this.rigidVehicleObject?.model?.position.clone();
         
         if(vec == null) return;
         // distance off ground
-        //vec.z += 3;
-        vec.y += 1.5;
+        //vec.y += 2;
 
         // offset to front of gun
-        //var tempPosition = vec.add(
-                //this.directionVector.clone().multiplyScalar(size.z * 0.5)
-            //);
+        var tempPosition = vec.add(
+                sideVector.clone().multiplyScalar(-size.z * 0.12)
+        );
 
         // offset to side of car
         // +x is in left of car, -x is to right of car
         // +z is in front of car, -z is to rear of car
-        var tempPosition = vec.add(
-            this.directionVector.clone().multiplyScalar(size.z * 2)
-        );
+        //var tempPosition = vec.add(
+            //this.directionVector.clone().multiplyScalar(-size.z * 5)
+        //);
         //tempPosition.add(this.directionVector.clone().multiplyScalar(size.z * 1.5));
 
 
@@ -716,7 +678,9 @@ export default class GameScene extends THREE.Scene {
 
         let color = new THREE.Color(r, g, b);
 
-        var tempProjectile = new Projectile(this, 0.05, tempPosition,
+        var tempProjectile = new Projectile(this,
+            0.05,                   // radius
+            tempPosition,           // launchPosition relative to chassis
             projectileLaunchVector,
             this.projectileSpeed,
             color,
@@ -790,6 +754,7 @@ export default class GameScene extends THREE.Scene {
                     }
                 });
 
+                /*
                 this.allRigidVehicleObjects.forEach(player => {
                     if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
                         this.generateRandomExplosion(
@@ -801,6 +766,7 @@ export default class GameScene extends THREE.Scene {
                             this.remove(projectile.mesh);
                     }
                 });
+                */
             };
             
         });
