@@ -15,6 +15,9 @@ export class RigidVehicleObject {
     model?: THREE.Group;
     modelOffset?: THREE.Vector3;
 
+    private readonly maxForceRigidBodyVehicle: number = 15;
+    private readonly rigidMaxSteerVal: number = Math.PI / 12;
+
     constructor(scene: THREE.Scene,
         position: THREE.Vector3,
         world: CANNON.World,
@@ -139,6 +142,66 @@ export class RigidVehicleObject {
 
         this.rigidVehicleObject.chassisBody.position.y = 5;
         //this.rigidVehicleObject.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
+    }
+
+    tryTurnLeft(): void {
+        // front wheels
+        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 0);
+        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 1);
+
+        // rear wheels
+        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal, 2);
+        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal, 3);
+    }
+    tryStopTurnLeft(): void {
+        // front wheels
+        this.rigidVehicleObject?.setSteeringValue(0, 0);
+        this.rigidVehicleObject?.setSteeringValue(0, 1);
+
+        // rear wheels
+        this.rigidVehicleObject?.setSteeringValue(0, 2);
+        this.rigidVehicleObject?.setSteeringValue(0, 3);
+    }
+
+    tryTurnRight(): void {
+        // front wheels
+        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal, 0);
+        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal, 1);
+
+        // rear wheels
+        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 2);
+        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 3);
+    }
+    tryStopTurnRight(): void {
+        // front wheels
+        this.rigidVehicleObject?.setSteeringValue(0, 0);
+        this.rigidVehicleObject?.setSteeringValue(0, 1);
+
+        // rear wheels
+        this.rigidVehicleObject?.setSteeringValue(0, 2);
+        this.rigidVehicleObject?.setSteeringValue(0, 3);
+    }
+
+    tryAccelerate(): void {
+        // rear wheels
+        this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 2);
+        this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 3);
+    }
+    tryStopAccelerate(): void {
+       // rear wheels
+       this.rigidVehicleObject?.setWheelForce(0, 2);
+       this.rigidVehicleObject?.setWheelForce(0, 3);
+    }
+
+    tryReverse(): void {
+        // rear wheels
+        this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 2);
+        this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 3);
+    }
+    tryStopReverse(): void {
+        // rear wheels
+        this.rigidVehicleObject?.setWheelForce(0, 2);
+        this.rigidVehicleObject?.setWheelForce(0, 3);
     }
 
     update() {

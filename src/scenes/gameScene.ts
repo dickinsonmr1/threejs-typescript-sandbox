@@ -48,7 +48,6 @@ export default class GameScene extends THREE.Scene {
     private directionVector = new THREE.Vector3();
 
     private cubes: BoxObject[] = [];
-    private bullets: Bullet[] = [];
     private targets: THREE.Group[] = [];
 
     private projectiles: Projectile[] = [];
@@ -319,7 +318,7 @@ export default class GameScene extends THREE.Scene {
             this.world,            
             new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
             new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            30,                            // chassis mass
+            20,                            // chassis mass
             wheelMaterial,
             0.2,                           // wheel radius
             new CANNON.Vec3(0, -0.2, 0),   // wheel offset
@@ -439,35 +438,17 @@ export default class GameScene extends THREE.Scene {
 
         // rigid body vehicle
         if(event.key === 'ArrowUp') {
-
-            // rear wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 2);
-            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 3);
+            this.rigidVehicleObject?.tryStopAccelerate();
         }
         else if(event.key === 'ArrowDown') {
-
-            // rear wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 2);
-            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 3);
+            this.rigidVehicleObject?.tryStopReverse();
         }
 
         if(event.key === 'ArrowLeft') {
-            //front wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 0);
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 1);
-
-            // rear wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 2);
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 3);
+            this.rigidVehicleObject?.tryStopTurnLeft();
         }
         else if(event.key === 'ArrowRight') {
-            // front wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 0);
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 1);
-
-            // rear wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 2);
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 3);
+            this.rigidVehicleObject?.tryStopTurnRight();
         }
 	}
 
@@ -518,38 +499,18 @@ export default class GameScene extends THREE.Scene {
         }
 
         // rigid body vehicle controls
-        const maxForceRigidBodyVehicle = 10;
-        const rigidMaxSteerVal = Math.PI / 8;
         if(this.keyDown.has('arrowup')) {
-
-            // rear wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(-maxForceRigidBodyVehicle, 2);
-            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(-maxForceRigidBodyVehicle, 3);
+            this.rigidVehicleObject?.tryAccelerate();
         }
         else if(this.keyDown.has('arrowdown')) {
-
-            // rear wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(maxForceRigidBodyVehicle, 2);
-            this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(maxForceRigidBodyVehicle, 3);
+            this.rigidVehicleObject?.tryReverse();
         }
 
         if(this.keyDown.has('arrowleft')) {
-            // front wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 0);
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 1);
-
-            // rear wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 2);
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 3);
+            this.rigidVehicleObject?.tryTurnLeft();
         }
         else if(this.keyDown.has('arrowright')) {
-            // front wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 0);
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 1);
-
-            // rear wheels
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 2);
-            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 3);
+            this.rigidVehicleObject?.tryTurnRight();
         }
         /*
         if(this.keyDown.has('w')) {

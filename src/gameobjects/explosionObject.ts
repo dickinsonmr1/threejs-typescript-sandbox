@@ -86,7 +86,7 @@ export class ExplosionObject {
             let item = <THREE.Sprite>child;
 
             item.position.add(child.userData.velocity);
-            item.material.opacity -= 0.05;
+            item.material.opacity -= 0.02
         });
 
         this.particleGroup.children = this.particleGroup.children
@@ -96,7 +96,7 @@ export class ExplosionObject {
             });       
             
         if(this.pointLightObject != null && this.pointLightObject.pointLight != null)
-            this.pointLightObject.pointLight.intensity *= 0.9;
+            this.pointLightObject.pointLight.intensity *= 0.95;
 
         if(this.particleGroup.children.length === 0) {
             this.isActive = false;

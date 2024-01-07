@@ -44,8 +44,8 @@ export class ChassisObject {
             this.meshMaterial
         );
         //this.mesh.position.set(centerOfMassAdjust.x, centerOfMassAdjust.y, centerOfMassAdjust.z);
-        //this.mesh.castShadow = true;
-        //this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
         
         scene.add(this.mesh);      
     }

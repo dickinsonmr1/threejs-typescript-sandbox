@@ -1,8 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
-import { BoxObject } from "../boxObject";
-import { CylinderObject } from "../cylinderObject";
 import { RaycastWheelObject } from "./raycastWheelObject";
 import { ChassisObject } from "../chassisObject";
 

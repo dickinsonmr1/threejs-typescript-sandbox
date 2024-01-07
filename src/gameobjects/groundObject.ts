@@ -42,7 +42,7 @@ export class GroundObject {
         let grid = new THREE.GridHelper( height, 50, 0xffffff, 0x0ffffff );
         grid.material.opacity = 1;
         grid.material.transparent = true;
-        scene.add( grid );
+        //scene.add( grid );
         
         if(world != null) {
 
