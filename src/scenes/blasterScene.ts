@@ -78,6 +78,8 @@ export default class BlasterScene extends THREE.Scene {
 
     private allRigidVehicleObjects: RigidVehicleObject[] = [];
 
+    private followCam?: THREE.Object3D;
+
     sphere?: SphereObject;
 
     spotlight?: SpotlightObject;
@@ -127,9 +129,9 @@ export default class BlasterScene extends THREE.Scene {
         this.blaster.position.z = -1;
 
         // attach blaster to camera
-        this.blaster.add(this.camera);
-        this.camera.position.z = 1;
-        this.camera.position.y = 0.5;
+        //this.blaster.add(this.camera);
+        //this.camera.position.z = 1;
+        //this.camera.position.y = 0.5;
 
         /*
             // Create a slippery material (friction coefficient = 0.0)
@@ -265,7 +267,7 @@ export default class BlasterScene extends THREE.Scene {
             //'assets/kenney-vehicles/taxi.glb',
             new THREE.Vector3(2, 2, -2), // position
             new THREE.Vector3(0.5, 0.5, 0.5), // scale
-            new THREE.Vector3(0.5, 0.5, 1), // bounding box size,
+            new THREE.Vector3(0.5, 0.5, 1), // bounding boxf size,
             new THREE.Vector3(0, -0.25, 0), // physics offset,
             this.world,
             objectMaterial);
@@ -324,6 +326,22 @@ export default class BlasterScene extends THREE.Scene {
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, -0.35, 0) // model offset
         );
+
+        //this.rigidVehicleObject.model?.add(this.camera);        
+        this.camera.position.x = 0;
+        this.camera.position.y = 2;        
+        this.camera.position.z = 5;
+
+        this.followCam = new THREE.Object3D();
+		this.followCam.position.copy(this.camera.position);
+		this.add(this.followCam);   
+        
+        this.rigidVehicleObject.model?.add(this.followCam);
+        this.followCam.position.set(0, 3, 5); // camera target offset related to car
+		//this.followCam.parent = this.rigidVehicleObject?.model;
+
+        //this.camera.lookAt
+
         this.allRigidVehicleObjects.push(this.rigidVehicleObject);
 
         // bounding box to show shadows
@@ -414,21 +432,35 @@ export default class BlasterScene extends THREE.Scene {
 
         // rigid body vehicle
         if(event.key === 't') {
+
+            // rear wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 3);
         }
         else if(event.key === 'g') {
+
+            // rear wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(0, 3);
         }
 
         if(event.key === 'f') {
+            //front wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 0);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 1);
+
+            // rear wheels
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 2);
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 3);
         }
         else if(event.key === 'h') {
+            // front wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 0);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 1);
+
+            // rear wheels
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 2);
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(0, 3);
         }
 	}
 
@@ -479,21 +511,35 @@ export default class BlasterScene extends THREE.Scene {
         const maxForceRigidBodyVehicle = 10;
         const rigidMaxSteerVal = Math.PI / 8;
         if(this.keyDown.has('t')) {
+
+            // rear wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(-maxForceRigidBodyVehicle, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(-maxForceRigidBodyVehicle, 3);
         }
         else if(this.keyDown.has('g')) {
+
+            // rear wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(maxForceRigidBodyVehicle, 2);
             this.rigidVehicleObject?.rigidVehicleObject?.setWheelForce(maxForceRigidBodyVehicle, 3);
         }
 
         if(this.keyDown.has('f')) {
+            // front wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 0);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 1);
+
+            // rear wheels
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 2);
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 3);
         }
         else if(this.keyDown.has('h')) {
+            // front wheels
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 0);
             this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(-rigidMaxSteerVal, 1);
+
+            // rear wheels
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 2);
+            this.rigidVehicleObject?.rigidVehicleObject?.setSteeringValue(rigidMaxSteerVal, 3);
         }
         
         // camera FPS controller
@@ -541,6 +587,14 @@ export default class BlasterScene extends THREE.Scene {
             this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 1);
         }
         */
+    }
+
+    updateCamera() {
+
+        if(this.followCam != null)
+            this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.05);
+		if(this.rigidVehicleObject?.chassis.mesh != null)
+            this.camera.lookAt(this.rigidVehicleObject?.chassis.mesh?.position);
     }
 
     private async createTarget(mtl: MTLLoader.MaterialCreator) {
@@ -613,22 +667,48 @@ export default class BlasterScene extends THREE.Scene {
         if(!this.blaster) 
             return;
 
+        if(!this.rigidVehicleObject) return;
+
         let projectileLaunchVector = new THREE.Vector3;
-        this.camera.getWorldDirection(projectileLaunchVector);
+
+        //this.camera.getWorldDirection(projectileLaunchVector);
+        this.rigidVehicleObject?.chassis.mesh.getWorldDirection(projectileLaunchVector);  
+
+        //var vector = new THREE.Vector3( 1, 0, 0 );
+
+        var axis = new THREE.Vector3( 0, 1, 0 );
+        var angle = -Math.PI / 2;
+        projectileLaunchVector.applyAxisAngle( axis, angle );
+
+
+        //projectileLaunchVector.z += Math.PI/2;      
 
         //axis-aligned bounding box
-        const aabb = new THREE.Box3().setFromObject(this.blaster);
+        const aabb = new THREE.Box3().setFromObject(this.rigidVehicleObject.chassis.mesh);
+        //const aabb = new THREE.Box3().setFromObject(this.blaster);
         const size = aabb.getSize(new THREE.Vector3());
 
-        const vec = this.blaster.position.clone();
+        //const vec = this.blaster.position.clone();
+        const vec = this.rigidVehicleObject?.model?.position.clone();
         
+        if(vec == null) return;
         // distance off ground
-        vec.y += 0.25;
+        //vec.z += 3;
+        vec.y += 1.5;
 
         // offset to front of gun
+        //var tempPosition = vec.add(
+                //this.directionVector.clone().multiplyScalar(size.z * 0.5)
+            //);
+
+        // offset to side of car
+        // +x is in left of car, -x is to right of car
+        // +z is in front of car, -z is to rear of car
         var tempPosition = vec.add(
-                this.directionVector.clone().multiplyScalar(size.z * 0.5)
-            );
+            this.directionVector.clone().multiplyScalar(size.z * 2)
+        );
+        //tempPosition.add(this.directionVector.clone().multiplyScalar(size.z * 1.5));
+
 
         let r = THREE.MathUtils.randInt(0, 255);
         let g = THREE.MathUtils.randInt(0, 255);
@@ -730,7 +810,8 @@ export default class BlasterScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
-        this.updateInput();       
+        this.updateInput();  
+        this.updateCamera();     
 
         this.ground?.update();
         this.cube?.update();

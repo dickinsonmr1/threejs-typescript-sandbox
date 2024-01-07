@@ -45,7 +45,7 @@ export class RigidVehicleObject {
             chassisBody: this.chassis.body
         });
         
-        const axisWidth = chassisDimensions.z * 2 //0.75;
+        const axisWidth = chassisDimensions.z * 2; //0.75;
         const down = new CANNON.Vec3(0, -1, 0);
         
         const chassisLength = chassisDimensions.x;

@@ -14,7 +14,7 @@ renderer.setSize(width, height);
 renderer.shadowMap.enabled = true;
 renderer.outputColorSpace = 'srgb';
 
-const mainCamera = new THREE.PerspectiveCamera(60, width/height, 0.1, 100);
+const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 100);
 
 // needed for GLTF models to light correctly
 // https://discourse.threejs.org/t/directional-light-and-gltf-model-not-working-together/49358
