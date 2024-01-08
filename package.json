@@ -10,12 +10,14 @@
   },
   "devDependencies": {
     "@types/three": "^0.159.0",
+    "@types/uuid": "^9.0.7",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"
   },
   "dependencies": {
     "cannon-es": "^0.20.0",
     "cannon-es-debugger": "^1.0.0",
-    "three": "^0.159.0"
+    "three": "^0.159.0",
+    "uuid": "^9.0.1"
   }
 }

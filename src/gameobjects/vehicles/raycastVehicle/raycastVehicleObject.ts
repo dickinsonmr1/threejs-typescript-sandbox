@@ -11,6 +11,10 @@ export class RaycastVehicleObject {
 
     raycastVehicle?: CANNON.RaycastVehicle;
 
+    
+    private readonly maxSteerVal: number = 0.5;
+    private readonly maxForce: number = 1000;
+
     //mesh: THREE.Mesh;
     //body?: CANNON.Body;
 
@@ -87,6 +91,45 @@ export class RaycastVehicleObject {
 
     getPosition() {
         return this.chassis.mesh.position;
+    }
+
+    tryAccelerate(): void {
+        this.raycastVehicle?.applyEngineForce(-this.maxForce, 2);
+        this.raycastVehicle?.applyEngineForce(-this.maxForce, 3);
+    }
+
+    tryStopAccelerate(): void {
+        this.raycastVehicle?.applyEngineForce(0, 2);
+        this.raycastVehicle?.applyEngineForce(0, 3);
+    }
+
+    tryReverse(): void {
+        this.raycastVehicle?.applyEngineForce(this.maxForce, 2);
+        this.raycastVehicle?.applyEngineForce(this.maxForce, 3);
+    }
+
+    tryStopReverse(): void {
+        this.raycastVehicle?.applyEngineForce(0, 2);
+        this.raycastVehicle?.applyEngineForce(0, 3);
+    }
+
+    tryTurnLeft() {
+        this.raycastVehicle?.setSteeringValue(this.maxSteerVal, 0);
+        this.raycastVehicle?.setSteeringValue(this.maxSteerVal, 1);
+    }
+
+    tryStopTurnLeft() {
+        this.raycastVehicle?.setSteeringValue(0, 0);
+        this.raycastVehicle?.setSteeringValue(0, 1);
+    }
+
+    tryTurnRight(): void {
+        this.raycastVehicle?.setSteeringValue(-this.maxSteerVal, 0);
+        this.raycastVehicle?.setSteeringValue(-this.maxSteerVal, 1);
+    }
+    tryStopTurnRight(): void {
+        this.raycastVehicle?.setSteeringValue(0, 0);
+        this.raycastVehicle?.setSteeringValue(0, 1);
     }
 
     update() {

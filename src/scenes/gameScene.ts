@@ -421,21 +421,17 @@ export default class GameScene extends THREE.Scene {
 		}
 
         if(event.key === 'w') {
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(0, 2);
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(0, 3);
+            this.raycastVehicleObject?.tryStopAccelerate();
         }
         else if(event.key === 's') {
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(0, 2);
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(0, 3);
+            this.raycastVehicleObject?.tryStopReverse();
         }
 
         if(event.key === 'a') {
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 0);
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 1);
+            this.raycastVehicleObject?.tryStopTurnLeft();
         }
         else if(event.key === 'd') {
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 0);
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(0, 1);
+            this.raycastVehicleObject?.tryStopTurnRight();
         }
 
         // rigid body vehicle
@@ -475,29 +471,20 @@ export default class GameScene extends THREE.Scene {
         const dir = this.directionVector;
 
         this.camera.getWorldDirection(dir);
-        const speed = 0.1;
-
-        const maxSteerVal = 0.5;
-        const maxForce = 1000;
-        const brakeForce = 1000000;
 
         // raycast vehicle controls
         if(this.keyDown.has('w')) {
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 2);
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 3);
+            this.raycastVehicleObject?.tryAccelerate();
         }
         else if(this.keyDown.has('s')) {
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(maxForce, 2);
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(maxForce, 3);
+            this.raycastVehicleObject?.tryReverse();
         }
 
         if(this.keyDown.has('a')) {
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(maxSteerVal, 0);
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(maxSteerVal, 1);
+            this.raycastVehicleObject?.tryTurnLeft();
         }
         else if(this.keyDown.has('d')) {
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 0);
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 1);
+            this.raycastVehicleObject?.tryTurnRight();
         }
 
         // rigid body vehicle controls
