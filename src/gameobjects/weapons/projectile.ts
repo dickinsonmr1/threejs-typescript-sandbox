@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { PointLightObject } from "./pointLightObject";
-import { SphereObject } from "./sphereObject";
+import { PointLightObject } from "../fx/pointLightObject";
+import { SphereObject } from "../shapes/sphereObject";
 import * as CANNON from 'cannon-es'
-import { ParticleEmitterObject, ParticleEmitterType } from "./particleEmitterObject";
+import { ParticleEmitterObject, ParticleEmitterType } from "../fx/particleEmitterObject";
 
 export enum ProjectileLaunchLocation {
     Left,

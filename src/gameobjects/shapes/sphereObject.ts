@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
-import { Utility } from "../utility";
+import { Utility } from "../../utility";
 
-export class CylinderObject {
+export class SphereObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
 
@@ -13,7 +13,6 @@ export class CylinderObject {
      */
     constructor(scene: THREE.Scene,
         radius: number,
-        height: number,
         position: THREE.Vector3,
         color: number = 0xffffff,
         meshMaterial?: THREE.Material,
@@ -27,7 +26,7 @@ export class CylinderObject {
         })
         
         this.mesh = new THREE.Mesh(
-            new THREE.CylinderGeometry(radius, radius, height),    
+            new THREE.SphereGeometry(radius),            
             this.meshMaterial
         );
         this.mesh.position.set(position.x, position.y, position.z);
@@ -42,10 +41,10 @@ export class CylinderObject {
             this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
             
             this.body = new CANNON.Body({
-                shape: new CANNON.Cylinder(radius, radius, height, 20),
+                shape: new CANNON.Sphere(radius),
                 position: new CANNON.Vec3(position.x, position.y, position.z),
                 //type: CANNON.Body.STATIC,    
-                //linearDamping: 0.31,            
+                linearDamping: 0.31,            
                 material: this.physicsMaterial,
                 mass: 1
             });

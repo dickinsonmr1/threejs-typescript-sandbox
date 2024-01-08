@@ -1,22 +1,24 @@
 import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
-import Bullet from '../gameobjects/bullet';
+import Bullet from '../gameobjects/weapons/bullet';
 import * as CANNON from 'cannon-es'
-import { GroundObject } from '../gameobjects/groundObject';
-import { BoxObject } from '../gameobjects/boxObject';
-import { SphereObject } from '../gameobjects/sphereObject';
+import { GroundObject } from '../gameobjects/shapes/groundObject';
+import { BoxObject } from '../gameobjects/shapes/boxObject';
+import { SphereObject } from '../gameobjects/shapes/sphereObject';
 import Stats from 'three/addons/libs/stats.module.js';
-import SpotlightObject from '../gameobjects/spotlightObject';
+import SpotlightObject from '../gameobjects/shapes/spotlightObject';
 import { randFloat } from 'three/src/math/MathUtils.js';
-import { ExplosionObject } from '../gameobjects/explosionObject';
+import { ExplosionObject } from '../gameobjects/fx/explosionObject';
 import { GltfObject } from '../gameobjects/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Utility } from '../utility';
-import { Projectile, ProjectileLaunchLocation } from '../gameobjects/projectile';
-import { CylinderObject } from '../gameobjects/cylinderObject';
-import { RaycastVehicleObject } from '../gameobjects/raycastVehicle/raycastVehicleObject';
-import { RigidVehicleObject } from '../gameobjects/rigidVehicle/rigidVehicleObject';
+import { Projectile, ProjectileLaunchLocation } from '../gameobjects/weapons/projectile';
+import { CylinderObject } from '../gameobjects/shapes/cylinderObject';
+import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/raycastVehicleObject';
+import { RigidVehicleObject } from '../gameobjects/vehicles/rigidVehicle/rigidVehicleObject';
+import { ProjectileType } from '../gameobjects/weapons/projectileType';
+import ProjectileFactory from '../gameobjects/weapons/projectileFactory';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -50,11 +52,11 @@ export default class GameScene extends THREE.Scene {
     private cubes: BoxObject[] = [];
     private targets: THREE.Group[] = [];
 
+    private projectileFactory: ProjectileFactory = new ProjectileFactory();
     private projectiles: Projectile[] = [];
-    projectileSpeed: number = 0.3;//0.5;
 
     private explosions: ExplosionObject[] = [];
-    private explosionTexture?: THREE.Texture;
+    private explosionTexture: THREE.Texture | undefined;
 
     world: CANNON.World = new CANNON.World({
         gravity: new CANNON.Vec3(0, -9.81, 0)
@@ -567,30 +569,9 @@ export default class GameScene extends THREE.Scene {
 
         if(!this.rigidVehicleObject || !this.rigidVehicleObject.model) return;
 
-        /*
-        let projectileLaunchVector = new THREE.Vector3();//0, 0, -1);
-
-        //this.camera.getWorldDirection(projectileLaunchVector);
-        //this.rigidVehicleObject?.chassis.mesh.getWorldDirection(projectileLaunchVector);  
-        this.rigidVehicleObject.model.getWorldDirection(projectileLaunchVector);
-        
-
-        const quaternion = new THREE.Quaternion();
-        quaternion.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 2 );
-
-        //const vector = new THREE.Vector3( projectileLaunchVector.x, projectileLaunchVector.y, projectileLaunchVector.z);
-        projectileLaunchVector.applyQuaternion( quaternion );
-
-        //var axis = new THREE.Vector3( 0, projectileLaunchVector.y, 0 );
-        //var angle = Math.PI / 2;
-        //projectileLaunchVector. applyAxisAngle( axis, angle );
-        */
-
         let forwardVector = new THREE.Vector3(-2, 0, 0);
         forwardVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
-        let projectileLaunchVector = forwardVector;
-
-        //projectileLaunchVector.z += Math.PI/2;      
+        let projectileLaunchVector = forwardVector; 
 
         let sideVector = new THREE.Vector3();
         switch(side) {
@@ -632,24 +613,14 @@ export default class GameScene extends THREE.Scene {
         //);
         //tempPosition.add(this.directionVector.clone().multiplyScalar(size.z * 1.5));
 
-
-        let r = THREE.MathUtils.randInt(0, 255);
-        let g = THREE.MathUtils.randInt(0, 255);
-        let b = THREE.MathUtils.randInt(0, 255);
-
-        let color = new THREE.Color(r, g, b);
-
-        var tempProjectile = new Projectile(this,
-            0.05,                   // radius
+        let newProjectile = this.projectileFactory.generateProjectile(
+            this,
+            ProjectileType.Rocket,
             tempPosition,           // launchPosition relative to chassis
-            projectileLaunchVector,
-            this.projectileSpeed,
-            color,
-            color,
-            new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
+            projectileLaunchVector,            
             this.explosionTexture);      
 
-        this.projectiles.push(tempProjectile);
+        this.projectiles.push(newProjectile);
     }
 
     private async generateRandomCube() {

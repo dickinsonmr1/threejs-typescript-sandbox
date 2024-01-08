@@ -3,7 +3,7 @@ import * as CANNON from 'cannon-es'
 import { ChassisObject } from "../chassisObject";
 import { SphereWheelObject } from "./sphereWheelObject";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { Utility } from "../../utility";
+import { Utility } from "../../../utility";
 
 export class RigidVehicleObject {
     

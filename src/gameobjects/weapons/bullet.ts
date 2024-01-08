@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { PointLightObject } from './pointLightObject';
+import { PointLightObject } from '../fx/pointLightObject';
 
 export default class Bullet
 {
