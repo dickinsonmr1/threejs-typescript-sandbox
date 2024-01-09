@@ -3,6 +3,7 @@ import { PointLightObject } from "../fx/pointLightObject";
 import { SphereObject } from "../shapes/sphereObject";
 import * as CANNON from 'cannon-es'
 import { ParticleEmitterObject, ParticleEmitterType } from "../fx/particleEmitterObject";
+import { ProjectileType } from "./projectileType";
 
 export enum ProjectileLaunchLocation {
     Left,
@@ -12,6 +13,7 @@ export enum ProjectileLaunchLocation {
 
 export class Projectile extends SphereObject {
 
+    private projectileType: ProjectileType;
     private lightColor: THREE.Color;
     private particleColor: THREE.Color;
 
@@ -25,6 +27,7 @@ export class Projectile extends SphereObject {
     private expiryTimer: THREE.Clock;
 
     constructor(scene: THREE.Scene,
+        projectileType: ProjectileType,
         radius: number,
         position: THREE.Vector3,
         launchVector: THREE.Vector3,
@@ -36,34 +39,42 @@ export class Projectile extends SphereObject {
         
         super(scene, radius, position, particleColor.getHex(), meshMaterial);
         
+        this.projectileType = projectileType;
+
         this.lightColor = lightColor;
         this.particleColor = particleColor;
+        
+        if(this.projectileType == ProjectileType.Rocket) {
 
-        this.pointLightObject = new PointLightObject(
-            scene,
-            lightColor,//new THREE.Color('white'),
-            0.2, 2, 0.96, 
-            new THREE.Vector3(0, 0, 0)
-        );
-
-        if(this.pointLightObject.pointLight != null) 
-            scene.add(this.pointLightObject.pointLight);
-
-        if(this.pointLightObject.pointLightHelper != null) 
-            scene.add(this.pointLightObject.pointLightHelper);
-
-        if(particleTexture != null) {
-            this.particleEmitterObject = new ParticleEmitterObject(
+            this.pointLightObject = new PointLightObject(
                 scene,
-                ParticleEmitterType.GlowingParticles,
-                particleTexture,
-                particleColor,//new THREE.Color('grey'),
-                position,
-                1,
-                20,
-                0
-            )
-        };
+                lightColor,//new THREE.Color('white'),
+                0.2, 2, 0.96, 
+                new THREE.Vector3(0, 0, 0)
+            );
+
+            if(this.pointLightObject.pointLight != null) 
+                scene.add(this.pointLightObject.pointLight);
+
+            if(this.pointLightObject.pointLightHelper != null) 
+                scene.add(this.pointLightObject.pointLightHelper);
+
+            if(particleTexture != null) {
+                this.particleEmitterObject = new ParticleEmitterObject(
+                    scene,
+                    ParticleEmitterType.GlowingParticles,
+                    particleTexture,
+                    particleColor,//new THREE.Color('grey'),
+                    position,
+                    1,
+                    20,
+                    0
+                )
+            };
+        }
+
+      
+      
 
         /*
         setTimeout(() => {

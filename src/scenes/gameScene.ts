@@ -53,6 +53,7 @@ export default class GameScene extends THREE.Scene {
     private targets: THREE.Group[] = [];
 
     private projectileFactory: ProjectileFactory = new ProjectileFactory();
+    private fireLeft: boolean = false;
     private projectiles: Projectile[] = [];
 
     private explosions: ExplosionObject[] = [];
@@ -407,13 +408,16 @@ export default class GameScene extends THREE.Scene {
 		if (event.key === ' ')
 		{
 			//this.createBullet();
-            this.createProjectile(ProjectileLaunchLocation.Center);
+            this.createProjectile(ProjectileType.Rocket, ProjectileLaunchLocation.Center);
             //this.generateRandomCube();
             //this.generateRandomExplosion();
 		}
         if (event.key === 'x')
 		{
-			this.generateRandomCube();
+            this.fireLeft = !this.fireLeft;
+            let launchLocation = this.fireLeft ? ProjectileLaunchLocation.Left : ProjectileLaunchLocation.Right;
+            this.createProjectile(ProjectileType.Bullet, launchLocation);
+			//this.generateRandomCube();
 		}
         if (event.key === 'Escape')
 		{
@@ -549,7 +553,7 @@ export default class GameScene extends THREE.Scene {
         return modelRoot;
     }
 
-    private async createProjectile(side: ProjectileLaunchLocation) {
+    private async createProjectile(projectileType: ProjectileType, side: ProjectileLaunchLocation) {
         
         if(!this.blaster) 
             return;
@@ -560,16 +564,26 @@ export default class GameScene extends THREE.Scene {
         forwardVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
         let projectileLaunchVector = forwardVector; 
 
+        let sideOffset = 0;
+        switch(projectileType) {
+            case ProjectileType.Bullet:
+                sideOffset = 2;
+                break;
+            case ProjectileType.Rocket:
+                sideOffset = 5;
+                break;
+        }
+
         let sideVector = new THREE.Vector3();
         switch(side) {
-            case ProjectileLaunchLocation.Left:
-                sideVector = new THREE.Vector3(0, 0, 5);
+            case ProjectileLaunchLocation.Left:                
+                sideVector = new THREE.Vector3(0, 0, sideOffset);
                 break;
             case ProjectileLaunchLocation.Center:
                 sideVector = new THREE.Vector3(0, 0, 0);
                 break;                
             case ProjectileLaunchLocation.Right:
-                sideVector = new THREE.Vector3(0, 0, -5);
+                sideVector = new THREE.Vector3(0, 0, -sideOffset);
                 break;
         }
         sideVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
@@ -602,7 +616,7 @@ export default class GameScene extends THREE.Scene {
 
         let newProjectile = this.projectileFactory.generateProjectile(
             this,
-            ProjectileType.Rocket,
+            projectileType,
             tempPosition,           // launchPosition relative to chassis
             projectileLaunchVector,            
             this.explosionTexture);      

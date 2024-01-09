@@ -20,23 +20,32 @@ export default class ProjectileFactory {
 
         let color = new THREE.Color(r, g, b);
 
-        let projectileSpeed = 0.3;
-        
         switch(type) {
             case ProjectileType.Bullet:
-            case ProjectileType.Rocket:
-            
-            return new Projectile(scene,
-                0.05,                   // radius
-                launchPosition,           // launchPosition relative to chassis
-                launchVector,
-                projectileSpeed,
-                color,
-                color,
-                new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
-                explosionTexture);      
-    
-            break;
+                return new Projectile(scene,
+                    ProjectileType.Bullet,
+                    0.05,                   // radius
+                    launchPosition,           // launchPosition relative to chassis
+                    launchVector,
+                    0.5,
+                    new THREE.Color('white'),
+                    new THREE.Color('white'),
+                    new THREE.MeshBasicMaterial( { color: 0xffffff, depthWrite: true }),
+                    explosionTexture);      
+        
+                break;
+            case ProjectileType.Rocket:            
+                return new Projectile(scene,
+                    ProjectileType.Rocket,
+                    0.07,                   // radius
+                    launchPosition,           // launchPosition relative to chassis
+                    launchVector,
+                    0.3,
+                    color,
+                    color,
+                    new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
+                    explosionTexture);          
+                break;
         }
     }
 }
