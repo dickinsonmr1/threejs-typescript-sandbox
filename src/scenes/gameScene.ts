@@ -19,6 +19,7 @@ import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/ray
 import { RigidVehicleObject } from '../gameobjects/vehicles/rigidVehicle/rigidVehicleObject';
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import ProjectileFactory from '../gameobjects/weapons/projectileFactory';
+import { PickupObject } from '../gameobjects/pickupObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -51,6 +52,8 @@ export default class GameScene extends THREE.Scene {
 
     private cubes: BoxObject[] = [];
     private targets: THREE.Group[] = [];
+
+    private pickups: PickupObject[] = [];
 
     private projectileFactory: ProjectileFactory = new ProjectileFactory();
     private fireLeft: boolean = false;
@@ -392,6 +395,12 @@ export default class GameScene extends THREE.Scene {
 
         this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
 
+        let pickupTexture = this.textureLoader.load('assets/rocketIcon-multiple.png');
+
+        for(let i = 0; i < 10; i++) {
+            this.generateRandomPickup(pickupTexture);
+        }
+
         document.body.appendChild(this.stats.dom);
 
         document.addEventListener('keydown', this.handleKeyDown);
@@ -640,6 +649,24 @@ export default class GameScene extends THREE.Scene {
 
         this.cubes.push(cube);
     }
+    
+    
+    private async generateRandomPickup(texture: THREE.Texture ) {
+
+        let randPosition = new THREE.Vector3(randFloat(-20, 20), 0.75, randFloat(-20, 20));
+        let randCubeSize = 0.5; //randFloat(0.5, 2);
+
+        let randColor = THREE.MathUtils.randInt(0, 0xffffff);
+
+        const cube = new PickupObject(this,
+            randCubeSize, randCubeSize, randCubeSize,
+            randPosition,
+            randColor,
+            texture
+        );
+
+        this.pickups.push(cube);
+    }
 
     private async generateRandomExplosion(position: THREE.Vector3, lightColor: THREE.Color, particleColor: THREE.Color) {
 
@@ -727,6 +754,8 @@ export default class GameScene extends THREE.Scene {
         this.rigidVehicleObject?.update();
 
         this.cubes.forEach(x => x.update());
+
+        this.pickups.forEach(x => x.update());
 
         this.projectiles.forEach(x => x.update());
         this.checkProjectilesForCollision();

@@ -32,13 +32,15 @@ export class BoxObject {
             //new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } 
             this.meshMaterial
         );
-        //this.mesh.position.set(position.x, position.y, position.z);
+        if(!world)
+            this.mesh.position.set(position.x, position.y, position.z);
+        
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;
         
         scene.add(this.mesh);
         
-        if(world != null) {
+        if(world) {
 
             this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
 
