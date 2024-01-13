@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
-import Bullet from '../gameobjects/weapons/bullet';
 import * as CANNON from 'cannon-es'
 import { GroundObject } from '../gameobjects/shapes/groundObject';
 import { BoxObject } from '../gameobjects/shapes/boxObject';
@@ -12,7 +11,6 @@ import { randFloat } from 'three/src/math/MathUtils.js';
 import { ExplosionObject } from '../gameobjects/fx/explosionObject';
 import { GltfObject } from '../gameobjects/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
-import { Utility } from '../utility';
 import { Projectile, ProjectileLaunchLocation } from '../gameobjects/weapons/projectile';
 import { CylinderObject } from '../gameobjects/shapes/cylinderObject';
 import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/raycastVehicleObject';
@@ -20,6 +18,7 @@ import { RigidVehicleObject } from '../gameobjects/vehicles/rigidVehicle/rigidVe
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import ProjectileFactory from '../gameobjects/weapons/projectileFactory';
 import { PickupObject } from '../gameobjects/pickupObject';
+import HealthBar from '../gameobjects/healthBar';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -88,6 +87,8 @@ export default class GameScene extends THREE.Scene {
     sphere?: SphereObject;
 
     spotlight?: SpotlightObject;
+
+    healthBar: HealthBar = new HealthBar(this);
 
     constructor(camera: THREE.PerspectiveCamera) {
         super();
@@ -403,6 +404,45 @@ export default class GameScene extends THREE.Scene {
 
         document.body.appendChild(this.stats.dom);
 
+        var text2 = document.createElement('div');
+        text2.style.position = 'absolute';
+        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        text2.style.width = "200";
+        text2.style.height = "200";
+        //text2.style.backgroundColor = "blue";
+        text2.style.color = "white";
+        text2.innerHTML = "Objective: eliminate all enemy vehicles";
+        text2.style.left = 10 + 'px';
+        text2.style.top = 100 + 'px';
+        
+        document.body.appendChild(text2);
+
+        //let healthBarTexture = this.textureLoader.load('assets/healthBarWhite-100x20.png');
+
+        //this.healthBar = new HealthBar(this);
+        
+        /*
+        let canvas = document.createElement("canvas") as HTMLCanvasElement;
+        canvas.width = 64;
+        canvas.height = 64;
+
+        let texture = new THREE.Texture(canvas);
+        const material = new THREE.MeshBasicMaterial({
+          map: this.explosionTexture,
+          depthTest: false,
+          transparent: true,
+        });
+        const geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
+    
+        let statsPlane = new THREE.Mesh(geometry, material);
+        statsPlane.position.x = 0;
+        statsPlane.position.y = 1.5;
+        statsPlane.position.z = 0;
+        statsPlane.renderOrder = 9999;
+
+        this.camera.add(statsPlane);
+        */
+
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
     }
@@ -668,7 +708,7 @@ export default class GameScene extends THREE.Scene {
         this.pickups.push(cube);
     }
 
-    private async generateRandomExplosion(position: THREE.Vector3, lightColor: THREE.Color, particleColor: THREE.Color) {
+    private async generateRandomExplosion(projectileType: ProjectileType, position: THREE.Vector3, lightColor: THREE.Color, particleColor: THREE.Color) {
 
         if(this.explosionTexture != null) {
             //let randPosition = new THREE.Vector3(randFloat(-5, 5), randFloat(5, 15), randFloat(-5.5, -10.5));
@@ -683,13 +723,23 @@ export default class GameScene extends THREE.Scene {
             }
             */
 
+            let numberParticles: number;
+            switch(projectileType) {
+                case ProjectileType.Bullet:
+                    numberParticles = 5;
+                    break;
+                case ProjectileType.Rocket:
+                    numberParticles = 100;
+                    break;
+            }
+
             this.explosions.push(new ExplosionObject(
                 this,
                 this.explosionTexture,
                 lightColor,
                 particleColor,
                 position,
-                100,
+                numberParticles,
                 0.05)
             );
         }
@@ -705,6 +755,7 @@ export default class GameScene extends THREE.Scene {
                 this.allPlayers.forEach(player => {
                     if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
                         this.generateRandomExplosion(
+                            projectile.projectileType,
                             projectile.getPosition(),
                             projectile.getLightColor(),
                             projectile.getParticleColor()
@@ -736,6 +787,8 @@ export default class GameScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
+        if(!this.rigidVehicleObject) return;
+
         this.updateInput();  
         this.updateCamera();     
 
@@ -750,9 +803,10 @@ export default class GameScene extends THREE.Scene {
         this.vehiclePlayer3?.update();
         this.vehiclePlayer4?.update();
 
-        this.raycastVehicleObject?.update();
+        this.raycastVehicleObject?.update();    
         this.rigidVehicleObject?.update();
 
+        
         this.cubes.forEach(x => x.update());
 
         this.pickups.forEach(x => x.update());
@@ -767,11 +821,11 @@ export default class GameScene extends THREE.Scene {
 
         this.spotlight?.update();
 
-        this.explosions.forEach(x => {
-            x.update();
-        });
+        this.explosions.forEach(x => x.update());
         this.explosions = this.explosions.filter(x => x.isActive);
        
+        this.healthBar.update(this.allPlayers[0].getPosition());
+
         this.stats.update();
     }
 }

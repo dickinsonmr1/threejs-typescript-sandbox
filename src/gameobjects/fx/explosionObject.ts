@@ -70,6 +70,8 @@ export class ExplosionObject {
             Math.random() * 5 + 3,
             Math.random() * 10 - 5);
         */
+       //if(this.pointLightObject.pointLight)
+            //this.particleGroup.add(this.pointLightObject.pointLight)
 
         scene.add(this.particleGroup);
     }
@@ -94,8 +96,8 @@ export class ExplosionObject {
                 let item = <THREE.Sprite>child;
                 return item.material.opacity > 0.0;
             });       
-            
-        if(this.pointLightObject != null && this.pointLightObject.pointLight != null)
+                    
+        if(this.pointLightObject && this.pointLightObject.pointLight)
             this.pointLightObject.pointLight.intensity *= 0.95;
 
         if(this.particleGroup.children.length === 0) {

@@ -13,7 +13,7 @@ export enum ProjectileLaunchLocation {
 
 export class Projectile extends SphereObject {
 
-    private projectileType: ProjectileType;
+    public projectileType: ProjectileType;
     private lightColor: THREE.Color;
     private particleColor: THREE.Color;
 
