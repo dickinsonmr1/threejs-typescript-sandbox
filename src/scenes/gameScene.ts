@@ -19,6 +19,7 @@ import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import ProjectileFactory from '../gameobjects/weapons/projectileFactory';
 import { PickupObject } from '../gameobjects/pickupObject';
 import HealthBar from '../gameobjects/healthBar';
+import Headlights from '../gameobjects/fx/headLights';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -89,6 +90,8 @@ export default class GameScene extends THREE.Scene {
     spotlight?: SpotlightObject;
 
     healthBar: HealthBar = new HealthBar(this);
+
+    headLights: Headlights = new Headlights(this);
 
     constructor(camera: THREE.PerspectiveCamera) {
         super();
@@ -837,6 +840,9 @@ export default class GameScene extends THREE.Scene {
         this.explosions = this.explosions.filter(x => x.isActive);
        
         this.healthBar.update(this.allPlayers[0].getPosition());
+
+        if(this.allPlayers[0].body != null )
+        this.headLights.update(this.allPlayers[0].getPosition(), this.allPlayers[0].mesh.quaternion);
 
         this.stats.update();
     }

@@ -62,8 +62,8 @@ export class ExplosionObject {
 
         this.particleGroup.position.set(position.x, position.y, position.z);
 
-        this.pointLightObject = new PointLightObject(scene,
-            lightColor, 0.1, 2, 0.5, position);
+        //this.pointLightObject = new PointLightObject(scene,
+            //lightColor, 0.1, 2, 0.5, position);
         /*
         this.particleGroup.position.set(
             Math.random() * 20 - 10,
