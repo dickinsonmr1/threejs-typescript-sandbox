@@ -94,7 +94,7 @@ export default class GameScene extends THREE.Scene {
         super();
         
         this.camera = camera;
-        this.background = new THREE.Color(0xB1E1FF);
+        //this.background = new THREE.Color(0xB1E1FF);
     }
 
     async initialize() {
@@ -442,6 +442,18 @@ export default class GameScene extends THREE.Scene {
 
         this.camera.add(statsPlane);
         */
+
+        // skybox tutorial: https://threejs.org/manual/#en/backgrounds
+        // asset source: https://polyhaven.com/a/industrial_sunset_puresky
+        let skyTexture = this.textureLoader.load(
+            'assets/industrial_sunset_puresky.jpg',
+            () => {
+
+                skyTexture.mapping = THREE.EquirectangularReflectionMapping;
+                skyTexture.colorSpace = THREE.SRGBColorSpace;
+                this.background = skyTexture;
+            } 
+        );
 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
