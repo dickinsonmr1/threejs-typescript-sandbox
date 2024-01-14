@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Utility } from '../../utility';
 
 export default class Headlights {
 

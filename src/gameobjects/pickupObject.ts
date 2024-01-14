@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
-import { Utility } from "../utility";
 
 export class PickupObject {
     mesh: THREE.Mesh;

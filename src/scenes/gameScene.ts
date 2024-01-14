@@ -417,7 +417,7 @@ export default class GameScene extends THREE.Scene {
         text2.innerHTML = "Objective: eliminate all enemy vehicles";
         text2.style.left = 10 + 'px';
         text2.style.top = 100 + 'px';
-        
+      
         document.body.appendChild(text2);
 
         //let healthBarTexture = this.textureLoader.load('assets/healthBarWhite-100x20.png');
@@ -457,6 +457,8 @@ export default class GameScene extends THREE.Scene {
                 this.background = skyTexture;
             } 
         );
+
+       
 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);

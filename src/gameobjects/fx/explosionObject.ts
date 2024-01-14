@@ -81,6 +81,7 @@ export class ExplosionObject {
     }
 
     setPosition(position: THREE.Vector3) {
+        this.particleGroup.position.set(position.x, position.y, position.z);
     }
 
     update() {
