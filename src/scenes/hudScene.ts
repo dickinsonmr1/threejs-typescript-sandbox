@@ -1,6 +1,5 @@
 import * as THREE from 'three';
-import HealthBar from '../gameobjects/healthBar';
-import HudHealthBar from '../gameobjects/HudHealthBar';
+import HudHealthBar from '../gameobjects/hudHealthBar';
 import SceneController from './sceneController';
 
 export enum HudIconLocation {

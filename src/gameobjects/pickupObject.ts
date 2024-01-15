@@ -9,6 +9,8 @@ export class PickupObject {
 
     meshMaterial: THREE.Material;
     physicsMaterial?: CANNON.Material;
+
+    group: THREE.Group = new THREE.Group();
     /**
      *
      */
@@ -33,33 +35,28 @@ export class PickupObject {
             this.meshMaterial
         );
     
-        this.mesh.position.set(position.x, position.y, position.z);
-        
+        this.mesh.position.set(0,0,0);//position.x, position.y, position.z);        
         this.mesh.castShadow = false;
         this.mesh.receiveShadow = false;
         
-        scene.add(this.mesh);
-
-        //this.iconTexture = iconTexture;
+        this.group.add(this.mesh);
 
         let sprite = new THREE.Sprite(new THREE.SpriteMaterial({
             map: iconTexture,
             depthTest: true
         }));
-        sprite.material.blending = THREE.AdditiveBlending;
-         
+        sprite.material.blending = THREE.AdditiveBlending;         
         sprite.material.opacity = 0.6;
         sprite.material.color = new THREE.Color('white');
-
-        let particleGroup = new THREE.Group();
-        particleGroup.position.set(position.x, position.y, position.z);
 
         let size = 0.5;
         sprite.scale.set(size, size, size);
         //sprite.position.set(position.x, position.y + 1, position.z);
-        particleGroup.add(sprite);
+        this.group.add(sprite);
 
-        scene.add(particleGroup);
+        this.group.position.set(position.x, position.y, position.z);
+
+        scene.add(this.group);
     }
 
     getPhysicsMaterial(): CANNON.Material {
@@ -71,10 +68,15 @@ export class PickupObject {
     }
     
     getPosition() {
-        return this.mesh?.position;
+        return this.group?.position;
     }
 
     update() {
         this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 32);
+    }
+
+    remove() {
+        this.group.clear();    
+        this.group.removeFromParent();    
     }
 }

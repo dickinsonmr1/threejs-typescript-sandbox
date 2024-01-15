@@ -816,6 +816,20 @@ export default class GameScene extends THREE.Scene {
         });
     }
 
+    private checkPickupsForCollisionWithPlayers() {
+        this.pickups.forEach(pickup => {
+            this.allPlayers.forEach(player => {
+
+                let playerPosition = player.getPosition();
+                let pickupPosition = pickup.getPosition();
+                if(playerPosition.distanceTo(pickupPosition) < 1) {
+                    // tpdp
+                    pickup.remove();
+                }
+            })
+        });
+    }
+
     update() {
         if(this.world != null)
             this.world.fixedStep();
@@ -846,6 +860,7 @@ export default class GameScene extends THREE.Scene {
 
         this.projectiles.forEach(x => x.update());
         this.checkProjectilesForCollision();
+        this.checkPickupsForCollisionWithPlayers();
 
         if(this.cube != null) 
         {
