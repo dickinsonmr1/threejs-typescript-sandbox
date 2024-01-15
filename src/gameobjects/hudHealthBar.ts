@@ -61,6 +61,17 @@ export default class HudHealthBar {
         this.currentValue = value;
 
         this.healthBarSprite.scale.x = this.calculateCurrentHealthBarWidth();
+
+        if(this.currentValue > 0.5 * this.maxValue) {
+            this.healthBarSprite.material.color.set(new THREE.Color('green'));
+        }
+        else if(this.currentValue <= 0.5 * this.maxValue &&
+            this.currentValue > 0.2 * this.maxValue) {
+                this.healthBarSprite.material.color.set(new THREE.Color('yellow'));
+        }
+        else if(this.currentValue <= 0.2 * this.maxValue) {
+                this.healthBarSprite.material.color.set(new THREE.Color('red'));
+        }
     }
 
     calculateCurrentHealthBarWidth(): number {

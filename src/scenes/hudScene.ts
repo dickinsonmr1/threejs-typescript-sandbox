@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import HealthBar from '../gameobjects/healthBar';
 import HudHealthBar from '../gameobjects/HudHealthBar';
+import SceneController from './sceneController';
 
 export enum HudIconLocation {
     UpperLeft,
@@ -15,12 +16,20 @@ export default class HudScene extends THREE.Scene {
      *
      */
     camera: THREE.OrthographicCamera;
-    //healthBar: HealthBar = new HealthBar(this);
+    private healthBar: HudHealthBar;
 
-    constructor(camera: THREE.OrthographicCamera) {
+    sceneController: SceneController;
+
+    constructor(camera: THREE.OrthographicCamera, sceneController: SceneController) {
         super();
 
         this.camera = camera;
+        this.sceneController = sceneController;
+
+        this.healthBar = new HudHealthBar(this, this.hudWidth, this.hudHeight,
+            200,
+            40,
+            100);
     }
 
     private readonly hudWidth = window.innerWidth / 2.5;
@@ -28,11 +37,7 @@ export default class HudScene extends THREE.Scene {
 
     async initialize() {
 
-        let hudHealthBar = new HudHealthBar(this, this.hudWidth, this.hudHeight,
-            200,
-            40,
-            100);
-
+        
         /////////////////////////////////////////////
 
         let textureLoader = new THREE.TextureLoader();
@@ -110,5 +115,9 @@ export default class HudScene extends THREE.Scene {
     }
 
     update() {
+    }
+
+    updateHealthBar(currentValue: number) {
+        this.healthBar.updateValue(currentValue);
     }
 }

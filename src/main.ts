@@ -4,6 +4,7 @@ import HudScene from './scenes/hudScene'
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import CannonDebugger from 'cannon-es-debugger';
 import HealthBar from './gameobjects/healthBar';
+import SceneController from './scenes/sceneController';
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -26,7 +27,9 @@ const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 100);
 const environment = new RoomEnvironment( renderer );
 const pmremGenerator = new THREE.PMREMGenerator( renderer );
 
-const scene = new GameScene(mainCamera);
+var sceneController = new SceneController();
+
+const scene = new GameScene(mainCamera, sceneController);
 scene.initialize();
 
 const cannonDebugger = CannonDebugger(scene, scene.world, {color: 0x0000ff });
@@ -60,9 +63,10 @@ cameraOrtho.position.z = 1;
 //cameraOrtho.position.x = 1;
 //cameraOrtho.lookAt(new THREE.Vector3(0, 0, 0));
             
-let sceneOrtho = new HudScene(cameraOrtho);
+let sceneOrtho = new HudScene(cameraOrtho, sceneController);
 sceneOrtho.initialize();
 
+sceneController.init(scene, sceneOrtho)
 
 /*
 var hudTexture = new THREE.Texture(hudCanvas)

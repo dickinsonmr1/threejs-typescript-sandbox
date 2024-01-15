@@ -20,6 +20,7 @@ import ProjectileFactory from '../gameobjects/weapons/projectileFactory';
 import { PickupObject } from '../gameobjects/pickupObject';
 import HealthBar from '../gameobjects/healthBar';
 import Headlights from '../gameobjects/fx/headLights';
+import SceneController from './sceneController';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -93,10 +94,13 @@ export default class GameScene extends THREE.Scene {
 
     headLights: Headlights = new Headlights(this);
 
-    constructor(camera: THREE.PerspectiveCamera) {
+    sceneController: SceneController;
+
+    constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController) {
         super();
         
         this.camera = camera;
+        this.sceneController = sceneController;
         //this.background = new THREE.Color(0xB1E1FF);
     }
 
@@ -484,6 +488,18 @@ export default class GameScene extends THREE.Scene {
             let launchLocation = this.fireLeft ? ProjectileLaunchLocation.Left : ProjectileLaunchLocation.Right;
             this.createProjectile(ProjectileType.Bullet, launchLocation);
 			//this.generateRandomCube();
+		}
+        if (event.key === '1')
+		{
+            this.sceneController.updateHealthOnHud(19);
+		}
+        if (event.key === '2')
+		{
+            this.sceneController.updateHealthOnHud(50);
+		}
+        if (event.key === '3')
+		{
+            this.sceneController.updateHealthOnHud(80);
 		}
         if (event.key === 'Escape')
 		{
