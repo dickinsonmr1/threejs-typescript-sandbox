@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import HealthBar from '../gameobjects/healthBar';
+import HudHealthBar from '../gameobjects/HudHealthBar';
 
 export enum HudIconLocation {
     UpperLeft,
@@ -23,50 +24,17 @@ export default class HudScene extends THREE.Scene {
     }
 
     private readonly hudWidth = window.innerWidth / 2.5;
-    private readonly hudHeight= window.innerHeight / 2.5;
+    private readonly hudHeight = window.innerHeight / 2.5;
 
     async initialize() {
 
+        let hudHealthBar = new HudHealthBar(this, this.hudWidth, this.hudHeight,
+            200,
+            40,
+            100);
 
+        /////////////////////////////////////////////
 
-        //var healthBar = new HealthBar(this);
-        //this.healthBar.group.position.set(0,0,0);
-
-        var healthBarOutlineSprite = new THREE.Sprite( new THREE.SpriteMaterial({
-            //map: healthBarTexture,// this.explosionTexture,
-            color: 'grey',
-            sizeAttenuation: false,
-            rotation: 0,        
-            //depthTest: true,
-            blending: THREE.AdditiveBlending,
-            opacity: 0.2
-        }));
-        healthBarOutlineSprite.center.set( 0, 0.5);       
-        //temp.scale.set(100, 20, 1); // 1x scale = dimensions of image
-        healthBarOutlineSprite.scale.set(200, 40, 1); // 1x scale = dimensions of image
-        this.add( healthBarOutlineSprite );
-        healthBarOutlineSprite.position.set(-this.hudWidth, -this.hudHeight, 0);     
-
-        var healthBarSprite = new THREE.Sprite( new THREE.SpriteMaterial({
-            //map: healthBarTexture,// this.explosionTexture,
-            color: 'green',
-            sizeAttenuation: false,
-            rotation: 0,        
-            //depthTest: true,
-            blending: THREE.AdditiveBlending,
-            opacity: 0.5
-        }));
-        //this.healthBarSpriteOutline.position.set( 8, 2, 8 );
-        healthBarSprite.center.set( 0, 0.5);
-        
-        //temp.scale.set(100, 20, 1); // 1x scale = dimensions of image
-        healthBarSprite.scale.set(150, 40, 1); // 1x scale = dimensions of image
-
-        //this.healthBarSpriteOutline.scale.set(0.25, 0.25, 0.25);
-        this.add( healthBarSprite );
-        healthBarSprite.position.set(-this.hudWidth, -this.hudHeight, 0);     
-        
-        
         let textureLoader = new THREE.TextureLoader();
         
         let healthIconTexture = textureLoader.load('assets/DPAD.png');
@@ -88,8 +56,6 @@ export default class HudScene extends THREE.Scene {
 
         //const spriteWidth = material.map?.image.width;
         //const spriteHeight = material.map?.image.height;
-
-        let spriteWidth = 64;
 
         let spriteCenter = this.generateIcon(freezeIconTexture, new THREE.Color('white'), HudIconLocation.Center);
         let spriteTL = this.generateIcon(rocketTexture, new THREE.Color('white'), HudIconLocation.UpperLeft);    
