@@ -63,53 +63,6 @@ cameraOrtho.position.z = 1;
 let sceneOrtho = new HudScene(cameraOrtho);
 sceneOrtho.initialize();
 
-let textureLoader = new THREE.TextureLoader();
-let texture = textureLoader.load('assets/rocketIcon-multiple.png');
-texture.colorSpace = THREE.SRGBColorSpace;
-let material = new THREE.SpriteMaterial( { map: texture });//,transparent: true, opacity: 0.5 } );
-
-//const spriteWidth = material.map?.image.width;
-//const spriteHeight = material.map?.image.height;
-
-const hudWidth = window.innerWidth / 2.5;
-const hudHeight = window.innerHeight / 2.5;
-
-
-let spriteWidth = 64;
-
-let spriteCenter = new THREE.Sprite( material );
-spriteCenter.center.set( 0.5, 0.5 );
-spriteCenter.scale.set( spriteWidth, spriteWidth, 1 );
-sceneOrtho.add( spriteCenter );
-spriteCenter.position.set(0, 0, 0);
-//spriteTL.position.set(-hudWidth, hudHeight, 1);
-
-
-let spriteTL = new THREE.Sprite( material );
-//spriteTL.center.set( 0, 0 );
-spriteTL.scale.set( spriteWidth, spriteWidth, 1 );
-sceneOrtho.add( spriteTL );
-spriteTL.position.set(-hudWidth, hudHeight, 0);
-//spriteTL.position.set(-hudWidth, hudHeight, 1);
-
-let spriteTR = new THREE.Sprite( material );
-//spriteTR.center.set( 0, 1 );
-spriteTR.scale.set( spriteWidth, spriteWidth, 1 );
-sceneOrtho.add( spriteTR);
-spriteTR.position.set(hudWidth, hudHeight, 0);
-
-let spriteLL = new THREE.Sprite( material );
-//spriteLL.center.set( 1, 0 );
-spriteLL.scale.set( spriteWidth, spriteWidth, 1 );
-sceneOrtho.add( spriteLL);
-spriteLL.position.set(-hudWidth, -hudHeight, 0);
-
-let spriteLR = new THREE.Sprite( material );
-//spriteLR.center.set( 1, 1 );
-spriteLR.scale.set( spriteWidth, spriteWidth, 1 );
-sceneOrtho.add( spriteLR);
-spriteLR.position.set(hudWidth, -hudHeight, 0);
-
 
 /*
 var hudTexture = new THREE.Texture(hudCanvas)
