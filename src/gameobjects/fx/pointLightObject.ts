@@ -4,6 +4,7 @@ export class PointLightObject {
 
     pointLight?: THREE.PointLight;
     pointLightHelper?: THREE.PointLightHelper;
+    group: THREE.Group = new THREE.Group;
 
     constructor(scene: THREE.Scene,
         color: THREE.Color,
@@ -13,28 +14,32 @@ export class PointLightObject {
         position: THREE.Vector3) {
 
         this.pointLight = new THREE.PointLight(color, intensity, distance, decay);
-        this.pointLight.position.set(position.x, position.y, position.z);
-        
+        //this.pointLight.position.set(0,0,0);
         this.pointLight.castShadow = false;
 
         this.pointLightHelper = new THREE.PointLightHelper(this.pointLight)
-        this.pointLight.add(this.pointLightHelper);
+        //this.pointLightHelper.position.set(0,0,0);                            
         
-        scene.add(this.pointLight);
+        this.group.add(this.pointLight);
+        this.group.position.set(position.x, position.y, position.z);
+
+        // hack
+        scene.add(this.pointLightHelper);
+
+        scene.add(this.group);
     }
 
     getPosition() {
-        return this.pointLight?.position;
+        return this.group.position;
     }
 
     // only use if pointLight is not already attached to another object
     setPosition(position: THREE.Vector3) {
-        this.pointLight?.position.set(position.x, position.y, position.z);
-        //this.pointLightHelper?.position.set(position.x, position.y, position.z);
+        this.group.position.set(position.x, position.y, position.z);        
     }
 
     update() {
-        this.pointLightHelper?.update();
+        //this.pointLightHelper?.update();
     }
 
     remove() {

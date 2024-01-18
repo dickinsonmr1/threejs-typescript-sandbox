@@ -6,6 +6,8 @@ export class SphereObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
 
+    group: THREE.Group = new THREE.Group();
+
     meshMaterial: THREE.Material;
     physicsMaterial?: CANNON.Material;
     /**
@@ -23,18 +25,18 @@ export class SphereObject {
             color: color,
             side: THREE.DoubleSide,
             wireframe: false
-        })
+        });
         
         this.mesh = new THREE.Mesh(
             new THREE.SphereGeometry(radius),            
             this.meshMaterial
         );
-        this.mesh.position.set(position.x, position.y, position.z);
+        this.mesh.position.set(0, 0, 0);    
         
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;  
         
-        scene.add(this.mesh);
+        this.group.add(this.mesh);
         
         if(world != null) {
 
@@ -50,6 +52,10 @@ export class SphereObject {
             });
             world.addBody(this.body);
         }
+
+        this.group.position.set(position.x, position.y, position.z);
+
+        scene.add(this.group);
     }
 
     getPhysicsMaterial(): CANNON.Material {
@@ -61,13 +67,13 @@ export class SphereObject {
     }
 
     getPosition() {
-        return this.mesh?.position;
+        return this.group.position;
     }
 
     update() {
         if(this.body != null) {
-            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
-            this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
+            this.group.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
+            this.group.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
         }
     }
 }

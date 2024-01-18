@@ -19,6 +19,7 @@ export class Projectile extends SphereObject {
 
     pointLightObject?: PointLightObject;
     particleEmitterObject?: ParticleEmitterObject;
+    
 	private readonly velocity = new THREE.Vector3();    
 	private isDead = false;
 
@@ -44,20 +45,25 @@ export class Projectile extends SphereObject {
         this.lightColor = lightColor;
         this.particleColor = particleColor;
         
+        //scene.add(this.group);
+        this.group.position.set(position.x, position.y, position.z);
+
         if(this.projectileType == ProjectileType.Rocket) {
 
             this.pointLightObject = new PointLightObject(
                 scene,
                 lightColor,//new THREE.Color('white'),
                 0.2, 2, 0.96, 
-                new THREE.Vector3(0, 0, 0)
+                new THREE.Vector3()// this.group.position
             );
 
-            if(this.pointLightObject.pointLight != null) 
-                scene.add(this.pointLightObject.pointLight);
+            //if(this.pointLightObject.pointLight != null) 
+            //this.group.add(this.pointLightObject.group);
 
-            if(this.pointLightObject.pointLightHelper != null) 
-                scene.add(this.pointLightObject.pointLightHelper);
+            //if(this.pointLightObject.pointLightHelper != null) 
+                //this.group.add(this.pointLightObject.pointLightHelper);
+
+            //this.group.position.set(position.x, position.y, position.z);
 
             if(particleTexture != null) {
                 this.particleEmitterObject = new ParticleEmitterObject(
@@ -72,9 +78,6 @@ export class Projectile extends SphereObject {
                 )
             };
         }
-
-      
-      
 
         /*
         setTimeout(() => {
@@ -92,18 +95,6 @@ export class Projectile extends SphereObject {
         this.expiryTimer.start();
     }
 
-    getPhysicsMaterial(): CANNON.Material {
-        
-        if(this.physicsMaterial != null)
-            return this.physicsMaterial;
-        else
-            throw new Error("No physics material set!")
-    }
-
-    getPosition() {
-        return this.mesh?.position;
-    }
-    
     getLightColor(): THREE.Color {
         return this.lightColor;
     }
@@ -112,13 +103,11 @@ export class Projectile extends SphereObject {
         return this.particleColor;
     }
 
-    get shouldRemove()
-	{
+    get shouldRemove() {
 		return this.isDead;
 	}
 
-	setVelocity(x: number, y: number, z: number)
-	{
+	setVelocity(x: number, y: number, z: number) {
 		this.velocity.set(x, y, z);
         //this.body?.velocity.set(x, y, z);
 	}
@@ -132,6 +121,7 @@ export class Projectile extends SphereObject {
         if(this.particleEmitterObject != null) {
             this.particleEmitterObject.kill();
         }
+        this.group.removeFromParent();
 	}
 
     update() {
@@ -139,17 +129,18 @@ export class Projectile extends SphereObject {
         //this.body?.applyForce(new CANNON.Vec3(0, 9.81, 0)) // opposite of gravity 
         super.update();
 
+        /*
         if(this.expiryTimer.getElapsedTime() > this.maxLifespanInSeconds) {
             this.kill();
             return;
         }
+        */
 
-        this.mesh.position.x += this.velocity.x;
-		this.mesh.position.y += this.velocity.y;
-		this.mesh.position.z += this.velocity.z;
+        this.group.position.x += this.velocity.x;
+		this.group.position.y += this.velocity.y;
+		this.group.position.z += this.velocity.z;
 
-        if(this.mesh?.position != null)
-            this.pointLightObject?.setPosition(this.mesh.position);
+        this.pointLightObject?.setPosition(this.group.position);
 
         if(this.particleEmitterObject != null) {            
             this.particleEmitterObject.update(this.getPosition());

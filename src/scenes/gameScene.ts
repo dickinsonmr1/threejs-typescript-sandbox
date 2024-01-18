@@ -649,7 +649,7 @@ export default class GameScene extends THREE.Scene {
         let sideOffset = 0;
         switch(projectileType) {
             case ProjectileType.Bullet:
-                sideOffset = 2;
+                sideOffset = 4;
                 break;
             case ProjectileType.Rocket:
                 sideOffset = 5;
@@ -782,9 +782,10 @@ export default class GameScene extends THREE.Scene {
         this.projectiles.forEach(projectile => {
             if(projectile.shouldRemove) {
                 projectile.kill();
-                this.remove(projectile.mesh);                
+                this.remove(projectile.group);                
             }
-            else {
+            else
+            {
                 this.allPlayers.forEach(player => {
                     if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
                         this.generateRandomExplosion(
