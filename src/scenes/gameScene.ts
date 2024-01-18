@@ -482,6 +482,10 @@ export default class GameScene extends THREE.Scene {
             //this.generateRandomCube();
             //this.generateRandomExplosion();
 		}
+        if (event.key === 'c')
+		{			
+            this.generateRandomCube();
+		}
         if (event.key === 'x')
 		{
             this.fireLeft = !this.fireLeft;
@@ -708,8 +712,8 @@ export default class GameScene extends THREE.Scene {
 
     private async generateRandomCube() {
 
-        let randPosition = new THREE.Vector3(randFloat(-5, 5), randFloat(5, 15), randFloat(-5.5, -10.5));
-        let randCubeSize = randFloat(0.5, 2);
+        let randPosition = new THREE.Vector3(randFloat(-10, 10), 5, randFloat(-10, -10));
+        let randCubeSize = randFloat(0.5, 1);
 
         let randColor = THREE.MathUtils.randInt(0, 0xffffff);
 
@@ -718,7 +722,9 @@ export default class GameScene extends THREE.Scene {
             randPosition,
             randColor,
             new THREE.MeshPhongMaterial( { color: randColor, depthWrite: true }),
-            this.world);
+            this.world,
+            new CANNON.Material(),
+            randCubeSize);
 
         this.cubes.push(cube);
     }

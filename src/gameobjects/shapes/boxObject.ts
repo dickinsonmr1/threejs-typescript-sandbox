@@ -6,6 +6,8 @@ export class BoxObject {
     mesh: THREE.Mesh;
     body: CANNON.Body = new CANNON.Body();
 
+    group: THREE.Group = new THREE.Group();
+
     meshMaterial: THREE.Material;
     physicsMaterial?: CANNON.Material;
     /**
@@ -33,12 +35,13 @@ export class BoxObject {
             this.meshMaterial
         );
         if(!world)
-            this.mesh.position.set(position.x, position.y, position.z);
+            this.group.position.set(position.x, position.y, position.z);
         
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;
         
-        scene.add(this.mesh);
+        this.group.add(this.mesh);
+
         
         if(world) {
 
@@ -58,6 +61,8 @@ export class BoxObject {
             //this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
             world.addBody(this.body);
         }
+
+        scene.add(this.group);
     }
 
     getPhysicsMaterial(): CANNON.Material {
@@ -69,13 +74,13 @@ export class BoxObject {
     }
     
     getPosition() {
-        return this.mesh?.position;
+        return this.group.position;
     }
 
     update() {
         if(this.body != null) {
-            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
-            this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
+            this.group.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
+            this.group.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
         }
     }
 }
