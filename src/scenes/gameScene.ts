@@ -90,7 +90,7 @@ export default class GameScene extends THREE.Scene {
 
     spotlight?: SpotlightObject;
 
-    healthBar: HealthBar = new HealthBar(this);
+    healthBar: HealthBar = new HealthBar(this, 100);
 
     headLights: Headlights = new Headlights(this);
 
@@ -513,6 +513,14 @@ export default class GameScene extends THREE.Scene {
 		{
             this.sceneController.updateTurboOnHud(50);
 		}        
+        if (event.key === '6')
+		{
+            this.healthBar.updateValue(50);
+		}      
+        if (event.key === '7')
+		{
+            this.healthBar.updateValue(19);
+		}      
         if (event.key === 'Escape')
 		{
 			this.rigidVehicleObject?.resetPosition();

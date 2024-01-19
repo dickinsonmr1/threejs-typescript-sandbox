@@ -146,7 +146,6 @@ export default class HudHealthBar {
         return (this.currentValue / this.maxValue) * this.spriteMaxWidth;
     }
 
-
     update(position: THREE.Vector3) {
 
         this.group.position.set(

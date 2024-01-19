@@ -1,6 +1,7 @@
 import { Projectile } from "./weapons/projectile";
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectileType } from "./weapons/projectileType";
+import HealthBar from "./healthBar";
 
 export class Player {
     // TODO: implement
@@ -11,9 +12,12 @@ export class Player {
     //public playerId: uuidv4;
     public playerName: string;
 
+    healthBar: HealthBar;
+
     constructor(scene: THREE.Scene,
         playerName: string) {
 
+        this.healthBar = new HealthBar(scene, 100);
         //super();
 
         //this.playerId = uuidv4();
@@ -98,7 +102,7 @@ export class Player {
     }
 
     refillHealth(): void {
-
+        this.healthBar.update()
     }
 
     refillShield(): void {
