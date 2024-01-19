@@ -16,9 +16,9 @@ export default class HudScene extends THREE.Scene {
      *
      */
     camera: THREE.OrthographicCamera;
-    private healthBar: HudHealthBar;
-    private turboBar: HudHealthBar;
-    private shieldBar: HudHealthBar;
+    private healthBar?: HudHealthBar;
+    private turboBar?: HudHealthBar;
+    private shieldBar?: HudHealthBar;
 
     sceneController: SceneController;
 
@@ -28,25 +28,7 @@ export default class HudScene extends THREE.Scene {
         this.camera = camera;
         this.sceneController = sceneController;
 
-        this.healthBar = new HudHealthBar(this, HudBarType.LowerLeftMain,
-            this.hudWidth, this.hudHeight,
-            200,
-            40,
-            100);
-
-        this.turboBar = new HudHealthBar(this, HudBarType.LowerRightMain,
-            this.hudWidth, this.hudHeight,
-            200,
-            20,
-            100,
-            new THREE.Color('yellow'));
-        
-        this.shieldBar = new HudHealthBar(this, HudBarType.LowerLeftSecondary,
-            this.hudWidth, this.hudHeight,
-            200,
-            20,
-            100,
-            new THREE.Color('blue'));
+       
     }
 
     private readonly hudWidth = window.innerWidth / 2.25;
@@ -62,6 +44,9 @@ export default class HudScene extends THREE.Scene {
         let healthIconTexture = textureLoader.load('assets/DPAD.png');
         healthIconTexture.colorSpace = THREE.SRGBColorSpace;
 
+        let shieldIconTexture = textureLoader.load('assets/shield.png');
+        shieldIconTexture.colorSpace = THREE.SRGBColorSpace;
+
         let rocketTexture = textureLoader.load('assets/rocketIcon-multiple.png');
         healthIconTexture.colorSpace = THREE.SRGBColorSpace;
 
@@ -74,6 +59,31 @@ export default class HudScene extends THREE.Scene {
         let turboIconTexture = textureLoader.load('assets/turboIcon.png');
         freezeIconTexture.colorSpace = THREE.SRGBColorSpace;
 
+        this.healthBar = new HudHealthBar(this, HudBarType.LowerLeftMain,
+            this.hudWidth, this.hudHeight,
+            200,
+            40,
+            100,
+            healthIconTexture);
+
+        this.turboBar = new HudHealthBar(this, HudBarType.LowerRightMain,
+            this.hudWidth, this.hudHeight,
+            200,
+            20,
+            100,
+            turboIconTexture,
+            new THREE.Color('yellow'),
+            );
+        
+        this.shieldBar = new HudHealthBar(this, HudBarType.LowerLeftSecondary,
+            this.hudWidth, this.hudHeight,
+            200,
+            20,
+            100,
+            shieldIconTexture,
+            new THREE.Color('blue'));
+
+
         let material = new THREE.SpriteMaterial( { map: healthIconTexture });//,transparent: true, opacity: 0.5 } );
 
         //const spriteWidth = material.map?.image.width;
@@ -83,8 +93,8 @@ export default class HudScene extends THREE.Scene {
         let spriteCenterBottom = this.generateIcon(freezeIconTexture, new THREE.Color('white'), HudIconLocation.CenterBottom);
         let spriteTL = this.generateIcon(rocketTexture, new THREE.Color('white'), HudIconLocation.UpperLeft);    
         let spriteTR = this.generateIcon(fireIconTexture, new THREE.Color('white'), HudIconLocation.UpperRight);
-        let spriteLL = this.generateIcon(healthIconTexture, new THREE.Color('white'), HudIconLocation.LowerLeft);
-        let spriteLR = this.generateIcon(turboIconTexture, new THREE.Color('white'), HudIconLocation.LowerRight);    
+        //let spriteLL = this.generateIcon(healthIconTexture, new THREE.Color('white'), HudIconLocation.LowerLeft);
+        //let spriteLR = this.generateIcon(turboIconTexture, new THREE.Color('white'), HudIconLocation.LowerRight);    
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color, location: HudIconLocation): THREE.Sprite {
@@ -124,7 +134,7 @@ export default class HudScene extends THREE.Scene {
                 sprite.center.set( 0.5, 0.5 );
                 sprite.scale.set( spriteWidth, spriteWidth, 1 );
                 this.add( sprite);
-                sprite.position.set(-this.hudWidth, -this.hudHeight, 0);
+                sprite.position.set(-this.hudWidth, -this.hudHeight, 0);                
                 break;
             case HudIconLocation.LowerRight:
                 sprite.center.set( 0.5, 0.5 );
@@ -141,6 +151,14 @@ export default class HudScene extends THREE.Scene {
     }
 
     updateHealthBar(currentValue: number) {
-        this.healthBar.updateValue(currentValue);
+        this.healthBar?.updateValue(currentValue);
+    }
+
+    updateShieldBar(currentValue: number) {
+        this.shieldBar?.updateValue(currentValue);
+    }
+
+    updateTurboBar(currentValue: number) {
+        this.turboBar?.updateValue(currentValue);
     }
 }

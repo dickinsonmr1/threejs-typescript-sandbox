@@ -34,6 +34,7 @@ export default class HudHealthBar {
         spriteMaxWidth: number,
         spriteMaxHeight: number,
         maxValue: number,
+        iconTexture?: THREE.Texture,
         colorOverride?: THREE.Color) {
 
         this.hudBarType = hudBarType;
@@ -53,6 +54,7 @@ export default class HudHealthBar {
         let y = 0;
         let xAlign = 0;
         let yAlign = 0;
+        let iconSize = 64;
         switch(this.hudBarType) {
             case HudBarType.LowerLeftMain:
                 x = -this.hudWidth;
@@ -65,6 +67,7 @@ export default class HudHealthBar {
                 y = -this.hudHeight * 0.9;
                 xAlign = 0;
                 yAlign = 0.5;
+                iconSize = 48;
                 break;
             case HudBarType.LowerRightMain:            
                 x = this.hudWidth;
@@ -77,6 +80,7 @@ export default class HudHealthBar {
                 y = -this.hudHeight * 0.9;
                 xAlign = 1;
                 yAlign = 0.5;
+                iconSize = 48;
                 break;
         }
 
@@ -104,7 +108,17 @@ export default class HudHealthBar {
         this.healthBarSprite.scale.set(this.spriteMaxWidth, this.spriteMaxHeight, 1);        
         this.group.add( this.healthBarSprite );
         this.healthBarSprite.position.set(x, y, 0);     
+        //this.group.rotateX(Math.PI / 16);// .rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 4);
 
+
+        if(iconTexture != null) {
+            let material = new THREE.SpriteMaterial( { map: iconTexture });//,transparent: true, opacity: 0.5 } );
+            let sprite = new THREE.Sprite( material );
+            sprite.center.set( 0.5, 0.5 );
+            sprite.scale.set( iconSize, iconSize, 1 );
+            this.group.add(sprite);
+            sprite.position.set(x, y, 0);
+        }
         scene.add(this.group);
     }
 

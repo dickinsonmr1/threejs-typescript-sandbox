@@ -505,6 +505,14 @@ export default class GameScene extends THREE.Scene {
 		{
             this.sceneController.updateHealthOnHud(80);
 		}
+        if (event.key === '4')
+		{
+            this.sceneController.updateShieldOnHud(25);
+		}
+        if (event.key === '5')
+		{
+            this.sceneController.updateTurboOnHud(50);
+		}        
         if (event.key === 'Escape')
 		{
 			this.rigidVehicleObject?.resetPosition();

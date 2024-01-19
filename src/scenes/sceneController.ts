@@ -18,4 +18,12 @@ export default class SceneController {
     updateHealthOnHud(currentValue: number) {
         this.hudScene?.updateHealthBar(currentValue);
     }
+
+    updateShieldOnHud(currentValue: number) {
+        this.hudScene?.updateShieldBar(currentValue);
+    }
+
+    updateTurboOnHud(currentValue: number) {
+        this.hudScene?.updateTurboBar(currentValue);
+    }
 }
