@@ -3,7 +3,6 @@ import GameScene from './scenes/gameScene'
 import HudScene from './scenes/hudScene'
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import CannonDebugger from 'cannon-es-debugger';
-import HealthBar from './gameobjects/healthBar';
 import SceneController from './scenes/sceneController';
 
 const width = window.innerWidth;
@@ -18,7 +17,7 @@ renderer.shadowMap.enabled = true;
 renderer.outputColorSpace = 'srgb';
 
 // https://threejs.org/examples/?q=sprites#webgl_sprites
-renderer.autoClear = false; // To allow render overlay on top of sprited sphere
+renderer.autoClear = false; // To allow render overlay
 
 const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 100);
 
@@ -38,21 +37,8 @@ scene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
 
 
-let hudwidth = 1920;
-let hudheight = 1080;
-/*
-var hudCanvas = document.createElement('canvas');
-hudCanvas.width = hudwidth;
-hudCanvas.height = hudheight;
-var hudBitmap = hudCanvas.getContext('2d');
-
-if(hudBitmap != null) {
-  hudBitmap.font = "Normal 40px Arial";
-  hudBitmap.textAlign = 'center';
-  hudBitmap.fillStyle = "rgba(245,245,245,0.75)";
-  hudBitmap.fillText('Initializing...', hudwidth / 2, hudheight / 2);
-}
-*/
+let hudwidth = width;
+let hudheight = height;
 
 var cameraOrtho = new THREE.OrthographicCamera(
     -hudwidth/2, hudwidth/2,

@@ -653,7 +653,7 @@ export default class GameScene extends THREE.Scene {
         let sideOffset = 0;
         switch(projectileType) {
             case ProjectileType.Bullet:
-                sideOffset = 4;
+                sideOffset = 3;
                 break;
             case ProjectileType.Rocket:
                 sideOffset = 5;
