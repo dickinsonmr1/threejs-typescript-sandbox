@@ -21,6 +21,7 @@ import { PickupObject } from '../gameobjects/pickupObject';
 import HealthBar from '../gameobjects/healthBar';
 import Headlights from '../gameobjects/fx/headLights';
 import SceneController from './sceneController';
+import { Player } from '../gameobjects/player';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -47,7 +48,6 @@ export default class GameScene extends THREE.Scene {
     private readonly keyDown = new Set<string>();
     private readonly keyUp = new Set<string>();
 
-    private blaster?: THREE.Group;
     private bulletMtl?: MTLLoader.MaterialCreator;
     private directionVector = new THREE.Vector3();
 
@@ -72,15 +72,21 @@ export default class GameScene extends THREE.Scene {
     cube2?: BoxObject;
     cylinder?: CylinderObject;
 
-    private allPlayers: GltfObject[] = [];
+    private allGltfPlayers: GltfObject[] = [];
 
-    vehiclePlayer1?: GltfObject;
-    vehiclePlayer2?: GltfObject;
-    vehiclePlayer3?: GltfObject;
-    vehiclePlayer4?: GltfObject;
+    gltfVehiclePlayer1?: GltfObject;
+    gltfVehiclePlayer2?: GltfObject;
+    gltfVehiclePlayer3?: GltfObject;
+    gltfVehiclePlayer4?: GltfObject;
 
     raycastVehicleObject?: RaycastVehicleObject;
-    rigidVehicleObject?: RigidVehicleObject;
+    //rigidVehicleObject?: RigidVehicleObject;
+
+    private allPlayers: Player[] = [];
+    player1: Player = new Player(this, "Ambulance");
+    player2: Player = new Player(this, "Taxi");
+    player3: Player = new Player(this, "Police");
+    player4: Player = new Player(this, "Trash Truck");
 
     private allRigidVehicleObjects: RigidVehicleObject[] = [];
 
@@ -90,9 +96,8 @@ export default class GameScene extends THREE.Scene {
 
     spotlight?: SpotlightObject;
 
-    healthBar: HealthBar = new HealthBar(this, 100);
-
-    headLights: Headlights = new Headlights(this);
+    //healthBar: HealthBar = new HealthBar(this, 100);
+    //headLights: Headlights = new Headlights(this);
 
     sceneController: SceneController;
 
@@ -114,63 +119,22 @@ export default class GameScene extends THREE.Scene {
         this.bulletMtl.preload();
 
         this.taxiModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/taxi.glb');
-        this.policeModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/police.glb');
-        this.ambulanceModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/ambulance.glb');
-        this.trashTruckModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/garbageTruck.glb');
+        this.taxiModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.taxiModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
+        this.policeModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/police.glb');        
+        this.policeModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.policeModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+                        
+        this.ambulanceModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/ambulance.glb');
         this.ambulanceModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.ambulanceModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
                 
-        // create 4 targets
-        const t1 = await this.createTarget(targetMtl);
-        t1.position.x = -1;
-        t1.position.z = -3;
-
-        const t2 = await this.createTarget(targetMtl);
-        t2.position.x = 1;
-        t2.position.z = -3;
-
-        const t3 = await this.createTarget(targetMtl);
-        t3.position.x = 2;
-        t3.position.z = -3;
-
-        const t4 = await this.createTarget(targetMtl);
-        t4.position.x = -2;
-        t4.position.z = -3;
-
-        this.add(t1, t2, t3, t4);
-        this.targets.push(t1, t2, t3, t4);
-        this.blaster = await this.createBlaster();
-        this.add(this.blaster);
-        this.blaster.position.z = -1;
-
-        // attach blaster to camera
-        //this.blaster.add(this.camera);
-        //this.camera.position.z = 1;
-        //this.camera.position.y = 0.5;
-
-        /*
-            // Create a slippery material (friction coefficient = 0.0)
-            var physicsMaterial = new CANNON.Material('physics')
-            const physics_physics = new CANNON.ContactMaterial(physicsMaterial, physicsMaterial, {
-            friction: 0.0,
-            restitution: 0.3,
-            });
-
-            this.world.addContactMaterial(physics_physics);
-
-            // Create the user collision sphere (attached to camera)
-            const radius = 1.3
-            var sphereShape = new CANNON.Sphere(radius)
-            var sphereBody = new CANNON.Body({ mass: 5, material: physicsMaterial })
-            sphereBody.addShape(sphereShape)
-            sphereBody.position.set(0, 5, 0);
-            sphereBody.linearDamping = 0.9;
-            this.world.addBody(sphereBody)
-        */
+        this.trashTruckModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/garbageTruck.glb');
+        this.trashTruckModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.trashTruckModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
         // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
-
 
         this.world.broadphase = new CANNON.SAPBroadphase(this.world);
 
@@ -189,74 +153,6 @@ export default class GameScene extends THREE.Scene {
             }
         );
         this.world.addContactMaterial(wheelGroundContactMaterial);
-
-        /*
-        const chassisShape = new CANNON.Box(new CANNON.Vec3(1, 0.5, 2));
-        const chassisBody = new CANNON.Body({ mass: 150 });
-        chassisBody.addShape(chassisShape);
-        chassisBody.position.set(0, 4, 0);
-        // this.help.addVisual(chassisBody, 'car');
-
-        const options = {
-            radius: 0.5,
-            directionLocal: new CANNON.Vec3(0, -1, 0),
-            suspensionStiffness: 30,
-            suspensionRestLength: 0.3,
-            frictionSlip: 5,
-            dampingRelaxation: 2.3,
-            dampingCompression: 4.4,
-            maxSuspensionForce: 100000,
-            rollInfluence: 0.01,
-            axleLocal: new CANNON.Vec3(-1, 0, 0),
-            chassisConnectionPointLocal: new CANNON.Vec3(1, 1, 0),
-            maxSuspensionTravel: 0.3,
-            customSlidingRotationalSpeed: -30,
-            useCustomSlidingRotationalSpeed: true
-        };
-
-        const vehicle = new CANNON.RaycastVehicle({
-            chassisBody: chassisBody,
-            indexRightAxis: 0,
-            indexUpAxis: 1,
-            indexForwardAxis: 2
-        });
-
-        options.chassisConnectionPointLocal.set(1, 0, -1);
-        vehicle.addWheel(options);
-        options.chassisConnectionPointLocal.set(-1, 0, -1);
-        vehicle.addWheel(options);
-        options.chassisConnectionPointLocal.set(1, 0, 1);
-        vehicle.addWheel(options);
-        options.chassisConnectionPointLocal.set(-1, 0, 1);
-        vehicle.addWheel(options);
-
-        vehicle.addToWorld(this.world);
-
-		var wheelBodies: CANNON.Body[] = [];    
-
-		vehicle.wheelInfos.forEach(wheel => {
-			const cylinderShape = new CANNON.Cylinder(wheel.radius, wheel.radius, wheel.radius / 2, 20);
-
-			const wheelBody = new CANNON.Body({ mass: 1, material: wheelMaterial });
-			const q = new CANNON.Quaternion();
-			q.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
-			wheelBody.addShape(cylinderShape, new CANNON.Vec3(), q);
-			wheelBodies.push(wheelBody);
-			//game.helper.addVisual(wheelBody, 'wheel');
-		});
-
-		// Update wheels
-		this.world.addEventListener('postStep', function(){
-			let index = 0;
-			vehicle.wheelInfos.forEach(wheel => {
-            	vehicle.updateWheelTransform(index);
-                const t = wheel.worldTransform;
-                wheelBodies[index].position.copy(t.position);
-                wheelBodies[index].quaternion.copy(t.quaternion);
-				index++; 
-			});
-		});        
-        */
 
         var objectMaterial = new CANNON.Material();
     
@@ -277,8 +173,9 @@ export default class GameScene extends THREE.Scene {
             this.world, objectMaterial);
 
       
+            
 
-        this.vehiclePlayer1 = new GltfObject(this,
+        this.gltfVehiclePlayer1 = new GltfObject(this,
             this.taxiModel,
             //'assets/kenney-vehicles/taxi.glb',
             new THREE.Vector3(2, 2, -2), // position
@@ -287,9 +184,9 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, -0.25, 0), // physics offset,
             this.world,
             objectMaterial);
-        this.allPlayers.push(this.vehiclePlayer1);
+        this.allGltfPlayers.push(this.gltfVehiclePlayer1);
 
-        this.vehiclePlayer2 = new GltfObject(this,
+        this.gltfVehiclePlayer2 = new GltfObject(this,
             this.policeModel,
             new THREE.Vector3(-2, 2, -2), // position
             new THREE.Vector3(0.5, 0.5, 0.5), // scale
@@ -297,9 +194,9 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, -0.25, 0), // physics offset,
             this.world,
             objectMaterial);
-        this.allPlayers.push(this.vehiclePlayer2);
+        this.allGltfPlayers.push(this.gltfVehiclePlayer2);
 
-        this.vehiclePlayer3 = new GltfObject(this,
+        this.gltfVehiclePlayer3 = new GltfObject(this,
             this.trashTruckModel,
             new THREE.Vector3(-6, 2, -2), // position
             new THREE.Vector3(0.5, 0.5, 0.5), // scale
@@ -307,9 +204,9 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, -0.5, 0), // physics offset,
             this.world,
             objectMaterial);
-        this.allPlayers.push(this.vehiclePlayer3);
+        this.allGltfPlayers.push(this.gltfVehiclePlayer3);
 
-        this.vehiclePlayer4 = new GltfObject(this,
+        this.gltfVehiclePlayer4 = new GltfObject(this,
             this.ambulanceModel,
             new THREE.Vector3(-3, 5, -2), // position
             new THREE.Vector3(0.5, 0.5, 0.5), // scale
@@ -317,7 +214,8 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, -0.5, 0), // physics offset,
             this.world,
             objectMaterial);
-        this.allPlayers.push(this.vehiclePlayer4);
+        this.allGltfPlayers.push(this.gltfVehiclePlayer4);
+        
 
         this.raycastVehicleObject = new RaycastVehicleObject(
             this,
@@ -326,7 +224,9 @@ export default class GameScene extends THREE.Scene {
             this.world,
             wheelMaterial);
 
-        this.rigidVehicleObject = new RigidVehicleObject(
+
+        // player1 currently assigned when GameScene is created
+        this.player1.rigidVehicleObject = new RigidVehicleObject(
             this,
             new THREE.Vector3(0, 4, 0),   // position
             this.world,            
@@ -342,6 +242,62 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
         );
+        this.allPlayers.push(this.player1);
+
+        this.player2.rigidVehicleObject = new RigidVehicleObject(
+            this,
+            new THREE.Vector3(5, 4, 5),   // position
+            this.world,            
+            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+            new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+            20,                            // chassis mass
+            wheelMaterial,
+            0.2,                           // wheel radius
+            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
+            2,                              // wheel mass
+            this.taxiModel,             // model            
+            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+            new THREE.Vector3(0, 0, 0) // model offset
+            //new THREE.Vector3(0, -0.35, 0) // model offset
+        );
+        this.allPlayers.push(this.player2);
+
+        this.player3.rigidVehicleObject = new RigidVehicleObject(
+            this,
+            new THREE.Vector3(-5, 4, -5),   // position
+            this.world,            
+            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+            new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+            20,                            // chassis mass
+            wheelMaterial,
+            0.2,                           // wheel radius
+            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
+            2,                              // wheel mass
+            this.policeModel,             // model            
+            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+            new THREE.Vector3(0, 0, 0) // model offset
+            //new THREE.Vector3(0, -0.35, 0) // model offset
+        );
+        this.allPlayers.push(this.player3);
+
+        this.player4.rigidVehicleObject = new RigidVehicleObject(
+            this,
+            new THREE.Vector3(-5, 4, 5),   // position
+            this.world,            
+            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+            new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+            20,                            // chassis mass
+            wheelMaterial,
+            0.2,                           // wheel radius
+            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
+            2,                              // wheel mass
+            this.trashTruckModel,             // model            
+            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+            new THREE.Vector3(0, 0, 0) // model offset
+            //new THREE.Vector3(0, -0.35, 0) // model offset
+        );
+        this.allPlayers.push(this.player4);
+
 
         //this.rigidVehicleObject.model?.add(this.camera);        
         this.camera.position.x = 0;
@@ -352,13 +308,10 @@ export default class GameScene extends THREE.Scene {
 		this.followCam.position.copy(this.camera.position);
 		this.add(this.followCam);   
         
-        this.rigidVehicleObject.model?.add(this.followCam);
+        this.player1.rigidVehicleObject.model?.add(this.followCam);
         this.followCam.position.set(5, 3, 0); // camera target offset related to car
-		//this.followCam.parent = this.rigidVehicleObject?.model;
 
-        //this.camera.lookAt
-
-        this.allRigidVehicleObjects.push(this.rigidVehicleObject);
+        this.allRigidVehicleObjects.push(this.player1.rigidVehicleObject);
 
         // bounding box to show shadows
         const cubeSize = 30;
@@ -515,15 +468,15 @@ export default class GameScene extends THREE.Scene {
 		}        
         if (event.key === '6')
 		{
-            this.healthBar.updateValue(50);
+            this.player1.healthBar.updateValue(50);
 		}      
         if (event.key === '7')
 		{
-            this.healthBar.updateValue(19);
+            this.player1.healthBar.updateValue(19);
 		}      
         if (event.key === 'Escape')
 		{
-			this.rigidVehicleObject?.resetPosition();
+			this.player1.rigidVehicleObject?.resetPosition();
 		}
 
         if(event.key === 'w') {
@@ -542,17 +495,17 @@ export default class GameScene extends THREE.Scene {
 
         // rigid body vehicle
         if(event.key === 'ArrowUp') {
-            this.rigidVehicleObject?.tryStopAccelerate();
+            this.player1.rigidVehicleObject?.tryStopAccelerate();
         }
         else if(event.key === 'ArrowDown') {
-            this.rigidVehicleObject?.tryStopReverse();
+            this.player1.rigidVehicleObject?.tryStopReverse();
         }
 
         if(event.key === 'ArrowLeft') {
-            this.rigidVehicleObject?.tryStopTurnLeft();
+            this.player1.rigidVehicleObject?.tryStopTurnLeft();
         }
         else if(event.key === 'ArrowRight') {
-            this.rigidVehicleObject?.tryStopTurnRight();
+            this.player1.rigidVehicleObject?.tryStopTurnRight();
         }
 	}
 
@@ -595,17 +548,17 @@ export default class GameScene extends THREE.Scene {
 
         // rigid body vehicle controls
         if(this.keyDown.has('arrowup')) {
-            this.rigidVehicleObject?.tryAccelerate();
+            this.player1.rigidVehicleObject?.tryAccelerate();
         }
         else if(this.keyDown.has('arrowdown')) {
-            this.rigidVehicleObject?.tryReverse();
+            this.player1.rigidVehicleObject?.tryReverse();
         }
 
         if(this.keyDown.has('arrowleft')) {
-            this.rigidVehicleObject?.tryTurnLeft();
+            this.player1.rigidVehicleObject?.tryTurnLeft();
         }
         else if(this.keyDown.has('arrowright')) {
-            this.rigidVehicleObject?.tryTurnRight();
+            this.player1.rigidVehicleObject?.tryTurnRight();
         }
         /*
         if(this.keyDown.has('w')) {
@@ -632,38 +585,16 @@ export default class GameScene extends THREE.Scene {
 
         if(this.followCam != null)
             this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.05);
-		if(this.rigidVehicleObject?.chassis.mesh != null)
-            this.camera.lookAt(this.rigidVehicleObject?.chassis.mesh?.position);
-    }
-
-    private async createTarget(mtl: MTLLoader.MaterialCreator) {
-        this.objLoader.setMaterials(mtl);
-
-        const modelRoot = await this.objLoader.loadAsync('assets/targetA.obj');
-        modelRoot.rotateY(Math.PI * 0.5);
-
-        return modelRoot;
-    }
-
-    private async createBlaster() {
-        const mtl = await this.mtlLoader.loadAsync('assets/blaster6.mtl');
-        mtl.preload();
-        
-        this.objLoader.setMaterials(mtl);
-        const modelRoot = await this.objLoader.loadAsync('assets/blasterG.obj');
-
-        return modelRoot;
+		if(this.player1.rigidVehicleObject?.chassis.mesh != null)
+            this.camera.lookAt(this.player1.rigidVehicleObject?.chassis.mesh?.position);
     }
 
     private async createProjectile(projectileType: ProjectileType, side: ProjectileLaunchLocation) {
         
-        if(!this.blaster) 
-            return;
-
-        if(!this.rigidVehicleObject || !this.rigidVehicleObject.model) return;
+        if(!this.player1.rigidVehicleObject || !this.player1.rigidVehicleObject.model) return;
 
         let forwardVector = new THREE.Vector3(-2, 0, 0);
-        forwardVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
+        forwardVector.applyQuaternion(this.player1.rigidVehicleObject.model.quaternion);
         let projectileLaunchVector = forwardVector; 
 
         let sideOffset = 0;
@@ -688,16 +619,14 @@ export default class GameScene extends THREE.Scene {
                 sideVector = new THREE.Vector3(0, 0, -sideOffset);
                 break;
         }
-        sideVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
+        sideVector.applyQuaternion(this.player1.rigidVehicleObject.model.quaternion);
 
         //axis-aligned bounding box
-        const aabb = new THREE.Box3().setFromObject(this.rigidVehicleObject.chassis.mesh);
-        //const aabb = new THREE.Box3().setFromObject(this.blaster);
+        const aabb = new THREE.Box3().setFromObject(this.player1.rigidVehicleObject.chassis.mesh);
         const size = aabb.getSize(new THREE.Vector3());
 
-        //const vec = this.blaster.position.clone();
         const vec = new THREE.Vector3();
-        this.rigidVehicleObject.model.getWorldPosition(vec) ;//this.rigidVehicleObject?.model?.position.clone();
+        this.player1.rigidVehicleObject.model.getWorldPosition(vec) ;//this.rigidVehicleObject?.model?.position.clone();
         
         if(vec == null) return;
         // distance off ground
@@ -718,7 +647,8 @@ export default class GameScene extends THREE.Scene {
 
         let newProjectile = this.projectileFactory.generateProjectile(
             this,
-            projectileType,
+            this.player1.playerId,
+            projectileType,            
             tempPosition,           // launchPosition relative to chassis
             projectileLaunchVector,            
             this.explosionTexture);      
@@ -808,7 +738,8 @@ export default class GameScene extends THREE.Scene {
             }
             else
             {
-                this.allPlayers.forEach(player => {
+                let playersToCheck = this.allPlayers.filter(x => x.playerId != projectile.playerId);
+                playersToCheck.forEach(player => {
                     if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
                         this.generateRandomExplosion(
                             projectile.projectileType,
@@ -841,7 +772,7 @@ export default class GameScene extends THREE.Scene {
 
     private checkPickupsForCollisionWithPlayers() {
         this.pickups.forEach(pickup => {
-            this.allPlayers.forEach(player => {
+            this.allGltfPlayers.forEach(player => {
 
                 let playerPosition = player.getPosition();
                 let pickupPosition = pickup.getPosition();
@@ -857,7 +788,7 @@ export default class GameScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
-        if(!this.rigidVehicleObject) return;
+        if(!this.player1.rigidVehicleObject) return;
 
         this.updateInput();  
         this.updateCamera();     
@@ -868,13 +799,13 @@ export default class GameScene extends THREE.Scene {
         this.sphere?.update();
         this.cylinder?.update();
 
-        this.vehiclePlayer1?.update();
-        this.vehiclePlayer2?.update();
-        this.vehiclePlayer3?.update();
-        this.vehiclePlayer4?.update();
+        this.gltfVehiclePlayer1?.update();
+        this.gltfVehiclePlayer2?.update();
+        this.gltfVehiclePlayer3?.update();
+        this.gltfVehiclePlayer4?.update();
 
         this.raycastVehicleObject?.update();    
-        this.rigidVehicleObject?.update();
+        //this.player1.rigidVehicleObject?.update();
 
         
         this.cubes.forEach(x => x.update());
@@ -895,10 +826,12 @@ export default class GameScene extends THREE.Scene {
         this.explosions.forEach(x => x.update());
         this.explosions = this.explosions.filter(x => x.isActive);
        
-        this.healthBar.update(this.allPlayers[0].getPosition());
+        //this.healthBar.update(this.allPlayers[0].getPosition());
 
-        if(this.allPlayers[0].body != null )
-        this.headLights.update(this.allPlayers[0].getPosition(), this.allPlayers[0].mesh.quaternion);
+        //if(this.allPlayers[0].body != null)
+        //this.headLights.update(this.allPlayers[0].getPosition(), this.allPlayers[0].mesh.quaternion);
+
+        this.allPlayers.forEach(x => x.update());
 
         this.stats.update();
     }

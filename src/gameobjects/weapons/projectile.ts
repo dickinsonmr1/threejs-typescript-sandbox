@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import { PointLightObject } from "../fx/pointLightObject";
 import { SphereObject } from "../shapes/sphereObject";
-import * as CANNON from 'cannon-es'
 import { ParticleEmitterObject, ParticleEmitterType } from "../fx/particleEmitterObject";
 import { ProjectileType } from "./projectileType";
+import { v4 as uuidv4 } from 'uuid';
 
 export enum ProjectileLaunchLocation {
     Left,
@@ -13,6 +13,7 @@ export enum ProjectileLaunchLocation {
 
 export class Projectile extends SphereObject {
 
+    public playerId: string;
     public projectileType: ProjectileType;
     private lightColor: THREE.Color;
     private particleColor: THREE.Color;
@@ -28,6 +29,7 @@ export class Projectile extends SphereObject {
     private expiryTimer: THREE.Clock;
 
     constructor(scene: THREE.Scene,
+        playerId: string,
         projectileType: ProjectileType,
         radius: number,
         position: THREE.Vector3,
@@ -40,6 +42,7 @@ export class Projectile extends SphereObject {
         
         super(scene, radius, position, particleColor.getHex(), meshMaterial);
         
+        this.playerId = playerId;
         this.projectileType = projectileType;
 
         this.lightColor = lightColor;

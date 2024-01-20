@@ -23,10 +23,16 @@ export default class Headlights {
             meshMaterial
         );
         
-        this.mesh1.position.set(-0.25, 0, -1.5);        
-        this.mesh1.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
-        this.mesh1.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+        // gltf
+        //this.mesh1.position.set(-0.25, 0, -1.5);        
+        //this.mesh1.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
+        //this.mesh1.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);        
 
+        // rigid body vehicle
+        this.mesh1.position.set(-2, 0, -0.3);        
+        this.mesh1.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.mesh1.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
+        this.mesh1.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);        
         this.group.add(this.mesh1);
 
         this.mesh2 = new THREE.Mesh(
@@ -34,10 +40,16 @@ export default class Headlights {
             meshMaterial
         );
         
-        this.mesh2.position.set(0.25, 0, -1.5);        
+        // gltf
+        //this.mesh2.position.set(0.25, 0, -1.5);        
+        //this.mesh2.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
+        //this.mesh2.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+
+        // rigid body vehicle
+        this.mesh2.position.set(-2, 0, 0.3);        
+        this.mesh2.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.mesh2.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
         this.mesh2.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
-
         this.group.add(this.mesh2);
 
         scene.add(this.group);

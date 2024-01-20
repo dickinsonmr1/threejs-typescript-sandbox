@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { Projectile } from "./projectile";
 import { ProjectileType } from "./projectileType";
+ import { v4 as uuidv4 } from 'uuid';
 
 export default class ProjectileFactory {
     constructor() {
@@ -8,6 +9,7 @@ export default class ProjectileFactory {
     }
 
     generateProjectile(scene: THREE.Scene,
+        playerId: string,
         type: ProjectileType,
         launchPosition: THREE.Vector3,
         launchVector: THREE.Vector3,
@@ -23,6 +25,7 @@ export default class ProjectileFactory {
         switch(type) {
             case ProjectileType.Bullet:
                 return new Projectile(scene,
+                    playerId,
                     ProjectileType.Bullet,
                     0.05,                   // radius
                     launchPosition,           // launchPosition relative to chassis
@@ -36,6 +39,7 @@ export default class ProjectileFactory {
                 break;
             case ProjectileType.Rocket:            
                 return new Projectile(scene,
+                    playerId,
                     ProjectileType.Rocket,
                     0.07,                   // radius
                     launchPosition,           // launchPosition relative to chassis
