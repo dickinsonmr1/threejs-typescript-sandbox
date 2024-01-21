@@ -54,10 +54,23 @@ export default class HealthBar {
 
     
     updateValue(value: number): void {
+
+        let oldValue = this.currentValue;
         this.currentValue = value;
 
-        this.healthBarSprite.scale.x = this.calculateCurrentHealthBarWidth();
+        if(this.currentValue <= 0) {
+            
+            this.healthBarSprite.visible = false;
+            this.healthBarSpriteOutline.visible = false;
+            return;
+        }
+        else if(this.currentValue > 0 && oldValue <= 0) {
+            this.healthBarSprite.visible = true;
+            this.healthBarSpriteOutline.visible = true;
+        };
 
+        this.healthBarSprite.scale.x =  this.calculateCurrentHealthBarWidth();
+        
         if(this.currentValue > 0.5 * this.maxValue) {
             this.healthBarSprite.material.color.set(new THREE.Color('green'));
         }

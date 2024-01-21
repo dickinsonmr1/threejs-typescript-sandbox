@@ -7,6 +7,13 @@ import Headlights from "./fx/headLights";
 import * as THREE from "three";
 import { v4 as uuidv4 } from 'uuid';
 
+
+export enum PlayerState {
+    Alive,
+    Dead,
+    Respawning
+}
+
 export class Player {
     // TODO: implement
     /**
@@ -17,6 +24,11 @@ export class Player {
     public playerName: string;
     public playerId: string;
     maxHealth: number = 100;
+    currentHealth: number;
+
+    static RespawnTimeinMs: number = 3000;
+
+    playerState: PlayerState = PlayerState.Alive;
 
     healthBar: HealthBar;
     headLights: Headlights;
@@ -28,6 +40,8 @@ export class Player {
 
         this.playerId = uuidv4();
         this.healthBar = new HealthBar(scene, this.maxHealth);
+
+        this.currentHealth = this.maxHealth;
 
         this.headLights = new Headlights(scene);
         //super();
@@ -50,6 +64,22 @@ export class Player {
     }
 
     update(): void {
+
+        if(this.playerState == PlayerState.Dead)
+            return; 
+
+        if(this.playerState == PlayerState.Respawning)
+            this.tryRespawn();
+        
+            /*
+            if(this.deadUntilRespawnTimer.running) {
+
+            if(this.deadUntilRespawnTimer.elapsedTime >= 3)
+                this.tryRespawn();
+            else
+                return;
+        }     
+        */   
 
         if(!this.rigidVehicleObject?.chassis?.body?.position) return;
 
@@ -96,7 +126,32 @@ export class Player {
     }
 
     tryDamage(projectileType: ProjectileType, damageLocation: THREE.Vector3): void {
+        
+        if(projectileType == ProjectileType.Bullet)
+            this.currentHealth -= 5;
+        else if(projectileType == ProjectileType.Rocket)
+            this.currentHealth -= 20;
 
+        this.healthBar.updateValue(this.currentHealth);
+
+        if(this.currentHealth <= 0)
+            this.tryKill();
+    }
+    
+    tryKill() {
+
+        if(this.playerState == PlayerState.Alive) {
+            this.playerState = PlayerState.Dead;
+
+            setTimeout(() => {
+                this.playerState = PlayerState.Respawning
+            }, Player.RespawnTimeinMs);
+        }
+    }
+
+    tryRespawn() {
+        this.refillHealth();
+        this.playerState = PlayerState.Alive;
     }
 
     tryFirePrimaryWeapon(): void {
@@ -130,7 +185,8 @@ export class Player {
     }
 
     refillHealth(): void {
-        this.healthBar.updateValue(this.maxHealth);
+        this.currentHealth = this.maxHealth;
+        this.healthBar.updateValue(this.currentHealth);
     }
 
     refillShield(): void {

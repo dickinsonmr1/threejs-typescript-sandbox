@@ -749,6 +749,7 @@ export default class GameScene extends THREE.Scene {
                         );
                         projectile.kill();
                         this.remove(projectile.mesh);
+                        player.tryDamage(projectile.projectileType, projectile.getPosition());
                     }
                 });
 
