@@ -6,6 +6,8 @@ import { Utility } from "../utility";
 import Headlights from "./fx/headLights";
 import * as THREE from "three";
 import { v4 as uuidv4 } from 'uuid';
+import { FireObject } from "./fx/fireObject";
+import GameScene from "../scenes/gameScene";
 
 
 export enum PlayerState {
@@ -20,6 +22,7 @@ export class Player {
      *
      */
 
+    scene: THREE.Scene;
     //public playerId: uuidv4;
     public playerName: string;
     public playerId: string;
@@ -35,8 +38,12 @@ export class Player {
     
     rigidVehicleObject?: RigidVehicleObject;
 
+    fireObjects: FireObject[] = [];
+
     constructor(scene: THREE.Scene,
         playerName: string) {
+
+        this.scene = scene;
 
         this.playerId = uuidv4();
         this.healthBar = new HealthBar(scene, this.maxHealth);
@@ -65,9 +72,12 @@ export class Player {
 
     update(): void {
 
-        if(this.playerState == PlayerState.Dead)
-            return; 
+        this.fireObjects.forEach(x => x.update());
 
+        if(this.playerState == PlayerState.Dead) {
+            return; 
+        }
+            
         if(this.playerState == PlayerState.Respawning)
             this.tryRespawn();
         
@@ -143,6 +153,24 @@ export class Player {
         if(this.playerState == PlayerState.Alive) {
             this.playerState = PlayerState.Dead;
 
+
+            let scene = <GameScene>this.scene;
+            
+            this.headLights.group.visible = false;
+
+            if(!scene.explosionTexture) return;
+
+            let deathFire = new FireObject(
+                this.scene,
+                scene.explosionTexture,
+                new THREE.Color('yellow'),
+                new THREE.Color('orange'),
+                this.getPosition(),
+                10
+            );
+
+            this.fireObjects.push(deathFire);
+
             setTimeout(() => {
                 this.playerState = PlayerState.Respawning
             }, Player.RespawnTimeinMs);
@@ -152,6 +180,9 @@ export class Player {
     tryRespawn() {
         this.refillHealth();
         this.playerState = PlayerState.Alive;
+
+
+        this.headLights.group.visible = true;
     }
 
     tryFirePrimaryWeapon(): void {

@@ -61,7 +61,7 @@ export default class GameScene extends THREE.Scene {
     private projectiles: Projectile[] = [];
 
     private explosions: ExplosionObject[] = [];
-    private explosionTexture: THREE.Texture | undefined;
+    public explosionTexture: THREE.Texture | undefined;
 
     world: CANNON.World = new CANNON.World({
         gravity: new CANNON.Vec3(0, -9.81, 0)
