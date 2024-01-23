@@ -1,7 +1,15 @@
 import * as THREE from "three";
 import { PointLightObject } from "./pointLightObject";
 
-export class FireObject {
+export class FlamethrowerEmitter {
+
+
+    colors = [
+        new THREE.Color(0xff0000),
+        new THREE.Color(0xffff00),
+        new THREE.Color(0x00ff00),
+        new THREE.Color(0x0000ff)
+      ];
 
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
@@ -67,21 +75,19 @@ export class FireObject {
             let sprite = new THREE.Sprite(particleMaterial);
             sprite.material.blending = THREE.AdditiveBlending;
             
-            sprite.userData.velocity = new THREE.Vector3(
-                0, //Math.random() * 0.2 - 0.1, //this.velocity - this.velocity / 2,
-                Math.random() * this.velocity - this.velocity / 2,
-                0, //Math.random() * 0.2 - 0.1, //this.velocity - this.velocity / 2
-            );
+            sprite.userData.velocity = new THREE.Vector3(0, 0, 0.1);
+                
             sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
 
-            sprite.material.color = this.particleColor;
+            sprite.material.color = new THREE.Color('yellow');//  this.particleColor.lerp(new THREE.Color('red'), 0.05);
 
             sprite.material.opacity = Math.random() * 0.2 + 0.8;
 
             let size = Math.random() * 0.1 + 0.5;
             sprite.scale.set(size, size, size);
-            sprite.position.x += Math.random() * 0.5 - 0.25;
-            sprite.position.z += Math.random() * 0.5 - 0.25;
+            sprite.position.x += Math.random() * 0.1 - 0.05;
+            sprite.position.y += Math.random() * 0.1 - 0.05;
+            sprite.position.z += Math.random() * 0.1 - 0.05;
             sprite.rotation.setFromVector3(new THREE.Vector3(
                 Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI,));
 
@@ -106,9 +112,14 @@ export class FireObject {
 
             item.position.add(child.userData.velocity);
             item.material.opacity -= 0.03;
-            item.scale.x *= 0.95;
-            item.scale.y *= 0.95;
-            item.scale.z *= 0.95;
+            item.scale.x *= 1.05;
+            item.scale.y *= 1.05;
+            item.scale.z *= 1.05;
+            
+            const color1 = item.material.color;
+            item.material.color.copy(color1);            
+            item.material.color.lerp(new THREE.Color('red'), 0.1);
+            //item.material.color = item.material.color.lerpColors(new THREE.Color('yellow'), new THREE.Color('red'), 0.1);
         });
 
         this.particleGroup.children = this.particleGroup.children
@@ -120,6 +131,7 @@ export class FireObject {
         //if(this.pointLightObject && this.pointLightObject.pointLight)
             //this.pointLightObject.pointLight.intensity *= 0.95;
 
+        this.particleColor.copy(this.particleColor).lerp(new THREE.Color('red'), 0.1);
         if(this.particleGroup.children.length === 0) {
             this.isActive = false;
             //this.pointLightObject?.remove();
@@ -128,6 +140,7 @@ export class FireObject {
             //this.pointLightObject?.update();
         }
     }
+    // https://jsfiddle.net/rnuL051z/
 
     stop() {
         // todo: implement

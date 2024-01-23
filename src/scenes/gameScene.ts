@@ -22,6 +22,7 @@ import HealthBar from '../gameobjects/healthBar';
 import Headlights from '../gameobjects/fx/headLights';
 import SceneController from './sceneController';
 import { Player } from '../gameobjects/player';
+import { FlamethrowerEmitter } from '../gameobjects/fx/flamethrowerEmitter';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -95,6 +96,8 @@ export default class GameScene extends THREE.Scene {
     sphere?: SphereObject;
 
     spotlight?: SpotlightObject;
+
+    flamethrowerEmitter?: FlamethrowerEmitter;
 
     //healthBar: HealthBar = new HealthBar(this, 100);
     //headLights: Headlights = new Headlights(this);
@@ -415,7 +418,13 @@ export default class GameScene extends THREE.Scene {
             } 
         );
 
-       
+        this.flamethrowerEmitter = new FlamethrowerEmitter(this,
+            this.explosionTexture,
+            new THREE.Color('yellow'),
+            new THREE.Color('orange'),
+            new THREE.Vector3(0, 1, 0),
+            10
+        );
 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -826,6 +835,8 @@ export default class GameScene extends THREE.Scene {
 
         this.explosions.forEach(x => x.update());
         this.explosions = this.explosions.filter(x => x.isActive);
+
+        this.flamethrowerEmitter?.update();
        
         //this.healthBar.update(this.allPlayers[0].getPosition());
 
