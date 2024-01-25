@@ -74,7 +74,7 @@ export class FireObject {
             );
             sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
 
-            sprite.material.color = this.particleColor;
+            sprite.material.color =  new THREE.Color('white'); //this.particleColor;
 
             sprite.material.opacity = Math.random() * 0.2 + 0.8;
 
@@ -109,6 +109,19 @@ export class FireObject {
             item.scale.x *= 0.95;
             item.scale.y *= 0.95;
             item.scale.z *= 0.95;
+
+            const color1 = item.material.color;
+            item.material.color.copy(color1);      
+            
+            //THREE.MathUtils.lerp
+            if(item.material.opacity < 0.98 && item.material.opacity >= 0.80)      
+                item.material.color.lerp(new THREE.Color('yellow'), 0.5);
+            else if(item.material.opacity < 0.80 && item.material.opacity >= 0.50)      
+                item.material.color.lerp(new THREE.Color('orange'), 0.5);
+            else if(item.material.opacity < 0.50)
+                item.material.color.lerp(new THREE.Color('red'), 0.5);
+
+            //todo: investigate: THREE.MathUtils.lerp
         });
 
         this.particleGroup.children = this.particleGroup.children

@@ -423,7 +423,7 @@ export default class GameScene extends THREE.Scene {
             new THREE.Color('yellow'),
             new THREE.Color('orange'),
             new THREE.Vector3(0, 1, 0),
-            10
+            5
         );
 
         document.addEventListener('keydown', this.handleKeyDown);
@@ -568,6 +568,15 @@ export default class GameScene extends THREE.Scene {
         }
         else if(this.keyDown.has('arrowright')) {
             this.player1.rigidVehicleObject?.tryTurnRight();
+        }
+        
+        if (this.keyDown.has('z')) {
+            this.flamethrowerEmitter?.setPosition(this.player1.getPosition());
+            if(this.player1.rigidVehicleObject && this.player1.rigidVehicleObject.model) {                
+                this.flamethrowerEmitter?.setQuaternion(this.player1.rigidVehicleObject.model.quaternion);
+            }
+        
+            this.flamethrowerEmitter?.emitParticles();
         }
         /*
         if(this.keyDown.has('w')) {

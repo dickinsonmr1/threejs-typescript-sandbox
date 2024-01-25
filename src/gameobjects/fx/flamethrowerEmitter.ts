@@ -3,6 +3,7 @@ import { PointLightObject } from "./pointLightObject";
 
 export class FlamethrowerEmitter {
 
+    scene: THREE.Scene;
 
     colors = [
         new THREE.Color(0xff0000),
@@ -12,6 +13,8 @@ export class FlamethrowerEmitter {
       ];
 
     particleGroup: THREE.Group;
+    sprites: THREE.Sprite[] = [];
+
     particleTexture: THREE.Texture;
     lightColor: THREE.Color;
     particleColor: THREE.Color;
@@ -32,6 +35,8 @@ export class FlamethrowerEmitter {
         particleColor: THREE.Color,
         position: THREE.Vector3,
         numberParticles: number) {
+
+        this.scene = scene;
                     
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
@@ -75,7 +80,10 @@ export class FlamethrowerEmitter {
             let sprite = new THREE.Sprite(particleMaterial);
             sprite.material.blending = THREE.AdditiveBlending;
             
-            sprite.userData.velocity = new THREE.Vector3(0, 0, 0.1);
+            let forwardVector = new THREE.Vector3(-0.2, 0, 0);
+            forwardVector.applyQuaternion(this.particleGroup.quaternion);
+
+            sprite.userData.velocity = forwardVector;//new THREE.Vector3(-0.1, 0, 0);
                 
             sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
 
@@ -85,13 +93,19 @@ export class FlamethrowerEmitter {
 
             let size = Math.random() * 0.1 + 0.5;
             sprite.scale.set(size, size, size);
+
+            sprite.position.set(this.particleGroup.position.x, this.particleGroup.position.y, this.particleGroup.position.z);
+            //sprite.quaternion.copy(this.particleGroup.quaternion);
+                
             sprite.position.x += Math.random() * 0.1 - 0.05;
             sprite.position.y += Math.random() * 0.1 - 0.05;
             sprite.position.z += Math.random() * 0.1 - 0.05;
             sprite.rotation.setFromVector3(new THREE.Vector3(
-                Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI,));
+                Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI));
 
-            this.particleGroup.add(sprite);
+            this.sprites.push(sprite);
+            this.scene.add(sprite);
+            //this.particleGroup.add(sprite);
         }
 
     }
@@ -104,10 +118,23 @@ export class FlamethrowerEmitter {
         this.particleGroup.position.set(position.x, position.y, position.z);
     }
 
-    update() {
-        this.addParticles();
+    setQuaternion(quaternion: THREE.Quaternion) {
 
-        this.particleGroup.children.forEach((child) => {
+        //let forwardVector = new THREE.Vector3(-2, 0, 0);
+        //forwardVector.applyQuaternion(quaternion);
+
+        this.particleGroup.quaternion.copy(quaternion);
+    }
+
+    emitParticles() {
+        this.addParticles();
+    }
+
+    update() {
+
+        
+        //this.particleGroup.children.forEach((child) => {
+        this.sprites.forEach((child) => {
             let item = <THREE.Sprite>child;
 
             item.position.add(child.userData.velocity);
@@ -119,10 +146,17 @@ export class FlamethrowerEmitter {
             const color1 = item.material.color;
             item.material.color.copy(color1);            
             item.material.color.lerp(new THREE.Color('red'), 0.1);
+
+            //const alpha1 = item.material.opacity;
+            //item.material.opacitycopy(alpha1);
+            //item.material.opacity.lerp(0, 0.03);
+            //THREE.linear
+
             //item.material.color = item.material.color.lerpColors(new THREE.Color('yellow'), new THREE.Color('red'), 0.1);
         });
 
-        this.particleGroup.children = this.particleGroup.children
+        //this.particleGroup.children = this.particleGroup.children
+        this.sprites = this.sprites
             .filter((child) => {
                 let item = <THREE.Sprite>child;
                 return item.material.opacity > 0.0;
@@ -132,7 +166,8 @@ export class FlamethrowerEmitter {
             //this.pointLightObject.pointLight.intensity *= 0.95;
 
         this.particleColor.copy(this.particleColor).lerp(new THREE.Color('red'), 0.1);
-        if(this.particleGroup.children.length === 0) {
+        //if(this.particleGroup.children.length === 0) {
+        if(this.sprites.length === 0) {
             this.isActive = false;
             //this.pointLightObject?.remove();
         } 
