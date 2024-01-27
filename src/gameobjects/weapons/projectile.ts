@@ -24,6 +24,7 @@ export class Projectile extends SphereObject {
     particleEmitterObject!: ParticleEmitterObject;
     
 	private readonly velocity = new THREE.Vector3();    
+
 	private isDead = false;
 
     private maxLifespanInSeconds: number = 3;
@@ -87,7 +88,7 @@ export class Projectile extends SphereObject {
             };
         }
         
-        setTimeout(() => {
+        setTimeout(() => {            
             this.isDead = true
         }, 3000);
         
@@ -119,13 +120,13 @@ export class Projectile extends SphereObject {
         //this.body?.velocity.set(x, y, z);
 	}
 
-	kill() {
+	kill(): void {
 
         super.kill();
         this.isDead = true;
 
         if(this.particleEmitterObject != null) {
-            this.particleEmitterObject.kill();
+            this.particleEmitterObject.stopEmitter();
         }
         if(this.pointLightObject != null) {
             this.pointLightObject.kill();
@@ -134,8 +135,6 @@ export class Projectile extends SphereObject {
 
         this.scene.remove(this.mesh);
         this.scene.remove(this.group);        
-        //this.group.children.forEach(x => this.group.remove(x));
-        //this.group.removeFromParent();
 	}
 
     update() {
@@ -147,7 +146,6 @@ export class Projectile extends SphereObject {
             this.kill();
             return;
         }
-
         
         //if(this.expiryTimer.getElapsedTime() > this.maxLifespanInSeconds) {
             //this.kill();
@@ -160,8 +158,9 @@ export class Projectile extends SphereObject {
 
         this.pointLightObject?.setPosition(this.group.position);
 
-        if(this.particleEmitterObject != null) {            
-            this.particleEmitterObject.update(this.getPosition());
+        if(this.particleEmitterObject != null) {     
+            this.particleEmitterObject.setEmitPosition(this.getPosition())       
+            //this.particleEmitterObject.update(this.getPosition());
         }
     }
 }

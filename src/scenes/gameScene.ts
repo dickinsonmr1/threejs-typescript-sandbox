@@ -23,6 +23,7 @@ import Headlights from '../gameobjects/fx/headLights';
 import SceneController from './sceneController';
 import { Player } from '../gameobjects/player';
 import { FlamethrowerEmitter } from '../gameobjects/fx/flamethrowerEmitter';
+import { ParticleEmitterObject } from '../gameobjects/fx/particleEmitterObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -60,6 +61,7 @@ export default class GameScene extends THREE.Scene {
     private projectileFactory: ProjectileFactory = new ProjectileFactory();
     private fireLeft: boolean = false;
     private projectiles: Projectile[] = [];
+    private particleEmitters: ParticleEmitterObject[] = [];
 
     private explosions: ExplosionObject[] = [];
     public explosionTexture: THREE.Texture | undefined;
@@ -704,6 +706,9 @@ export default class GameScene extends THREE.Scene {
             this.explosionTexture);      
 
         this.projectiles.push(newProjectile);
+
+        if(newProjectile.particleEmitterObject != null)
+            this.particleEmitters.push(newProjectile.particleEmitterObject);
     }
 
     private async generateRandomCube() {
@@ -867,6 +872,7 @@ export default class GameScene extends THREE.Scene {
         this.pickups.forEach(x => x.update());
 
         this.projectiles.forEach(x => x.update());
+        this.particleEmitters.forEach(x => x.update());
         this.checkProjectilesForCollision();
         this.checkPickupsForCollisionWithPlayers();
 

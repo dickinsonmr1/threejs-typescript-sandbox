@@ -14,10 +14,15 @@ export class ParticleEmitterObject {
     particleTexture: THREE.Texture;
     color: THREE.Color;
     position: THREE.Vector3;
+    emitPosition: THREE.Vector3;
+
+
     numberParticles: number;
     maxParticles: number;
     velocity: number;
-    isActive: boolean;
+
+    isDead: boolean = false;
+    isEmitting: boolean = true;
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
@@ -35,12 +40,12 @@ export class ParticleEmitterObject {
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
         this.color = color;
-        this.position = position;
+        //this.position = position;
         this.numberParticles = numberParticles;
         this.maxParticles = maxParticles;
         this.velocity = velocity;
 
-        this.isActive = true;
+        this.isEmitting = true;
        
         this.particleGroup.position.set(0,0,0);//position.x, position.y, position.z);
 
@@ -62,7 +67,8 @@ export class ParticleEmitterObject {
         return this.color;
     }
 
-    setPosition(position: THREE.Vector3) {
+    setEmitPosition(position: THREE.Vector3) {
+        this.emitPosition = position;
     }
 
     private emitParticles(emitPosition: THREE.Vector3, color: THREE.Color) {
@@ -104,9 +110,24 @@ export class ParticleEmitterObject {
         }
     }
 
-    update(emitPosition: THREE.Vector3) {
+    stopEmitter() {
+        this.isEmitting = false;
 
-        this.emitParticles(emitPosition, this.color);
+        setTimeout(() => {
+            this.isDead = true;
+        }, 1000);
+    }
+
+    update() {
+
+        if(this.isDead) {
+            this.kill();
+            return;
+        }
+
+        if(this.isEmitting) {
+            this.emitParticles(this.emitPosition, this.color);
+        }
 
         this.particleGroup.children.forEach((child) => {
             let item = <THREE.Sprite>child;
@@ -130,8 +151,8 @@ export class ParticleEmitterObject {
         //} 
     }
 
-    kill() {
-        this.isActive = false;
+    private kill(): void {
+        this.isDead = true;
 
         this.particleGroup.children = this.particleGroup.children
         .filter((child) => {
