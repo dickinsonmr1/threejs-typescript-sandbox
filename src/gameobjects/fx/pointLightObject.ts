@@ -42,16 +42,18 @@ export class PointLightObject {
         //this.pointLightHelper?.update();
     }
 
-    remove() {
+    kill() {
 
         if(this.pointLight != null) {
             this.pointLight.visible = false;
-            this.pointLight.remove();
+            //this.pointLight.remove();
+            this.group.remove(this.pointLight);
         }
 
         if(this.pointLightHelper != null) {
             this.pointLightHelper.visible = false;
-            this.pointLightHelper.remove(); 
+            //this.pointLightHelper.remove(); 
+            this.group.remove(this.pointLightHelper);
         }
     }
 }

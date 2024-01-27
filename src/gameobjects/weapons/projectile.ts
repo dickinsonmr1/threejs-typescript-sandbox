@@ -116,15 +116,17 @@ export class Projectile extends SphereObject {
 	}
 
 	kill() {
+
+        super.kill();
         this.isDead = true;
-		this.pointLightObject?.remove();
+
         if(this.particleEmitterObject != null) {
             this.particleEmitterObject.kill();
         }
-        if(this.particleEmitterObject != null) {
-            this.particleEmitterObject.kill();
+        if(this.pointLightObject != null) {
+            this.pointLightObject.kill();
         }
-        this.group.removeFromParent();
+        //this.group.removeFromParent();
 	}
 
     update() {

@@ -80,7 +80,7 @@ export class FlamethrowerEmitter {
             let sprite = new THREE.Sprite(particleMaterial);
             sprite.material.blending = THREE.AdditiveBlending;
             
-            let forwardVector = new THREE.Vector3(-0.2, 0, 0);
+            let forwardVector = new THREE.Vector3(-0.1, 0, 0);
             forwardVector.applyQuaternion(this.particleGroup.quaternion);
 
             sprite.userData.velocity = forwardVector;//new THREE.Vector3(-0.1, 0, 0);
@@ -104,6 +104,8 @@ export class FlamethrowerEmitter {
                 Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI));
 
             this.sprites.push(sprite);
+
+            // adding the sprite directly to the scene because each particle is independent of a parent group
             this.scene.add(sprite);
             //this.particleGroup.add(sprite);
         }
@@ -147,6 +149,12 @@ export class FlamethrowerEmitter {
             item.material.color.copy(color1);            
             item.material.color.lerp(new THREE.Color('red'), 0.1);
 
+            if(item.material.opacity <= 0) {
+                this.scene.remove(item);
+                //item.material.dispose();
+                //item.geometry.dispose();                
+            }
+
             //const alpha1 = item.material.opacity;
             //item.material.opacitycopy(alpha1);
             //item.material.opacity.lerp(0, 0.03);
@@ -169,6 +177,7 @@ export class FlamethrowerEmitter {
         //if(this.particleGroup.children.length === 0) {
         if(this.sprites.length === 0) {
             this.isActive = false;
+
             //this.pointLightObject?.remove();
         } 
         else {

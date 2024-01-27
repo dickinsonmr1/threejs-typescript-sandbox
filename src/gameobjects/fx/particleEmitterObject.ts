@@ -134,7 +134,8 @@ export class ParticleEmitterObject {
         this.particleGroup.children = this.particleGroup.children
         .filter((child) => {
             let item = <THREE.Sprite>child;
-            item.remove();
+            //item.remove();
+            this.particleGroup.remove(item);
         });   
     }
 }

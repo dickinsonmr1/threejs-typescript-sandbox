@@ -70,6 +70,10 @@ export class SphereObject {
         return this.group.position;
     }
 
+    kill() {
+        this.group.remove(this.mesh);
+    }
+
     update() {
         if(this.body != null) {
             this.group.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
