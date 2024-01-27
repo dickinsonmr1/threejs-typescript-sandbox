@@ -71,7 +71,8 @@ export class SphereObject {
     }
 
     kill() {
-        this.group.remove(this.mesh);
+        this.group.children.forEach( x => this.group.remove(x));
+        //this.group.remove(this.mesh);
     }
 
     update() {

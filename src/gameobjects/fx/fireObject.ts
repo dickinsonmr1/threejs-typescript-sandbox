@@ -3,6 +3,7 @@ import { PointLightObject } from "./pointLightObject";
 
 export class FireObject {
 
+    scene: THREE.Scene;
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
     lightColor: THREE.Color;
@@ -25,6 +26,7 @@ export class FireObject {
         position: THREE.Vector3,
         numberParticles: number) {
                     
+        this.scene = scene;
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
         this.lightColor = lightColor;
@@ -53,7 +55,7 @@ export class FireObject {
        //if(this.pointLightObject.pointLight)
             //this.particleGroup.add(this.pointLightObject.pointLight)
 
-        scene.add(this.particleGroup);
+        scene.add(this.particleGroup);        
     }
 
 

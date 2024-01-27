@@ -8,6 +8,7 @@ export enum ParticleEmitterType {
 
 export class ParticleEmitterObject {
 
+    scene: THREE.Scene;
     type: ParticleEmitterType;
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
@@ -29,6 +30,7 @@ export class ParticleEmitterObject {
         maxParticles: number,
         velocity: number) {
                     
+        this.scene = scene;
         this.type = type;
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
@@ -49,7 +51,7 @@ export class ParticleEmitterObject {
             Math.random() * 10 - 5);
         */
 
-        scene.add(this.particleGroup);
+        this.scene.add(this.particleGroup);
     }
 
     getPosition() {
@@ -137,5 +139,7 @@ export class ParticleEmitterObject {
             //item.remove();
             this.particleGroup.remove(item);
         });   
+
+        this.scene.remove(this.particleGroup);
     }
 }

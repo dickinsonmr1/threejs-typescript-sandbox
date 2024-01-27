@@ -3,6 +3,7 @@ import { PointLightObject } from "./pointLightObject";
 
 export class ExplosionObject {
 
+    scene: THREE.Scene;
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
     lightColor: THREE.Color;
@@ -24,6 +25,7 @@ export class ExplosionObject {
         numberParticles: number,
         velocity: number) {
                     
+        this.scene = scene;
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
         this.lightColor = lightColor;
@@ -73,7 +75,7 @@ export class ExplosionObject {
        //if(this.pointLightObject.pointLight)
             //this.particleGroup.add(this.pointLightObject.pointLight)
 
-        scene.add(this.particleGroup);
+        this.scene.add(this.particleGroup);
     }
 
     getPosition() {
@@ -103,7 +105,8 @@ export class ExplosionObject {
 
         if(this.particleGroup.children.length === 0) {
             this.isActive = false;
-            this.pointLightObject?.remove();
+            this.pointLightObject?.kill();
+            this.scene.remove(this.particleGroup);
         } 
         else {
             this.pointLightObject?.update();

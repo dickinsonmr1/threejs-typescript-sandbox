@@ -2,6 +2,7 @@ import * as THREE from "three";
 
 export class PointLightObject {
 
+    scene: THREE.Scene;
     pointLight?: THREE.PointLight;
     pointLightHelper?: THREE.PointLightHelper;
     group: THREE.Group = new THREE.Group;
@@ -12,6 +13,8 @@ export class PointLightObject {
         distance: number,
         decay: number,
         position: THREE.Vector3) {
+
+        this.scene = scene;
 
         this.pointLight = new THREE.PointLight(color, intensity, distance, decay);
         //this.pointLight.position.set(0,0,0);
@@ -46,14 +49,14 @@ export class PointLightObject {
 
         if(this.pointLight != null) {
             this.pointLight.visible = false;
-            //this.pointLight.remove();
             this.group.remove(this.pointLight);
         }
 
         if(this.pointLightHelper != null) {
             this.pointLightHelper.visible = false;
-            //this.pointLightHelper.remove(); 
-            this.group.remove(this.pointLightHelper);
+            this.scene.remove(this.pointLightHelper);
         }
+
+        this.scene.remove(this.group);
     }
 }

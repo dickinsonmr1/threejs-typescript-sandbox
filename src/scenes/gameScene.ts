@@ -784,6 +784,7 @@ export default class GameScene extends THREE.Scene {
         this.projectiles.forEach(projectile => {
             if(projectile.shouldRemove) {
                 projectile.kill();
+                projectile.group.children.forEach(x => this.remove(x));
                 this.remove(projectile.group);      
             }
             else
@@ -819,6 +820,8 @@ export default class GameScene extends THREE.Scene {
             };
             
         });
+
+        this.projectiles = this.projectiles.filter(x => !x.shouldRemove);
     }
 
     private checkPickupsForCollisionWithPlayers() {
