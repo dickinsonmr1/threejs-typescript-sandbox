@@ -17,6 +17,9 @@ export class FireObject {
 
     pointLightObject?: PointLightObject;
 
+    isEmitting: boolean = true;
+    isDead: boolean = false;
+
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
     constructor(scene: THREE.Scene,
@@ -55,7 +58,11 @@ export class FireObject {
        //if(this.pointLightObject.pointLight)
             //this.particleGroup.add(this.pointLightObject.pointLight)
 
-        scene.add(this.particleGroup);        
+        scene.add(this.particleGroup);     
+        
+        setTimeout(() => {
+            this.isEmitting = false
+        }, 3000);        
     }
 
 
@@ -100,9 +107,27 @@ export class FireObject {
         this.particleGroup.position.set(position.x, position.y, position.z);
     }
 
-    update() {
-        this.addParticles();
+    kill() {
+        this.scene.remove(this.particleGroup);
+    }
 
+    update() {
+
+        if(this.isDead) {
+            this.kill();
+            return;
+        }
+
+        if(!this.isEmitting) {
+            setTimeout(() => {
+                this.isDead = true
+            }, 1000);        
+        }
+
+        if(this.isEmitting) {
+            this.addParticles();
+        }
+        
         this.particleGroup.children.forEach((child) => {
             let item = <THREE.Sprite>child;
 
