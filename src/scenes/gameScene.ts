@@ -63,12 +63,10 @@ export default class GameScene extends THREE.Scene {
     private projectileFactory: ProjectileFactory = new ProjectileFactory();
     private fireLeft: boolean = false;
     private projectiles: Projectile[] = [];
-    private particleEmitters: ParticleTrailObject[] = [];
 
-    private explosions: ParticleEmitter[] = [];
+    private particleEmitters: ParticleEmitter[] = [];
     public explosionTexture: THREE.Texture | undefined;
 
-    private smokeObjects: SmokeObject[] = []
 
     world: CANNON.World = new CANNON.World({
         gravity: new CANNON.Vec3(0, -9.81, 0)
@@ -464,7 +462,7 @@ export default class GameScene extends THREE.Scene {
             5
         );
 
-        this.smokeObjects.push(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
+        this.particleEmitters.push(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -779,7 +777,7 @@ export default class GameScene extends THREE.Scene {
                     break;
             }
 
-            this.explosions.push(new VehicleExplosionObject(
+            this.particleEmitters.push(new VehicleExplosionObject(
                 this,
                 this.explosionTexture,
                 lightColor,
@@ -879,6 +877,7 @@ export default class GameScene extends THREE.Scene {
 
         this.projectiles.forEach(x => x.update());
         this.particleEmitters.forEach(x => x.update());
+
         this.checkProjectilesForCollision();
         this.checkPickupsForCollisionWithPlayers();
 
@@ -889,14 +888,11 @@ export default class GameScene extends THREE.Scene {
 
         this.spotlight?.update();
 
-        this.explosions.forEach(x => x.update());
-        this.explosions = this.explosions.filter(x => !x.isDead);
+        this.particleEmitters.forEach(x => x.update());
+        this.particleEmitters = this.particleEmitters.filter(x => !x.isDead);
 
         this.flamethrowerEmitter?.update();
 
-
-        this.smokeObjects.forEach(x => x.update());
-       
         //this.healthBar.update(this.allPlayers[0].getPosition());
 
         //if(this.allPlayers[0].body != null)
