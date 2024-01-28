@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { PointLightObject } from "./pointLightObject";
-import { ExplosionObject } from "./explosionObject";
+import { ParticleEmitter } from "./particleEmitter";
 
-export class SmokeObject extends ExplosionObject {
+export class SmokeObject extends ParticleEmitter {
 
     scene: THREE.Scene;
     particleGroup: THREE.Group;

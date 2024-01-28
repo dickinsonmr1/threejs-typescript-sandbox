@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { ExplosionObject } from "./explosionObject";
+import { ParticleEmitter } from "./particleEmitter";
 
 export enum ParticleEmitterType {    
     SmokeTrail,
@@ -7,7 +7,7 @@ export enum ParticleEmitterType {
     GlowingParticles
 }
 
-export class ParticleEmitterObject extends ExplosionObject { 
+export class ParticleTrailObject extends ParticleEmitter { 
     scene: THREE.Scene;
     type: ParticleEmitterType;
     particleGroup: THREE.Group;

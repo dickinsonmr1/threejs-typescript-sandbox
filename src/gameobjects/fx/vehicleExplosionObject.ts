@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { PointLightObject } from "./pointLightObject";
-import { ExplosionObject } from "./explosionObject";
+import { ParticleEmitter } from "./particleEmitter";
 
-export class VehicleExplosionObject extends ExplosionObject {
+export class VehicleExplosionObject extends ParticleEmitter {
 
     isEmitting: boolean;
     isDead: boolean;

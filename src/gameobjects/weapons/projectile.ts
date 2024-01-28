@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { PointLightObject } from "../fx/pointLightObject";
 import { SphereObject } from "../shapes/sphereObject";
-import { ParticleEmitterObject, ParticleEmitterType } from "../fx/particleEmitterObject";
+import { ParticleTrailObject, ParticleEmitterType } from "../fx/particleTrailObject";
 import { ProjectileType } from "./projectileType";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,7 +21,7 @@ export class Projectile extends SphereObject {
     scene: THREE.Scene;
 
     pointLightObject!: PointLightObject;
-    particleEmitterObject!: ParticleEmitterObject;
+    particleEmitterObject!: ParticleTrailObject;
     
 	private readonly velocity = new THREE.Vector3();    
 
@@ -75,7 +75,7 @@ export class Projectile extends SphereObject {
             //this.group.position.set(position.x, position.y, position.z);
 
             if(particleTexture != null) {
-                this.particleEmitterObject = new ParticleEmitterObject(
+                this.particleEmitterObject = new ParticleTrailObject(
                     scene,
                     ParticleEmitterType.GlowingParticles,
                     particleTexture,

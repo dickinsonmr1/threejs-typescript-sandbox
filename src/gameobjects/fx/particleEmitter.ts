@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export abstract class ExplosionObject {
+export abstract class ParticleEmitter {
     
     abstract isEmitting: boolean;
     abstract isDead: boolean;

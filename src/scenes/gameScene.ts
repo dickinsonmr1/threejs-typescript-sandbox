@@ -8,7 +8,7 @@ import { SphereObject } from '../gameobjects/shapes/sphereObject';
 import Stats from 'three/addons/libs/stats.module.js';
 import SpotlightObject from '../gameobjects/shapes/spotlightObject';
 import { randFloat } from 'three/src/math/MathUtils.js';
-import { ExplosionObject } from '../gameobjects/fx/explosionObject';
+import { ParticleEmitter } from '../gameobjects/fx/particleEmitter';
 import { GltfObject } from '../gameobjects/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Projectile, ProjectileLaunchLocation } from '../gameobjects/weapons/projectile';
@@ -23,7 +23,7 @@ import Headlights from '../gameobjects/vehicles/headLights';
 import SceneController from './sceneController';
 import { Player } from '../gameobjects/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
-import { ParticleEmitterObject } from '../gameobjects/fx/particleEmitterObject';
+import { ParticleTrailObject } from '../gameobjects/fx/particleTrailObject';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 
@@ -63,9 +63,9 @@ export default class GameScene extends THREE.Scene {
     private projectileFactory: ProjectileFactory = new ProjectileFactory();
     private fireLeft: boolean = false;
     private projectiles: Projectile[] = [];
-    private particleEmitters: ParticleEmitterObject[] = [];
+    private particleEmitters: ParticleTrailObject[] = [];
 
-    private explosions: ExplosionObject[] = [];
+    private explosions: ParticleEmitter[] = [];
     public explosionTexture: THREE.Texture | undefined;
 
     private smokeObjects: SmokeObject[] = []
