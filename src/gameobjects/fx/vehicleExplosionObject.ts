@@ -2,24 +2,21 @@ import * as THREE from "three";
 import { PointLightObject } from "./pointLightObject";
 import { ExplosionObject } from "./explosionObject";
 
-export class FireObject extends ExplosionObject {
+export class VehicleExplosionObject extends ExplosionObject {
 
+    isEmitting: boolean;
+    isDead: boolean;
+    
     scene: THREE.Scene;
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
     lightColor: THREE.Color;
     particleColor: THREE.Color;
     position: THREE.Vector3;
-
     numberParticles: number;
-
     velocity: number;
-    isActive: boolean;
 
     pointLightObject?: PointLightObject;
-
-    isEmitting: boolean = true;
-    isDead: boolean = false;
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
@@ -28,10 +25,11 @@ export class FireObject extends ExplosionObject {
         lightColor: THREE.Color,
         particleColor: THREE.Color,
         position: THREE.Vector3,
-        numberParticles: number) {
-                    
+        numberParticles: number,
+        velocity: number) {
+
         super();
-        
+
         this.scene = scene;
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
@@ -39,14 +37,36 @@ export class FireObject extends ExplosionObject {
         this.particleColor = particleColor;
         this.position = position;
         this.numberParticles = numberParticles;
-        this.velocity = 0.05;
+        this.velocity = velocity;
 
-        this.isActive = true;
+        this.isEmitting = true;
+        this.isDead = false;
 
-        this.numberParticles = numberParticles;
-        this.particleColor = particleColor;
+        for(let i = 0; i < numberParticles; i++) {
+            let particleMaterial = new THREE.SpriteMaterial({
+                map: this.particleTexture,
+                depthTest: true
+            });
 
-        this.addParticles();
+            let sprite = new THREE.Sprite(particleMaterial);
+            sprite.material.blending = THREE.AdditiveBlending;
+            
+            sprite.userData.velocity = new THREE.Vector3(
+                Math.random() * this.velocity - this.velocity / 2,
+                Math.random() * this.velocity - this.velocity / 2,
+                Math.random() * this.velocity - this.velocity / 2
+            );
+            sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
+
+            sprite.material.color = particleColor;
+
+            sprite.material.opacity = Math.random() * 0.2 + 0.8;
+
+            let size = Math.random() * 0.1 + 0.1;
+            sprite.scale.set(size, size, size);
+
+            this.particleGroup.add(sprite);
+        }
 
         this.particleGroup.position.set(position.x, position.y, position.z);
 
@@ -61,89 +81,28 @@ export class FireObject extends ExplosionObject {
        //if(this.pointLightObject.pointLight)
             //this.particleGroup.add(this.pointLightObject.pointLight)
 
-        scene.add(this.particleGroup);     
-        
-        setTimeout(() => {
-            this.isEmitting = false
-        }, 3000);        
-    }
-
-
-    private addParticles(): void {
-        for(let i = 0; i < this.numberParticles; i++) {
-            let particleMaterial = new THREE.SpriteMaterial({
-                map: this.particleTexture,
-                depthTest: true
-            });
-
-            let sprite = new THREE.Sprite(particleMaterial);
-            sprite.material.blending = THREE.AdditiveBlending;
-            
-            sprite.userData.velocity = new THREE.Vector3(
-                0, //Math.random() * 0.2 - 0.1, //this.velocity - this.velocity / 2,
-                Math.random() * this.velocity - this.velocity / 2,
-                0, //Math.random() * 0.2 - 0.1, //this.velocity - this.velocity / 2
-            );
-            sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
-
-            sprite.material.color =  new THREE.Color('white'); //this.particleColor;
-
-            sprite.material.opacity = Math.random() * 0.2 + 0.8;
-
-            let size = Math.random() * 0.1 + 0.5;
-            sprite.scale.set(size, size, size);
-            sprite.position.x += Math.random() * 0.5 - 0.25;
-            sprite.position.z += Math.random() * 0.5 - 0.25;
-            sprite.rotation.setFromVector3(new THREE.Vector3(
-                Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI,));
-
-            this.particleGroup.add(sprite);
-        }
-
+        this.scene.add(this.particleGroup);
     }
 
     getPosition(): THREE.Vector3 {
         return this.particleGroup.position;
     }
 
-    setPosition(position: THREE.Vector3): void {
+    setPosition(position: THREE.Vector3) {
         this.particleGroup.position.set(position.x, position.y, position.z);
     }
-
+    
     setQuaternion(quaternion: THREE.Quaternion): void {
-        
+        throw new Error("Method not implemented.");
     }
 
-    kill() {
-        this.scene.remove(this.particleGroup);
-    }
-
-    update(): void {
-
-        if(this.isDead) {
-            this.kill();
-            return;
-        }
-
-        if(!this.isEmitting) {
-            setTimeout(() => {
-                this.isDead = true
-            }, 1000);        
-        }
-
-        if(this.isEmitting) {
-            this.addParticles();
-        }
-        
+    update() {
         this.particleGroup.children.forEach((child) => {
             let item = <THREE.Sprite>child;
 
             item.position.add(child.userData.velocity);
-            item.material.opacity -= 0.03;
-            item.scale.x *= 0.95;
-            item.scale.y *= 0.95;
-            item.scale.z *= 0.95;
-
+            item.material.opacity -= 0.02;
+            
             const color1 = item.material.color;
             item.material.color.copy(color1);      
             
@@ -154,8 +113,6 @@ export class FireObject extends ExplosionObject {
                 item.material.color.lerp(new THREE.Color('orange'), 0.5);
             else if(item.material.opacity < 0.50)
                 item.material.color.lerp(new THREE.Color('red'), 0.5);
-
-            //todo: investigate: THREE.MathUtils.lerp
         });
 
         this.particleGroup.children = this.particleGroup.children
@@ -164,19 +121,23 @@ export class FireObject extends ExplosionObject {
                 return item.material.opacity > 0.0;
             });       
                     
-        //if(this.pointLightObject && this.pointLightObject.pointLight)
-            //this.pointLightObject.pointLight.intensity *= 0.95;
+        if(this.pointLightObject && this.pointLightObject.pointLight)
+            this.pointLightObject.pointLight.intensity *= 0.95;
 
         if(this.particleGroup.children.length === 0) {
-            this.isActive = false;
-            //this.pointLightObject?.remove();
+            this.isDead = true;
+            this.pointLightObject?.kill();
+            this.scene.remove(this.particleGroup);
         } 
         else {
-            //this.pointLightObject?.update();
+            this.pointLightObject?.update();
         }
     }
 
-    stop() {
-        // todo: implement
+    kill(): void {
+        throw new Error("Method not implemented.");
+    }
+    stop(): void {
+        throw new Error("Method not implemented.");
     }
 }

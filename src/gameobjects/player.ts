@@ -3,7 +3,7 @@ import { ProjectileType } from "./weapons/projectileType";
 import HealthBar from "./healthBar";
 import { RigidVehicleObject } from "./vehicles/rigidVehicle/rigidVehicleObject";
 import { Utility } from "../utility";
-import Headlights from "./fx/headLights";
+import Headlights from "./vehicles/headLights";
 import * as THREE from "three";
 import { v4 as uuidv4 } from 'uuid';
 import { FireObject } from "./fx/fireObject";

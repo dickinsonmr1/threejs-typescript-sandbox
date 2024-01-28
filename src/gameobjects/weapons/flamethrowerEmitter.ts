@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { PointLightObject } from "./pointLightObject";
+import { PointLightObject } from "../fx/pointLightObject";
 
 export class FlamethrowerEmitter {
 
@@ -112,15 +112,15 @@ export class FlamethrowerEmitter {
 
     }
 
-    getPosition() {
-        return null;
+    getPosition(): THREE.Vector3 {
+        return this.particleGroup.position;
     }
 
-    setPosition(position: THREE.Vector3) {
+    setPosition(position: THREE.Vector3): void {
         this.particleGroup.position.set(position.x, position.y, position.z);
     }
 
-    setQuaternion(quaternion: THREE.Quaternion) {
+    setQuaternion(quaternion: THREE.Quaternion): void {
 
         //let forwardVector = new THREE.Vector3(-2, 0, 0);
         //forwardVector.applyQuaternion(quaternion);
@@ -128,13 +128,11 @@ export class FlamethrowerEmitter {
         this.particleGroup.quaternion.copy(quaternion);
     }
 
-    emitParticles() {
+    emitParticles(): void {
         this.addParticles();
     }
 
-    update() {
-
-        
+    update() {        
         //this.particleGroup.children.forEach((child) => {
         this.sprites.forEach((child) => {
             let item = <THREE.Sprite>child;

@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { PointLightObject } from "./pointLightObject";
+import { ExplosionObject } from "./explosionObject";
 
-export class SmokeObject {
+export class SmokeObject extends ExplosionObject {
 
     scene: THREE.Scene;
     particleGroup: THREE.Group;
@@ -28,6 +29,8 @@ export class SmokeObject {
         numberParticles: number,
         lifeTimeInMs: number) {
                     
+        super();
+
         this.scene = scene;
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
@@ -98,19 +101,23 @@ export class SmokeObject {
 
     }
 
-    getPosition() {
-        return null;
+    getPosition(): THREE.Vector3 {
+        return this.particleGroup.position;
     }
 
-    setPosition(position: THREE.Vector3) {
+    setPosition(position: THREE.Vector3): void {
         this.particleGroup.position.set(position.x, position.y, position.z);
+    }
+
+    setQuaternion(quaternion: THREE.Quaternion): void {
+        
     }
 
     kill() {
         this.scene.remove(this.particleGroup);
     }
 
-    update() {
+    update(): void {
 
         if(this.isDead) {
             this.kill();

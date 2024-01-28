@@ -19,12 +19,13 @@ import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import ProjectileFactory from '../gameobjects/weapons/projectileFactory';
 import { PickupObject } from '../gameobjects/pickupObject';
 import HealthBar from '../gameobjects/healthBar';
-import Headlights from '../gameobjects/fx/headLights';
+import Headlights from '../gameobjects/vehicles/headLights';
 import SceneController from './sceneController';
 import { Player } from '../gameobjects/player';
-import { FlamethrowerEmitter } from '../gameobjects/fx/flamethrowerEmitter';
+import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
 import { ParticleEmitterObject } from '../gameobjects/fx/particleEmitterObject';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
+import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -778,14 +779,14 @@ export default class GameScene extends THREE.Scene {
                     break;
             }
 
-            this.explosions.push(new ExplosionObject(
+            this.explosions.push(new VehicleExplosionObject(
                 this,
                 this.explosionTexture,
                 lightColor,
                 particleColor,
                 position,
                 numberParticles,
-                0.05)
+                0.03)
             );
         }
     }
@@ -889,7 +890,7 @@ export default class GameScene extends THREE.Scene {
         this.spotlight?.update();
 
         this.explosions.forEach(x => x.update());
-        this.explosions = this.explosions.filter(x => x.isActive);
+        this.explosions = this.explosions.filter(x => !x.isDead);
 
         this.flamethrowerEmitter?.update();
 

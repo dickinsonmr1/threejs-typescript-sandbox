@@ -126,7 +126,7 @@ export class Projectile extends SphereObject {
         this.isDead = true;
 
         if(this.particleEmitterObject != null) {
-            this.particleEmitterObject.stopEmitter();
+            this.particleEmitterObject.stop();
         }
         if(this.pointLightObject != null) {
             this.pointLightObject.kill();

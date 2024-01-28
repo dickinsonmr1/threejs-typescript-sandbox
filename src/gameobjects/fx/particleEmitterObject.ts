@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { ExplosionObject } from "./explosionObject";
 
 export enum ParticleEmitterType {    
     SmokeTrail,
@@ -6,8 +7,7 @@ export enum ParticleEmitterType {
     GlowingParticles
 }
 
-export class ParticleEmitterObject {
-
+export class ParticleEmitterObject extends ExplosionObject { 
     scene: THREE.Scene;
     type: ParticleEmitterType;
     particleGroup: THREE.Group;
@@ -15,7 +15,6 @@ export class ParticleEmitterObject {
     color: THREE.Color;
     position!: THREE.Vector3;
     emitPosition!: THREE.Vector3;
-
 
     numberParticles: number;
     maxParticles: number;
@@ -34,7 +33,9 @@ export class ParticleEmitterObject {
         numberParticles: number,
         maxParticles: number,
         velocity: number) {
-                    
+                  
+        super();
+
         this.scene = scene;
         this.type = type;
         this.particleGroup = new THREE.Group();
@@ -59,16 +60,23 @@ export class ParticleEmitterObject {
         this.scene.add(this.particleGroup);
     }
 
-    getPosition() {
-        return null;
+    getPosition(): THREE.Vector3 {
+        return this.particleGroup.position;
     }
 
     getColor(): THREE.Color {
         return this.color;
     }
 
-    setEmitPosition(position: THREE.Vector3) {
+    setEmitPosition(position: THREE.Vector3): void {
         this.emitPosition = position;
+    }
+
+    setPosition(position: THREE.Vector3): void {
+        throw new Error("Method not implemented.");
+    }
+    setQuaternion(quaternion: THREE.Quaternion): void {
+        throw new Error("Method not implemented.");
     }
 
     private emitParticles(emitPosition: THREE.Vector3, color: THREE.Color) {
@@ -110,7 +118,7 @@ export class ParticleEmitterObject {
         }
     }
 
-    stopEmitter() {
+    stop(): void {
         this.isEmitting = false;
 
         setTimeout(() => {
@@ -151,7 +159,7 @@ export class ParticleEmitterObject {
         //} 
     }
 
-    private kill(): void {
+    kill(): void {
         this.isDead = true;
 
         this.particleGroup.children = this.particleGroup.children
