@@ -110,6 +110,7 @@ export default class GameScene extends THREE.Scene {
 
     divElementPlayerStats!: HTMLDivElement;
     divElementObjective!: HTMLDivElement;
+    divElementWeaponParticleCount!: HTMLDivElement;
     divElementParticleCount!: HTMLDivElement;
 
     constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController) {
@@ -375,46 +376,10 @@ export default class GameScene extends THREE.Scene {
 
         document.body.appendChild(this.stats.dom);
 
-        
-        let divElementPlayerStats = document.createElement('div');
-        divElementPlayerStats.style.position = 'absolute';
-        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        divElementPlayerStats.style.width = "200";
-        divElementPlayerStats.style.height = "200";
-        //text2.style.backgroundColor = "blue";
-        divElementPlayerStats.style.color = "white";
-        divElementPlayerStats.innerHTML = "Player location";
-        divElementPlayerStats.style.left = 10 + 'px';
-        divElementPlayerStats.style.top = 50 + 'px';
-        document.body.appendChild(divElementPlayerStats);
-        this.divElementPlayerStats = divElementPlayerStats;
-
-        let divElement = document.createElement('div');
-        divElement.style.position = 'absolute';
-        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        divElement.style.width = "200";
-        divElement.style.height = "200";
-        //text2.style.backgroundColor = "blue";
-        divElement.style.color = "white";
-        divElement.innerHTML = "Objective: eliminate all enemy vehicles";
-        divElement.style.left = 10 + 'px';
-        divElement.style.top = 100 + 'px';
-        document.body.appendChild(divElement);
-        this.divElementObjective = divElement;
-
-        let divElement3 = document.createElement('div');
-        divElement3.style.position = 'absolute';
-        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        divElement3.style.width = "200";
-        divElement3.style.height = "200";
-        //text2.style.backgroundColor = "blue";
-        divElement3.style.color = "white";
-        divElement3.innerHTML = "Particle count";
-        divElement3.style.left = 10 + 'px';
-        divElement3.style.top = 200 + 'px';
-      
-        document.body.appendChild(divElement3);
-        this.divElementParticleCount = divElement3;
+        this.divElementPlayerStats = this.generateDivElement(10, 50, "Player location");
+        this.divElementObjective = this.generateDivElement(10, 100, "Objective");
+        this.divElementParticleCount = this.generateDivElement(10, 150, "Particle count");
+        this.divElementWeaponParticleCount = this.generateDivElement(10, 200, "Weapon count");
 
         //let healthBarTexture = this.textureLoader.load('assets/healthBarWhite-100x20.png');
 
@@ -462,7 +427,7 @@ export default class GameScene extends THREE.Scene {
             5
         );
 
-        this.particleEmitters.push(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
+        //this.particleEmitters.push(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -800,7 +765,7 @@ export default class GameScene extends THREE.Scene {
             {
                 let playersToCheck = this.allPlayers.filter(x => x.playerId != projectile.playerId);
                 playersToCheck.forEach(player => {
-                    if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
+                    if(player.getPosition().distanceTo(projectile.getPosition()) < 1 && player.currentHealth > 0){
                         this.generateRandomExplosion(
                             projectile.projectileType,
                             projectile.getPosition(),
@@ -902,10 +867,36 @@ export default class GameScene extends THREE.Scene {
 
         let playerPosition = this.player1.getPosition();
 
+        let emitterTotalParticleCount: number = 0;
+        this.particleEmitters.forEach(x => {
+            emitterTotalParticleCount += x.getParticleCount();
+        });
+
+        this.allPlayers.forEach(x => {
+            emitterTotalParticleCount += x.getTotalParticleCount();
+        })
+
         this.divElementPlayerStats.innerHTML = `location: (${playerPosition.x}, ${playerPosition.y}, ${playerPosition.z})`;
         this.divElementObjective.innerHTML = `scene objects: ${this.children.length}`;
-        this.divElementParticleCount.innerHTML = `flamethrower particles: ${this.flamethrowerEmitter?.sprites.length}`; 
+        this.divElementWeaponParticleCount.innerHTML = `flamethrower particles: ${this.flamethrowerEmitter?.sprites.length}`; 
+        this.divElementParticleCount.innerHTML = `total emitter particles: ${emitterTotalParticleCount}`; 
 
         this.stats.update();
+    }
+
+    generateDivElement(screenX: number, screenY: number, text: string): HTMLDivElement {
+        let div = document.createElement('div');
+        div.style.position = 'absolute';
+        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        div.style.width = "200";
+        div.style.height = "200";
+        //text2.style.backgroundColor = "blue";
+        div.style.color = "white";
+        div.innerHTML = text;
+        div.style.left = screenX + 'px';
+        div.style.top = screenY + 'px';
+        document.body.appendChild(div);
+        
+        return div;
     }
 }

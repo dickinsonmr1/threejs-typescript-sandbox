@@ -231,4 +231,11 @@ export class Player {
     trySelectNextWeapon(): void {
 
     }
+
+    getTotalParticleCount(): number {
+        let particleCount = 0;
+        this.fireObjects.forEach(x => particleCount += x.getParticleCount());
+        
+        return particleCount;
+    }
 }
