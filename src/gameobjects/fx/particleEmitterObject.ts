@@ -13,8 +13,8 @@ export class ParticleEmitterObject {
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
     color: THREE.Color;
-    position: THREE.Vector3;
-    emitPosition: THREE.Vector3;
+    position!: THREE.Vector3;
+    emitPosition!: THREE.Vector3;
 
 
     numberParticles: number;

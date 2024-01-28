@@ -24,6 +24,7 @@ import SceneController from './sceneController';
 import { Player } from '../gameobjects/player';
 import { FlamethrowerEmitter } from '../gameobjects/fx/flamethrowerEmitter';
 import { ParticleEmitterObject } from '../gameobjects/fx/particleEmitterObject';
+import { SmokeObject } from '../gameobjects/fx/smokeObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -65,6 +66,8 @@ export default class GameScene extends THREE.Scene {
 
     private explosions: ExplosionObject[] = [];
     public explosionTexture: THREE.Texture | undefined;
+
+    private smokeObjects: SmokeObject[] = []
 
     world: CANNON.World = new CANNON.World({
         gravity: new CANNON.Vec3(0, -9.81, 0)
@@ -459,6 +462,8 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, 1, 0),
             5
         );
+
+        this.smokeObjects.push(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -887,6 +892,9 @@ export default class GameScene extends THREE.Scene {
         this.explosions = this.explosions.filter(x => x.isActive);
 
         this.flamethrowerEmitter?.update();
+
+
+        this.smokeObjects.forEach(x => x.update());
        
         //this.healthBar.update(this.allPlayers[0].getPosition());
 
