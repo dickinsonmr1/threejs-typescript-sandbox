@@ -25,7 +25,7 @@ export default class HealthBar {
             color: 'grey',
             sizeAttenuation: false,
             rotation: 0,        
-            //depthTest: true,
+            depthTest: false,
             blending: THREE.AdditiveBlending,
             opacity: 0.3
         }));
@@ -38,6 +38,7 @@ export default class HealthBar {
         this.healthBarSprite = new THREE.Sprite( new THREE.SpriteMaterial({
             color: 'green',
             sizeAttenuation: false,
+            depthTest: false,
             opacity: 0.7
         }));
         this.healthBarSprite.material.rotation = 0; //Math.PI / 2;

@@ -113,6 +113,8 @@ export default class GameScene extends THREE.Scene {
     divElementWeaponParticleCount!: HTMLDivElement;
     divElementParticleCount!: HTMLDivElement;
 
+    crosshairSprite!: THREE.Sprite;
+
     constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController) {
         super();
         
@@ -184,8 +186,6 @@ export default class GameScene extends THREE.Scene {
             new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.world, objectMaterial);
 
-      
-            
 
         this.gltfVehiclePlayer1 = new GltfObject(this,
             this.taxiModel,
@@ -324,6 +324,11 @@ export default class GameScene extends THREE.Scene {
         this.followCam.position.set(5, 3, 0); // camera target offset related to car
 
         this.allRigidVehicleObjects.push(this.player1.rigidVehicleObject);
+        
+        let crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
+        let material = new THREE.SpriteMaterial( { map: crosshairTexture, color: 0xffffff, depthTest: false });//,transparent: true, opacity: 0.5 } );
+        this.crosshairSprite = new THREE.Sprite( material );
+        this.add(this.crosshairSprite);
 
         // bounding box to show shadows
         const cubeSize = 30;
@@ -866,6 +871,14 @@ export default class GameScene extends THREE.Scene {
         this.allPlayers.forEach(x => x.update());
 
         let playerPosition = this.player1.getPosition();
+
+        if(this.player1.rigidVehicleObject.model != null) {
+            let forwardVector = new THREE.Vector3(-10, 0, 0);
+            forwardVector.applyQuaternion(this.player1.rigidVehicleObject.model.quaternion);
+            this.crosshairSprite.position.addVectors(this.player1.rigidVehicleObject.model.position, forwardVector);//playerPosition.x, playerPosition.y - 2, playerPosition.z);
+            //let size = 10;
+            //this.crosshairSprite.scale.set(size, size, size);
+        }
 
         let emitterTotalParticleCount: number = 0;
         this.particleEmitters.forEach(x => {
