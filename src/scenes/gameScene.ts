@@ -26,6 +26,7 @@ import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter'
 import { ParticleTrailObject } from '../gameobjects/fx/particleTrailObject';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
+import { Utility } from '../utility';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -341,6 +342,7 @@ export default class GameScene extends THREE.Scene {
         mesh.receiveShadow = true;
         mesh.position.set(0, cubeSize / 2 - 0.1, 0);
         //this.add(mesh);
+
         
         var groundCubeContactMaterial = new CANNON.ContactMaterial(
             this.ground.getPhysicsMaterial(),
@@ -878,6 +880,42 @@ export default class GameScene extends THREE.Scene {
             this.crosshairSprite.position.addVectors(this.player1.rigidVehicleObject.model.position, forwardVector);//playerPosition.x, playerPosition.y - 2, playerPosition.z);
             //let size = 10;
             //this.crosshairSprite.scale.set(size, size, size);
+
+            var otherPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
+
+            var otherPlayerBodies: CANNON.Body[] = [];
+            for(var i = 0; i < otherPlayers.length; i++) {
+                if(otherPlayers[i].rigidVehicleObject != null && otherPlayers[i].rigidVehicleObject?.chassis.body != null) {
+                    let body = otherPlayers[i].rigidVehicleObject?.chassis.body ?? new CANNON.Body();
+                    otherPlayerBodies.push(body); 
+                }
+            }
+
+            /*
+            var otherPlayerBodies = <unknown>otherPlayers.forEach(x => {
+                return x.rigidVehicleObject?.chassis.body;
+            });
+            var temp = otherPlayerBodies as CANNON.Body[];
+            */
+
+            if(this.player2.rigidVehicleObject?.rigidVehicleObject != null) {
+                let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(playerPosition), Utility.ThreeVec3ToCannonVec3(this.crosshairSprite.position));
+                
+                var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
+
+                // intersect single body
+                ray.intersectBody(this.player2.rigidVehicleObject?.rigidVehicleObject?.chassisBody, raycastResult);
+
+                // intersect multiple bodies
+                ray.intersectBodies(otherPlayerBodies, raycastResult);
+
+                if(raycastResult != null && raycastResult.hasHit) {
+                    this.crosshairSprite.material.color.set(new THREE.Color('red'));
+                }
+                else {
+                    this.crosshairSprite.material.color.set(new THREE.Color('white'));
+                }
+            }
         }
 
         let emitterTotalParticleCount: number = 0;
