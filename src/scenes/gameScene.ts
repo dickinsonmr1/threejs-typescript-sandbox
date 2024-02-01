@@ -375,10 +375,8 @@ export default class GameScene extends THREE.Scene {
 
         this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
 
-        let pickupTexture = this.textureLoader.load('assets/rocketIcon-multiple.png');
-
         for(let i = 0; i < 10; i++) {
-            this.generateRandomPickup(pickupTexture);
+            this.generateRandomPickup();
         }
 
         document.body.appendChild(this.stats.dom);
@@ -707,7 +705,41 @@ export default class GameScene extends THREE.Scene {
     }
     
     
-    private async generateRandomPickup(texture: THREE.Texture ) {
+    private async generateRandomPickup() {
+
+        
+        let pickupTextureRocket = this.textureLoader.load('assets/rocketIcon-multiple.png');
+        let pickupTextureHealth = this.textureLoader.load('assets/DPAD.png');
+        let pickupTextureFlamethrower = this.textureLoader.load('assets/fire.png');
+        let pickupTextureFreeze = this.textureLoader.load('assets/freezeIcon.png');
+        let pickupTextureLightning = this.textureLoader.load('assets/shockwaveIcon2.png');
+        let pickupTextureShockwave = this.textureLoader.load('assets/shockwaveIcon3.png');
+        
+        let texture: THREE.Texture;
+        let randIconIndex = THREE.MathUtils.randInt(0, 5);
+        switch(randIconIndex) {
+            case 0:
+                texture = pickupTextureRocket;
+                break;
+            case 1:
+                texture = pickupTextureHealth;
+                break;
+            case 2:
+                texture = pickupTextureFlamethrower;
+                break;
+            case 3:
+                texture = pickupTextureFreeze;
+                break;
+            case 4:
+                texture = pickupTextureLightning;
+                break;
+            case 5:
+                texture = pickupTextureShockwave;
+                break;
+            default:
+                texture = pickupTextureRocket;
+                break;
+        }
 
         let randPosition = new THREE.Vector3(randFloat(-20, 20), 0.75, randFloat(-20, 20));
         let randCubeSize = 0.5; //randFloat(0.5, 2);
@@ -881,12 +913,13 @@ export default class GameScene extends THREE.Scene {
             //let size = 10;
             //this.crosshairSprite.scale.set(size, size, size);
 
-            var otherPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
+            // otherPlayers still alive
+            var otherPlayersStillAlive = this.allPlayers.filter(x => x.playerId != this.player1.playerId && x.currentHealth > 0);
 
             var otherPlayerBodies: CANNON.Body[] = [];
-            for(var i = 0; i < otherPlayers.length; i++) {
-                if(otherPlayers[i].rigidVehicleObject != null && otherPlayers[i].rigidVehicleObject?.chassis.body != null) {
-                    let body = otherPlayers[i].rigidVehicleObject?.chassis.body ?? new CANNON.Body();
+            for(var i = 0; i < otherPlayersStillAlive.length; i++) {
+                if(otherPlayersStillAlive[i].rigidVehicleObject != null && otherPlayersStillAlive[i].rigidVehicleObject?.chassis.body != null) {
+                    let body = otherPlayersStillAlive[i].rigidVehicleObject?.chassis.body ?? new CANNON.Body();
                     otherPlayerBodies.push(body); 
                 }
             }
