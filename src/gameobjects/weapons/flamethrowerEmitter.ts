@@ -4,6 +4,7 @@ import { PointLightObject } from "../fx/pointLightObject";
 export class FlamethrowerEmitter {
 
     scene: THREE.Scene;
+    playerId: string;
 
     colors = [
         new THREE.Color(0xff0000),
@@ -30,6 +31,7 @@ export class FlamethrowerEmitter {
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
     constructor(scene: THREE.Scene,
+        playerId: string,
         particleTexture: THREE.Texture,
         lightColor: THREE.Color,
         particleColor: THREE.Color,
@@ -37,6 +39,7 @@ export class FlamethrowerEmitter {
         numberParticles: number) {
 
         this.scene = scene;
+        this.playerId = playerId;
                     
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;

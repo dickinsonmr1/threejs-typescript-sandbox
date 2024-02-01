@@ -102,7 +102,7 @@ export default class GameScene extends THREE.Scene {
 
     spotlight?: SpotlightObject;
 
-    flamethrowerEmitter?: FlamethrowerEmitter;
+    flamethrowerEmitters: FlamethrowerEmitter[] = [];
 
     //healthBar: HealthBar = new HealthBar(this, 100);
     //headLights: Headlights = new Headlights(this);
@@ -424,13 +424,26 @@ export default class GameScene extends THREE.Scene {
             } 
         );
 
-        this.flamethrowerEmitter = new FlamethrowerEmitter(this,
+        var flamethrowerEmitter = new FlamethrowerEmitter(this,
+            this.player1.playerId,
             this.explosionTexture,
             new THREE.Color('yellow'),
             new THREE.Color('orange'),
             new THREE.Vector3(0, 1, 0),
             5
         );
+        this.flamethrowerEmitters.push(flamethrowerEmitter);
+
+        
+        var flamethrowerEmitter2 = new FlamethrowerEmitter(this,
+            this.player2.playerId,
+            this.explosionTexture,
+            new THREE.Color('yellow'),
+            new THREE.Color('orange'),
+            new THREE.Vector3(0, 1, 0),
+            5
+        );
+        this.flamethrowerEmitters.push(flamethrowerEmitter2);
 
         //this.particleEmitters.push(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
 
@@ -579,12 +592,23 @@ export default class GameScene extends THREE.Scene {
         }
         
         if (this.keyDown.has('z')) {
-            this.flamethrowerEmitter?.setPosition(this.player1.getPosition());
+            let flamethrowerEmitter = this.flamethrowerEmitters[0];
+            flamethrowerEmitter.setPosition(this.player1.getPosition());
             if(this.player1.rigidVehicleObject && this.player1.rigidVehicleObject.model) {                
-                this.flamethrowerEmitter?.setQuaternion(this.player1.rigidVehicleObject.model.quaternion);
+                flamethrowerEmitter.setQuaternion(this.player1.rigidVehicleObject.model.quaternion);
             }
         
-            this.flamethrowerEmitter?.emitParticles();
+            flamethrowerEmitter.emitParticles();
+        }
+
+        if (this.keyDown.has('q')) {
+            let flamethrowerEmitter = this.flamethrowerEmitters[1];
+            flamethrowerEmitter.setPosition(this.player2.getPosition());
+            if(this.player2.rigidVehicleObject && this.player2.rigidVehicleObject.model) {                
+                flamethrowerEmitter.setQuaternion(this.player2.rigidVehicleObject.model.quaternion);
+            }
+        
+            flamethrowerEmitter.emitParticles();
         }
         /*
         if(this.keyDown.has('w')) {
@@ -895,7 +919,7 @@ export default class GameScene extends THREE.Scene {
         this.particleEmitters.forEach(x => x.update());
         this.particleEmitters = this.particleEmitters.filter(x => !x.isDead);
 
-        this.flamethrowerEmitter?.update();
+        this.flamethrowerEmitters.forEach(x => x.update());
 
         //this.healthBar.update(this.allPlayers[0].getPosition());
 
@@ -962,7 +986,12 @@ export default class GameScene extends THREE.Scene {
 
         this.divElementPlayerStats.innerHTML = `location: (${playerPosition.x}, ${playerPosition.y}, ${playerPosition.z})`;
         this.divElementObjective.innerHTML = `scene objects: ${this.children.length}`;
-        this.divElementWeaponParticleCount.innerHTML = `flamethrower particles: ${this.flamethrowerEmitter?.sprites.length}`; 
+
+        let flameThrowerEmitterTotalParticleCount: number = 0;
+        this.flamethrowerEmitters.forEach(x => {
+            flameThrowerEmitterTotalParticleCount += x.sprites.length;
+        });
+        this.divElementWeaponParticleCount.innerHTML = `flamethrower particles: ${flameThrowerEmitterTotalParticleCount}`; 
         this.divElementParticleCount.innerHTML = `total emitter particles: ${emitterTotalParticleCount}`; 
 
         this.stats.update();
