@@ -36,7 +36,7 @@ export class Player {
     healthBar: HealthBar;
     headLights: Headlights;
     
-    rigidVehicleObject?: RigidVehicleObject;
+    rigidVehicleObject!: RigidVehicleObject;
 
     fireObjects: FireObject[] = [];
 
@@ -157,6 +157,7 @@ export class Player {
             let scene = <GameScene>this.scene;
             
             this.headLights.group.visible = false;
+            this.rigidVehicleObject.model.visible = false;
 
             if(!scene.explosionTexture) return;
 
@@ -180,7 +181,7 @@ export class Player {
     tryRespawn() {
         this.refillHealth();
         this.playerState = PlayerState.Alive;
-
+        this.rigidVehicleObject.model.visible = true;
 
         this.headLights.group.visible = true;
     }

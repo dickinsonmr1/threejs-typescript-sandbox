@@ -12,7 +12,7 @@ export class RigidVehicleObject {
 
     rigidVehicleObject?: CANNON.RigidVehicle;
 
-    model?: THREE.Group;
+    model!: THREE.Group;
     modelOffset?: THREE.Vector3;
 
     private readonly maxForceRigidBodyVehicle: number = 15;
