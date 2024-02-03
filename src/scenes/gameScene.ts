@@ -62,11 +62,11 @@ export default class GameScene extends THREE.Scene {
     private pickups: PickupObject[] = [];
 
     private projectileFactory: ProjectileFactory = new ProjectileFactory();
-    private fireLeft: boolean = false;
+    
     private projectiles: Projectile[] = [];
 
     private particleEmitters: ParticleEmitter[] = [];
-    public explosionTexture: THREE.Texture | undefined;
+    public explosionTexture: THREE.Texture = new THREE.Texture();
 
 
     world: CANNON.World = new CANNON.World({
@@ -459,22 +459,28 @@ export default class GameScene extends THREE.Scene {
 		this.keyDown.delete(event.key.toLowerCase())
 
 		if (event.key === ' ')
-		{
-			//this.createBullet();
-            this.createProjectile(ProjectileType.Rocket, ProjectileLaunchLocation.Center);
-            //this.generateRandomCube();
-            //this.generateRandomExplosion();
+		{            
+            let newProjectile = this.player1.createProjectile(ProjectileType.Rocket);
+            this.addNewProjectile(newProjectile);	            
 		}
         if (event.key === 'c')
 		{			
             this.generateRandomCube();
 		}
         if (event.key === 'x')
-		{
-            this.fireLeft = !this.fireLeft;
-            let launchLocation = this.fireLeft ? ProjectileLaunchLocation.Left : ProjectileLaunchLocation.Right;
-            this.createProjectile(ProjectileType.Bullet, launchLocation);
-			//this.generateRandomCube();
+		{            
+            let newProjectile = this.player1.createProjectile(ProjectileType.Bullet);
+            this.addNewProjectile(newProjectile);		
+		}
+        if (event.key === 'e')
+		{                        
+            let newProjectile = this.player2.createProjectile(ProjectileType.Bullet);
+            this.addNewProjectile(newProjectile);		
+		}
+        if (event.key === 'r')
+		{                        
+            let newProjectile = this.player2.createProjectile(ProjectileType.Rocket);
+            this.addNewProjectile(newProjectile);		
 		}
         if (event.key === '1')
 		{
@@ -639,74 +645,10 @@ export default class GameScene extends THREE.Scene {
             this.camera.lookAt(this.player1.rigidVehicleObject?.chassis.mesh?.position);
     }
 
-    private async createProjectile(projectileType: ProjectileType, side: ProjectileLaunchLocation) {
-        
-        if(!this.player1.rigidVehicleObject || !this.player1.rigidVehicleObject.model) return;
-
-        let forwardVector = new THREE.Vector3(-2, 0, 0);
-        forwardVector.applyQuaternion(this.player1.rigidVehicleObject.model.quaternion);
-        let projectileLaunchVector = forwardVector; 
-
-        let sideOffset = 0;
-        switch(projectileType) {
-            case ProjectileType.Bullet:
-                sideOffset = 3;
-                break;
-            case ProjectileType.Rocket:
-                sideOffset = 5;
-                break;
-        }
-
-        let sideVector = new THREE.Vector3();
-        switch(side) {
-            case ProjectileLaunchLocation.Left:                
-                sideVector = new THREE.Vector3(0, 0, sideOffset);
-                break;
-            case ProjectileLaunchLocation.Center:
-                sideVector = new THREE.Vector3(0, 0, 0);
-                break;                
-            case ProjectileLaunchLocation.Right:
-                sideVector = new THREE.Vector3(0, 0, -sideOffset);
-                break;
-        }
-        sideVector.applyQuaternion(this.player1.rigidVehicleObject.model.quaternion);
-
-        //axis-aligned bounding box
-        const aabb = new THREE.Box3().setFromObject(this.player1.rigidVehicleObject.chassis.mesh);
-        const size = aabb.getSize(new THREE.Vector3());
-
-        const vec = new THREE.Vector3();
-        this.player1.rigidVehicleObject.model.getWorldPosition(vec) ;//this.rigidVehicleObject?.model?.position.clone();
-        
-        if(vec == null) return;
-        // distance off ground
-        //vec.y += 2;
-
-        // offset to front of gun
-        var tempPosition = vec.add(
-                sideVector.clone().multiplyScalar(-size.z * 0.12)
-        );
-
-        // offset to side of car
-        // +x is in left of car, -x is to right of car
-        // +z is in front of car, -z is to rear of car
-        //var tempPosition = vec.add(
-            //this.directionVector.clone().multiplyScalar(-size.z * 5)
-        //);
-        //tempPosition.add(this.directionVector.clone().multiplyScalar(size.z * 1.5));
-
-        let newProjectile = this.projectileFactory.generateProjectile(
-            this,
-            this.player1.playerId,
-            projectileType,            
-            tempPosition,           // launchPosition relative to chassis
-            projectileLaunchVector,            
-            this.explosionTexture);      
-
-        this.projectiles.push(newProjectile);
-
-        if(newProjectile.particleEmitterObject != null)
-            this.particleEmitters.push(newProjectile.particleEmitterObject);
+    private async addNewProjectile(projectile: Projectile) {
+        this.projectiles.push(projectile);
+        if(projectile.particleEmitterObject != null)
+            this.particleEmitters.push(projectile.particleEmitterObject);	
     }
 
     private async generateRandomCube() {

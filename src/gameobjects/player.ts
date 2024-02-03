@@ -8,6 +8,8 @@ import * as THREE from "three";
 import { v4 as uuidv4 } from 'uuid';
 import { FireObject } from "./fx/fireObject";
 import GameScene from "../scenes/gameScene";
+import ProjectileFactory from "./weapons/projectileFactory";
+import { Projectile, ProjectileLaunchLocation } from "./weapons/projectile";
 
 
 export enum PlayerState {
@@ -39,6 +41,9 @@ export class Player {
     rigidVehicleObject!: RigidVehicleObject;
 
     fireObjects: FireObject[] = [];
+
+    private fireLeft: boolean = false;
+    private projectileFactory: ProjectileFactory = new ProjectileFactory();
 
     constructor(scene: THREE.Scene,
         playerName: string) {
@@ -102,6 +107,77 @@ export class Player {
             Utility.CannonQuaternionToThreeQuaternion(this.rigidVehicleObject.chassis.body.quaternion)
         );
     }
+
+    public createProjectile(projectileType: ProjectileType): Projectile {
+                
+        let scene = <GameScene>this.scene;
+
+        let launchLocation = ProjectileLaunchLocation.Center;        
+
+        let forwardVector = new THREE.Vector3(-2, 0, 0);
+        forwardVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
+        let projectileLaunchVector = forwardVector; 
+
+        let sideOffset = 0;
+        switch(projectileType) {
+            case ProjectileType.Bullet:
+                sideOffset = 3;
+                this.fireLeft = !this.fireLeft;
+                launchLocation = this.fireLeft ? ProjectileLaunchLocation.Left : ProjectileLaunchLocation.Right;
+                break;
+            case ProjectileType.Rocket:
+                sideOffset = 5;
+                launchLocation = ProjectileLaunchLocation.Center;
+                break;
+        }        
+
+        let sideVector = new THREE.Vector3();
+        switch(launchLocation) {
+            case ProjectileLaunchLocation.Left:                
+                sideVector = new THREE.Vector3(0, 0, sideOffset);
+                break;
+            case ProjectileLaunchLocation.Center:
+                sideVector = new THREE.Vector3(0, 0, 0);
+                break;                
+            case ProjectileLaunchLocation.Right:
+                sideVector = new THREE.Vector3(0, 0, -sideOffset);
+                break;
+        }
+        sideVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
+
+        //axis-aligned bounding box
+        const aabb = new THREE.Box3().setFromObject(this.rigidVehicleObject.chassis.mesh);
+        const size = aabb.getSize(new THREE.Vector3());
+
+        const vec = new THREE.Vector3();
+        this.rigidVehicleObject.model.getWorldPosition(vec) ;//this.rigidVehicleObject?.model?.position.clone();
+        
+        //if(vec == null) return;
+        // distance off ground
+        //vec.y += 2;
+
+        // offset to front of gun
+        var tempPosition = vec.add(
+                sideVector.clone().multiplyScalar(-size.z * 0.12)
+        );
+
+        // offset to side of car
+        // +x is in left of car, -x is to right of car
+        // +z is in front of car, -z is to rear of car
+        //var tempPosition = vec.add(
+            //this.directionVector.clone().multiplyScalar(-size.z * 5)
+        //);
+        //tempPosition.add(this.directionVector.clone().multiplyScalar(size.z * 1.5));
+
+        return this.projectileFactory.generateProjectile(
+            this.scene,
+            this.playerId,
+            projectileType,            
+            tempPosition,           // launchPosition relative to chassis
+            projectileLaunchVector,            
+            scene.explosionTexture);              
+    }
+
 
     tryAccelerateWithKeyboard(): void {
 
