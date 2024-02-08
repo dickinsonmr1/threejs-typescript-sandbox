@@ -1,4 +1,4 @@
-import { Scene } from "three";
+
 import GameScene from "./gameScene";
 import HudScene from "./hudScene";
 import { GamePadEnums } from "./gamePadEnums";
@@ -58,6 +58,23 @@ export default class SceneController {
         */  
         const gamepad = navigator.getGamepads()[0];
         if(!gamepad) return;
+
+        this.gameScene?.player1.tryTurn(-gamepad.axes[0]);
+
+        /*
+        if(gamepad.axes[0] < -0.25) {
+            this.gameScene?.player1.tryTurnLeftWithKeyboard();
+        }
+        else if(gamepad.axes[0] > 0.25) {
+            this.gameScene?.player1.tryTurnRightWithKeyboard();
+        }
+        else {
+            this.gameScene?.player1.tryStopTurnLeftWithKeyboard()
+        }
+        */
+		//console.log(`Left stick at (${myGamepad.axes[0]}, ${myGamepad.axes[1]})` );
+		//console.log(`Right stick at (${myGamepad.axes[2]}, ${myGamepad.axes[3]})` );
+
 
         gamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
             if(isPressed) {

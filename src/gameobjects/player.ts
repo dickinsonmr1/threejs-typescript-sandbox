@@ -195,16 +195,20 @@ export class Player {
         this.rigidVehicleObject.tryStopReverse();
     }
 
+    tryTurn(x: number): void {
+        this.rigidVehicleObject.tryTurn(x);
+    }
+    
     tryTurnLeftWithKeyboard(): void {
-        
+        this.rigidVehicleObject.tryTurnLeft();
     }
 
     tryStopTurnLeftWithKeyboard(): void {
-        
+        this.rigidVehicleObject.tryStopTurnLeft(); // same as right
     }
 
     tryTurnRightWithKeyboard(): void {
-        
+        this.rigidVehicleObject.tryTurnRight();
     }
 
     tryStopTurnRightWithKeyboard(): void {

@@ -144,6 +144,16 @@ export class RigidVehicleObject {
         //this.rigidVehicleObject.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
     }
 
+    tryTurn(gamepadStickX: number): void {
+        // front wheels
+        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal * gamepadStickX, 0);
+        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal * gamepadStickX, 1);
+
+        // rear wheels
+        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal * gamepadStickX, 2);
+        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal * gamepadStickX, 3);
+    }
+
     tryTurnLeft(): void {
         // front wheels
         this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 0);
