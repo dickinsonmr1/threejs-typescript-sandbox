@@ -180,19 +180,19 @@ export class Player {
 
 
     tryAccelerateWithKeyboard(): void {
-
+        this.rigidVehicleObject.tryAccelerate();
     }
 
     tryStopAccelerateWithKeyboard(): void {
-        
+        this.rigidVehicleObject.tryStopAccelerate();
     }
     
     tryReverseWithKeyboard(): void {
-        
+        this.rigidVehicleObject.tryReverse();
     }
 
     tryStopReverseWithKeyboard(): void {
-        
+        this.rigidVehicleObject.tryStopReverse();
     }
 
     tryTurnLeftWithKeyboard(): void {

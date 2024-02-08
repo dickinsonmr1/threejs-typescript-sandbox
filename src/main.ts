@@ -26,6 +26,17 @@ const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 100);
 const environment = new RoomEnvironment( renderer );
 const pmremGenerator = new THREE.PMREMGenerator( renderer );
 
+window.addEventListener("gamepadconnected", (event) => {
+  console.log("A gamepad connected:");
+  console.log(event.gamepad);
+  sceneController.setGamePad1(event.gamepad);
+});
+
+window.addEventListener("gamepaddisconnected", (event) => {
+  console.log("A gamepad disconnected:");
+  console.log(event.gamepad);
+});
+
 var sceneController = new SceneController();
 
 const scene = new GameScene(mainCamera, sceneController);
@@ -54,6 +65,31 @@ sceneOrtho.initialize();
 
 sceneController.init(scene, sceneOrtho)
 
+var gamepads = navigator.getGamepads();
+console.log(gamepads);
+
+// https://gabrielromualdo.com/articles/2020-12-15-how-to-use-the-html5-gamepad-api
+/*
+setInterval(() => {
+	if(gamepads[0] !== undefined) {
+
+		// a gamepad is connected and has an index
+		const myGamepad = navigator.getGamepads()[0];
+    if(!myGamepad) return;
+		console.log(`Left stick at (${myGamepad.axes[0]}, ${myGamepad.axes[1]})` );
+		console.log(`Right stick at (${myGamepad.axes[2]}, ${myGamepad.axes[3]})` );
+
+    myGamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
+			if(isPressed) {
+				// button is pressed; indicate this on the page
+				document.body.innerHTML += `<h1>Button ${buttonIndex} is pressed</h1>`;
+        console.log(`pressed: ${buttonIndex}`);
+			}
+		})
+	}
+}, 100) // print axes 10 times per second
+*/
+
 /*
 var hudTexture = new THREE.Texture(hudCanvas)
 hudTexture.needsUpdate = true;
@@ -65,7 +101,15 @@ var plane = new THREE.Mesh( planeGeometry, material );
 sceneHUD.add( plane );
 */
 
-
+/*
+function startPollingForGamepads() {
+  // Don't accidentally start a second loop, man.
+  if (!gamepadSupport.ticking) {
+  gamepadSupport.ticking = true;
+  gamepadSupport.tick();
+  }
+}
+*/
 
 function tick() {
   scene.update();

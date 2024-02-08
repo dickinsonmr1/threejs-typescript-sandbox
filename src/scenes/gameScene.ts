@@ -567,6 +567,8 @@ export default class GameScene extends THREE.Scene {
 
         this.camera.getWorldDirection(dir);
 
+        this.sceneController.pollGamepads();
+
         // raycast vehicle controls
         if(this.keyDown.has('w')) {
             this.raycastVehicleObject?.tryAccelerate();
