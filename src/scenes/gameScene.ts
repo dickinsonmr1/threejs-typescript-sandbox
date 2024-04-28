@@ -807,12 +807,12 @@ export default class GameScene extends THREE.Scene {
 
     private checkPickupsForCollisionWithPlayers() {
         this.pickups.forEach(pickup => {
-            this.allGltfPlayers.forEach(player => {
+            this.allPlayers.forEach(player => {
 
                 let playerPosition = player.getPosition();
                 let pickupPosition = pickup.getPosition();
                 if(playerPosition.distanceTo(pickupPosition) < 1) {
-                    // tpdp
+                    // TODO: logic for player receiving pickup item
                     pickup.remove();
                 }
             })
