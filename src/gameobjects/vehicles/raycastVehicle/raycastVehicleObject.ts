@@ -10,7 +10,6 @@ export class RaycastVehicleObject {
     chassis: ChassisObject;
 
     raycastVehicle?: CANNON.RaycastVehicle;
-
     
     private readonly maxSteerVal: number = 0.5;
     private readonly maxForce: number = 1000;
@@ -35,7 +34,7 @@ export class RaycastVehicleObject {
             position,
             world,
             new CANNON.Material(),
-            150,
+            300,
             new CANNON.Vec3(0, 0, 0));
 
         const wheelOptions = {
@@ -94,23 +93,44 @@ export class RaycastVehicleObject {
     }
 
     tryAccelerate(): void {
+        // rear wheels
         this.raycastVehicle?.applyEngineForce(-this.maxForce, 2);
         this.raycastVehicle?.applyEngineForce(-this.maxForce, 3);
+
+        // front wheels
+        this.raycastVehicle?.applyEngineForce(-this.maxForce, 0);
+        this.raycastVehicle?.applyEngineForce(-this.maxForce, 1);
+
     }
 
     tryStopAccelerate(): void {
+        // rear wheels
         this.raycastVehicle?.applyEngineForce(0, 2);
         this.raycastVehicle?.applyEngineForce(0, 3);
+        
+        // front wheels
+        this.raycastVehicle?.applyEngineForce(0, 0);
+        this.raycastVehicle?.applyEngineForce(0, 1);
     }
 
     tryReverse(): void {
+        // rear wheels
         this.raycastVehicle?.applyEngineForce(this.maxForce, 2);
         this.raycastVehicle?.applyEngineForce(this.maxForce, 3);
+
+        // front wheels
+        this.raycastVehicle?.applyEngineForce(this.maxForce, 0);
+        this.raycastVehicle?.applyEngineForce(this.maxForce, 1);
     }
 
     tryStopReverse(): void {
+        // rear wheels
         this.raycastVehicle?.applyEngineForce(0, 2);
         this.raycastVehicle?.applyEngineForce(0, 3);
+
+        // front wheels
+        this.raycastVehicle?.applyEngineForce(0, 0);
+        this.raycastVehicle?.applyEngineForce(0, 1);
     }
 
     tryTurnLeft() {

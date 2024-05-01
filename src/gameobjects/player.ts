@@ -10,6 +10,7 @@ import { FireObject } from "./fx/fireObject";
 import GameScene from "../scenes/gameScene";
 import ProjectileFactory from "./weapons/projectileFactory";
 import { Projectile, ProjectileLaunchLocation } from "./weapons/projectile";
+import { RaycastVehicleObject } from "./vehicles/raycastVehicle/raycastVehicleObject";
 
 
 export enum PlayerState {
@@ -39,6 +40,7 @@ export class Player {
     headLights: Headlights;
     
     rigidVehicleObject!: RigidVehicleObject;
+    raycastVehicleObject!: RaycastVehicleObject;
 
     fireObjects: FireObject[] = [];
 

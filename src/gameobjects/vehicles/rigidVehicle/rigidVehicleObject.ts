@@ -15,7 +15,7 @@ export class RigidVehicleObject {
     model!: THREE.Group;
     modelOffset?: THREE.Vector3;
 
-    private readonly maxForceRigidBodyVehicle: number = 15;
+    private readonly maxForceRigidBodyVehicle: number = 25;
     private readonly rigidMaxSteerVal: number = Math.PI / 12;
 
     constructor(scene: THREE.Scene,
@@ -46,7 +46,7 @@ export class RigidVehicleObject {
             chassisBody: this.chassis.body
         });
         
-        const axisWidth = chassisDimensions.z * 2; //0.75;
+        const axisWidth = chassisDimensions.z * 2.5; //0.75;
         const down = new CANNON.Vec3(0, -1, 0);
         
         const chassisLength = chassisDimensions.x;
@@ -196,22 +196,37 @@ export class RigidVehicleObject {
         // rear wheels
         this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 2);
         this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 3);
+
+        // front wheels
+        //this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 0);
+        //this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 1);
     }
     tryStopAccelerate(): void {
        // rear wheels
        this.rigidVehicleObject?.setWheelForce(0, 2);
        this.rigidVehicleObject?.setWheelForce(0, 3);
+
+       // front wheels
+       //this.rigidVehicleObject?.setWheelForce(0, 0);
+       //this.rigidVehicleObject?.setWheelForce(0, 1);
     }
 
     tryReverse(): void {
         // rear wheels
         this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 2);
         this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 3);
+
+        // front wheels
+        //this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 0);
+        //this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 1);
     }
     tryStopReverse(): void {
         // rear wheels
         this.rigidVehicleObject?.setWheelForce(0, 2);
         this.rigidVehicleObject?.setWheelForce(0, 3);
+
+        //this.rigidVehicleObject?.setWheelForce(0, 0);
+        //this.rigidVehicleObject?.setWheelForce(0, 1);
     }
 
     update() {

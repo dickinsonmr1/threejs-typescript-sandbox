@@ -245,11 +245,11 @@ export default class GameScene extends THREE.Scene {
             this.world,            
             new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
             new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            20,                            // chassis mass
+            15,                            // chassis mass
             wheelMaterial,
-            0.2,                           // wheel radius
+            0.3,                           // wheel radius
             new CANNON.Vec3(0, -0.2, 0),   // wheel offset
-            2,                              // wheel mass
+            3,                              // wheel mass
             this.ambulanceModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
