@@ -11,6 +11,7 @@ import GameScene from "../scenes/gameScene";
 import ProjectileFactory from "./weapons/projectileFactory";
 import { Projectile, ProjectileLaunchLocation } from "./weapons/projectile";
 import { RaycastVehicleObject } from "./vehicles/raycastVehicle/raycastVehicleObject";
+import { IPlayerVehicle } from "./vehicles/IPlayerVehicle";
 
 
 export enum PlayerState {
@@ -38,9 +39,10 @@ export class Player {
 
     healthBar: HealthBar;
     headLights: Headlights;
-    
-    rigidVehicleObject!: RigidVehicleObject;
-    raycastVehicleObject!: RaycastVehicleObject;
+
+    vehicleObject!: IPlayerVehicle;    
+    //private rigidVehicleObject!: RigidVehicleObject;
+    //private raycastVehicleObject!: RaycastVehicleObject;
 
     fireObjects: FireObject[] = [];
 
@@ -72,9 +74,9 @@ export class Player {
     */
 
     getPosition(): THREE.Vector3{
-        if(!this.rigidVehicleObject?.chassis.body) return new THREE.Vector3(0,0,0);
+        if(!this.vehicleObject?.getChassis().body) return new THREE.Vector3(0,0,0);
 
-        return Utility.CannonVec3ToThreeVec3(this.rigidVehicleObject.chassis.body.position);
+        return Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position);
     }
 
     update(): void {
@@ -98,15 +100,15 @@ export class Player {
         }     
         */   
 
-        if(!this.rigidVehicleObject?.chassis?.body?.position) return;
+        if(!this.vehicleObject?.getChassis()?.body?.position) return;
 
-        this.rigidVehicleObject.update();
+        this.vehicleObject.update();
 
-        this.healthBar.update(Utility.CannonVec3ToThreeVec3(this.rigidVehicleObject.chassis.body.position));
+        this.healthBar.update(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position));
 
         this.headLights.update(
-            Utility.CannonVec3ToThreeVec3(this.rigidVehicleObject.chassis.body.position),
-            Utility.CannonQuaternionToThreeQuaternion(this.rigidVehicleObject.chassis.body.quaternion)
+            Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
+            Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)
         );
     }
 
@@ -117,7 +119,7 @@ export class Player {
         let launchLocation = ProjectileLaunchLocation.Center;        
 
         let forwardVector = new THREE.Vector3(-2, 0, 0);
-        forwardVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
+        forwardVector.applyQuaternion(this.vehicleObject.getModel().quaternion);
         let projectileLaunchVector = forwardVector; 
 
         let sideOffset = 0;
@@ -145,14 +147,14 @@ export class Player {
                 sideVector = new THREE.Vector3(0, 0, -sideOffset);
                 break;
         }
-        sideVector.applyQuaternion(this.rigidVehicleObject.model.quaternion);
+        sideVector.applyQuaternion(this.vehicleObject.getModel().quaternion);
 
         //axis-aligned bounding box
-        const aabb = new THREE.Box3().setFromObject(this.rigidVehicleObject.chassis.mesh);
+        const aabb = new THREE.Box3().setFromObject(this.vehicleObject.getChassis().mesh);
         const size = aabb.getSize(new THREE.Vector3());
 
         const vec = new THREE.Vector3();
-        this.rigidVehicleObject.model.getWorldPosition(vec) ;//this.rigidVehicleObject?.model?.position.clone();
+        this.vehicleObject.getModel().getWorldPosition(vec) ;//this.rigidVehicleObject?.model?.position.clone();
         
         //if(vec == null) return;
         // distance off ground
@@ -182,35 +184,35 @@ export class Player {
 
 
     tryAccelerateWithKeyboard(): void {
-        this.rigidVehicleObject.tryAccelerate();
+        this.vehicleObject.tryAccelerate();
     }
 
     tryStopAccelerateWithKeyboard(): void {
-        this.rigidVehicleObject.tryStopAccelerate();
+        this.vehicleObject.tryStopAccelerate();
     }
     
     tryReverseWithKeyboard(): void {
-        this.rigidVehicleObject.tryReverse();
+        this.vehicleObject.tryReverse();
     }
 
     tryStopReverseWithKeyboard(): void {
-        this.rigidVehicleObject.tryStopReverse();
+        this.vehicleObject.tryStopReverse();
     }
 
     tryTurn(x: number): void {
-        this.rigidVehicleObject.tryTurn(x);
+        this.vehicleObject.tryTurn(x);
     }
     
     tryTurnLeftWithKeyboard(): void {
-        this.rigidVehicleObject.tryTurnLeft();
+        this.vehicleObject.tryTurnLeft();
     }
 
     tryStopTurnLeftWithKeyboard(): void {
-        this.rigidVehicleObject.tryStopTurnLeft(); // same as right
+        this.vehicleObject.tryStopTurnLeft(); // same as right
     }
 
     tryTurnRightWithKeyboard(): void {
-        this.rigidVehicleObject.tryTurnRight();
+        this.vehicleObject.tryTurnRight();
     }
 
     tryStopTurnRightWithKeyboard(): void {
@@ -239,7 +241,7 @@ export class Player {
             let scene = <GameScene>this.scene;
             
             this.headLights.group.visible = false;
-            this.rigidVehicleObject.model.visible = false;
+            this.vehicleObject.getModel().visible = false;
 
             if(!scene.explosionTexture) return;
 
@@ -263,7 +265,7 @@ export class Player {
     tryRespawn() {
         this.refillHealth();
         this.playerState = PlayerState.Alive;
-        this.rigidVehicleObject.model.visible = true;
+        this.vehicleObject.getModel().visible = true;
 
         this.headLights.group.visible = true;
     }

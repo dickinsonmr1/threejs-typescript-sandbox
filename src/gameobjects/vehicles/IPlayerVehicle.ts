@@ -1,14 +1,12 @@
-import { Quaternion } from "cannon-es";
-import { Vector3 } from "three";
+import { ChassisObject } from "./chassisObject";
+import * as CANNON from 'cannon-es'
 
 export interface IPlayerVehicle {
-    // TODO: implement    
-    getChassisPosition(): Vector3;
-    getChassisQuaternion(): Quaternion;
-    getModelQuaternion(): Quaternion;
-    getModelMesh(): THREE.Mesh;
+    getChassis(): ChassisObject;
     getModel(): THREE.Group;
-    
+    getCannonVehicleChassisBody(): CANNON.Body | undefined; 
+
+    tryTurn(x: number): void;
     tryAccelerate(): void;
     tryStopAccelerate(): void;
     tryReverse(): void;
@@ -17,6 +15,8 @@ export interface IPlayerVehicle {
     tryStopTurnLeft(): void;
     tryTurnRight(): void;
     tryStopTurnRight(): void;
+
+    resetPosition(): void;
 
     update(): void;
 }

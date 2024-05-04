@@ -3,13 +3,18 @@ import * as CANNON from 'cannon-es'
 import { Utility } from "../../../utility";
 import { RaycastWheelObject } from "./raycastWheelObject";
 import { ChassisObject } from "../chassisObject";
+import { IPlayerVehicle } from "../IPlayerVehicle";
 
-export class RaycastVehicleObject {
+export class RaycastVehicleObject implements IPlayerVehicle {
     
     wheels: RaycastWheelObject[] = [];
     chassis: ChassisObject;
 
-    raycastVehicle?: CANNON.RaycastVehicle;
+    private raycastVehicle?: CANNON.RaycastVehicle;
+
+    // TODO: use these
+    private model!: THREE.Group;
+    modelOffset?: THREE.Vector3;
     
     private readonly maxSteerVal: number = 0.5;
     private readonly maxForce: number = 1000;
@@ -87,6 +92,23 @@ export class RaycastVehicleObject {
             i++;
 		});
     }
+    resetPosition(): void {
+        if(!this.raycastVehicle) return;
+
+        this.raycastVehicle.chassisBody.position.y = 5;
+    }
+    
+    getChassis(): ChassisObject {
+        return this.chassis;
+    }
+
+    getModel(): THREE.Group<THREE.Object3DEventMap> {
+        return this.model
+    }
+    
+    getCannonVehicleChassisBody(): CANNON.Body | undefined {
+        return this.raycastVehicle?.chassisBody;
+    }
 
     getPosition() {
         return this.chassis.mesh.position;
@@ -131,6 +153,16 @@ export class RaycastVehicleObject {
         // front wheels
         this.raycastVehicle?.applyEngineForce(0, 0);
         this.raycastVehicle?.applyEngineForce(0, 1);
+    }
+
+    tryTurn(gamepadStickX: number): void {
+        // front wheels
+        this.raycastVehicle?.setSteeringValue(this.maxSteerVal * gamepadStickX, 0);
+        this.raycastVehicle?.setSteeringValue(this.maxSteerVal * gamepadStickX, 1);
+
+        // rear wheels
+        //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 2);
+        //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 3);
     }
 
     tryTurnLeft() {

@@ -4,15 +4,16 @@ import { ChassisObject } from "../chassisObject";
 import { SphereWheelObject } from "./sphereWheelObject";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Utility } from "../../../utility";
+import { IPlayerVehicle } from "../IPlayerVehicle";
 
-export class RigidVehicleObject {
+export class RigidVehicleObject implements IPlayerVehicle {
     
     wheels: SphereWheelObject[] = [];
     chassis: ChassisObject;
 
-    rigidVehicleObject?: CANNON.RigidVehicle;
+    private rigidVehicleObject?: CANNON.RigidVehicle;
 
-    model!: THREE.Group;
+    private model!: THREE.Group;
     modelOffset?: THREE.Vector3;
 
     private readonly maxForceRigidBodyVehicle: number = 25;
@@ -131,6 +132,25 @@ export class RigidVehicleObject {
             this.model.scale.set(modelScale.x, modelScale.y, modelScale.z);         
             this.model.rotateY(Math.PI / 2);
         }
+    }
+    getChassis(): ChassisObject {
+        return this.chassis;
+    }
+    getChassisPosition(): THREE.Vector3 {
+        return this.chassis.getPosition();
+    }
+    getChassisQuaternion(): CANNON.Quaternion {
+        return this.chassis.body.quaternion;
+    }
+    getModelQuaternion(): THREE.Quaternion {
+        return this.model.quaternion;
+    }
+    getModel(): THREE.Group<THREE.Object3DEventMap> {
+        return this.model;
+    }
+
+    getCannonVehicleChassisBody() {
+        return this.rigidVehicleObject?.chassisBody;
     }
 
     getPosition() {

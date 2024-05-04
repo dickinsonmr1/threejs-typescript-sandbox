@@ -27,6 +27,7 @@ import { ParticleTrailObject } from '../gameobjects/fx/particleTrailObject';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
+import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -94,7 +95,7 @@ export default class GameScene extends THREE.Scene {
     player3: Player = new Player(this, "Police");
     player4: Player = new Player(this, "Trash Truck");
 
-    private allRigidVehicleObjects: RigidVehicleObject[] = [];
+    private allRigidVehicleObjects: IPlayerVehicle[] = [];
 
     private followCam?: THREE.Object3D;
 
@@ -239,7 +240,7 @@ export default class GameScene extends THREE.Scene {
 
 
         // player1 currently assigned when GameScene is created
-        this.player1.rigidVehicleObject = new RigidVehicleObject(
+        this.player1.vehicleObject = new RigidVehicleObject(
             this,
             new THREE.Vector3(0, 4, 0),   // position
             this.world,            
@@ -257,7 +258,7 @@ export default class GameScene extends THREE.Scene {
         );
         this.allPlayers.push(this.player1);
 
-        this.player2.rigidVehicleObject = new RigidVehicleObject(
+        this.player2.vehicleObject = new RigidVehicleObject(
             this,
             new THREE.Vector3(5, 4, 5),   // position
             this.world,            
@@ -275,7 +276,7 @@ export default class GameScene extends THREE.Scene {
         );
         this.allPlayers.push(this.player2);
 
-        this.player3.rigidVehicleObject = new RigidVehicleObject(
+        this.player3.vehicleObject = new RigidVehicleObject(
             this,
             new THREE.Vector3(-5, 4, -5),   // position
             this.world,            
@@ -293,7 +294,7 @@ export default class GameScene extends THREE.Scene {
         );
         this.allPlayers.push(this.player3);
 
-        this.player4.rigidVehicleObject = new RigidVehicleObject(
+        this.player4.vehicleObject = new RigidVehicleObject(
             this,
             new THREE.Vector3(-5, 4, 5),   // position
             this.world,            
@@ -321,10 +322,10 @@ export default class GameScene extends THREE.Scene {
 		this.followCam.position.copy(this.camera.position);
 		this.add(this.followCam);   
         
-        this.player1.rigidVehicleObject.model?.add(this.followCam);
+        this.player1.vehicleObject.getModel()?.add(this.followCam);
         this.followCam.position.set(5, 3, 0); // camera target offset related to car
 
-        this.allRigidVehicleObjects.push(this.player1.rigidVehicleObject);
+        this.allRigidVehicleObjects.push(this.player1.vehicleObject);
         
         let crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
         let material = new THREE.SpriteMaterial( { map: crosshairTexture, color: 0xffffff, depthTest: false });//,transparent: true, opacity: 0.5 } );
@@ -512,7 +513,7 @@ export default class GameScene extends THREE.Scene {
 		}      
         if (event.key === 'Escape')
 		{
-			this.player1.rigidVehicleObject?.resetPosition();
+			this.player1.vehicleObject?.resetPosition();
 		}
 
         if(event.key === 'w') {
@@ -531,17 +532,17 @@ export default class GameScene extends THREE.Scene {
 
         // rigid body vehicle
         if(event.key === 'ArrowUp') {
-            this.player1.rigidVehicleObject?.tryStopAccelerate();
+            this.player1.vehicleObject?.tryStopAccelerate();
         }
         else if(event.key === 'ArrowDown') {
-            this.player1.rigidVehicleObject?.tryStopReverse();
+            this.player1.vehicleObject?.tryStopReverse();
         }
 
         if(event.key === 'ArrowLeft') {
-            this.player1.rigidVehicleObject?.tryStopTurnLeft();
+            this.player1.vehicleObject?.tryStopTurnLeft();
         }
         else if(event.key === 'ArrowRight') {
-            this.player1.rigidVehicleObject?.tryStopTurnRight();
+            this.player1.vehicleObject?.tryStopTurnRight();
         }
 	}
 
@@ -586,24 +587,24 @@ export default class GameScene extends THREE.Scene {
 
         // rigid body vehicle controls
         if(this.keyDown.has('arrowup')) {
-            this.player1.rigidVehicleObject?.tryAccelerate();
+            this.player1.vehicleObject?.tryAccelerate();
         }
         else if(this.keyDown.has('arrowdown')) {
-            this.player1.rigidVehicleObject?.tryReverse();
+            this.player1.vehicleObject?.tryReverse();
         }
 
         if(this.keyDown.has('arrowleft')) {
-            this.player1.rigidVehicleObject?.tryTurnLeft();
+            this.player1.vehicleObject?.tryTurnLeft();
         }
         else if(this.keyDown.has('arrowright')) {
-            this.player1.rigidVehicleObject?.tryTurnRight();
+            this.player1.vehicleObject?.tryTurnRight();
         }
         
         if (this.keyDown.has('z')) {
             let flamethrowerEmitter = this.flamethrowerEmitters[0];
             flamethrowerEmitter.setPosition(this.player1.getPosition());
-            if(this.player1.rigidVehicleObject && this.player1.rigidVehicleObject.model) {                
-                flamethrowerEmitter.setQuaternion(this.player1.rigidVehicleObject.model.quaternion);
+            if(this.player1.vehicleObject && this.player1.vehicleObject.getModel()) {                
+                flamethrowerEmitter.setQuaternion(this.player1.vehicleObject.getModel().quaternion);
             }
         
             flamethrowerEmitter.emitParticles();
@@ -612,8 +613,8 @@ export default class GameScene extends THREE.Scene {
         if (this.keyDown.has('q')) {
             let flamethrowerEmitter = this.flamethrowerEmitters[1];
             flamethrowerEmitter.setPosition(this.player2.getPosition());
-            if(this.player2.rigidVehicleObject && this.player2.rigidVehicleObject.model) {                
-                flamethrowerEmitter.setQuaternion(this.player2.rigidVehicleObject.model.quaternion);
+            if(this.player2.vehicleObject && this.player2.vehicleObject.getModel()) {                
+                flamethrowerEmitter.setQuaternion(this.player2.vehicleObject.getModel().quaternion);
             }
         
             flamethrowerEmitter.emitParticles();
@@ -643,8 +644,8 @@ export default class GameScene extends THREE.Scene {
 
         if(this.followCam != null)
             this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.05);
-		if(this.player1.rigidVehicleObject?.chassis.mesh != null)
-            this.camera.lookAt(this.player1.rigidVehicleObject?.chassis.mesh?.position);
+		if(this.player1.vehicleObject?.getChassis().mesh != null)
+            this.camera.lookAt(this.player1.vehicleObject?.getChassis().mesh?.position);
     }
 
     private async addNewProjectile(projectile: Projectile) {
@@ -823,7 +824,7 @@ export default class GameScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
-        if(!this.player1.rigidVehicleObject) return;
+        if(!this.player1.vehicleObject) return;
 
         this.updateInput();  
         this.updateCamera();     
@@ -874,10 +875,10 @@ export default class GameScene extends THREE.Scene {
 
         let playerPosition = this.player1.getPosition();
 
-        if(this.player1.rigidVehicleObject.model != null) {
+        if(this.player1.vehicleObject.getModel() != null) {
             let forwardVector = new THREE.Vector3(-10, 0, 0);
-            forwardVector.applyQuaternion(this.player1.rigidVehicleObject.model.quaternion);
-            this.crosshairSprite.position.addVectors(this.player1.rigidVehicleObject.model.position, forwardVector);//playerPosition.x, playerPosition.y - 2, playerPosition.z);
+            forwardVector.applyQuaternion(this.player1.vehicleObject.getModel().quaternion);
+            this.crosshairSprite.position.addVectors(this.player1.vehicleObject.getModel().position, forwardVector);//playerPosition.x, playerPosition.y - 2, playerPosition.z);
             //let size = 10;
             //this.crosshairSprite.scale.set(size, size, size);
 
@@ -886,8 +887,8 @@ export default class GameScene extends THREE.Scene {
 
             var otherPlayerBodies: CANNON.Body[] = [];
             for(var i = 0; i < otherPlayersStillAlive.length; i++) {
-                if(otherPlayersStillAlive[i].rigidVehicleObject != null && otherPlayersStillAlive[i].rigidVehicleObject?.chassis.body != null) {
-                    let body = otherPlayersStillAlive[i].rigidVehicleObject?.chassis.body ?? new CANNON.Body();
+                if(otherPlayersStillAlive[i].vehicleObject != null && otherPlayersStillAlive[i].vehicleObject?.getChassis().body != null) {
+                    let body = otherPlayersStillAlive[i].vehicleObject?.getChassis().body ?? new CANNON.Body();
                     otherPlayerBodies.push(body); 
                 }
             }
@@ -899,13 +900,16 @@ export default class GameScene extends THREE.Scene {
             var temp = otherPlayerBodies as CANNON.Body[];
             */
 
-            if(this.player2.rigidVehicleObject?.rigidVehicleObject != null) {
+            if(this.player2.vehicleObject?.getCannonVehicleChassisBody() != null) {
                 let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(playerPosition), Utility.ThreeVec3ToCannonVec3(this.crosshairSprite.position));
                 
                 var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
 
-                // intersect single body
-                ray.intersectBody(this.player2.rigidVehicleObject?.rigidVehicleObject?.chassisBody, raycastResult);
+                var otherVehicleObject = this.player2.vehicleObject?.getCannonVehicleChassisBody();
+                if(otherVehicleObject != null) {
+                    // intersect single body
+                    ray.intersectBody(otherVehicleObject, raycastResult);
+                }
 
                 // intersect multiple bodies
                 ray.intersectBodies(otherPlayerBodies, raycastResult);
