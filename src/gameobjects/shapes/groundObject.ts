@@ -24,14 +24,42 @@ export class GroundObject {
         this.meshMaterial = meshMaterial ?? new THREE.MeshBasicMaterial({
             color: color,
             side: THREE.DoubleSide,
-            wireframe: false
+            wireframe: true
         })
 
+ 
+        
+        if(world != null) {
+
+            this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
+                        
+            /*
+            this.body = new CANNON.Body({
+                shape: new CANNON.Plane(),
+                type: CANNON.Body.STATIC,
+                material: this.physicsMaterial,
+                mass: 0
+            });
+            */
+            const groundShape = new CANNON.Plane();
+            this.body = new CANNON.Body({
+                mass: 0,
+                type: CANNON.Body.STATIC,
+                material:
+                this.physicsMaterial});
+            this.body.addShape(groundShape);            
+            //this.body.position.set(0, 0, -width);
+            this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+            world.addBody(this.body)
+        }
+
         this.mesh = new THREE.Mesh(
-            new THREE.PlaneGeometry( height, width ),
+            new THREE.PlaneGeometry( height, width, 1, 1),
             this.meshMaterial
         );
+        this.mesh.position.setX(height / 2);
         this.mesh.position.setY(0);
+        this.mesh.position.setZ(-width);
         this.mesh.rotation.x = - Math.PI / 2;
 
         this.mesh.castShadow = false;
@@ -39,25 +67,10 @@ export class GroundObject {
         
         scene.add(this.mesh);
                 
-        let grid = new THREE.GridHelper( height, 50, 0xffffff, 0x0ffffff );
+        let grid = new THREE.GridHelper( height, 10, 0xffffff, 0xffffff );
         grid.material.opacity = 1;
-        grid.material.transparent = true;
-        //scene.add( grid );
-        
-        if(world != null) {
-
-            this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
-                        
-            this.body = new CANNON.Body({
-                shape: new CANNON.Plane(),
-                type: CANNON.Body.STATIC,
-                material: this.physicsMaterial,
-                mass: 0
-            });
-            this.body.position.set(0, 0, 0);
-            this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
-            world.addBody(this.body)
-        }
+        grid.material.transparent = false;
+        scene.add( grid );
     }
     
     getPhysicsMaterial(): CANNON.Material {

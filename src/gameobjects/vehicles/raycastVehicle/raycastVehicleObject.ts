@@ -4,6 +4,7 @@ import { Utility } from "../../../utility";
 import { RaycastWheelObject } from "./raycastWheelObject";
 import { ChassisObject } from "../chassisObject";
 import { IPlayerVehicle } from "../IPlayerVehicle";
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 export class RaycastVehicleObject implements IPlayerVehicle {
     
@@ -29,21 +30,31 @@ export class RaycastVehicleObject implements IPlayerVehicle {
      */
     constructor(scene: THREE.Scene,
         position: THREE.Vector3,
-        color: number = 0xffffff,
+        //color: number = 0xffffff,
         world: CANNON.World,
-        wheelMaterial: CANNON.Material) {
+        chassisDimensions: CANNON.Vec3,        
+        centerOfMassAdjust: CANNON.Vec3,
+        chassisMass: number,
+        wheelMaterial: CANNON.Material,
+        wheelRadius: number,
+        wheelOffset: CANNON.Vec3,
+        wheelMass: number,
+        modelData?: GLTF,
+        modelScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1),
+        modelOffset: THREE.Vector3 = new THREE.Vector3(0, 0, 0)) {
 
         this.chassis = new ChassisObject(
             scene,
-            new CANNON.Vec3(1, 0.5, 0.5),
+            chassisDimensions,
             position,
             world,
-            new CANNON.Material(),
-            300,
-            new CANNON.Vec3(0, 0, 0));
+            new CANNON.Material(), 
+            chassisMass,
+            centerOfMassAdjust
+        );
 
         const wheelOptions = {
-            radius: 0.5,
+            radius: wheelRadius,
             directionLocal: new CANNON.Vec3(0, -1, 0),
             suspensionStiffness: 30,
             suspensionRestLength: 0.3,
@@ -91,13 +102,22 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             this.wheels.push(temp);
             i++;
 		});
+
+        if(modelData != null) {
+            this.model = modelData.scene;//.children[0];
+            this.modelOffset = modelOffset;
+
+            this.model.position.set(position.x + modelOffset.x, position.y + modelOffset.y, position.z + modelOffset.z);
+            this.model.scale.set(modelScale.x, modelScale.y, modelScale.z);         
+            this.model.rotateY(Math.PI / 2);
+        }
     }
     resetPosition(): void {
         if(!this.raycastVehicle) return;
 
         this.raycastVehicle.chassisBody.position.y = 5;
     }
-    
+
     getChassis(): ChassisObject {
         return this.chassis;
     }
@@ -187,7 +207,9 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     update() {
 
         //this.raycastVehicle?.updateVehicle(1);
-        this.chassis.update();     
+        this.chassis.update();  
+        //this.wheels.forEach(x => x.update());
+
         if(this.raycastVehicle != null) {
             for(let i = 0; i < this.raycastVehicle.wheelInfos.length; i++) {
                 this.raycastVehicle?.updateWheelTransform(i);
@@ -212,6 +234,21 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
                 //this.wheels[i].update();    
             }
+        }
+
+        if(this.model != null && this.modelOffset != null) {            
+            
+            this.model.position.copy(Utility.CannonVec3ToThreeVec3(this.chassis.body.position));//.add(this.modelOffset));
+            this.model.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.chassis.body.quaternion));
+
+            /*
+            var temp = new THREE.Quaternion().multiplyQuaternions(
+                Utility.CannonQuaternionToThreeQuaternion(this.chassis.body.quaternion),
+                new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI/2)
+            );
+            this.model.quaternion.copy(temp);
+            */
+            
         }
 
         //this.wheels.forEach(x => x.update());

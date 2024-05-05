@@ -155,7 +155,7 @@ export default class GameScene extends THREE.Scene {
         this.world.broadphase = new CANNON.SAPBroadphase(this.world);
 
         var groundMaterial = new CANNON.Material("groundMaterial");
-        this.ground = new GroundObject(this, 100, 100, 0x444444,
+        this.ground = new GroundObject(this, 20, 20, 0x444444,
             new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: true }),
             this.world, groundMaterial);
 
@@ -231,14 +231,42 @@ export default class GameScene extends THREE.Scene {
         this.allGltfPlayers.push(this.gltfVehiclePlayer4);
         
 
+        
         this.raycastVehicleObject = new RaycastVehicleObject(
             this,
-            new THREE.Vector3(-5, 4, -15),
-            0x00ff00,
-            this.world,
-            wheelMaterial);
+            new THREE.Vector3(-5, 4, -15),   // position
+            this.world,            
+            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+            new CANNON.Vec3(0, 0.5, 0),    // center of mass adjust
+            500,                            // chassis mass
+            wheelMaterial,
+            0.25,                           // wheel radius
+            new CANNON.Vec3(0, 0, 0),   // wheel offset
+            20,                              // wheel mass
+            this.trashTruckModel,             // model            
+            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+            new THREE.Vector3(0, 0, 0) // model offset
+            //new THREE.Vector3(0, -0.35, 0) // model offset
+        );
 
+        this.player1.vehicleObject = new RaycastVehicleObject(
+            this,
+            new THREE.Vector3(-10, 5, -10),   // position
+            this.world,            
+            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+            new CANNON.Vec3(0, 0.5, 0),    // center of mass adjust
+            500,                            // chassis mass
+            wheelMaterial,
+            0.25,                           // wheel radius
+            new CANNON.Vec3(0, 0, 0),   // wheel offset
+            20,                              // wheel mass
+            this.ambulanceModel,             // model            
+            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+            new THREE.Vector3(0, 0, 0) // model offset
+            //new THREE.Vector3(0, -0.35, 0) // model offset
+        );
 
+        /*
         // player1 currently assigned when GameScene is created
         this.player1.vehicleObject = new RigidVehicleObject(
             this,
@@ -256,7 +284,9 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
         );
+        */
         this.allPlayers.push(this.player1);
+        
 
         this.player2.vehicleObject = new RigidVehicleObject(
             this,
@@ -932,7 +962,7 @@ export default class GameScene extends THREE.Scene {
             emitterTotalParticleCount += x.getTotalParticleCount();
         })
 
-        this.divElementPlayerStats.innerHTML = `location: (${playerPosition.x}, ${playerPosition.y}, ${playerPosition.z})`;
+        this.divElementPlayerStats.innerHTML = `location: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`;
         this.divElementObjective.innerHTML = `scene objects: ${this.children.length}`;
 
         let flameThrowerEmitterTotalParticleCount: number = 0;

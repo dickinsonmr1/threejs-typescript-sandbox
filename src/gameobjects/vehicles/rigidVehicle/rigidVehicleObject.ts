@@ -149,7 +149,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
         return this.model;
     }
 
-    getCannonVehicleChassisBody() {
+    getCannonVehicleChassisBody(): CANNON.Body | undefined {
         return this.rigidVehicleObject?.chassisBody;
     }
 
