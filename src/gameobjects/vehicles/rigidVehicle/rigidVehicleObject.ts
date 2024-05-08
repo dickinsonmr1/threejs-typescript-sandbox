@@ -161,7 +161,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
         if(!this.rigidVehicleObject) return;
 
         this.rigidVehicleObject.chassisBody.position.y = 5;
-        //this.rigidVehicleObject.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
+        this.rigidVehicleObject.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
     }
 
     tryTurn(gamepadStickX: number): void {

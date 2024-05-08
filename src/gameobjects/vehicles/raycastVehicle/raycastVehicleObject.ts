@@ -77,16 +77,25 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             //indexForwardAxis: 2
         });
 
-        wheelOptions.chassisConnectionPointLocal.set(-1, 0, -1);
+        const axisWidth = chassisDimensions.z * 2.5; //0.75;
+        const down = new CANNON.Vec3(0, -1, 0);
+        
+        const chassisLength = chassisDimensions.x;
+
+        // front right
+        wheelOptions.chassisConnectionPointLocal.set(-chassisLength, 0, -axisWidth / 2);
         this.raycastVehicle.addWheel(wheelOptions);
         
-        wheelOptions.chassisConnectionPointLocal.set(-1, 0, 1);
+        // front left
+        wheelOptions.chassisConnectionPointLocal.set(-chassisLength, 0, axisWidth / 2);
         this.raycastVehicle.addWheel(wheelOptions);
         
-        wheelOptions.chassisConnectionPointLocal.set(1, 0, -1);
+        // rear right
+        wheelOptions.chassisConnectionPointLocal.set(chassisLength, 0, -axisWidth / 2);
         this.raycastVehicle.addWheel(wheelOptions);
 
-        wheelOptions.chassisConnectionPointLocal.set(1, 0, 1);        
+        // rear left
+        wheelOptions.chassisConnectionPointLocal.set(chassisLength, 0, axisWidth / 2);        
         this.raycastVehicle.addWheel(wheelOptions);
 
         this.raycastVehicle.addToWorld(world);
@@ -116,6 +125,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         if(!this.raycastVehicle) return;
 
         this.raycastVehicle.chassisBody.position.y = 5;
+        this.raycastVehicle.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
     }
 
     getChassis(): ChassisObject {
