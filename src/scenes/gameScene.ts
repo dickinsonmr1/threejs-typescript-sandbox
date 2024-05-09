@@ -155,10 +155,9 @@ export default class GameScene extends THREE.Scene {
         this.world.broadphase = new CANNON.SAPBroadphase(this.world);
 
         var groundMaterial = new CANNON.Material("groundMaterial");
-        this.ground = new GroundObject(this, 20, 20, 0x444444,
+        this.ground = new GroundObject(this, 100, 100, 0x444444,
             new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: true }),
             this.world, groundMaterial);
-
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
@@ -229,9 +228,7 @@ export default class GameScene extends THREE.Scene {
             this.world,
             objectMaterial);
         this.allGltfPlayers.push(this.gltfVehiclePlayer4);
-        
-
-        
+                
         this.raycastVehicleObject = new RaycastVehicleObject(
             this,
             new THREE.Vector3(-5, 4, -15),   // position
@@ -265,40 +262,19 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
         );
-
-        /*
-        // player1 currently assigned when GameScene is created
-        this.player1.vehicleObject = new RigidVehicleObject(
-            this,
-            new THREE.Vector3(0, 4, 0),   // position
-            this.world,            
-            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-            new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            15,                            // chassis mass
-            wheelMaterial,
-            0.3,                           // wheel radius
-            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
-            3,                              // wheel mass
-            this.ambulanceModel,             // model            
-            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-            new THREE.Vector3(0, 0, 0) // model offset
-            //new THREE.Vector3(0, -0.35, 0) // model offset
-        );
-        */
         this.allPlayers.push(this.player1);
         
-
-        this.player2.vehicleObject = new RigidVehicleObject(
+        this.player2.vehicleObject = new RaycastVehicleObject(
             this,
             new THREE.Vector3(5, 4, 5),   // position
             this.world,            
             new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
             new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            20,                            // chassis mass
+            500,                            // chassis mass
             wheelMaterial,
-            0.2,                           // wheel radius
-            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
-            2,                              // wheel mass
+            0.25,                           // wheel radius
+            new CANNON.Vec3(0, 0, 0),   // wheel offset
+            20,                              // wheel mass
             this.taxiModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
@@ -306,17 +282,17 @@ export default class GameScene extends THREE.Scene {
         );
         this.allPlayers.push(this.player2);
 
-        this.player3.vehicleObject = new RigidVehicleObject(
+        this.player3.vehicleObject = new RaycastVehicleObject(
             this,
             new THREE.Vector3(-5, 4, -5),   // position
             this.world,            
             new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
             new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            20,                            // chassis mass
+            500,                            // chassis mass
             wheelMaterial,
-            0.2,                           // wheel radius
-            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
-            2,                              // wheel mass
+            0.25,                           // wheel radius
+            new CANNON.Vec3(0, 0, 0),   // wheel offset
+            20,                              // wheel mass
             this.policeModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
@@ -324,24 +300,23 @@ export default class GameScene extends THREE.Scene {
         );
         this.allPlayers.push(this.player3);
 
-        this.player4.vehicleObject = new RigidVehicleObject(
+        this.player4.vehicleObject = new RaycastVehicleObject(
             this,
-            new THREE.Vector3(-5, 4, 5),   // position
+            new THREE.Vector3(-5, 4, -5),   // position
             this.world,            
             new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
             new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            20,                            // chassis mass
+            500,                            // chassis mass
             wheelMaterial,
-            0.2,                           // wheel radius
-            new CANNON.Vec3(0, -0.2, 0),   // wheel offset
-            2,                              // wheel mass
+            0.25,                           // wheel radius
+            new CANNON.Vec3(0, 0, 0),   // wheel offset
+            20,                              // wheel mass
             this.trashTruckModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
-        );
+        );       
         this.allPlayers.push(this.player4);
-
 
         //this.rigidVehicleObject.model?.add(this.camera);        
         this.camera.position.x = 0;
@@ -373,7 +348,6 @@ export default class GameScene extends THREE.Scene {
         mesh.receiveShadow = true;
         mesh.position.set(0, cubeSize / 2 - 0.1, 0);
         //this.add(mesh);
-
         
         var groundCubeContactMaterial = new CANNON.ContactMaterial(
             this.ground.getPhysicsMaterial(),
