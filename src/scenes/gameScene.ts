@@ -115,6 +115,7 @@ export default class GameScene extends THREE.Scene {
     divElementObjective!: HTMLDivElement;
     divElementWeaponParticleCount!: HTMLDivElement;
     divElementParticleCount!: HTMLDivElement;
+    divElementPhysicsObjectCount!: HTMLDivElement;
 
     crosshairSprite!: THREE.Sprite;
 
@@ -397,6 +398,7 @@ export default class GameScene extends THREE.Scene {
         this.divElementObjective = this.generateDivElement(10, 100, "Objective");
         this.divElementParticleCount = this.generateDivElement(10, 150, "Particle count");
         this.divElementWeaponParticleCount = this.generateDivElement(10, 200, "Weapon count");
+        this.divElementPhysicsObjectCount = this.generateDivElement(10, 250, "Physics object count");
 
         //let healthBarTexture = this.textureLoader.load('assets/healthBarWhite-100x20.png');
 
@@ -952,6 +954,11 @@ export default class GameScene extends THREE.Scene {
         });
         this.divElementWeaponParticleCount.innerHTML = `flamethrower particles: ${flameThrowerEmitterTotalParticleCount}`; 
         this.divElementParticleCount.innerHTML = `total emitter particles: ${emitterTotalParticleCount}`; 
+
+        let totalPhysicsObjectCount: number = this.world.bodies.length;
+        
+        this.divElementPhysicsObjectCount.innerHTML = `total physics objects: ${totalPhysicsObjectCount}`; 
+        
 
         this.stats.update();
     }
