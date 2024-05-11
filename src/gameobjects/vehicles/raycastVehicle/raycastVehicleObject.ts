@@ -17,7 +17,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     private model!: THREE.Group;
     modelOffset?: THREE.Vector3;
     
-    private readonly maxSteerVal: number = 0.5;
+    private readonly maxSteerVal: number = 0.7;
     private readonly maxForce: number = 1000;
 
     //mesh: THREE.Mesh;

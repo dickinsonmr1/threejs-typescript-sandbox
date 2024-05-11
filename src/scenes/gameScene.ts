@@ -46,6 +46,7 @@ export default class GameScene extends THREE.Scene {
     private policeModel?: GLTF;
     private ambulanceModel?: GLTF;
     private trashTruckModel?: GLTF;
+    private sedanSportsModel?: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
 
@@ -150,6 +151,10 @@ export default class GameScene extends THREE.Scene {
         this.trashTruckModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.trashTruckModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
+        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/sedanSports.glb');
+        this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+
         // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
 
         this.world.broadphase = new CANNON.SAPBroadphase(this.world);
@@ -158,6 +163,8 @@ export default class GameScene extends THREE.Scene {
         this.ground = new GroundObject(this, 100, 100, 0x444444,
             new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: true }),
             this.world, groundMaterial);
+
+        this.addHeightField();
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
@@ -189,7 +196,7 @@ export default class GameScene extends THREE.Scene {
 
 
         this.gltfVehiclePlayer1 = new GltfObject(this,
-            this.taxiModel,
+            this.sedanSportsModel,
             //'assets/kenney-vehicles/taxi.glb',
             new THREE.Vector3(2, 2, -2), // position
             new THREE.Vector3(0.5, 0.5, 0.5), // scale
@@ -228,7 +235,7 @@ export default class GameScene extends THREE.Scene {
             this.world,
             objectMaterial);
         this.allGltfPlayers.push(this.gltfVehiclePlayer4);
-                
+              
         this.raycastVehicleObject = new RaycastVehicleObject(
             this,
             new THREE.Vector3(-5, 4, -15),   // position
@@ -257,7 +264,7 @@ export default class GameScene extends THREE.Scene {
             0.25,                           // wheel radius
             new CANNON.Vec3(0, 0, 0),   // wheel offset
             20,                              // wheel mass
-            this.ambulanceModel,             // model            
+            this.sedanSportsModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
@@ -963,5 +970,44 @@ export default class GameScene extends THREE.Scene {
         document.body.appendChild(div);
         
         return div;
+    }
+
+    addHeightField() {
+        
+        var height = 3;
+
+        // Add the ground
+        const sizeX = 64;
+        const sizeZ = 64;
+        var matrix: number[][] = [];
+        for (let i = 0; i < sizeX; i++) {
+          matrix.push([])
+          for (let j = 0; j < sizeZ; j++) {
+            if (i === 0 || i === sizeX - 1 || j === 0 || j === sizeZ - 1) {
+              matrix[i].push(height);
+              continue;
+            }
+
+            const height2 = Math.cos((i / sizeX) * Math.PI * 5) * Math.cos((j / sizeZ) * Math.PI * 5) * 2 + 2;
+            matrix[i].push(height2);
+          }
+        }
+
+        const groundMaterial = new CANNON.Material('ground')
+        const heightfieldShape = new CANNON.Heightfield(matrix, {
+          elementSize: 100 / sizeX,
+        })
+        const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial })
+        heightfieldBody.addShape(heightfieldShape)
+        heightfieldBody.position.set(
+          // -((sizeX - 1) * heightfieldShape.elementSize) / 2,
+          -(sizeX * heightfieldShape.elementSize) / 2,
+          -1,
+          // ((sizeZ - 1) * heightfieldShape.elementSize) / 2
+          (sizeZ * heightfieldShape.elementSize) / 2
+        )
+        heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+        this.world.addBody(heightfieldBody)
+        //demo.addVisual(heightfieldBody)
     }
 }
