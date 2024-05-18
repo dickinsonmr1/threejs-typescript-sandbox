@@ -21,13 +21,45 @@ export class GroundObject {
         world?: CANNON.World,
         physicsMaterial?: CANNON.Material) {
 
+            /*
         this.meshMaterial = meshMaterial ?? new THREE.MeshBasicMaterial({
             color: color,
             side: THREE.DoubleSide,
             wireframe: true
         })
+        */
 
+        // https://sbcode.net/threejs/displacmentmap/
+        const displacementMap = new THREE.TextureLoader().load('assets/displacement-map.png');
+        const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
+        
+        const planeSize = 40;
  
+        const loader = new THREE.TextureLoader();
+        const texture = loader.load('assets/checker.png');
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.magFilter = THREE.NearestFilter;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        const repeats = planeSize / 2;
+        texture.repeat.set(repeats, repeats);
+
+        //this.meshMaterial = new THREE.MeshPhongMaterial();
+        //var temp = this.meshMaterial as THREE.MeshPhongMaterial;
+        //temp.displacementMap = displacementMap;
+
+        this.meshMaterial = new THREE.MeshStandardMaterial({
+            map: texture,
+            side: THREE.DoubleSide,
+            displacementMap: displacementMap,
+            displacementScale: 2,
+            color: color,
+            fog: true,
+            normalMap: normalMap,
+            depthTest: true            
+        });
+        
+        
         
         if(world != null) {
 
@@ -54,7 +86,7 @@ export class GroundObject {
         }
 
         this.mesh = new THREE.Mesh(
-            new THREE.PlaneGeometry( height, width, 1, 1),
+            new THREE.PlaneGeometry( height, width, 100, 100),
             this.meshMaterial
         );
         this.mesh.position.setX(height / 2);
@@ -62,7 +94,7 @@ export class GroundObject {
         this.mesh.position.setZ(-width);
         this.mesh.rotation.x = - Math.PI / 2;
 
-        this.mesh.castShadow = false;
+        this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;  
         
         scene.add(this.mesh);
