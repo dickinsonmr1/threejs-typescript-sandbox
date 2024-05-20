@@ -262,10 +262,16 @@ export class GroundObject {
             }
           }
         }
-        tempGeometry.setFromPoints(points)
+        tempGeometry.setFromPoints(points);
         //geometry.computeBoundingSphere()
         //geometry.computeFaceNormals()
-        var tempMesh = new THREE.Mesh(tempGeometry, this.meshMaterial);
+        var tempMaterial = new THREE.MeshBasicMaterial({
+            color: 0x007700,
+            wireframe: false,
+            fog: true
+          });
+
+        var tempMesh = new THREE.Mesh(tempGeometry, tempMaterial);
         tempMesh.scale.set(1, 1, 1);
         tempMesh.position.set(
             // -((sizeX - 1) * heightfieldShape.elementSize) / 2,
@@ -275,7 +281,9 @@ export class GroundObject {
             (sizeZ * heightfieldShape.elementSize) / 2
         );
         tempMesh.rotation.x = - Math.PI / 2;
-
+        tempMesh.castShadow = true;
+        tempMesh.receiveShadow = false;  
+        
         scene.add(tempMesh);
 
         // https://dustinpfister.github.io/2022/12/09/threejs-buffer-geometry-index/
