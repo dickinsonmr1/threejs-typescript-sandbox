@@ -18,14 +18,12 @@ export class GroundObject {
         meshMaterial?: THREE.Material,
         world?: CANNON.World,
         physicsMaterial?: CANNON.Material) {
-
-            /*
+            
         this.meshMaterial = meshMaterial ?? new THREE.MeshBasicMaterial({
             color: color,
             side: THREE.DoubleSide,
             wireframe: true
-        })
-        */
+        });
 
         // https://sbcode.net/threejs/displacmentmap/
         const displacementMap = new THREE.TextureLoader().load('assets/displacement-map.png');
@@ -46,6 +44,7 @@ export class GroundObject {
         //var temp = this.meshMaterial as THREE.MeshPhongMaterial;
         //temp.displacementMap = displacementMap;
 
+        /*
         this.meshMaterial = new THREE.MeshStandardMaterial({
             map: texture,
             side: THREE.DoubleSide,
@@ -56,6 +55,7 @@ export class GroundObject {
             normalMap: normalMap,
             depthTest: true            
         });
+        */
                     
         if(world != null) {
 
@@ -85,6 +85,8 @@ export class GroundObject {
             new THREE.PlaneGeometry( height, width, 100, 100),
             this.meshMaterial
         );
+
+        /*
         this.mesh.position.setX(height / 2);
         this.mesh.position.setY(0);
         this.mesh.position.setZ(-width);
@@ -92,7 +94,8 @@ export class GroundObject {
 
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;  
-        
+        */
+
         //scene.add(this.mesh);
                 
         let grid = new THREE.GridHelper( height, 10, 0xffffff, 0xffffff );
@@ -263,15 +266,20 @@ export class GroundObject {
           }
         }
         tempGeometry.setFromPoints(points);
+        //tempGeometry.computeFaceNormals();
+        tempGeometry.computeVertexNormals();
+        //tempGeometry.computeTangents();
         //geometry.computeBoundingSphere()
         //geometry.computeFaceNormals()
+        /*
         var tempMaterial = new THREE.MeshBasicMaterial({
             color: 0x007700,
             wireframe: false,
             fog: true
           });
+        */
 
-        var tempMesh = new THREE.Mesh(tempGeometry, tempMaterial);
+        var tempMesh = new THREE.Mesh(tempGeometry, this.meshMaterial);
         tempMesh.scale.set(1, 1, 1);
         tempMesh.position.set(
             // -((sizeX - 1) * heightfieldShape.elementSize) / 2,
@@ -281,8 +289,8 @@ export class GroundObject {
             (sizeZ * heightfieldShape.elementSize) / 2
         );
         tempMesh.rotation.x = - Math.PI / 2;
-        tempMesh.castShadow = true;
-        tempMesh.receiveShadow = false;  
+        tempMesh.castShadow = false;
+        tempMesh.receiveShadow = true;  
         
         scene.add(tempMesh);
 

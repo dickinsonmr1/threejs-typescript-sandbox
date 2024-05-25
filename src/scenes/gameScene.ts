@@ -163,7 +163,30 @@ export default class GameScene extends THREE.Scene {
         var groundMaterial = new CANNON.Material("groundMaterial");
         
         this.ground = new GroundObject(this, 100, 100, 0x444444,
-            new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: true }),
+            /*
+                new THREE.MeshPhongMaterial(
+                {
+                    color: 0x999999,
+                    depthWrite: true,
+                    //wireframe: true,
+                    side: THREE.DoubleSide
+                }),
+            */
+           /*
+            new THREE.MeshBasicMaterial({
+                color: 0x007700,
+                wireframe: false,
+                depthWrite: true,
+                fog: true
+            }),
+            */
+            new THREE.MeshStandardMaterial({
+                color: 0x004400, 
+                emissive: 0x004400,
+                roughness: 0.9,
+                metalness: 0.3
+
+            }),
             this.world, groundMaterial);        
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");

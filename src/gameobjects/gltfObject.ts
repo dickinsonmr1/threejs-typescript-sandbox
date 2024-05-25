@@ -40,7 +40,7 @@ export class GltfObject {
         this.model = modelData.scene;//.children[0];
         this.model.position.set(position.x, position.y, position.z);
         this.model.scale.set(scale.x, scale.y, scale.z);            
-        //this.model.castShadow = true;
+        this.model.castShadow = true;
         //this.model.receiveShadow = true;
 
         scene.add(this.model);
