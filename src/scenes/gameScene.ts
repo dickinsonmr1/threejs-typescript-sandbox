@@ -671,23 +671,11 @@ export default class GameScene extends THREE.Scene {
         }
         
         if (this.keyDown.has('z')) {
-            let flamethrowerEmitter = this.flamethrowerEmitters[0];
-            flamethrowerEmitter.setPosition(this.player1.getPosition());
-            if(this.player1.vehicleObject && this.player1.vehicleObject.getModel()) {                
-                flamethrowerEmitter.setQuaternion(this.player1.vehicleObject.getModel().quaternion);
-            }
-        
-            flamethrowerEmitter.emitParticles();
+            this.firePlayerFlamethrower();
         }
 
         if (this.keyDown.has('q')) {
-            let flamethrowerEmitter = this.flamethrowerEmitters[1];
-            flamethrowerEmitter.setPosition(this.player2.getPosition());
-            if(this.player2.vehicleObject && this.player2.vehicleObject.getModel()) {                
-                flamethrowerEmitter.setQuaternion(this.player2.vehicleObject.getModel().quaternion);
-            }
-        
-            flamethrowerEmitter.emitParticles();
+            this.fireEnemyFlamethrower();
         }
         /*
         if(this.keyDown.has('w')) {
@@ -718,10 +706,34 @@ export default class GameScene extends THREE.Scene {
             this.camera.lookAt(this.player1.vehicleObject?.getChassis().mesh?.position);
     }
 
-    private async addNewProjectile(projectile: Projectile) {
+    public async addNewProjectile(projectile: Projectile) {
         this.projectiles.push(projectile);
         if(projectile.particleEmitterObject != null)
             this.particleEmitters.push(projectile.particleEmitterObject);	
+    }
+
+    public firePlayerFlamethrower() {
+
+        let flamethrowerEmitter = this.flamethrowerEmitters[0];
+        flamethrowerEmitter.setPosition(this.player1.getPosition());
+        if(this.player1.vehicleObject && this.player1.vehicleObject.getModel()) {                
+            flamethrowerEmitter.setQuaternion(this.player1.vehicleObject.getModel().quaternion);
+        }
+    
+        flamethrowerEmitter.emitParticles();
+    }
+
+    public fireEnemyFlamethrower() {
+
+        // TODO: refactor and link to specific enemies
+
+        let flamethrowerEmitter = this.flamethrowerEmitters[1];
+        flamethrowerEmitter.setPosition(this.player2.getPosition());
+        if(this.player2.vehicleObject && this.player2.vehicleObject.getModel()) {                
+            flamethrowerEmitter.setQuaternion(this.player2.vehicleObject.getModel().quaternion);
+        }
+    
+        flamethrowerEmitter.emitParticles();
     }
 
     private async generateRandomCube() {

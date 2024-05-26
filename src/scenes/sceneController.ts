@@ -2,6 +2,7 @@
 import GameScene from "./gameScene";
 import HudScene from "./hudScene";
 import { GamePadEnums } from "./gamePadEnums";
+import { ProjectileType } from "../gameobjects/weapons/projectileType";
 
 export default class SceneController {
     gameScene?: GameScene;
@@ -75,9 +76,13 @@ export default class SceneController {
 		//console.log(`Left stick at (${myGamepad.axes[0]}, ${myGamepad.axes[1]})` );
 		//console.log(`Right stick at (${myGamepad.axes[2]}, ${myGamepad.axes[3]})` );
 
+        
 
         gamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
-            if(isPressed) {
+
+            if(!this.gameScene) return;
+
+            if(isPressed) {                
                 if(buttonIndex == GamePadEnums.RIGHT_SHOULDER_BOTTOM) {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene?.player1.tryAccelerateWithKeyboard();
@@ -85,6 +90,24 @@ export default class SceneController {
                 if(buttonIndex == GamePadEnums.LEFT_SHOULDER_BOTTOM) {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene?.player1.tryReverseWithKeyboard();
+                }
+                if(buttonIndex == GamePadEnums.FACE_1 && !this.gamepadPrevious.buttons[GamePadEnums.FACE_1].pressed) {
+                    console.log(`pressed: ${buttonIndex}`);
+                    var projectile = this.gameScene.player1.createProjectile(ProjectileType.Bullet);
+                    this.gameScene?.addNewProjectile(projectile);
+                }
+                if(buttonIndex == GamePadEnums.FACE_2 && !this.gamepadPrevious.buttons[GamePadEnums.FACE_2].pressed) {
+                    console.log(`pressed: ${buttonIndex}`);
+                    var projectile = this.gameScene.player1.createProjectile(ProjectileType.Rocket);
+                    this.gameScene?.addNewProjectile(projectile);
+                }
+                if(buttonIndex == GamePadEnums.FACE_3) {
+                    console.log(`pressed: ${buttonIndex}`);
+                    this.gameScene.firePlayerFlamethrower();
+                }
+                if(buttonIndex == GamePadEnums.FACE_4) {
+                    console.log(`pressed: ${buttonIndex}`);
+                    this.gameScene.fireEnemyFlamethrower();
                 }
             }
             else {
