@@ -1,7 +1,7 @@
 
 import GameScene from "./gameScene";
 import HudScene from "./hudScene";
-import { GamePadEnums } from "./gamePadEnums";
+import { GamepadControlScheme, GamepadEnums } from "./gamePadEnums";
 import { ProjectileType } from "../gameobjects/weapons/projectileType";
 
 export default class SceneController {
@@ -10,15 +10,41 @@ export default class SceneController {
 
     gamepad!: Gamepad;
     gamepadPrevious!: Gamepad;
+    gamepadControlScheme!: GamepadControlScheme;
 
     constructor() {
 
     }
 
-    setGamePad1(gamepad: Gamepad) {
+
+    accelerateGamepadIndex!: number;
+    brakeOrReverseGamepadIndex!: number;
+    firePrimaryWeaponGamepadIndex!: number;
+    fireSecondaryWeaponGamepadIndex!: number;
+    fireFlameThrowerGamepadIndex!: number;
+
+    setGamePad1(gamepad: Gamepad, gamepadControlScheme: GamepadControlScheme) {
         this.gamepad = gamepad;
         this.gamepadPrevious = gamepad;
+
+        this.gamepadControlScheme = gamepadControlScheme;
+
         console.log('gamepad1 assigned');
+
+        if(gamepadControlScheme == GamepadControlScheme.Racing) {
+            this.accelerateGamepadIndex = GamepadEnums.RIGHT_SHOULDER_BOTTOM;
+            this.brakeOrReverseGamepadIndex = GamepadEnums.LEFT_SHOULDER_BOTTOM;
+            this.firePrimaryWeaponGamepadIndex = GamepadEnums.FACE_2;
+            this.fireSecondaryWeaponGamepadIndex = GamepadEnums.FACE_1;
+            this.fireFlameThrowerGamepadIndex = GamepadEnums.FACE_3;
+        }
+        else {
+            this.accelerateGamepadIndex = GamepadEnums.FACE_3;
+            this.brakeOrReverseGamepadIndex = GamepadEnums.FACE_1
+            this.firePrimaryWeaponGamepadIndex = GamepadEnums.RIGHT_SHOULDER_BOTTOM;
+            this.fireSecondaryWeaponGamepadIndex = GamepadEnums.LEFT_SHOULDER_BOTTOM;
+            this.fireFlameThrowerGamepadIndex = GamepadEnums.FACE_2;
+        }
     }
 
     pollGamepads() {
@@ -83,41 +109,41 @@ export default class SceneController {
             if(!this.gameScene) return;
 
             if(isPressed) {                
-                if(buttonIndex == GamePadEnums.RIGHT_SHOULDER_BOTTOM) {
+                if(buttonIndex == this.accelerateGamepadIndex) {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene?.player1.tryAccelerateWithKeyboard();
                 }
-                if(buttonIndex == GamePadEnums.LEFT_SHOULDER_BOTTOM) {
+                if(buttonIndex == this.brakeOrReverseGamepadIndex) {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene?.player1.tryReverseWithKeyboard();
                 }
-                if(buttonIndex == GamePadEnums.FACE_1 && !this.gamepadPrevious.buttons[GamePadEnums.FACE_1].pressed) {
+                if(buttonIndex == this.firePrimaryWeaponGamepadIndex && !this.gamepadPrevious.buttons[this.firePrimaryWeaponGamepadIndex].pressed) {
                     console.log(`pressed: ${buttonIndex}`);
                     var projectile = this.gameScene.player1.createProjectile(ProjectileType.Bullet);
                     this.gameScene?.addNewProjectile(projectile);
                 }
-                if(buttonIndex == GamePadEnums.FACE_2 && !this.gamepadPrevious.buttons[GamePadEnums.FACE_2].pressed) {
+                if(buttonIndex == this.fireSecondaryWeaponGamepadIndex && !this.gamepadPrevious.buttons[this.fireSecondaryWeaponGamepadIndex].pressed) {
                     console.log(`pressed: ${buttonIndex}`);
                     var projectile = this.gameScene.player1.createProjectile(ProjectileType.Rocket);
                     this.gameScene?.addNewProjectile(projectile);
                 }
-                if(buttonIndex == GamePadEnums.FACE_3) {
+                if(buttonIndex == this.fireFlameThrowerGamepadIndex) {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene.firePlayerFlamethrower();
                 }
-                if(buttonIndex == GamePadEnums.FACE_4) {
+                if(buttonIndex == GamepadEnums.FACE_4) {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene.fireEnemyFlamethrower();
                 }
             }
             else {
-                if(this.gamepadPrevious.buttons[GamePadEnums.RIGHT_SHOULDER_BOTTOM].pressed
-                    && buttonIndex == GamePadEnums.RIGHT_SHOULDER_BOTTOM) {
+                if(this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER_BOTTOM].pressed
+                    && buttonIndex == GamepadEnums.RIGHT_SHOULDER_BOTTOM) {
                         console.log(`button no longer pressed: ${buttonIndex}`);
                         this.gameScene?.player1.tryStopAccelerateWithKeyboard();
                 }
-                if(this.gamepadPrevious.buttons[GamePadEnums.LEFT_SHOULDER_BOTTOM].pressed
-                    && buttonIndex == GamePadEnums.LEFT_SHOULDER_BOTTOM) {
+                if(this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER_BOTTOM].pressed
+                    && buttonIndex == GamepadEnums.LEFT_SHOULDER_BOTTOM) {
                         console.log(`button no longer pressed: ${buttonIndex}`);
                         this.gameScene?.player1.tryStopReverseWithKeyboard();
                 }

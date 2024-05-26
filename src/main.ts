@@ -4,6 +4,7 @@ import HudScene from './scenes/hudScene'
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import CannonDebugger from 'cannon-es-debugger';
 import SceneController from './scenes/sceneController';
+import { GamepadControlScheme } from './scenes/gamePadEnums';
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -29,7 +30,7 @@ const pmremGenerator = new THREE.PMREMGenerator( renderer );
 window.addEventListener("gamepadconnected", (event) => {
   console.log("A gamepad connected:");
   console.log(event.gamepad);
-  sceneController.setGamePad1(event.gamepad);
+  sceneController.setGamePad1(event.gamepad, GamepadControlScheme.CarCombat);
 });
 
 window.addEventListener("gamepaddisconnected", (event) => {
