@@ -118,6 +118,7 @@ export default class GameScene extends THREE.Scene {
     divElementWeaponParticleCount!: HTMLDivElement;
     divElementParticleCount!: HTMLDivElement;
     divElementPhysicsObjectCount!: HTMLDivElement;
+    divElementLightObjectCount!: HTMLDivElement;
 
     crosshairSprite!: THREE.Sprite;
 
@@ -456,6 +457,7 @@ export default class GameScene extends THREE.Scene {
         this.divElementParticleCount = this.generateDivElement(10, 150, "Particle count");
         this.divElementWeaponParticleCount = this.generateDivElement(10, 200, "Weapon count");
         this.divElementPhysicsObjectCount = this.generateDivElement(10, 250, "Physics object count");
+        this.divElementLightObjectCount = this.generateDivElement(10, 300, "Light object count");
 
         //let healthBarTexture = this.textureLoader.load('assets/healthBarWhite-100x20.png');
 
@@ -1025,11 +1027,13 @@ export default class GameScene extends THREE.Scene {
         this.divElementWeaponParticleCount.innerHTML = `flamethrower particles: ${flameThrowerEmitterTotalParticleCount}`; 
         this.divElementParticleCount.innerHTML = `total emitter particles: ${emitterTotalParticleCount}`; 
 
-        let totalPhysicsObjectCount: number = this.world.bodies.length;
-        
+        let totalPhysicsObjectCount: number = this.world.bodies.length;        
         this.divElementPhysicsObjectCount.innerHTML = `total physics objects: ${totalPhysicsObjectCount}`; 
-        
 
+        var arrayLightTypes = ['SpotLight', 'HemisphereLight', 'AmbientLight', 'DirectionalLight', 'PointLight', 'RectAreaLight'];
+        let totalLightObjectCount: number = this.children.filter(x => arrayLightTypes.includes(x.type)).length;
+        this.divElementLightObjectCount.innerHTML = `total light objects: ${totalLightObjectCount}`; 
+        
         this.stats.update();
     }
 
