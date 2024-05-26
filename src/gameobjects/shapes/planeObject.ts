@@ -49,8 +49,8 @@ export class PlaneObject {
         this.meshMaterial = new THREE.MeshStandardMaterial({
             map: texture,
             side: THREE.DoubleSide,
-            displacementMap: displacementMap,
-            displacementScale: 5,
+            //displacementMap: displacementMap,
+            //displacementScale: 5,
             //color: color,
             fog: true,
             //normalMap: normalMap,
@@ -99,7 +99,15 @@ export class PlaneObject {
 
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;  
-        
+
+        const uv = this.mesh.geometry.getAttribute('uv');
+        const position = this.mesh.geometry.getAttribute('position');
+
+        console.log(position.count); // 4 ( the are points or vertices )
+        console.log(position.array.length); // 12 ( x, y, and z for each point )
+        // THE UV ATTRIBUTE
+        console.log(uv.count); // 4 ( the are points or vertices )
+        console.log(uv.array.length); // 8 ( there is a u and v value for each point )
 
         scene.add(this.mesh)
                 

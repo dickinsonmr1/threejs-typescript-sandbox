@@ -270,11 +270,27 @@ export class GroundObject {
         tempGeometry.computeVertexNormals();
         tempGeometry.computeTangents();
         tempGeometry.computeBoundingBox();
-        
-        // https://stackoverflow.com/questions/20774648/three-js-generate-uv-coordinate
-        // let bboxSize = tempGeometry.boundingBox.getSize();
-        // let uvMapSize = Math.min(bboxSize.x, bboxSize.y, bboxSize.z);
 
+        
+        //alert(uv.toJSON());
+        //https://dustinpfister.github.io/2021/06/09/threejs-buffer-geometry-attributes-uv/
+
+        var boundingBox = tempGeometry.boundingBox?.clone();
+
+        /*
+        alert('bounding box coordinates: ' + 
+        '(' + boundingBox?.min.x + ', ' + boundingBox?.min.y + ', ' + boundingBox?.min.z + '), ' + 
+        '(' + boundingBox?.max.x + ', ' + boundingBox?.max.y + ', ' + boundingBox?.max.z + ')' );
+        *
+        /
+        let uvMapSize = 10;
+
+        const uv = tempGeometry.getAttribute('uv');
+
+        // https://stackoverflow.com/questions/20774648/three-js-generate-uv-coordinate
+        
+        //let bboxSize = tempGeometry.boundingBox?.getSize());
+        //let uvMapSize = Math.min(bboxSize.x, bboxSize.y, bboxSize.z);
 
         //tempGeometry.computeTangents();
         //geometry.computeBoundingSphere()

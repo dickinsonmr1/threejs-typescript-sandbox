@@ -180,7 +180,7 @@ export default class GameScene extends THREE.Scene {
             
                 new THREE.MeshPhongMaterial(
                 {
-                    color: 0x44dd44,
+                    //color: 0x44dd44,
                     depthWrite: true,
                     //wireframe: true,
                     side: THREE.DoubleSide,
