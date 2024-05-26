@@ -28,6 +28,7 @@ import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
 import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
+import { PlaneObject } from '../gameobjects/shapes/planeObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -76,6 +77,7 @@ export default class GameScene extends THREE.Scene {
     });
     
     ground?: GroundObject;
+    mountainPlane?: PlaneObject;
     cube?: BoxObject;
     cube2?: BoxObject;
     cylinder?: CylinderObject;
@@ -162,32 +164,65 @@ export default class GameScene extends THREE.Scene {
 
         var groundMaterial = new CANNON.Material("groundMaterial");
         
+        const loader = new THREE.TextureLoader();
+        const texture = loader.load('assets/wall.jpg');
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping
+        texture.magFilter = THREE.NearestFilter;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        //const repeats = 32;//planeSize / 2;
+        //texture.repeat.set(repeats, repeats);
+
+        const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
+        
+
         this.ground = new GroundObject(this, 100, 100, 0x444444,
-            /*
+            
                 new THREE.MeshPhongMaterial(
                 {
-                    color: 0x999999,
+                    color: 0x44dd44,
                     depthWrite: true,
                     //wireframe: true,
-                    side: THREE.DoubleSide
+                    side: THREE.DoubleSide,
+                    bumpMap: normalMap,
+                    //vertexColors: true
                 }),
-            */
-           /*
+            
+            /*
             new THREE.MeshBasicMaterial({
-                color: 0x007700,
-                wireframe: false,
-                depthWrite: true,
-                fog: true
+                //color: 0x007700,
+                //wireframe: false,
+                //depthWrite: true,
+                //fog: true,
+                map: texture
             }),
             */
+            /*
             new THREE.MeshStandardMaterial({
                 color: 0x004400, 
                 emissive: 0x004400,
                 roughness: 0.9,
-                metalness: 0.3
+                metalness: 0.3,
+                map: texture 
+            }),            
+            */
+            /*
+            new THREE.MeshLambertMaterial({
+                color: 0x004400,
+                emissive: 0x004400,
+                emissiveIntensity: 0.5,
+                map: texture,
 
             }),
-            this.world, groundMaterial);        
+            */
+            
+            this.world, groundMaterial);      
+
+        this.mountainPlane = new PlaneObject(
+            this, 20, 20, 0x444444,
+            undefined, groundMaterial
+        
+        );
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
@@ -205,7 +240,7 @@ export default class GameScene extends THREE.Scene {
                         new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
                         this.world, objectMaterial);
 
-        this.cube2 = new BoxObject(this, 1,1,1, new THREE.Vector3(0, 20, -8), 0xffff00,
+        this.cube2 = new BoxObject(this, 1,1,1, new THREE.Vector3(0, 10, -8), 0xffff00,
                         new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
                         this.world, objectMaterial);
 
@@ -393,13 +428,13 @@ export default class GameScene extends THREE.Scene {
         //this.add(light);
         const color = new THREE.Color('white');
         const intensity = 1;
-        const distance = 30;
+        const distance = 50;
         const angle = Math.PI / 8;
         const penumbra = 0.25;
-        const decay = 0.5;
+        const decay = 0.1;
 
         this.spotlight = new SpotlightObject(this, color, intensity, distance, angle, penumbra, decay,
-            new THREE.Vector3(0,0,0),
+            new THREE.Vector3(0,15,0),
             this.cube2.mesh);
 
         //const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
@@ -865,6 +900,7 @@ export default class GameScene extends THREE.Scene {
         this.updateCamera();     
 
         this.ground?.update();
+        this.mountainPlane?.update();
         this.cube?.update();
         this.cube2?.update();
         this.sphere?.update();

@@ -268,6 +268,14 @@ export class GroundObject {
         tempGeometry.setFromPoints(points);
         //tempGeometry.computeFaceNormals();
         tempGeometry.computeVertexNormals();
+        tempGeometry.computeTangents();
+        tempGeometry.computeBoundingBox();
+        
+        // https://stackoverflow.com/questions/20774648/three-js-generate-uv-coordinate
+        // let bboxSize = tempGeometry.boundingBox.getSize();
+        // let uvMapSize = Math.min(bboxSize.x, bboxSize.y, bboxSize.z);
+
+
         //tempGeometry.computeTangents();
         //geometry.computeBoundingSphere()
         //geometry.computeFaceNormals()
