@@ -12,7 +12,7 @@ export class TextureToArray {
         //const originalTexture = new THREE.TextureLoader().load('assets/normal-map.png');
 
         let originalTexture = textureLoader.load(
-            'assets/normal-map.png',
+            'assets/heightmap_64x64.png',
             () => {
 
             // Get the image data from the original texture

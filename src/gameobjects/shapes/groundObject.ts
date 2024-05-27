@@ -17,7 +17,8 @@ export class GroundObject {
         color: number = 0xffffff,
         meshMaterial?: THREE.Material,
         world?: CANNON.World,
-        physicsMaterial?: CANNON.Material) {
+        physicsMaterial?: CANNON.Material,
+        dataArray2D: number[][] = []) {
             
         this.meshMaterial = meshMaterial ?? new THREE.MeshBasicMaterial({
             color: color,
@@ -110,7 +111,7 @@ export class GroundObject {
         scene.add( grid );
 
         if(world != null)
-            this.generateHeightfieldv2(scene, world);
+            this.generateHeightfieldv2(scene, world, 64, 64, dataArray2D);
     }
     
     getPhysicsMaterial(): CANNON.Material {
@@ -132,24 +133,36 @@ export class GroundObject {
         }
     }
 
-    generateHeightfieldv2(scene: THREE.Scene, world: CANNON.World) {           
+    generateHeightfieldv2(scene: THREE.Scene, world: CANNON.World, sizeX: number, sizeZ: number, dataArray2D: number[][] = []) {           
         // generate physics object
         var height = 3;        
-        const sizeX = 64;
-        const sizeZ = 64;
-        var matrix: number[][] = [];
-        
-        for (let i = 0; i < sizeX; i++) {
-          
-          matrix.push([]);
-          for (let j = 0; j < sizeZ; j++) {
-            if (i === 0 || i === sizeX - 1 || j === 0 || j === sizeZ - 1) {
-              matrix[i].push(height);
-              continue;
-            }
 
-            const height2 = Math.cos((i / sizeX) * Math.PI * 5) * Math.cos((j / sizeZ) * Math.PI * 5) * 2 + 2;
-            matrix[i].push(height2);
+        //const sizeX = 64;
+        //const sizeZ = 64;
+
+        var matrix: number[][] = [];
+
+        if(dataArray2D.length > 0) {
+          matrix = dataArray2D;
+          for (let i = 0; i < sizeX; i++) {
+            for (let j = 0; j < sizeZ; j++) {
+              matrix[i][j] *= 10;
+            }
+          }
+        }
+        else {
+          for (let i = 0; i < sizeX; i++) {
+            
+            matrix.push([]);
+            for (let j = 0; j < sizeZ; j++) {
+              if (i === 0 || i === sizeX - 1 || j === 0 || j === sizeZ - 1) {
+                matrix[i].push(height);
+                continue;
+              }
+
+              const height2 = Math.cos((i / sizeX) * Math.PI * 5) * Math.cos((j / sizeZ) * Math.PI * 5) * 2 + 2;
+              matrix[i].push(height2);
+            }
           }
         }
 

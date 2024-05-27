@@ -124,7 +124,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     resetPosition(): void {
         if(!this.raycastVehicle) return;
 
-        this.raycastVehicle.chassisBody.position.y = 5;
+        this.raycastVehicle.chassisBody.position.y = 10;
         this.raycastVehicle.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
     }
 

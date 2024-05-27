@@ -220,7 +220,9 @@ export default class GameScene extends THREE.Scene {
             }),
             */
             
-            this.world, groundMaterial);      
+            this.world,
+            groundMaterial,
+            this.textureToArray.getArray());      
 
         this.mountainPlane = new PlaneObject(
             this, 20, 20, 0x444444,
