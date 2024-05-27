@@ -5,6 +5,7 @@ import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import CannonDebugger from 'cannon-es-debugger';
 import SceneController from './scenes/sceneController';
 import { GamepadControlScheme } from './scenes/gamePadEnums';
+import { TextureToArray } from './gameobjects/shapes/textureToArray';
 
 const width = window.innerWidth;
 const height = window.innerHeight;

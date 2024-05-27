@@ -135,15 +135,20 @@ export default class SceneController {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene.fireEnemyFlamethrower();
                 }
+
+                if(buttonIndex == GamepadEnums.SELECT && !this.gamepadPrevious.buttons[GamepadEnums.SELECT].pressed) {
+                    console.log(`pressed: ${buttonIndex}`);
+                    this.gameScene.player1.vehicleObject.resetPosition();
+                }
             }
             else {
-                if(this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER_BOTTOM].pressed
-                    && buttonIndex == GamepadEnums.RIGHT_SHOULDER_BOTTOM) {
+                if(this.gamepadPrevious.buttons[this.accelerateGamepadIndex].pressed
+                    && buttonIndex == this.accelerateGamepadIndex) {
                         console.log(`button no longer pressed: ${buttonIndex}`);
                         this.gameScene?.player1.tryStopAccelerateWithKeyboard();
                 }
-                if(this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER_BOTTOM].pressed
-                    && buttonIndex == GamepadEnums.LEFT_SHOULDER_BOTTOM) {
+                if(this.gamepadPrevious.buttons[this.brakeOrReverseGamepadIndex].pressed
+                    && buttonIndex == this.brakeOrReverseGamepadIndex) {
                         console.log(`button no longer pressed: ${buttonIndex}`);
                         this.gameScene?.player1.tryStopReverseWithKeyboard();
                 }

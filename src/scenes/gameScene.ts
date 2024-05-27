@@ -29,6 +29,7 @@ import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject
 import { Utility } from '../utility';
 import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
 import { PlaneObject } from '../gameobjects/shapes/planeObject';
+import { TextureToArray } from '../gameobjects/shapes/textureToArray';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -70,6 +71,8 @@ export default class GameScene extends THREE.Scene {
 
     private particleEmitters: ParticleEmitter[] = [];
     public explosionTexture: THREE.Texture = new THREE.Texture();
+
+    private textureToArray: TextureToArray = new TextureToArray(this.textureLoader);
 
 
     world: CANNON.World = new CANNON.World({
@@ -459,6 +462,8 @@ export default class GameScene extends THREE.Scene {
         this.divElementPhysicsObjectCount = this.generateDivElement(10, 250, "Physics object count");
         this.divElementLightObjectCount = this.generateDivElement(10, 300, "Light object count");
 
+        this.generateArrayFromTexture();
+
         //let healthBarTexture = this.textureLoader.load('assets/healthBarWhite-100x20.png');
 
         //this.healthBar = new HealthBar(this);
@@ -519,7 +524,7 @@ export default class GameScene extends THREE.Scene {
         this.flamethrowerEmitters.push(flamethrowerEmitter2);
 
         //this.particleEmitters.push(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
-
+                
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
     }
@@ -1053,5 +1058,7 @@ export default class GameScene extends THREE.Scene {
         return div;
     }
 
-    
+    generateArrayFromTexture() {
+        var textureToArray = new TextureToArray(this.textureLoader);
+    }    
 }

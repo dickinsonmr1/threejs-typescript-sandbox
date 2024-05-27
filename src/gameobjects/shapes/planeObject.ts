@@ -49,8 +49,8 @@ export class PlaneObject {
         this.meshMaterial = new THREE.MeshStandardMaterial({
             map: texture,
             side: THREE.DoubleSide,
-            //displacementMap: displacementMap,
-            //displacementScale: 5,
+            displacementMap: displacementMap,
+            displacementScale: 5,
             //color: color,
             fog: true,
             //normalMap: normalMap,
