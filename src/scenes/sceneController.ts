@@ -145,6 +145,11 @@ export default class SceneController {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene.player1.vehicleObject.tryJump();
                 }
+
+                if(buttonIndex == GamepadEnums.LEFT_SHOULDER) {
+                    console.log(`pressed: ${buttonIndex}`);
+                    this.gameScene.player1.vehicleObject.tryTurbo();
+                }
             }
             else {
                 if(this.gamepadPrevious.buttons[this.accelerateGamepadIndex].pressed

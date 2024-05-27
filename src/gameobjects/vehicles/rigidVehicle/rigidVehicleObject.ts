@@ -136,6 +136,11 @@ export class RigidVehicleObject implements IPlayerVehicle {
     tryJump(): void {
         throw new Error("Method not implemented.");
     }
+    
+    tryTurbo(): void {
+        throw new Error("Method not implemented.");
+    }
+
     getChassis(): ChassisObject {
         return this.chassis;
     }
