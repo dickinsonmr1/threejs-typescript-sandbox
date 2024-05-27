@@ -147,6 +147,7 @@ export class GroundObject {
           for (let i = 0; i < sizeX; i++) {
             for (let j = 0; j < sizeZ; j++) {
               matrix[i][j] *= 10;
+              matrix[i][j] += 1;
             }
           }
         }

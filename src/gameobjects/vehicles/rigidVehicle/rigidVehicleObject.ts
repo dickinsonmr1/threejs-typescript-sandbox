@@ -133,6 +133,9 @@ export class RigidVehicleObject implements IPlayerVehicle {
             this.model.rotateY(Math.PI / 2);
         }
     }
+    tryJump(): void {
+        throw new Error("Method not implemented.");
+    }
     getChassis(): ChassisObject {
         return this.chassis;
     }

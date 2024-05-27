@@ -16,6 +16,8 @@ export interface IPlayerVehicle {
     tryTurnRight(): void;
     tryStopTurnRight(): void;
 
+    tryJump(): void;
+
     resetPosition(): void;
 
     update(): void;

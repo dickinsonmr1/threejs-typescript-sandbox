@@ -140,6 +140,11 @@ export default class SceneController {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene.player1.vehicleObject.resetPosition();
                 }
+                
+                if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {
+                    console.log(`pressed: ${buttonIndex}`);
+                    this.gameScene.player1.vehicleObject.tryJump();
+                }
             }
             else {
                 if(this.gamepadPrevious.buttons[this.accelerateGamepadIndex].pressed

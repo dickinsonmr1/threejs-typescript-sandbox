@@ -216,7 +216,10 @@ export class Player {
     }
 
     tryStopTurnRightWithKeyboard(): void {
-        
+    }
+
+    tryJump(): void {
+        this.vehicleObject.tryJump();
     }
 
     tryDamage(projectileType: ProjectileType, damageLocation: THREE.Vector3): void {
