@@ -4,6 +4,7 @@ import { Utility } from "../../utility";
 export class GroundObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
+    heightfield!: CANNON.Heightfield;
 
     meshMaterial?: THREE.Material;
     physicsMaterial?: CANNON.Material;
@@ -62,19 +63,21 @@ export class GroundObject {
             depthTest: true            
         });
         */
-                    
+                  
+        
         if(world != null) {
 
             this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
                         
+            
+            //this.body = new CANNON.Body({
+                //shape: new CANNON.Plane(),
+                //type: CANNON.Body.STATIC,
+                //material: this.physicsMaterial,
+                //mass: 0
+            //});
+
             /*
-            this.body = new CANNON.Body({
-                shape: new CANNON.Plane(),
-                type: CANNON.Body.STATIC,
-                material: this.physicsMaterial,
-                mass: 0
-            });
-            */
             const groundShape = new CANNON.Plane();
             this.body = new CANNON.Body({
                 mass: 0,
@@ -85,9 +88,10 @@ export class GroundObject {
             //this.body.position.set(0, 0, -width);
             this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
             world.addBody(this.body)
+            */
         }
-
-        this.mesh = new THREE.Mesh(
+        
+          this.mesh = new THREE.Mesh(
             new THREE.PlaneGeometry( height, width, 100, 100),
             this.meshMaterial
         );
@@ -183,7 +187,9 @@ export class GroundObject {
           (sizeZ * heightfieldShape.elementSize) / 2
         );
         heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+        
         world.addBody(heightfieldBody);
+        this.body = heightfieldBody;
                 
         // TODO: see if texture can be loaded into array to generate cannon heightfield (similiar to three.js displacement map)
         // https://threejs.org/docs/#api/en/textures/DataTexture

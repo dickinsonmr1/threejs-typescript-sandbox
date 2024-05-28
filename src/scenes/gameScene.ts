@@ -76,7 +76,7 @@ export default class GameScene extends THREE.Scene {
 
 
     world: CANNON.World = new CANNON.World({
-        gravity: new CANNON.Vec3(0, -9.81, 0)
+        gravity: new CANNON.Vec3(0, -19.81, 0)
     });
     
     ground?: GroundObject;
@@ -802,6 +802,9 @@ export default class GameScene extends THREE.Scene {
         }
 
         let randPosition = new THREE.Vector3(randFloat(-20, 20), 0.75, randFloat(-20, 20));
+
+        // TODO: place pickup above point on heightfield
+
         let randCubeSize = 0.5; //randFloat(0.5, 2);
 
         let randColor = THREE.MathUtils.randInt(0, 0xffffff);

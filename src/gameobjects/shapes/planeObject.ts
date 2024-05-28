@@ -26,7 +26,7 @@ export class PlaneObject {
         });
 
         // https://sbcode.net/threejs/displacmentmap/
-        const displacementMap = new THREE.TextureLoader().load('assets/displacement-map.png');
+        const displacementMap = new THREE.TextureLoader().load('assets/heightmap_64x64.png');
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
         const planeSize = 40;
@@ -55,7 +55,7 @@ export class PlaneObject {
             fog: true,
             //normalMap: normalMap,
             //bumpMap: normalMap,
-            lightMap: normalMap,
+            lightMap: displacementMap,
             depthTest: true            
         });        
                     
@@ -89,8 +89,11 @@ export class PlaneObject {
             this.meshMaterial
         );
 
-        this.mesh.position.set(10, 0, 64);
+        this.mesh.position.set(64, 0, 0);
         this.mesh.rotation.x = - Math.PI / 2;
+        this.mesh.rotation.z = Math.PI / 2;
+
+        this.mesh.scale.set(4, 4, 4);
         /*
         this.mesh.position.setX(height / 2);
         this.mesh.position.setY(0);

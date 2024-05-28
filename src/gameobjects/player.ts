@@ -222,6 +222,10 @@ export class Player {
         this.vehicleObject.tryJump();
     }
 
+    tryTurbo(): void {        
+        this.vehicleObject.tryTurbo();
+    }
+    
     tryDamage(projectileType: ProjectileType, damageLocation: THREE.Vector3): void {
         
         if(projectileType == ProjectileType.Bullet)
