@@ -179,7 +179,8 @@ export class Player {
             projectileType,            
             tempPosition,           // launchPosition relative to chassis
             projectileLaunchVector,            
-            scene.explosionTexture);              
+            scene.explosionTexture,
+            scene.getWorld());              
     }
 
 

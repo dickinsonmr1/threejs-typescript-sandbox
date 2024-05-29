@@ -76,8 +76,12 @@ export default class GameScene extends THREE.Scene {
 
 
     world: CANNON.World = new CANNON.World({
-        gravity: new CANNON.Vec3(0, -19.81, 0)
+        gravity: new CANNON.Vec3(0, -14.81, 0)
     });
+
+    getWorld(): CANNON.World {
+        return this.world;
+    }
     
     ground?: GroundObject;
     mountainPlane?: PlaneObject;
@@ -880,6 +884,28 @@ export default class GameScene extends THREE.Scene {
                     }
                 });
 
+                
+                // TODO: fix me
+                this.world.contacts.forEach((contact) => {
+
+                    if(contact.bi === projectile.body || contact.bj === projectile.body)
+                        console.log('Collision detected involving projectile');
+
+
+                    if(contact.bi === this.ground?.body || contact.bj === this.ground?.body)
+                        console.log('Collision detected involving ground');
+
+                    if ((contact.bi === projectile.body && contact.bj === this.ground?.body) || 
+                        (contact.bj === projectile.body && contact.bi === this.ground?.body)) {
+                        
+                        console.log('Collision detected between projectile and ground');
+                        projectile.kill();
+                        this.remove(projectile.group);
+                        // Perform additional collision handling logic here
+                }
+                });
+        
+
                 /*
                 this.allRigidVehicleObjects.forEach(player => {
                     if(player.getPosition().distanceTo(projectile.getPosition()) < 1){
@@ -948,6 +974,14 @@ export default class GameScene extends THREE.Scene {
 
         this.checkProjectilesForCollision();
         this.checkPickupsForCollisionWithPlayers();
+
+        this.world.contacts.forEach((contact) => {
+            if ((contact.bi === this.player1.vehicleObject.getChassis().body && contact.bj === this.player2.vehicleObject.getChassis().body) || 
+                (contact.bj === this.player1.vehicleObject.getChassis().body && contact.bi === this.player2.vehicleObject.getChassis().body)) {
+                console.log('Collision detected between player 1 and player 2');
+                // Perform additional collision handling logic here
+        }
+        });
 
         if(this.cube != null) 
         {

@@ -4,6 +4,7 @@ import { Utility } from "../../utility";
 export class GroundObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
+    //triggerBody?: CANNON.Body;
     heightfield!: CANNON.Heightfield;
 
     meshMaterial?: THREE.Material;
@@ -134,7 +135,8 @@ export class GroundObject {
         if(this.body != null) {
             this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
             this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
-        }
+            this.body.updateAABB();
+        }        
     }
 
     generateHeightfieldv2(scene: THREE.Scene, world: CANNON.World, sizeX: number, sizeZ: number, dataArray2D: number[][] = []) {           
@@ -190,6 +192,18 @@ export class GroundObject {
         
         world.addBody(heightfieldBody);
         this.body = heightfieldBody;
+
+        /*
+        this.triggerBody = new CANNON.Body({isTrigger: true});
+        this.triggerBody.addShape(heightfieldShape)
+        world.addBody(this.triggerBody);
+
+        this.triggerBody.addEventListener('collide', (event: { body: any; }) => {
+          if (event.body === sphereBody) {
+            console.log('The sphere entered the trigger!', event)
+          }
+        })
+        */
                 
         // TODO: see if texture can be loaded into array to generate cannon heightfield (similiar to three.js displacement map)
         // https://threejs.org/docs/#api/en/textures/DataTexture
@@ -233,14 +247,14 @@ export class GroundObject {
         tempGeometry.setFromPoints(points);
         //tempGeometry.computeFaceNormals();
         tempGeometry.computeVertexNormals();
-        tempGeometry.computeTangents();
+        //tempGeometry.computeTangents();
         tempGeometry.computeBoundingBox();
 
         
         //alert(uv.toJSON());
         //https://dustinpfister.github.io/2021/06/09/threejs-buffer-geometry-attributes-uv/
 
-        var boundingBox = tempGeometry.boundingBox?.clone();
+        //var boundingBox = tempGeometry.boundingBox?.clone();
 
         /*
         alert('bounding box coordinates: ' + 

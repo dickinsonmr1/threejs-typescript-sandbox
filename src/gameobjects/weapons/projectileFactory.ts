@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import * as CANNON from 'cannon-es'
 import { Projectile } from "./projectile";
 import { ProjectileType } from "./projectileType";
  import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +14,8 @@ export default class ProjectileFactory {
         type: ProjectileType,
         launchPosition: THREE.Vector3,
         launchVector: THREE.Vector3,
-        explosionTexture?: THREE.Texture) : Projectile
+        explosionTexture?: THREE.Texture,
+        world?: CANNON.World) : Projectile
     {
 
         let r = THREE.MathUtils.randInt(0, 255);
@@ -34,7 +36,8 @@ export default class ProjectileFactory {
                     new THREE.Color('white'),
                     new THREE.Color('white'),
                     new THREE.MeshBasicMaterial( { color: 0xffffff, depthWrite: true }),
-                    explosionTexture);      
+                    explosionTexture,
+                    world);      
         
                 break;
             case ProjectileType.Rocket:            
@@ -48,7 +51,8 @@ export default class ProjectileFactory {
                     color,
                     color,
                     new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
-                    explosionTexture);          
+                    explosionTexture,
+                    world);          
                 break;
         }
     }

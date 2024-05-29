@@ -1,12 +1,15 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
+import GameScene from "../../scenes/gameScene";
 
 export class SphereObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
+    scene: THREE.Scene;
 
     group: THREE.Group = new THREE.Group();
+
 
     meshMaterial: THREE.Material;
     physicsMaterial?: CANNON.Material;
@@ -20,6 +23,8 @@ export class SphereObject {
         meshMaterial?: THREE.Material,
         world?: CANNON.World,
         physicsMaterial?: CANNON.Material) {
+
+        this.scene = scene;
 
         this.meshMaterial = meshMaterial ?? new THREE.MeshBasicMaterial({
             color: color,
@@ -45,7 +50,7 @@ export class SphereObject {
             this.body = new CANNON.Body({
                 shape: new CANNON.Sphere(radius),
                 position: new CANNON.Vec3(position.x, position.y, position.z),
-                //type: CANNON.Body.STATIC,    
+                type: CANNON.Body.STATIC,   
                 linearDamping: 0.31,            
                 material: this.physicsMaterial,
                 mass: 1
@@ -72,6 +77,13 @@ export class SphereObject {
 
     kill() {
         this.group.children.forEach( x => this.group.remove(x));
+        
+        let scene = <GameScene>this.scene;
+
+        if(!scene.world || !this.body)
+            return;
+            
+        scene.world.removeBody(this.body)
         //this.group.remove(this.mesh);
     }
 

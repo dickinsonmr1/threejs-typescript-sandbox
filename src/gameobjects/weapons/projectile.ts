@@ -4,6 +4,8 @@ import { SphereObject } from "../shapes/sphereObject";
 import { ParticleTrailObject, ParticleEmitterType } from "../fx/particleTrailObject";
 import { ProjectileType } from "./projectileType";
 import { v4 as uuidv4 } from 'uuid';
+import * as CANNON from 'cannon-es'
+import { Utility } from "../../utility";
 
 export enum ProjectileLaunchLocation {
     Left,
@@ -41,9 +43,10 @@ export class Projectile extends SphereObject {
         lightColor: THREE.Color,
         particleColor: THREE.Color,
         meshMaterial?: THREE.Material,
-        particleTexture?: THREE.Texture) {
+        particleTexture?: THREE.Texture,
+        world?: CANNON.World) {
         
-        super(scene, radius, position, particleColor.getHex(), meshMaterial);
+        super(scene, radius, position, particleColor.getHex(), meshMaterial, world);
 
         this.scene = scene;
         
@@ -152,14 +155,21 @@ export class Projectile extends SphereObject {
             //return;
         //}        
 
+        
+        //this.body?.velocity.set(this.velocity.x, this.velocity.y, this.velocity.z);
         this.group.position.x += this.velocity.x;
 		this.group.position.y += this.velocity.y;
 		this.group.position.z += this.velocity.z;
 
+        //this.body?.position.addScaledVector(1, Utility.ThreeVec3ToCannonVec3(this.velocity));
+        this.body?.position.set(this.group.position.x, this.group.position.y, this.group.position.z);
+        //this.body?.updateBoundingRadius();
+        this.body?.updateAABB();
+
         this.pointLightObject?.setPosition(this.group.position);
 
         if(this.particleEmitterObject != null) {     
-            this.particleEmitterObject.setEmitPosition(this.getPosition())       
+            this.particleEmitterObject.setEmitPosition(this.getPosition());   
             //this.particleEmitterObject.update(this.getPosition());
         }
     }
