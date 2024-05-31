@@ -110,7 +110,7 @@ export class SmokeObject extends ParticleEmitter {
     }
 
     setQuaternion(quaternion: THREE.Quaternion): void {
-        
+        this.particleGroup.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     }
 
     kill() {
@@ -177,5 +177,14 @@ export class SmokeObject extends ParticleEmitter {
 
     stop() {
         // todo: implement
+    }
+
+    
+    pause(): void {
+        this.isEmitting = false;        
+    }
+
+    resume(): void {
+        this.isEmitting = true;        
     }
 }

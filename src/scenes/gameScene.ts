@@ -100,10 +100,10 @@ export default class GameScene extends THREE.Scene {
     //rigidVehicleObject?: RigidVehicleObject;
 
     private allPlayers: Player[] = [];
-    player1: Player = new Player(this, "Ambulance");
-    player2: Player = new Player(this, "Taxi");
-    player3: Player = new Player(this, "Police");
-    player4: Player = new Player(this, "Trash Truck");
+    player1!: Player;
+    player2!: Player;
+    player3!: Player;
+    player4!: Player;
 
     private allRigidVehicleObjects: IPlayerVehicle[] = [];
 
@@ -114,6 +114,7 @@ export default class GameScene extends THREE.Scene {
     spotlight?: SpotlightObject;
 
     flamethrowerEmitters: FlamethrowerEmitter[] = [];
+    //turboParticleEmitters: SmokeObject[] = []
 
     //healthBar: HealthBar = new HealthBar(this, 100);
     //headLights: Headlights = new Headlights(this);
@@ -165,6 +166,8 @@ export default class GameScene extends THREE.Scene {
         this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/sedanSports.glb');
         this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+
+        this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
 
         // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
 
@@ -261,6 +264,11 @@ export default class GameScene extends THREE.Scene {
         this.cylinder = new CylinderObject(this, 1, 0.25, new THREE.Vector3(0, 3, -12), 0x00ff00,
             new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.world, objectMaterial);
+
+        this.player1 = new Player(this, "Ambulance");
+        this.player2 = new Player(this, "Taxi");
+        this.player3 = new Player(this, "Police");
+        this.player4 = new Player(this, "Trash Truck");
 
 
         this.gltfVehiclePlayer1 = new GltfObject(this,
@@ -453,8 +461,6 @@ export default class GameScene extends THREE.Scene {
         const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.5 );
         this.add( light );
 
-        this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
-
         for(let i = 0; i < 10; i++) {
             this.generateRandomPickup();
         }
@@ -529,7 +535,7 @@ export default class GameScene extends THREE.Scene {
         );
         this.flamethrowerEmitters.push(flamethrowerEmitter2);
 
-        //this.particleEmitters.push(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
+        this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
                 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -722,7 +728,7 @@ export default class GameScene extends THREE.Scene {
     public async addNewProjectile(projectile: Projectile) {
         this.projectiles.push(projectile);
         if(projectile.particleEmitterObject != null)
-            this.particleEmitters.push(projectile.particleEmitterObject);	
+            this.addToParticleEmitters(projectile.particleEmitterObject);	
     }
 
     public firePlayerFlamethrower() {
@@ -747,6 +753,10 @@ export default class GameScene extends THREE.Scene {
         }
     
         flamethrowerEmitter.emitParticles();
+    }
+
+    public addToParticleEmitters(emitter: ParticleEmitter) {
+        this.particleEmitters.push(emitter);
     }
 
     private async generateRandomCube() {
@@ -848,7 +858,7 @@ export default class GameScene extends THREE.Scene {
                     break;
             }
 
-            this.particleEmitters.push(new VehicleExplosionObject(
+            this.addToParticleEmitters(new VehicleExplosionObject(
                 this,
                 this.explosionTexture,
                 lightColor,
@@ -944,7 +954,7 @@ export default class GameScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
-        if(!this.player1.vehicleObject) return;
+        if(!this.player1 || !this.player1.vehicleObject) return;
 
         this.updateInput();  
         this.updateCamera();     

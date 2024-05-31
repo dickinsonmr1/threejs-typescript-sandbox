@@ -11,6 +11,8 @@ export abstract class ParticleEmitter {
     abstract setQuaternion(quaternion: THREE.Quaternion): void;
     abstract update(): void;
     abstract kill(): void;
+    abstract pause(): void;
+    abstract resume(): void;
     abstract stop(): void;
     getParticleCount(): number {
         return this.particleGroup.children.length;

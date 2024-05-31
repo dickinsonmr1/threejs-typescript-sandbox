@@ -143,12 +143,12 @@ export default class SceneController {
                 
                 if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {
                     console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene.player1.vehicleObject.tryJump();
+                    this.gameScene.player1.tryJump();
                 }
 
                 if(buttonIndex == GamepadEnums.LEFT_SHOULDER) {
                     console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene.player1.vehicleObject.tryTurbo();
+                    this.gameScene.player1.tryTurbo();
                 }
             }
             else {
@@ -161,6 +161,11 @@ export default class SceneController {
                     && buttonIndex == this.brakeOrReverseGamepadIndex) {
                         console.log(`button no longer pressed: ${buttonIndex}`);
                         this.gameScene?.player1.tryStopReverseWithKeyboard();
+                }
+                if(this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed
+                    && buttonIndex == GamepadEnums.LEFT_SHOULDER) {
+                        console.log(`button no longer pressed: ${buttonIndex}`);
+                        this.gameScene?.player1.tryStopTurbo();
                 }
             }
         })

@@ -49,6 +49,7 @@ export class ParticleTrailObject extends ParticleEmitter {
         this.isEmitting = true;
        
         this.particleGroup.position.set(0,0,0);//position.x, position.y, position.z);
+        this.emitPosition = this.particleGroup.position;
 
         /*
         this.particleGroup.position.set(
@@ -124,6 +125,14 @@ export class ParticleTrailObject extends ParticleEmitter {
         setTimeout(() => {
             this.isDead = true;
         }, 1000);
+    }
+
+    pause(): void {
+        this.isEmitting = false;        
+    }
+
+    resume(): void {
+        this.isEmitting = true;        
     }
 
     update() {

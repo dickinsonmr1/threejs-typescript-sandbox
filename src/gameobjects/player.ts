@@ -12,6 +12,9 @@ import ProjectileFactory from "./weapons/projectileFactory";
 import { Projectile, ProjectileLaunchLocation } from "./weapons/projectile";
 import { RaycastVehicleObject } from "./vehicles/raycastVehicle/raycastVehicleObject";
 import { IPlayerVehicle } from "./vehicles/IPlayerVehicle";
+import { ParticleEmitter } from "./fx/particleEmitter";
+import { SmokeObject } from "./fx/smokeObject";
+import { ParticleEmitterType, ParticleTrailObject } from "./fx/particleTrailObject";
 
 
 export enum PlayerState {
@@ -43,6 +46,7 @@ export class Player {
     vehicleObject!: IPlayerVehicle;    
     //private rigidVehicleObject!: RigidVehicleObject;
     //private raycastVehicleObject!: RaycastVehicleObject;
+    turboParticleEmitter: ParticleTrailObject;
 
     fireObjects: FireObject[] = [];
 
@@ -63,7 +67,12 @@ export class Player {
         //super();
 
         //this.playerId = uuidv4();
-        this.playerName = playerName;        
+        this.playerName = playerName;      
+        let gameScene = <GameScene>scene;
+        
+        this.turboParticleEmitter = new ParticleTrailObject(scene, ParticleEmitterType.GlowingParticles, gameScene.explosionTexture, new THREE.Color('grey'), this.getPosition(), 1, 20, 0);
+        this.turboParticleEmitter.pause();
+        gameScene.addToParticleEmitters(this.turboParticleEmitter);
     }
 
 
@@ -74,7 +83,7 @@ export class Player {
     */
 
     getPosition(): THREE.Vector3{
-        if(!this.vehicleObject?.getChassis().body) return new THREE.Vector3(0,0,0);
+        if(!this.vehicleObject?.getChassis().body) return new THREE.Vector3(0,10,0);
 
         return Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position);
     }
@@ -108,8 +117,10 @@ export class Player {
 
         this.headLights.update(
             Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
-            Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)
+            Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
         );
+
+        this.turboParticleEmitter.setEmitPosition(this.getPosition());
     }
 
     public createProjectile(projectileType: ProjectileType): Projectile {
@@ -225,6 +236,11 @@ export class Player {
 
     tryTurbo(): void {        
         this.vehicleObject.tryTurbo();
+        this.turboParticleEmitter.resume();
+    }
+
+    tryStopTurbo(): void {
+        this.turboParticleEmitter.pause();
     }
     
     tryDamage(projectileType: ProjectileType, damageLocation: THREE.Vector3): void {
@@ -250,6 +266,7 @@ export class Player {
             
             this.headLights.group.visible = false;
             this.vehicleObject.getModel().visible = false;
+            this.turboParticleEmitter.pause();
 
             if(!scene.explosionTexture) return;
 
@@ -276,6 +293,7 @@ export class Player {
         this.vehicleObject.getModel().visible = true;
 
         this.headLights.group.visible = true;
+        this.turboParticleEmitter.isEmitting = true;
     }
 
     tryFirePrimaryWeapon(): void {
