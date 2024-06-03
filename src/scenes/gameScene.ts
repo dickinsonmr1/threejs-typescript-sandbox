@@ -548,7 +548,7 @@ export default class GameScene extends THREE.Scene {
 	private handleKeyUp = (event: KeyboardEvent) => {
 		this.keyDown.delete(event.key.toLowerCase())
 
-		if (event.key === ' ')
+		if (event.key === 'Control')
 		{            
             let newProjectile = this.player1.createProjectile(ProjectileType.Rocket);
             this.addNewProjectile(newProjectile);	            
@@ -619,7 +619,7 @@ export default class GameScene extends THREE.Scene {
             this.raycastVehicleObject?.tryStopTurnRight();
         }
 
-        // rigid body vehicle
+        // player 1
         if(event.key === 'ArrowUp') {
             this.player1.vehicleObject?.tryStopAccelerate();
         }
@@ -632,6 +632,10 @@ export default class GameScene extends THREE.Scene {
         }
         else if(event.key === 'ArrowRight') {
             this.player1.vehicleObject?.tryStopTurnRight();
+        }
+
+        if(event.key === ' ') {
+            this.player1.tryJump();
         }
 	}
 
@@ -695,6 +699,12 @@ export default class GameScene extends THREE.Scene {
 
         if (this.keyDown.has('q')) {
             this.fireEnemyFlamethrower();
+        }
+        if (this.keyDown.has('shift')) {
+            this.player1.tryTurbo();
+        }
+        else {
+            this.player1.tryStopTurbo();
         }
         /*
         if(this.keyDown.has('w')) {
@@ -1085,8 +1095,16 @@ export default class GameScene extends THREE.Scene {
         this.divElementPhysicsObjectCount.innerHTML = `total physics objects: ${totalPhysicsObjectCount}`; 
 
         var arrayLightTypes = ['SpotLight', 'HemisphereLight', 'AmbientLight', 'DirectionalLight', 'PointLight', 'RectAreaLight'];
+
+        var totalLightCountInGroup = 0;
+        
+        var allGroups = this.children.filter(x => x.type == 'Group');
+        allGroups.forEach(x => {
+            totalLightCountInGroup += x.children.filter(y => arrayLightTypes.includes(y.type)).length;
+        });
+
         let totalLightObjectCount: number = this.children.filter(x => arrayLightTypes.includes(x.type)).length;
-        this.divElementLightObjectCount.innerHTML = `total light objects: ${totalLightObjectCount}`; 
+        this.divElementLightObjectCount.innerHTML = `total light objects: ${totalLightObjectCount + totalLightCountInGroup}`; 
         
         this.stats.update();
     }
