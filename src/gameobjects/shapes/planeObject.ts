@@ -50,7 +50,7 @@ export class PlaneObject {
             map: texture,
             side: THREE.DoubleSide,
             displacementMap: displacementMap,
-            displacementScale: 5,
+            displacementScale: 2,
             //color: color,
             fog: true,
             //normalMap: normalMap,
@@ -89,11 +89,11 @@ export class PlaneObject {
             this.meshMaterial
         );
 
-        this.mesh.position.set(64, 0, 0);
+        this.mesh.position.set(0, 0, 0);
         this.mesh.rotation.x = - Math.PI / 2;
         this.mesh.rotation.z = Math.PI / 2;
 
-        this.mesh.scale.set(4, 4, 4);
+        this.mesh.scale.set(5, 5, 5);
         /*
         this.mesh.position.setX(height / 2);
         this.mesh.position.setY(0);
