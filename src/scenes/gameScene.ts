@@ -84,8 +84,6 @@ export default class GameScene extends THREE.Scene {
         return this.world;
     }
     
-    mountainPlane?: PlaneObject;
-
     terrain?: TerrainObject;
     
     cube?: BoxObject;
@@ -190,7 +188,7 @@ export default class GameScene extends THREE.Scene {
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
 
-        this.terrain = new TerrainObject(this, 100, 100,
+        this.terrain = new TerrainObject(this, 64, 64,
             new THREE.MeshPhongMaterial(
                 {
                     //color: 0x44dd44,
@@ -231,13 +229,6 @@ export default class GameScene extends THREE.Scene {
             groundMaterial,
             this.textureToArray.getArray()
         );
-
-        /*
-        this.mountainPlane = new PlaneObject(
-            this, 20, 20, 0x444444,
-            undefined, groundMaterial        
-        );
-        */
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
@@ -946,8 +937,6 @@ export default class GameScene extends THREE.Scene {
         this.updateCamera(); 
         
         this.terrain?.update();
-        //this.mountainPlane?.update();
-
 
         this.cube?.update();
         this.cube2?.update();
