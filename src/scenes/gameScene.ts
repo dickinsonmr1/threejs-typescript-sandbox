@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import * as CANNON from 'cannon-es'
-import { GroundObject } from '../gameobjects/shapes/groundObject';
 import { BoxObject } from '../gameobjects/shapes/boxObject';
 import { SphereObject } from '../gameobjects/shapes/sphereObject';
 import Stats from 'three/addons/libs/stats.module.js';
@@ -11,24 +10,19 @@ import { randFloat } from 'three/src/math/MathUtils.js';
 import { ParticleEmitter } from '../gameobjects/fx/particleEmitter';
 import { GltfObject } from '../gameobjects/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
-import { Projectile, ProjectileLaunchLocation } from '../gameobjects/weapons/projectile';
+import { Projectile } from '../gameobjects/weapons/projectile';
 import { CylinderObject } from '../gameobjects/shapes/cylinderObject';
 import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/raycastVehicleObject';
-import { RigidVehicleObject } from '../gameobjects/vehicles/rigidVehicle/rigidVehicleObject';
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import ProjectileFactory from '../gameobjects/weapons/projectileFactory';
 import { PickupObject } from '../gameobjects/pickupObject';
-import HealthBar from '../gameobjects/healthBar';
-import Headlights from '../gameobjects/vehicles/headLights';
 import SceneController from './sceneController';
 import { Player } from '../gameobjects/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
-import { ParticleTrailObject } from '../gameobjects/fx/particleTrailObject';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
 import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
-import { PlaneObject } from '../gameobjects/shapes/planeObject';
 import { TextureToArray } from '../gameobjects/shapes/textureToArray';
 import { TerrainObject } from '../gameobjects/shapes/terrainObject';
 
@@ -42,7 +36,6 @@ export default class GameScene extends THREE.Scene {
     private stats: Stats = new Stats();
 
     private readonly mtlLoader = new MTLLoader();
-    private readonly objLoader = new OBJLoader();
 
     private readonly gltfLoader = new GLTFLoader();
     private taxiModel?: GLTF;
@@ -56,24 +49,20 @@ export default class GameScene extends THREE.Scene {
     private readonly camera: THREE.PerspectiveCamera;
 
     private readonly keyDown = new Set<string>();
-    private readonly keyUp = new Set<string>();
 
     private bulletMtl?: MTLLoader.MaterialCreator;
     private directionVector = new THREE.Vector3();
 
     private cubes: BoxObject[] = [];
-    private targets: THREE.Group[] = [];
 
     private pickups: PickupObject[] = [];
 
-    private projectileFactory: ProjectileFactory = new ProjectileFactory();
-    
     private projectiles: Projectile[] = [];
 
     private particleEmitters: ParticleEmitter[] = [];
     public explosionTexture: THREE.Texture = new THREE.Texture();
 
-    private textureToArray: TextureToArray = new TextureToArray(this.textureLoader);
+    private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmap_64x64.png');
 
 
     world: CANNON.World = new CANNON.World({
@@ -179,7 +168,7 @@ export default class GameScene extends THREE.Scene {
         
 
         // width and height need to match dimensions of heightmap
-        this.terrain = new TerrainObject(this, 64, 64,
+        this.terrain = new TerrainObject(this,
             new THREE.MeshPhongMaterial(
                 {
                     color: 0x44dd44,
@@ -218,7 +207,7 @@ export default class GameScene extends THREE.Scene {
             */
             this.world,
             groundMaterial,
-            this.textureToArray.getArray()
+            this.heightMapTextureAsArray
         );
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
@@ -662,25 +651,6 @@ export default class GameScene extends THREE.Scene {
         else {
             this.player1.tryStopTurbo();
         }
-        /*
-        if(this.keyDown.has('w')) {
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 2);
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(-maxForce, 3);
-        }
-        else if(this.keyDown.has('s')) {
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(maxForce, 2);
-            this.raycastVehicleObject?.raycastVehicle?.applyEngineForce(maxForce, 3);
-        }
-
-        if(this.keyDown.has('a')) {
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(maxSteerVal, 0);
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(maxSteerVal, 1);
-        }
-        else if(this.keyDown.has('d')) {
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 0);
-            this.raycastVehicleObject?.raycastVehicle?.setSteeringValue(-maxSteerVal, 1);
-        }
-        */
     }
 
     updateCamera() {

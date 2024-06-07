@@ -2,9 +2,14 @@ import * as THREE from "three";
 
 export class TextureToArray {
 
-    public numbers2DArray: number[][] = [];
-    constructor(textureLoader: THREE.TextureLoader) {
 
+    public numbers2DArray: number[][] = [];
+    
+    private width!: number;
+    private height!: number;
+    private assetName!: string;
+    
+    constructor(textureLoader: THREE.TextureLoader, asset: string) {
 
         // Assuming you have a texture already loaded
         //var textureLoader = new THREE.TextureLoader();
@@ -12,7 +17,7 @@ export class TextureToArray {
         //const originalTexture = new THREE.TextureLoader().load('assets/normal-map.png');
 
         let originalTexture = textureLoader.load(
-            'assets/heightmap_64x64.png',
+            asset,
             () => {
 
             // Get the image data from the original texture
@@ -28,6 +33,10 @@ export class TextureToArray {
             var pixelData = imageData.data;
             var width = originalTexture.image.width;
             var height = originalTexture.image.height;
+
+            this.width = width;
+            this.height = height;
+            this.assetName = asset;
             //var numbers2DArray = [];
 
             for (var y = 0; y < height; y++) {
@@ -52,5 +61,16 @@ export class TextureToArray {
 
     getArray(): number[][] {
         return this.numbers2DArray;
+    }
+    getImageWidth(): number {
+        return this.width;
+    }
+
+    getImageHeight(): number {
+        return this.height;
+    }
+
+    getAssetName(): string {
+        return this.assetName;
     }
 }
