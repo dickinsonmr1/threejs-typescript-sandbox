@@ -30,18 +30,31 @@ export class PlaneObject {
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
         const planeSize = 40;
- 
+        const repeats = planeSize / 2;
+
         const loader = new THREE.TextureLoader();
+
         //const texture = loader.load('assets/checker.png');
-        const texture = loader.load('assets/tileable_grass_00.png');
-        const texture2 = loader.load('assets/tileable_grass_01.png');
-        const texture3 = loader.load('assets/stone 03.png');
+        const texture = loader.load('assets/tileable_grass_00.png');                
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.magFilter = THREE.NearestFilter;
         texture.colorSpace = THREE.SRGBColorSpace;
-        const repeats = planeSize / 2;
         texture.repeat.set(repeats, repeats);
+
+        const texture2 = loader.load('assets/tileable_grass_01.png');
+        texture2.wrapS = THREE.RepeatWrapping;
+        texture2.wrapT = THREE.RepeatWrapping;
+        texture2.magFilter = THREE.NearestFilter;
+        texture2.colorSpace = THREE.SRGBColorSpace;
+        texture2.repeat.set(repeats, repeats);
+
+        const texture3 = loader.load('assets/stone 3.png');
+        texture3.wrapS = THREE.RepeatWrapping;
+        texture3.wrapT = THREE.RepeatWrapping;
+        texture3.magFilter = THREE.NearestFilter;
+        texture3.colorSpace = THREE.SRGBColorSpace;
+        texture3.repeat.set(repeats, repeats);
 
         //this.meshMaterial = new THREE.MeshPhongMaterial();
         //var temp = this.meshMaterial as THREE.MeshPhongMaterial;
@@ -49,13 +62,17 @@ export class PlaneObject {
 
         var material = new THREE.ShaderMaterial({
             uniforms: {
-                grassTexture: { value: texture },
-                rockTexture: { value: texture2 },
-                snowTexture: { value: texture3 },
-                //displacementMap: { value: displacementMap },
+                level1Texture: { value: texture },
+                level2Texture: { value: texture2 },
+                level3Texture: { value: texture3 },
+                level4Texture: { value: texture3 },
+                level5Texture: { value: texture3 },
+                displacementMap: { value: displacementMap },
+                displacementScale: {value: 2},
+                lightMap: { value: displacementMap }
             },
-            vertexShader: this.vertexShader1(),
-            fragmentShader: this.fragmentShader1(),
+            vertexShader: this.vertexShader3(),
+            fragmentShader: this.fragmentShader3(),
         });
         this.meshMaterial = material;
         
@@ -267,5 +284,94 @@ export class PlaneObject {
 			}
 		}
         `;
+    }
+
+    vertexShader2() {
+        return `
+        // vertexShader
+        varying vec2 vUv;
+        varying float displacement;
+
+        void main() {
+            vUv = uv;
+            vec3 newPosition = position + normal * texture2D(displacementMap, uv).r * 0.5; // Displacement mapping
+            displacement = newPosition.z;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+        }
+        `;
+    }
+
+    fragmentShader2() {
+        return `
+        // fragmentShader
+        uniform sampler2D grassTexture;
+        uniform sampler2D rockTexture;
+        uniform sampler2D snowTexture;
+
+        varying vec2 vUv;
+        varying float displacement;
+
+        void main() {
+            vec4 grassColor = texture2D(grassTexture, vUv);
+            vec4 rockColor = texture2D(rockTexture, vUv);
+            vec4 snowColor = texture2D(snowTexture, vUv);
+
+            // Texture splatting based on displacement
+            if (displacement < 0.2) {
+                gl_FragColor = mix(grassColor, rockColor, (displacement - 0.1) * 5.0);
+            } else if (displacement < 0.4) {
+                gl_FragColor = mix(rockColor, snowColor, (displacement - 0.3) * 5.0);
+            } else {
+                gl_FragColor = snowColor;
+            }
+        }
+        `;
+    }
+
+    vertexShader3() {
+        return `
+        uniform sampler2D displacementMap;
+        uniform float displacementScale;
+
+        varying float vAmount;
+        varying vec2 vUV;
+
+        void main() 
+        { 
+            vUV = uv;
+            vec4 displacementData = texture2D( displacementMap, uv );
+            
+            vAmount = displacementData.r; // assuming map is grayscale it doesn't matter if you use r, g, or b.
+            
+            // move the position along the normal
+            vec3 newPosition = position + normal * displacementScale * vAmount;
+            
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+        }
+        `
+    }
+
+    fragmentShader3() {
+        return `
+        uniform sampler2D level1Texture;
+        uniform sampler2D level2Texture;
+        uniform sampler2D level3Texture;
+        uniform sampler2D level4Texture;
+        uniform sampler2D level5Texture;
+
+        varying vec2 vUV;
+
+        varying float vAmount;
+
+        void main() 
+        {
+            vec4 water = (smoothstep(0.01, 0.25, vAmount) - smoothstep(0.24, 0.26, vAmount)) * texture2D( level1Texture, vUV * 10.0 );
+            vec4 sandy = (smoothstep(0.24, 0.27, vAmount) - smoothstep(0.28, 0.31, vAmount)) * texture2D( level2Texture, vUV * 10.0 );
+            vec4 grass = (smoothstep(0.28, 0.32, vAmount) - smoothstep(0.35, 0.40, vAmount)) * texture2D( level3Texture, vUV * 20.0 );
+            vec4 rocky = (smoothstep(0.30, 0.50, vAmount) - smoothstep(0.40, 0.70, vAmount)) * texture2D( level4Texture, vUV * 20.0 );
+            vec4 snowy = (smoothstep(0.50, 0.65, vAmount))                                   * texture2D( level5Texture, vUV * 10.0 );
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + water + sandy + grass + rocky + snowy; //, 1.0);
+        }  
+        `
     }
 }
