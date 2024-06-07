@@ -30,6 +30,7 @@ import { Utility } from '../utility';
 import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
 import { PlaneObject } from '../gameobjects/shapes/planeObject';
 import { TextureToArray } from '../gameobjects/shapes/textureToArray';
+import { TerrainObject } from '../gameobjects/shapes/terrainObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -83,8 +84,10 @@ export default class GameScene extends THREE.Scene {
         return this.world;
     }
     
-    ground?: GroundObject;
     mountainPlane?: PlaneObject;
+
+    terrain?: TerrainObject;
+    
     cube?: BoxObject;
     cube2?: BoxObject;
     cylinder?: CylinderObject;
@@ -187,9 +190,8 @@ export default class GameScene extends THREE.Scene {
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
 
-        this.ground = new GroundObject(this, 100, 100, 0x444444,
-            
-                new THREE.MeshPhongMaterial(
+        this.terrain = new TerrainObject(this, 100, 100,
+            new THREE.MeshPhongMaterial(
                 {
                     //color: 0x44dd44,
                     depthWrite: true,
@@ -198,8 +200,7 @@ export default class GameScene extends THREE.Scene {
                     bumpMap: normalMap,
                     //vertexColors: true
                 }),
-            
-            /*
+                 /*
             new THREE.MeshBasicMaterial({
                 //color: 0x007700,
                 //wireframe: false,
@@ -226,16 +227,17 @@ export default class GameScene extends THREE.Scene {
 
             }),
             */
-            
             this.world,
             groundMaterial,
-            this.textureToArray.getArray());      
+            this.textureToArray.getArray()
+        );
 
+        /*
         this.mountainPlane = new PlaneObject(
             this, 20, 20, 0x444444,
-            undefined, groundMaterial
-        
+            undefined, groundMaterial        
         );
+        */
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
@@ -433,7 +435,7 @@ export default class GameScene extends THREE.Scene {
         //this.add(mesh);
         
         var groundCubeContactMaterial = new CANNON.ContactMaterial(
-            this.ground.getPhysicsMaterial(),
+            this.terrain.getPhysicsMaterial(),
             this.cube.getPhysicsMaterial(),
             {
                 friction: 0
@@ -473,34 +475,6 @@ export default class GameScene extends THREE.Scene {
         this.divElementWeaponParticleCount = this.generateDivElement(10, 200, "Weapon count");
         this.divElementPhysicsObjectCount = this.generateDivElement(10, 250, "Physics object count");
         this.divElementLightObjectCount = this.generateDivElement(10, 300, "Light object count");
-
-        this.generateArrayFromTexture();
-
-        //let healthBarTexture = this.textureLoader.load('assets/healthBarWhite-100x20.png');
-
-        //this.healthBar = new HealthBar(this);
-        
-        /*
-        let canvas = document.createElement("canvas") as HTMLCanvasElement;
-        canvas.width = 64;
-        canvas.height = 64;
-
-        let texture = new THREE.Texture(canvas);
-        const material = new THREE.MeshBasicMaterial({
-          map: this.explosionTexture,
-          depthTest: false,
-          transparent: true,
-        });
-        const geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
-    
-        let statsPlane = new THREE.Mesh(geometry, material);
-        statsPlane.position.x = 0;
-        statsPlane.position.y = 1.5;
-        statsPlane.position.z = 0;
-        statsPlane.renderOrder = 9999;
-
-        this.camera.add(statsPlane);
-        */
 
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky
@@ -906,17 +880,18 @@ export default class GameScene extends THREE.Scene {
 
                 
                 // TODO: fix me
+                /*
                 this.world.contacts.forEach((contact) => {
 
                     if(contact.bi === projectile.body || contact.bj === projectile.body)
                         console.log('Collision detected involving projectile');
 
 
-                    if(contact.bi === this.ground?.body || contact.bj === this.ground?.body)
+                    if(contact.bi === this.terrain?.body || contact.bj === this.terrain?.body)
                         console.log('Collision detected involving ground');
 
-                    if ((contact.bi === projectile.body && contact.bj === this.ground?.body) || 
-                        (contact.bj === projectile.body && contact.bi === this.ground?.body)) {
+                    if ((contact.bi === projectile.body && contact.bj === this.terrain?.body) |s| 
+                        (contact.bj === projectile.body && contact.bi === this.terrain?.body)) {
                         
                         console.log('Collision detected between projectile and ground');
                         projectile.kill();
@@ -924,6 +899,7 @@ export default class GameScene extends THREE.Scene {
                         // Perform additional collision handling logic here
                 }
                 });
+                */
         
 
                 /*
@@ -966,11 +942,13 @@ export default class GameScene extends THREE.Scene {
 
         if(!this.player1 || !this.player1.vehicleObject) return;
 
-        this.updateInput();  
-        this.updateCamera();     
+        this.updateInput();          
+        this.updateCamera(); 
+        
+        this.terrain?.update();
+        //this.mountainPlane?.update();
 
-        this.ground?.update();
-        this.mountainPlane?.update();
+
         this.cube?.update();
         this.cube2?.update();
         this.sphere?.update();
@@ -1125,7 +1103,7 @@ export default class GameScene extends THREE.Scene {
         return div;
     }
 
-    generateArrayFromTexture() {
-        var textureToArray = new TextureToArray(this.textureLoader);
-    }    
+    //generateArrayFromTexture() {
+        //var textureToArray = new TextureToArray(this.textureLoader);
+    //}    
 }

@@ -102,7 +102,7 @@ export default class SceneController {
 		//console.log(`Left stick at (${myGamepad.axes[0]}, ${myGamepad.axes[1]})` );
 		//console.log(`Right stick at (${myGamepad.axes[2]}, ${myGamepad.axes[3]})` );
 
-        
+        // https://gabrielromualdo.com/articles/2020-12-15-how-to-use-the-html5-gamepad-api        
 
         gamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
 

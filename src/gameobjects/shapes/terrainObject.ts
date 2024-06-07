@@ -38,7 +38,7 @@ export class TerrainObject {
         scene.add( grid );
 
         this.generateCannonHeightField(scene, world, 64, 64, dataArray2D);
-        this.generateThreeMeshFromCannonHeightField(scene, 64, 64);
+        //this.generateThreeMeshFromCannonHeightField(scene, 64, 64);
     }
     
     getPhysicsMaterial(): CANNON.Material {
