@@ -6,16 +6,14 @@ import { Utility } from "../../utility";
 // TODO: combine PlaneObject and GroundObject (in progress)
 export class TerrainObject {
     
-    displacementMesh?: THREE.Mesh;
-    generatedMesh: THREE.Mesh;
-
     body?: CANNON.Body;
     heightfieldShape!: CANNON.Heightfield;
-
-    meshMaterial?: THREE.Material;
     physicsMaterial?: CANNON.Material;
 
+    generatedMesh: THREE.Mesh;
     grid?: THREE.GridHelper;
+
+    displacementMesh?: THREE.Mesh;
 
     constructor(scene: THREE.Scene,
         height: number, width: number,
@@ -24,12 +22,11 @@ export class TerrainObject {
         physicsMaterial: CANNON.Material,
         dataArray2D: number[][] = []) {
             
-        this.meshMaterial = meshMaterial;        
         this.physicsMaterial = physicsMaterial;
         
         this.generatedMesh = new THREE.Mesh(
             new THREE.PlaneGeometry( height, width, 100, 100),
-            this.meshMaterial
+            meshMaterial
         );
 
         let grid = new THREE.GridHelper( height, 10, 0xffffff, 0xffffff );
@@ -37,10 +34,13 @@ export class TerrainObject {
         grid.material.transparent = false;
         scene.add( grid );
 
-        // TODO: use height and width
-        this.generateCannonHeightField(scene, world, height, width, dataArray2D);
-        this.generateThreeMeshFromCannonHeightField(scene, height, width);
-        this.generateSplattedMeshFromDisplacementPlane(scene, 20, 20);
+        var displacementHeightFactor = 3;
+
+        // width and height need to match dimensions of heightmap
+        this.generateCannonHeightField(world, height, width, displacementHeightFactor, dataArray2D);
+        this.generateThreeMeshFromCannonHeightField(scene, height, width, meshMaterial);
+
+        this.generateSplattedMeshFromDisplacementPlane(scene, 'assets/heightmap_64x64.png', height, width, displacementHeightFactor);
     }
     
     getPhysicsMaterial(): CANNON.Material {
@@ -63,13 +63,9 @@ export class TerrainObject {
         }        
     }
 
-    generateCannonHeightField(scene: THREE.Scene, world: CANNON.World, sizeX: number, sizeZ: number, dataArray2D: number[][] = []) {           
+    generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, displacementHeightFactor: number, dataArray2D: number[][] = []) {           
         // generate physics object
-        var height = 3;        
-
-        //const sizeX = 64;
-        //const sizeZ = 64;
-
+        var height = displacementHeightFactor;        
         var matrix: number[][] = [];
 
         if(dataArray2D.length > 0) {
@@ -99,7 +95,7 @@ export class TerrainObject {
 
         const groundMaterial = new CANNON.Material('ground');
         this.heightfieldShape = new CANNON.Heightfield(matrix, {
-          elementSize: 100 / sizeX,
+          elementSize: 1, //100 / sizeX,
         });
 
         const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial });
@@ -121,9 +117,8 @@ export class TerrainObject {
         // https://threejs.org/docs/#api/en/textures/DataTexture       
     }    
 
-    generateThreeMeshFromCannonHeightField(scene: THREE.Scene, sizeX: number, sizeZ: number) {
-        // https://sbcode.net/threejs/physics-cannonDebugrenderer/
-        // generate THREE mesh
+    generateThreeMeshFromCannonHeightField(scene: THREE.Scene, sizeX: number, sizeZ: number, material: THREE.Material) {
+        // generate THREE mesh: https://sbcode.net/threejs/physics-cannonDebugrenderer/
         
         let points: THREE.Vector3[] = [];
         var tempGeometry = new THREE.BufferGeometry();
@@ -131,7 +126,6 @@ export class TerrainObject {
         var tmpVec0: CANNON.Vec3 = new CANNON.Vec3()
         var tmpVec1: CANNON.Vec3 = new CANNON.Vec3()
         var tmpVec2: CANNON.Vec3 = new CANNON.Vec3()
-        //var tmpQuat0: CANNON.Quaternion = new CANNON.Quaternion()
 
         var shape = this.heightfieldShape;
         var v0 = tmpVec0;
@@ -163,65 +157,35 @@ export class TerrainObject {
         //tempGeometry.computeTangents();
         tempGeometry.computeBoundingBox();
 
-        var tempMesh = new THREE.Mesh(tempGeometry, this.meshMaterial);
-        tempMesh.scale.set(1, 1, 1);
-        tempMesh.position.set(
+        var mesh = new THREE.Mesh(tempGeometry, material);
+        mesh.scale.set(1, 1, 1);
+        mesh.position.set(
             // -((sizeX - 1) * heightfieldShape.elementSize) / 2,
             -(sizeX * this.heightfieldShape.elementSize) / 2,
             -1,
             // ((sizeZ - 1) * heightfieldShape.elementSize) / 2
             (sizeZ * this.heightfieldShape.elementSize) / 2
         );
-        tempMesh.rotation.x = - Math.PI / 2;
-        tempMesh.castShadow = false;
-        tempMesh.receiveShadow = true;  
+        mesh.rotation.x = - Math.PI / 2;
+        mesh.castShadow = false;
+        mesh.receiveShadow = true;  
         
-        this.generatedMesh = tempMesh;
+        this.generatedMesh = mesh;
         scene.add(this.generatedMesh);
     }
 
-    generateSplattedMeshFromDisplacementPlane(scene: THREE.Scene, height: number, width: number) {
-        const displacementMap = new THREE.TextureLoader().load('assets/heightmap_64x64.png');
-        //const displacementMap = new THREE.TextureLoader().load('assets/heightmaps/heightmapSS_480.png');
-        //const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
-        
-        const planeSize = 40;
+    generateSplattedMeshFromDisplacementPlane(scene: THREE.Scene, asset: string, height: number, width: number, displacementHeightFactor: number) {
+        const displacementMap = new THREE.TextureLoader().load(asset);
+       
+        const planeSize = width * 2;
         const repeats = planeSize / 2;
 
         const loader = new THREE.TextureLoader();
 
-        //const texture = loader.load('assets/checker.png');
-        const texture = loader.load('assets/tileable_grass_00.png');                
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.magFilter = THREE.NearestFilter;
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.repeat.set(repeats, repeats);
-
-        const texture2 = loader.load('assets/tileable_grass_01.png');
-        texture2.wrapS = THREE.RepeatWrapping;
-        texture2.wrapT = THREE.RepeatWrapping;
-        texture2.magFilter = THREE.NearestFilter;
-        texture2.colorSpace = THREE.SRGBColorSpace;
-        texture2.repeat.set(repeats, repeats);
-
-        const texture3 = loader.load('assets/stone 3.png');
-        texture3.wrapS = THREE.RepeatWrapping;
-        texture3.wrapT = THREE.RepeatWrapping;
-        texture3.magFilter = THREE.NearestFilter;
-        texture3.colorSpace = THREE.SRGBColorSpace;
-        texture3.repeat.set(repeats, repeats);
-
-        const texture4 = loader.load('assets/snow.png');
-        texture4.wrapS = THREE.RepeatWrapping;
-        texture4.wrapT = THREE.RepeatWrapping;
-        texture4.magFilter = THREE.NearestFilter;
-        texture4.colorSpace = THREE.SRGBColorSpace;
-        texture4.repeat.set(repeats, repeats);
-
-        //this.meshMaterial = new THREE.MeshPhongMaterial();
-        //var temp = this.meshMaterial as THREE.MeshPhongMaterial;
-        //temp.displacementMap = displacementMap;
+        const texture = this.loadAndConfigureTexture(loader, 'assets/tileable_grass_00.png', repeats);                
+        const texture2 = this.loadAndConfigureTexture(loader, 'assets/tileable_grass_01.png', repeats);        
+        const texture3 = this.loadAndConfigureTexture(loader, 'assets/stone 3.png', repeats);        
+        const texture4 = this.loadAndConfigureTexture(loader, 'assets/snow.png', repeats);
 
         var material = new THREE.ShaderMaterial({
             uniforms: {
@@ -231,24 +195,27 @@ export class TerrainObject {
                 level4Texture: { value: texture3 },
                 level5Texture: { value: texture4 },
                 displacementMap: { value: displacementMap },
-                displacementScale: {value: 2},
+                displacementScale: {value: displacementHeightFactor},
                 lightMap: { value: displacementMap }
             },
             vertexShader: this.vertexShader3(),
             fragmentShader: this.fragmentShader3(),
         });
-        this.meshMaterial = material;
 
         this.displacementMesh = new THREE.Mesh(
             new THREE.PlaneGeometry( height, width, 100, 100),
-            this.meshMaterial
+            material
         );
+        
+        this.displacementMesh.scale.set(1, 1, displacementHeightFactor);
 
-        this.displacementMesh.position.set(0, 0, 0.5);
-        this.displacementMesh.rotation.x = - Math.PI / 2;
+        
+        this.displacementMesh.rotation.x = -Math.PI / 2;
         this.displacementMesh.rotation.z = Math.PI / 2;
 
-        this.displacementMesh.scale.set(5, 5, 5);
+        this.displacementMesh.position.set(0, 0.5, 0.6);
+        //this.displacementMesh.position.set(0, 0, 0);
+        
         /*
         this.mesh.position.setX(height / 2);
         this.mesh.position.setY(0);
@@ -273,6 +240,18 @@ export class TerrainObject {
         grid.material.opacity = 1;
         grid.material.transparent = false;
         scene.add( grid );
+    }
+
+    loadAndConfigureTexture(loader: THREE.TextureLoader, asset: string, repeats: number): THREE.Texture
+    {
+        const texture = loader.load(asset);                
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.magFilter = THREE.NearestFilter;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.repeat.set(repeats, repeats);
+
+        return texture;
     }
 
     vertexShader3() {

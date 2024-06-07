@@ -175,23 +175,14 @@ export default class GameScene extends THREE.Scene {
         this.world.broadphase = new CANNON.SAPBroadphase(this.world);
 
         var groundMaterial = new CANNON.Material("groundMaterial");
-        
-        const loader = new THREE.TextureLoader();
-        const texture = loader.load('assets/wall.jpg');
-        texture.wrapS = THREE.ClampToEdgeWrapping;
-        texture.wrapT = THREE.ClampToEdgeWrapping
-        texture.magFilter = THREE.NearestFilter;
-        texture.colorSpace = THREE.SRGBColorSpace;
-        //const repeats = 32;//planeSize / 2;
-        //texture.repeat.set(repeats, repeats);
-
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
 
+        // width and height need to match dimensions of heightmap
         this.terrain = new TerrainObject(this, 64, 64,
             new THREE.MeshPhongMaterial(
                 {
-                    //color: 0x44dd44,
+                    color: 0x44dd44,
                     depthWrite: true,
                     //wireframe: true,
                     side: THREE.DoubleSide,
