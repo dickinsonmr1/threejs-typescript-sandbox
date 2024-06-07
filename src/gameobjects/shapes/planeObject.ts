@@ -27,6 +27,7 @@ export class PlaneObject {
 
         // https://sbcode.net/threejs/displacmentmap/
         const displacementMap = new THREE.TextureLoader().load('assets/heightmap_64x64.png');
+        //const displacementMap = new THREE.TextureLoader().load('assets/heightmaps/heightmapSS_480.png');
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
         const planeSize = 40;
@@ -56,6 +57,13 @@ export class PlaneObject {
         texture3.colorSpace = THREE.SRGBColorSpace;
         texture3.repeat.set(repeats, repeats);
 
+        const texture4 = loader.load('assets/snow.png');
+        texture4.wrapS = THREE.RepeatWrapping;
+        texture4.wrapT = THREE.RepeatWrapping;
+        texture4.magFilter = THREE.NearestFilter;
+        texture4.colorSpace = THREE.SRGBColorSpace;
+        texture4.repeat.set(repeats, repeats);
+
         //this.meshMaterial = new THREE.MeshPhongMaterial();
         //var temp = this.meshMaterial as THREE.MeshPhongMaterial;
         //temp.displacementMap = displacementMap;
@@ -66,7 +74,7 @@ export class PlaneObject {
                 level2Texture: { value: texture2 },
                 level3Texture: { value: texture3 },
                 level4Texture: { value: texture3 },
-                level5Texture: { value: texture3 },
+                level5Texture: { value: texture4 },
                 displacementMap: { value: displacementMap },
                 displacementScale: {value: 2},
                 lightMap: { value: displacementMap }

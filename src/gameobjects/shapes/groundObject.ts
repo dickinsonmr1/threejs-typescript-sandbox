@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
+
 export class GroundObject {
     mesh: THREE.Mesh;
     body?: CANNON.Body;
@@ -295,7 +296,6 @@ export class GroundObject {
         tempMesh.castShadow = false;
         tempMesh.receiveShadow = true;  
         
-        //disabled for investigations on heightmap with displacement / shaders
         //scene.add(tempMesh);
 
         // https://dustinpfister.github.io/2022/12/09/threejs-buffer-geometry-index/
