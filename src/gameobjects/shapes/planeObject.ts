@@ -34,6 +34,8 @@ export class PlaneObject {
         const loader = new THREE.TextureLoader();
         //const texture = loader.load('assets/checker.png');
         const texture = loader.load('assets/tileable_grass_00.png');
+        const texture2 = loader.load('assets/tileable_grass_01.png');
+        const texture3 = loader.load('assets/stone 03.png');
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.magFilter = THREE.NearestFilter;
@@ -45,7 +47,19 @@ export class PlaneObject {
         //var temp = this.meshMaterial as THREE.MeshPhongMaterial;
         //temp.displacementMap = displacementMap;
 
+        var material = new THREE.ShaderMaterial({
+            uniforms: {
+                grassTexture: { value: texture },
+                rockTexture: { value: texture2 },
+                snowTexture: { value: texture3 },
+                //displacementMap: { value: displacementMap },
+            },
+            vertexShader: this.vertexShader1(),
+            fragmentShader: this.fragmentShader1(),
+        });
+        this.meshMaterial = material;
         
+        /*
         this.meshMaterial = new THREE.MeshStandardMaterial({
             map: texture,
             side: THREE.DoubleSide,
@@ -53,11 +67,13 @@ export class PlaneObject {
             displacementScale: 2,
             //color: color,
             fog: true,
-            //normalMap: normalMap,
-            //bumpMap: normalMap,
+            normalMap: displacementMap,
+            //bumpMap: displacementMap,
             lightMap: displacementMap,
+            lightMapIntensity: 2,
             depthTest: true            
-        });        
+        });
+        */        
                     
         if(world != null) {
 
@@ -89,7 +105,7 @@ export class PlaneObject {
             this.meshMaterial
         );
 
-        this.mesh.position.set(0, 0, 0);
+        this.mesh.position.set(0, 0, 0.5);
         this.mesh.rotation.x = - Math.PI / 2;
         this.mesh.rotation.z = Math.PI / 2;
 
@@ -212,5 +228,44 @@ export class PlaneObject {
         )
         heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
         world.addBody(heightfieldBody)
+    }
+
+    vertexShader1() {
+        return `
+		// vertexShader
+		varying vec2 vUv;
+		
+		void main() {
+			vUv = uv;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+		}
+        `;
+    }
+
+    fragmentShader1() {
+        return `
+        // fragmentShader
+		uniform sampler2D grassTexture;
+		uniform sampler2D rockTexture;
+		uniform sampler2D snowTexture;
+		
+		varying vec2 vUv;
+		
+		void main() {
+			vec4 grassColor = texture2D(grassTexture, vUv);
+			vec4 rockColor = texture2D(rockTexture, vUv);
+			vec4 snowColor = texture2D(snowTexture, vUv);
+		
+			// You can implement texture splatting logic here to blend textures based on terrain attributes
+		
+			// For simplicity, let's just blend based on height
+			float height = texture2D(grassTexture, vUv).r * 0.3 + texture2D(rockTexture, vUv).r * 0.5 + texture2D(snowTexture, vUv).r * 0.2;
+			if (height < 0.5) {
+				gl_FragColor = mix(grassColor, rockColor, height * 2.0);
+			} else {
+				gl_FragColor = mix(rockColor, snowColor, (height - 0.5) * 2.0);
+			}
+		}
+        `;
     }
 }

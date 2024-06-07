@@ -44,7 +44,7 @@ var sceneController = new SceneController();
 const scene = new GameScene(mainCamera, sceneController);
 scene.initialize();
 
-const cannonDebugger = CannonDebugger(scene, scene.world, {color: 0x0000ff });
+//const cannonDebugger = CannonDebugger(scene, scene.world, {color: 0x0000ff });
 
 scene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
@@ -116,7 +116,7 @@ function startPollingForGamepads() {
 function tick() {
   scene.update();
   sceneOrtho.update();
-  cannonDebugger.update();
+  //cannonDebugger.update();
 
   /*
   if(hudBitmap != null) {

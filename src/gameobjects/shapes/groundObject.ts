@@ -295,7 +295,8 @@ export class GroundObject {
         tempMesh.castShadow = false;
         tempMesh.receiveShadow = true;  
         
-        scene.add(tempMesh);
+        //disabled for investigations on heightmap with displacement / shaders
+        //scene.add(tempMesh);
 
         // https://dustinpfister.github.io/2022/12/09/threejs-buffer-geometry-index/
 
