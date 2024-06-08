@@ -25,6 +25,7 @@ import { Utility } from '../utility';
 import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
 import { TextureToArray } from '../gameobjects/shapes/textureToArray';
 import { TerrainObject } from '../gameobjects/shapes/terrainObject';
+import { Water } from 'three/addons/objects/Water.js';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -74,6 +75,7 @@ export default class GameScene extends THREE.Scene {
     }
     
     terrain?: TerrainObject;
+    water: Water;
     
     cube?: BoxObject;
     cube2?: BoxObject;
@@ -209,6 +211,16 @@ export default class GameScene extends THREE.Scene {
             groundMaterial,
             this.heightMapTextureAsArray
         );
+
+        // adding phyyics plane to avoid falling through
+        const groundShape = new CANNON.Plane();
+        var body = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        body.addShape(groundShape);            
+        body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+        this.world.addBody(body)
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
@@ -459,6 +471,44 @@ export default class GameScene extends THREE.Scene {
             } 
         );
 
+        // https://threejs.org/examples/?q=water#webgl_shaders_ocean
+        const waterGeometry = new THREE.PlaneGeometry( 10000, 10000 );
+        this.water = new Water(
+            waterGeometry,
+            {
+                textureWidth: 512,
+                textureHeight: 512,
+                waterNormals: new THREE.TextureLoader().load( 'assets/waternormals.jpg', function ( texture ) {
+
+                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+                } ),
+                sunDirection: new THREE.Vector3(),
+                sunColor: 0xffffff,
+                waterColor: 0x001e0f,
+                distortionScale: 3.7,
+                fog: this.fog !== undefined
+            }
+        );
+        this.water.rotation.x = - Math.PI / 2;
+        this.water.position.y += 0.75;
+        this.add( this.water );
+
+        // TODO: sun from https://threejs.org/examples/?q=water#webgl_shaders_ocean
+        /*
+        const parameters = {
+            elevation: 2,
+            azimuth: 180
+        };
+        const phi = THREE.MathUtils.degToRad( 90 - parameters.elevation );
+        const theta = THREE.MathUtils.degToRad( parameters.azimuth );
+
+        var sun = new THREE.Vector3();
+        sun.setFromSphericalCoords( 1, phi, theta );
+        //sky.material.uniforms[ 'sunPosition' ].value.copy( sun );
+        this.water.material.uniforms[ 'sunDirection' ].value.copy( sun ).normalize();        
+        */
+
         var flamethrowerEmitter = new FlamethrowerEmitter(this,
             this.player1.playerId,
             this.explosionTexture,
@@ -582,6 +632,9 @@ export default class GameScene extends THREE.Scene {
         if(event.key === ' ') {
             this.player1.tryJump();
         }
+        if (event.key === 'shift') {
+            this.player1.tryStopTurbo();
+        }
 	}
 
     private updateInput() {
@@ -647,9 +700,6 @@ export default class GameScene extends THREE.Scene {
         }
         if (this.keyDown.has('shift')) {
             this.player1.tryTurbo();
-        }
-        else {
-            this.player1.tryStopTurbo();
         }
     }
 
@@ -888,6 +938,13 @@ export default class GameScene extends THREE.Scene {
         });
     }
 
+    updateWater() {
+        if(!this.water)
+            return;
+
+        this.water.material.uniforms[ 'time' ].value += 0.5 / 60.0;
+    }
+
     update() {
         if(this.world != null)
             this.world.fixedStep();
@@ -903,6 +960,8 @@ export default class GameScene extends THREE.Scene {
         this.cube2?.update();
         this.sphere?.update();
         this.cylinder?.update();
+
+        //const time = performance.now() * 0.001;
 
         this.gltfVehiclePlayer1?.update();
         this.gltfVehiclePlayer2?.update();

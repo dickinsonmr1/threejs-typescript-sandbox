@@ -71,6 +71,7 @@ var gamepads = navigator.getGamepads();
 console.log(gamepads);
 
 function tick() {
+  scene.updateWater();
   scene.update();
   sceneOrtho.update();
   cannonDebugger.update();
