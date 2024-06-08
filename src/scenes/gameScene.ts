@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import * as CANNON from 'cannon-es'
 import { BoxObject } from '../gameobjects/shapes/boxObject';
@@ -14,7 +13,6 @@ import { Projectile } from '../gameobjects/weapons/projectile';
 import { CylinderObject } from '../gameobjects/shapes/cylinderObject';
 import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/raycastVehicleObject';
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
-import ProjectileFactory from '../gameobjects/weapons/projectileFactory';
 import { PickupObject } from '../gameobjects/pickupObject';
 import SceneController from './sceneController';
 import { Player } from '../gameobjects/player';
@@ -63,7 +61,7 @@ export default class GameScene extends THREE.Scene {
     private particleEmitters: ParticleEmitter[] = [];
     public explosionTexture: THREE.Texture = new THREE.Texture();
 
-    private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmap_64x64.png');
+    private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_256x256.png');
 
 
     world: CANNON.World = new CANNON.World({
@@ -210,8 +208,9 @@ export default class GameScene extends THREE.Scene {
             this.world,
             groundMaterial,
             this.heightMapTextureAsArray,
-            false,
-            true
+            true,
+            true,
+            false
         );
 
         // adding phyyics plane to avoid falling through
@@ -494,7 +493,7 @@ export default class GameScene extends THREE.Scene {
         );
         this.water.rotation.x = - Math.PI / 2;
         this.water.position.y += 0.75;
-        this.add( this.water );
+        //this.add( this.water );
 
         // TODO: sun from https://threejs.org/examples/?q=water#webgl_shaders_ocean
         /*

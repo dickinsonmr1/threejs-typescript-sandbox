@@ -1,7 +1,6 @@
 // import { v4 as uuidv4 } from 'uuid';
 import { ProjectileType } from "./weapons/projectileType";
 import HealthBar from "./healthBar";
-import { RigidVehicleObject } from "./vehicles/rigidVehicle/rigidVehicleObject";
 import { Utility } from "../utility";
 import Headlights from "./vehicles/headLights";
 import * as THREE from "three";
@@ -10,10 +9,7 @@ import { FireObject } from "./fx/fireObject";
 import GameScene from "../scenes/gameScene";
 import ProjectileFactory from "./weapons/projectileFactory";
 import { Projectile, ProjectileLaunchLocation } from "./weapons/projectile";
-import { RaycastVehicleObject } from "./vehicles/raycastVehicle/raycastVehicleObject";
 import { IPlayerVehicle } from "./vehicles/IPlayerVehicle";
-import { ParticleEmitter } from "./fx/particleEmitter";
-import { SmokeObject } from "./fx/smokeObject";
 import { ParticleEmitterType, ParticleTrailObject } from "./fx/particleTrailObject";
 
 
