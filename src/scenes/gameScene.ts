@@ -75,7 +75,7 @@ export default class GameScene extends THREE.Scene {
     }
     
     terrain?: TerrainObject;
-    water: Water;
+    water?: Water;
     
     cube?: BoxObject;
     cube2?: BoxObject;
@@ -177,7 +177,7 @@ export default class GameScene extends THREE.Scene {
                     depthWrite: true,
                     //wireframe: true,
                     side: THREE.DoubleSide,
-                    bumpMap: normalMap,
+                    bumpMap: normalMap,                    
                     //vertexColors: true
                 }),
                  /*
@@ -209,7 +209,9 @@ export default class GameScene extends THREE.Scene {
             */
             this.world,
             groundMaterial,
-            this.heightMapTextureAsArray
+            this.heightMapTextureAsArray,
+            false,
+            true
         );
 
         // adding phyyics plane to avoid falling through
