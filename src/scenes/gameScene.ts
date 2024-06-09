@@ -227,7 +227,7 @@ export default class GameScene extends THREE.Scene {
         this.world.addBody(body);
 
 
-        this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight());
+        this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight(), 2, 4);
 
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
@@ -543,7 +543,7 @@ export default class GameScene extends THREE.Scene {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
     }
-    generateGrassBillboards(mapWidth: number, mapHeight: number) {
+    generateGrassBillboards(mapWidth: number, mapHeight: number, yMin: number, yMax: number) {
 
         const geometry = new THREE.BufferGeometry();
         const vertices = [];
@@ -551,13 +551,14 @@ export default class GameScene extends THREE.Scene {
         const sprite = new THREE.TextureLoader().load( 'assets/billboard_grass_256x256.png' );
         sprite.colorSpace = THREE.SRGBColorSpace;
 
-        for ( let i = 0; i < 10000; i ++ ) {
+        for ( let i = 0; i < 500000; i ++ ) {
 
             const x = mapWidth * Math.random() - mapWidth / 2;
             const z = mapHeight * Math.random() - mapHeight / 2;
 
             let tempVector3 = this.getWorldPositionOnTerrain(x, z);
-            vertices.push( tempVector3.x, tempVector3.y, tempVector3.z );
+            if(tempVector3.y > yMin && tempVector3.y < yMax)
+                vertices.push( tempVector3.x, tempVector3.y, tempVector3.z );
         }
 
         geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
