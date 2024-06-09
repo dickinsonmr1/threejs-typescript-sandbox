@@ -61,7 +61,7 @@ export default class GameScene extends THREE.Scene {
     private particleEmitters: ParticleEmitter[] = [];
     public explosionTexture: THREE.Texture = new THREE.Texture();
 
-    private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_256x256.png');
+    private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
 
 
     world: CANNON.World = new CANNON.World({
@@ -208,7 +208,8 @@ export default class GameScene extends THREE.Scene {
             this.world,
             groundMaterial,
             this.heightMapTextureAsArray,
-            true,
+            2,
+            false,
             true,
             false
         );
@@ -492,8 +493,8 @@ export default class GameScene extends THREE.Scene {
             }
         );
         this.water.rotation.x = - Math.PI / 2;
-        this.water.position.y += 0.75;
-        //this.add( this.water );
+        this.water.position.y += 1.5;
+        this.add( this.water );
 
         // TODO: sun from https://threejs.org/examples/?q=water#webgl_shaders_ocean
         /*

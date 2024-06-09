@@ -21,6 +21,7 @@ export class TerrainObject {
         world: CANNON.World,
         physicsMaterial: CANNON.Material,
         heightMapTextureAsArray: TextureToArray,
+        displacementHeightFactor: number,
         isCannonMeshVisible: boolean,
         isTexturedMeshVisible: boolean,
         wireframe: boolean = false) {
@@ -40,8 +41,6 @@ export class TerrainObject {
         grid.material.opacity = 1;
         grid.material.transparent = false;
         scene.add( grid );
-
-        var displacementHeightFactor = 3;
               
         // physics object and mesh generated directly from physics object
         var dataArray2D = heightMapTextureAsArray.getArray();
@@ -86,12 +85,13 @@ export class TerrainObject {
           matrix = dataArray2D;
           for (let i = 0; i < sizeX; i++) {
             for (let j = 0; j < sizeZ; j++) {
-              matrix[i][j] *= 10;
+              matrix[i][j] *= 10 / displacementHeightFactor;              
               matrix[i][j] += 1;
             }
           }
         }
         else {
+          // default is to generate hills
           for (let i = 0; i < sizeX; i++) {
             
             matrix.push([]);
@@ -189,24 +189,25 @@ export class TerrainObject {
 
       const displacementMap = new THREE.TextureLoader().load(asset);
 
-        if(!wireframe)
+        if(wireframe)
           return new THREE.MeshStandardMaterial({color: 0x007700,wireframe: true, displacementMap: displacementMap, displacementScale: displacementHeightFactor });
         
         const repeats = planeSize / 2;
         const loader = new THREE.TextureLoader();
 
-        const texture = this.loadAndConfigureTexture(loader, 'assets/tileable_grass_00.png', repeats);                
-        const texture2 = this.loadAndConfigureTexture(loader, 'assets/tileable_grass_01.png', repeats);        
-        const texture3 = this.loadAndConfigureTexture(loader, 'assets/stone 3.png', repeats);        
-        const texture4 = this.loadAndConfigureTexture(loader, 'assets/snow.png', repeats);
+        const texture1 = this.loadAndConfigureTexture(loader, 'assets/Sand 4.jpg', repeats);                
+        const texture2 = this.loadAndConfigureTexture(loader, 'assets/tileable_grass_00.png', repeats);        
+        const texture3 = this.loadAndConfigureTexture(loader, 'assets/tileable_grass_01.png', repeats);        
+        const texture4 = this.loadAndConfigureTexture(loader, 'assets/stone 3.png', repeats);
+        const texture5 = this.loadAndConfigureTexture(loader, 'assets/snow.png', repeats);
 
         return new THREE.ShaderMaterial({
             uniforms: {
-                level1Texture: { value: texture },
+                level1Texture: { value: texture1},
                 level2Texture: { value: texture2 },
                 level3Texture: { value: texture3 },
-                level4Texture: { value: texture3 },
-                level5Texture: { value: texture4 },
+                level4Texture: { value: texture4 },
+                level5Texture: { value: texture5 },
                 displacementMap: { value: displacementMap },
                 displacementScale: {value: displacementHeightFactor},
                 lightMap: { value: displacementMap },
@@ -307,7 +308,7 @@ export class TerrainObject {
 
         void main() 
         {
-            vec4 water = (smoothstep(0.01, 0.25, vAmount) - smoothstep(0.24, 0.26, vAmount)) * texture2D( level1Texture, vUV * 10.0 );
+            vec4 water = (smoothstep(-1.00, 0.25, vAmount) - smoothstep(0.24, 0.26, vAmount)) * texture2D( level1Texture, vUV * 10.0 );
             vec4 sandy = (smoothstep(0.24, 0.27, vAmount) - smoothstep(0.28, 0.31, vAmount)) * texture2D( level2Texture, vUV * 10.0 );
             vec4 grass = (smoothstep(0.28, 0.32, vAmount) - smoothstep(0.35, 0.40, vAmount)) * texture2D( level3Texture, vUV * 20.0 );
             vec4 rocky = (smoothstep(0.30, 0.50, vAmount) - smoothstep(0.40, 0.70, vAmount)) * texture2D( level4Texture, vUV * 20.0 );
