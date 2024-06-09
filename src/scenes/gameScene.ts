@@ -448,8 +448,8 @@ export default class GameScene extends THREE.Scene {
         const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.5 );
         this.add( light );
 
-        for(let i = 0; i < 10; i++) {
-            this.generateRandomPickup(this.heightMapTextureAsArray.getImageHeight(), this.heightMapTextureAsArray.getImageWidth());
+        for(let i = 0; i < 50; i++) {
+            this.generateRandomPickup(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight());
         }
 
         document.body.appendChild(this.stats.dom);
@@ -810,14 +810,21 @@ export default class GameScene extends THREE.Scene {
         if(!this.terrain || !this.terrain.heightfieldShape)
             return;
 
-        // TODO: place pickup above point on heightfield
-        //let y = this.terrain?.heightfieldShape?.getHeightAt(randX, randZ, true);// + 0.5;
-        let y = 3;//
-        
-        let randPosition = new THREE.Vector3(randX, y, randZ);
+        let startPosition = new THREE.Vector3(randX, 100, randZ);
+        let endPosition = new THREE.Vector3(randX, -100, randZ);
+        let randPosition = new THREE.Vector3(0,0,0);
+
+        let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(startPosition), Utility.ThreeVec3ToCannonVec3(endPosition));                
+        var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
+        if(this.terrain.body != null) {
+            ray.intersectBody(this.terrain.body, raycastResult);
+        }
+        if(raycastResult != null && raycastResult.hasHit) {
+            randPosition = Utility.CannonVec3ToThreeVec3(raycastResult.hitPointWorld);
+            randPosition.y += 0.75;
+        }
 
         let randCubeSize = 0.75; //randFloat(0.5, 2);
-
         let randColor = THREE.MathUtils.randInt(0, 0xffffff);
 
         const cube = new PickupObject(this,
