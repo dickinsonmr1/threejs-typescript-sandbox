@@ -74,6 +74,8 @@ export default class GameScene extends THREE.Scene {
     
     terrain?: TerrainObject;
     water?: Water;
+
+    grassBillboards?: THREE.Points;
     
     cube?: BoxObject;
     cube2?: BoxObject;
@@ -214,15 +216,19 @@ export default class GameScene extends THREE.Scene {
             false
         );
 
-        // adding phyyics plane to avoid falling through
+        // adding phyics plane to avoid falling through
         const groundShape = new CANNON.Plane();
         var body = new CANNON.Body({
             mass: 0,
             type: CANNON.Body.STATIC,
             material: new CANNON.Material});
         body.addShape(groundShape);            
-        body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
-        this.world.addBody(body)
+        body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
+        this.world.addBody(body);
+
+
+        this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight());
+
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
@@ -537,6 +543,31 @@ export default class GameScene extends THREE.Scene {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
     }
+    generateGrassBillboards(mapWidth: number, mapHeight: number) {
+
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+
+        const sprite = new THREE.TextureLoader().load( 'assets/billboard_grass_256x256.png' );
+        sprite.colorSpace = THREE.SRGBColorSpace;
+
+        for ( let i = 0; i < 10000; i ++ ) {
+
+            const x = mapWidth * Math.random() - mapWidth / 2;
+            const z = mapHeight * Math.random() - mapHeight / 2;
+
+            let tempVector3 = this.getWorldPositionOnTerrain(x, z);
+            vertices.push( tempVector3.x, tempVector3.y, tempVector3.z );
+        }
+
+        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+
+        var material = new THREE.PointsMaterial( { size: 1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true } );
+        //material.color.setHSL( 1.0, 0.3, 0.7, THREE.SRGBColorSpace );
+
+        const particles = new THREE.Points( geometry, material );
+        this.add( particles );
+    }
 
     private handleKeyDown = (event: KeyboardEvent) => {
         this.keyDown.add(event.key.toLowerCase());
@@ -806,30 +837,15 @@ export default class GameScene extends THREE.Scene {
 
         let randX = randFloat(-mapWidth / 2, mapWidth / 2);        
         let randZ = randFloat(-mapHeight / 2, mapHeight / 2);
-
-        if(!this.terrain || !this.terrain.heightfieldShape)
-            return;
-
-        let startPosition = new THREE.Vector3(randX, 100, randZ);
-        let endPosition = new THREE.Vector3(randX, -100, randZ);
-        let randPosition = new THREE.Vector3(0,0,0);
-
-        let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(startPosition), Utility.ThreeVec3ToCannonVec3(endPosition));                
-        var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
-        if(this.terrain.body != null) {
-            ray.intersectBody(this.terrain.body, raycastResult);
-        }
-        if(raycastResult != null && raycastResult.hasHit) {
-            randPosition = Utility.CannonVec3ToThreeVec3(raycastResult.hitPointWorld);
-            randPosition.y += 0.75;
-        }
+        let spawnPosition = this.getWorldPositionOnTerrain(randX, randZ);
+        spawnPosition.y += 0.75;
 
         let randCubeSize = 0.75; //randFloat(0.5, 2);
         let randColor = THREE.MathUtils.randInt(0, 0xffffff);
 
         const cube = new PickupObject(this,
             randCubeSize, randCubeSize, randCubeSize,
-            randPosition,
+            spawnPosition,
             randColor,
             texture,
             0.75
@@ -955,6 +971,28 @@ export default class GameScene extends THREE.Scene {
                 }
             })
         });
+    }
+
+    getWorldPositionOnTerrain(x: number, z: number): THREE.Vector3 {
+
+        let worldPosition = new THREE.Vector3(0,0,0);
+
+        if(!this.terrain || !this.terrain.heightfieldShape)
+            return new THREE.Vector3(0,0,0);
+
+        let startPosition = new THREE.Vector3(x, 100, z);
+        let endPosition = new THREE.Vector3(x, -100, z);
+
+        let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(startPosition), Utility.ThreeVec3ToCannonVec3(endPosition));                
+        var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
+        if(this.terrain.body != null) {
+            ray.intersectBody(this.terrain.body, raycastResult);
+        }
+        if(raycastResult != null && raycastResult.hasHit) {
+            worldPosition = Utility.CannonVec3ToThreeVec3(raycastResult.hitPointWorld);
+        }
+
+        return worldPosition;
     }
 
     updateWater() {
