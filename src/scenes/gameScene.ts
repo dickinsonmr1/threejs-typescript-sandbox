@@ -449,7 +449,7 @@ export default class GameScene extends THREE.Scene {
         this.add( light );
 
         for(let i = 0; i < 10; i++) {
-            this.generateRandomPickup();
+            this.generateRandomPickup(this.heightMapTextureAsArray.getImageHeight(), this.heightMapTextureAsArray.getImageWidth());
         }
 
         document.body.appendChild(this.stats.dom);
@@ -767,7 +767,7 @@ export default class GameScene extends THREE.Scene {
     }
     
     
-    private async generateRandomPickup() {
+    private async generateRandomPickup(mapWidth: number, mapHeight: number) {
 
         
         let pickupTextureRocket = this.textureLoader.load('assets/rocketIcon-multiple.png');
@@ -803,11 +803,20 @@ export default class GameScene extends THREE.Scene {
                 break;
         }
 
-        let randPosition = new THREE.Vector3(randFloat(-20, 20), 0.75, randFloat(-20, 20));
+
+        let randX = randFloat(-mapWidth / 2, mapWidth / 2);        
+        let randZ = randFloat(-mapHeight / 2, mapHeight / 2);
+
+        if(!this.terrain || !this.terrain.heightfieldShape)
+            return;
 
         // TODO: place pickup above point on heightfield
+        //let y = this.terrain?.heightfieldShape?.getHeightAt(randX, randZ, true);// + 0.5;
+        let y = 3;//
+        
+        let randPosition = new THREE.Vector3(randX, y, randZ);
 
-        let randCubeSize = 0.5; //randFloat(0.5, 2);
+        let randCubeSize = 0.75; //randFloat(0.5, 2);
 
         let randColor = THREE.MathUtils.randInt(0, 0xffffff);
 
@@ -815,7 +824,8 @@ export default class GameScene extends THREE.Scene {
             randCubeSize, randCubeSize, randCubeSize,
             randPosition,
             randColor,
-            texture
+            texture,
+            0.75
         );
 
         this.pickups.push(cube);
@@ -932,7 +942,7 @@ export default class GameScene extends THREE.Scene {
 
                 let playerPosition = player.getPosition();
                 let pickupPosition = pickup.getPosition();
-                if(playerPosition.distanceTo(pickupPosition) < 1) {
+                if(playerPosition.distanceTo(pickupPosition) < 1.5) {
                     // TODO: logic for player receiving pickup item
                     pickup.remove();
                 }

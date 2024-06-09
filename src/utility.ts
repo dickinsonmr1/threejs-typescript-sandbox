@@ -26,6 +26,13 @@ export class Utility {
         position1.z + position2.z);
     }
 
+    static ThreeVector3Add(position1: THREE.Vector3, position2: THREE.Vector3): THREE.Vector3 {
+      return new THREE.Vector3(
+        position1.x + position2.x,
+        position1.y + position2.y,
+        position1.z + position2.z);
+    }
+
     static cylinderBodyToMesh(body: CANNON.Body, material: THREE.Material, radius: number, numSegments: number): THREE.Group {
         const group = new THREE.Group()
       

@@ -18,7 +18,8 @@ export class PickupObject {
         height: number, width: number, depth: number,
         position: THREE.Vector3,
         color: number = 0xffffff,
-        iconTexture: THREE.Texture | undefined) {
+        iconTexture: THREE.Texture | undefined,
+        textureScale: number) {
 
         this.meshMaterial = new THREE.MeshBasicMaterial({
             color: color,
@@ -49,7 +50,7 @@ export class PickupObject {
         sprite.material.opacity = 0.6;
         sprite.material.color = new THREE.Color('white');
 
-        let size = 0.5;
+        let size = textureScale;//0.5;
         sprite.scale.set(size, size, size);
         //sprite.position.set(position.x, position.y + 1, position.z);
         this.group.add(sprite);

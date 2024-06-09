@@ -66,7 +66,7 @@ export class Player {
         this.playerName = playerName;      
         let gameScene = <GameScene>scene;
         
-        this.turboParticleEmitter = new ParticleTrailObject(scene, ParticleEmitterType.GlowingParticles, gameScene.explosionTexture, new THREE.Color('grey'), this.getPosition(), 1, 20, 0);
+        this.turboParticleEmitter = new ParticleTrailObject(scene, ParticleEmitterType.GlowingParticles, gameScene.explosionTexture, new THREE.Color('yellow'), this.getPosition(), 1, 20, 0);
         this.turboParticleEmitter.pause();
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
     }
@@ -116,7 +116,24 @@ export class Player {
             Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
         );
 
-        this.turboParticleEmitter.setEmitPosition(this.getPosition());
+        let turboOffset = new THREE.Vector3(1, 0, 0);
+        /*
+        switch(launchLocation) {
+            case ProjectileLaunchLocation.Left:                
+                sideVector = new THREE.Vector3(-10, 0, sideOffset);
+                break;
+            case ProjectileLaunchLocation.Center:
+                sideVector = new THREE.Vector3(0, 0, 0);
+                break;                
+            case ProjectileLaunchLocation.Right:
+                sideVector = new THREE.Vector3(0, 0, -sideOffset);
+                break;
+        }
+        */
+        turboOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
+        let turboEmitPosition = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), turboOffset);
+
+        this.turboParticleEmitter.setEmitPosition(turboEmitPosition);
     }
 
     public createProjectile(projectileType: ProjectileType): Projectile {
