@@ -18,6 +18,30 @@ export default class ProjectileFactory {
         world?: CANNON.World) : Projectile
     {
 
+
+        let randRocketType = THREE.MathUtils.randInt(0, 1);
+
+        let particleColor1; //= new THREE.Color(0x663399);
+        let particleColor2; //= new THREE.Color(0x663399);
+        let particleColor3; //= new THREE.Color(0x663399);
+        let particleColor4; //= new THREE.Color(0x4d0099);
+
+        switch(randRocketType) {
+            case 0:
+                particleColor1 = new THREE.Color(0xffffff);
+                particleColor2 = new THREE.Color(0x663399);
+                particleColor3 = new THREE.Color(0x663399);
+                particleColor4 = new THREE.Color(0x4d0099);
+                break;
+            case 1:
+            default:
+                particleColor1 = new THREE.Color('white');    
+                particleColor2 = new THREE.Color('yellow');
+                particleColor3 = new THREE.Color('orange');
+                particleColor4 = new THREE.Color('red');
+                break;
+        }
+    
         let r = THREE.MathUtils.randInt(0, 255);
         let g = THREE.MathUtils.randInt(0, 255);
         let b = THREE.MathUtils.randInt(0, 255);
@@ -35,6 +59,9 @@ export default class ProjectileFactory {
                     0.5,
                     new THREE.Color('white'),
                     new THREE.Color('white'),
+                    new THREE.Color('white'),
+                    new THREE.Color('white'),
+                    new THREE.Color('white'),
                     new THREE.MeshBasicMaterial( { color: 0xffffff, depthWrite: true }),
                     explosionTexture,
                     world);      
@@ -47,9 +74,12 @@ export default class ProjectileFactory {
                     0.07,                   // radius
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
-                    0.3,
+                    0.4,
                     new THREE.Color('white'),
-                    new THREE.Color('white'),
+                    particleColor1,
+                    particleColor2,
+                    particleColor3,
+                    particleColor4,
                     new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
                     explosionTexture,
                     world);          

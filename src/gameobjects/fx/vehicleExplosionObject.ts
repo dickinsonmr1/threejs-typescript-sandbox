@@ -4,6 +4,7 @@ import { ParticleEmitter } from "./particleEmitter";
 
 export class VehicleExplosionObject extends ParticleEmitter {
 
+
     isEmitting: boolean;
     isDead: boolean;
     
@@ -11,7 +12,12 @@ export class VehicleExplosionObject extends ParticleEmitter {
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
     lightColor: THREE.Color;
-    particleColor: THREE.Color;
+
+    particleColor1: THREE.Color;
+    particleColor2: THREE.Color;
+    particleColor3: THREE.Color;
+    particleColor4: THREE.Color;
+
     position: THREE.Vector3;
     numberParticles: number;
     velocity: number;
@@ -23,7 +29,12 @@ export class VehicleExplosionObject extends ParticleEmitter {
     constructor(scene: THREE.Scene,
         particleTexture: THREE.Texture,
         lightColor: THREE.Color,
-        particleColor: THREE.Color,
+
+        particleColor1: THREE.Color,
+        particleColor2: THREE.Color,
+        particleColor3: THREE.Color,
+        particleColor4: THREE.Color,
+
         position: THREE.Vector3,
         numberParticles: number,
         velocity: number) {
@@ -34,7 +45,12 @@ export class VehicleExplosionObject extends ParticleEmitter {
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
         this.lightColor = lightColor;
-        this.particleColor = particleColor;
+
+        this.particleColor1 = particleColor1;
+        this.particleColor2 = particleColor2;
+        this.particleColor3 = particleColor3;
+        this.particleColor4 = particleColor4;
+
         this.position = position;
         this.numberParticles = numberParticles;
         this.velocity = velocity;
@@ -58,7 +74,7 @@ export class VehicleExplosionObject extends ParticleEmitter {
             );
             sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
 
-            sprite.material.color = particleColor;
+            sprite.material.color = particleColor1;
 
             sprite.material.opacity = Math.random() * 0.2 + 0.8;
 
@@ -108,11 +124,11 @@ export class VehicleExplosionObject extends ParticleEmitter {
             
             //THREE.MathUtils.lerp
             if(item.material.opacity < 0.98 && item.material.opacity >= 0.80)      
-                item.material.color.lerp(new THREE.Color('yellow'), 0.5);
+                item.material.color.lerp(this.particleColor2, 0.5);
             else if(item.material.opacity < 0.80 && item.material.opacity >= 0.50)      
-                item.material.color.lerp(new THREE.Color('orange'), 0.5);
+                item.material.color.lerp(this.particleColor3, 0.5);
             else if(item.material.opacity < 0.50)
-                item.material.color.lerp(new THREE.Color('red'), 0.5);
+                item.material.color.lerp(this.particleColor4, 0.5);
         });
 
         this.particleGroup.children = this.particleGroup.children
@@ -138,6 +154,13 @@ export class VehicleExplosionObject extends ParticleEmitter {
         throw new Error("Method not implemented.");
     }
     stop(): void {
+        throw new Error("Method not implemented.");
+    }
+
+    pause(): void {
+        throw new Error("Method not implemented.");
+    }
+    resume(): void {
         throw new Error("Method not implemented.");
     }
 }

@@ -20,13 +20,8 @@ export enum PlayerState {
 }
 
 export class Player {
-    // TODO: implement
-    /**
-     *
-     */
 
     scene: THREE.Scene;
-    //public playerId: uuidv4;
     public playerName: string;
     public playerId: string;
     maxHealth: number = 100;
@@ -40,8 +35,6 @@ export class Player {
     headLights: Headlights;
 
     vehicleObject!: IPlayerVehicle;    
-    //private rigidVehicleObject!: RigidVehicleObject;
-    //private raycastVehicleObject!: RaycastVehicleObject;
     turboParticleEmitter: ParticleTrailObject;
 
     fireObjects: FireObject[] = [];
@@ -71,21 +64,15 @@ export class Player {
             ParticleEmitterType.GlowingParticles,
             gameScene.explosionTexture,
             new THREE.Color('white'),
-            this.getPosition(),
+            new THREE.Color('yellow'),
+            new THREE.Color('orange'),
+            new THREE.Color('red'),
             1,
-            20,
             0.01);
-            
+
         this.turboParticleEmitter.pause();
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
     }
-
-
-    /*
-    createProjectile(): Projectile {
-        return;
-    }
-    */
 
     getPosition(): THREE.Vector3{
         if(!this.vehicleObject?.getChassis().body) return new THREE.Vector3(0,10,0);

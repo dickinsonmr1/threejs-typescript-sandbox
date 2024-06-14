@@ -855,7 +855,14 @@ export default class GameScene extends THREE.Scene {
         this.pickups.push(cube);
     }
 
-    private async generateRandomExplosion(projectileType: ProjectileType, position: THREE.Vector3, lightColor: THREE.Color, particleColor: THREE.Color) {
+    private async generateRandomExplosion(
+        projectileType: ProjectileType,
+        position: THREE.Vector3,
+        lightColor: THREE.Color,
+        particleColor1: THREE.Color,
+        particleColor2: THREE.Color,
+        particleColor3: THREE.Color,
+        particleColor4: THREE.Color) {
 
         if(this.explosionTexture != null) {
             //let randPosition = new THREE.Vector3(randFloat(-5, 5), randFloat(5, 15), randFloat(-5.5, -10.5));
@@ -884,7 +891,10 @@ export default class GameScene extends THREE.Scene {
                 this,
                 this.explosionTexture,
                 lightColor,
-                particleColor,
+                particleColor1,
+                particleColor2,
+                particleColor3,
+                particleColor4,
                 position,
                 numberParticles,
                 0.03)
@@ -908,7 +918,10 @@ export default class GameScene extends THREE.Scene {
                             projectile.projectileType,
                             projectile.getPosition(),
                             projectile.getLightColor(),
-                            projectile.getParticleColor()
+                            projectile.getParticleColor1(),
+                            projectile.getParticleColor2(),
+                            projectile.getParticleColor3(),
+                            projectile.getParticleColor4(),
                         );
                         projectile.kill();
                         this.remove(projectile.group);

@@ -12,12 +12,16 @@ export class ParticleTrailObject extends ParticleEmitter {
     type: ParticleEmitterType;
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
-    color: THREE.Color;
+
+    startColor: THREE.Color;
+    lerpColor1: THREE.Color;
+    lerpColor2: THREE.Color;
+    lerpColor3: THREE.Color;
+
     position!: THREE.Vector3;
     emitPosition!: THREE.Vector3;
 
     numberParticles: number;
-    maxParticles: number;
     velocity: number;
 
     isDead: boolean = false;
@@ -28,10 +32,11 @@ export class ParticleTrailObject extends ParticleEmitter {
     constructor(scene: THREE.Scene,
         type: ParticleEmitterType,
         particleTexture: THREE.Texture,
-        color: THREE.Color,
-        position: THREE.Vector3,
+        startColor: THREE.Color,
+        lerpColor1: THREE.Color,
+        lerpColor2: THREE.Color,
+        lerpColor3: THREE.Color,
         numberParticles: number,
-        maxParticles: number,
         velocity: number) {
                   
         super();
@@ -40,10 +45,12 @@ export class ParticleTrailObject extends ParticleEmitter {
         this.type = type;
         this.particleGroup = new THREE.Group();
         this.particleTexture = particleTexture;
-        this.color = color;
+        this.startColor = startColor;
+        this.lerpColor1 = lerpColor1;
+        this.lerpColor2 = lerpColor2;
+        this.lerpColor3 = lerpColor3;
         //this.position = position;
         this.numberParticles = numberParticles;
-        this.maxParticles = maxParticles;
         this.velocity = velocity;
 
         this.isEmitting = true;
@@ -66,7 +73,7 @@ export class ParticleTrailObject extends ParticleEmitter {
     }
 
     getColor(): THREE.Color {
-        return this.color;
+        return this.startColor;
     }
 
     setEmitPosition(position: THREE.Vector3): void {
@@ -80,9 +87,10 @@ export class ParticleTrailObject extends ParticleEmitter {
         throw new Error("Method not implemented.");
     }
 
-    private emitParticles(emitPosition: THREE.Vector3, color: THREE.Color) {
+    private emitParticles(emitPosition: THREE.Vector3) {
 
-        let newEmitColor = new THREE.Color('white');
+        let newEmitColor = this.startColor.clone();// new THREE.Color('white');
+        
         for(let i = 0; i < this.numberParticles; i++) {
             let particleMaterial = new THREE.SpriteMaterial({
                 map: this.particleTexture,
@@ -145,7 +153,7 @@ export class ParticleTrailObject extends ParticleEmitter {
         }
 
         if(this.isEmitting) {
-            this.emitParticles(this.emitPosition, this.color);
+            this.emitParticles(this.emitPosition);
         }
 
         this.particleGroup.children.forEach((child) => {
@@ -163,11 +171,11 @@ export class ParticleTrailObject extends ParticleEmitter {
             
             //THREE.MathUtils.lerp
             if(item.material.opacity < 0.98 && item.material.opacity >= 0.80)      
-                item.material.color.lerp(new THREE.Color('yellow'), 0.5);
+                item.material.color.lerp(this.lerpColor1, 0.5);
             else if(item.material.opacity < 0.80 && item.material.opacity >= 0.50)      
-                item.material.color.lerp(new THREE.Color('orange'), 0.5);
+                item.material.color.lerp(this.lerpColor2, 0.5);
             else if(item.material.opacity < 0.50)
-                item.material.color.lerp(new THREE.Color('red'), 0.5);
+                item.material.color.lerp(this.lerpColor3, 0.5);
         });
 
         this.particleGroup.children = this.particleGroup.children

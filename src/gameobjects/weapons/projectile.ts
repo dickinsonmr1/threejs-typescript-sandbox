@@ -18,7 +18,11 @@ export class Projectile extends SphereObject {
     public playerId: string;
     public projectileType: ProjectileType;
     private lightColor: THREE.Color;
-    private particleColor: THREE.Color;
+
+    private particleColor1: THREE.Color;
+    private particleColor2: THREE.Color;
+    private particleColor3: THREE.Color;
+    private particleColor4: THREE.Color;
 
     scene: THREE.Scene;
 
@@ -41,12 +45,17 @@ export class Projectile extends SphereObject {
         launchVector: THREE.Vector3,
         projectileSpeed: number,
         lightColor: THREE.Color,
-        particleColor: THREE.Color,
+        
+        particleColor1: THREE.Color,
+        particleColor2: THREE.Color,
+        particleColor3: THREE.Color,
+        particleColor4: THREE.Color,
+
         meshMaterial?: THREE.Material,
         particleTexture?: THREE.Texture,
         world?: CANNON.World) {
         
-        super(scene, radius, position, particleColor.getHex(), meshMaterial, world);
+        super(scene, radius, position, particleColor1.getHex(), meshMaterial, world);
 
         this.scene = scene;
         
@@ -54,38 +63,34 @@ export class Projectile extends SphereObject {
         this.projectileType = projectileType;
 
         this.lightColor = lightColor;
-        this.particleColor = particleColor;
+        this.particleColor1 = particleColor1;
+        this.particleColor2 = particleColor2;
+        this.particleColor3 = particleColor3;
+        this.particleColor4 = particleColor4;
         
-        //scene.add(this.group);
         this.group.position.set(position.x, position.y, position.z);
 
         if(this.projectileType == ProjectileType.Rocket) {
 
-            
+            /*
             this.pointLightObject = new PointLightObject(
                 scene,
                 lightColor,//new THREE.Color('white'),
                 0.2, 2, 0.96, 
                 new THREE.Vector3()// this.group.position
             );
-
-            //if(this.pointLightObject.pointLight != null) 
-            //this.group.add(this.pointLightObject.group);
-
-            //if(this.pointLightObject.pointLightHelper != null) 
-                //this.group.add(this.pointLightObject.pointLightHelper);
-
-            //this.group.position.set(position.x, position.y, position.z);
+            */
 
             if(particleTexture != null) {
                 this.particleEmitterObject = new ParticleTrailObject(
                     scene,
                     ParticleEmitterType.GlowingParticles,
                     particleTexture,
-                    particleColor,//new THREE.Color('grey'),
-                    position,
+                    particleColor1,//new THREE.Color('grey'),
+                    particleColor2, //new THREE.Color(0x663399),
+                    particleColor3, //new THREE.Color(0x663399),
+                    particleColor4, //new THREE.Color(0x4d0099),
                     1,
-                    20,
                     0.0025
                 )
             };
@@ -93,7 +98,7 @@ export class Projectile extends SphereObject {
         
         setTimeout(() => {            
             this.isDead = true
-        }, 5000);
+        }, 3000);
         
 
         this.setVelocity(
@@ -110,8 +115,17 @@ export class Projectile extends SphereObject {
         return this.lightColor;
     }
 
-    getParticleColor(): THREE.Color {
-        return this.particleColor;
+    getParticleColor1(): THREE.Color {
+        return this.particleColor1;
+    }
+    getParticleColor2(): THREE.Color {
+        return this.particleColor2;
+    }
+    getParticleColor3(): THREE.Color {
+        return this.particleColor3;
+    }
+    getParticleColor4(): THREE.Color {
+        return this.particleColor4;
     }
 
     get shouldRemove() {
@@ -120,7 +134,6 @@ export class Projectile extends SphereObject {
 
 	setVelocity(x: number, y: number, z: number) {
 		this.velocity.set(x, y, z);
-        //this.body?.velocity.set(x, y, z);
 	}
 
 	kill(): void {
@@ -142,7 +155,6 @@ export class Projectile extends SphereObject {
 
     update() {
 
-        //this.body?.applyForce(new CANNON.Vec3(0, 9.81, 0)) // opposite of gravity 
         super.update();
 
         if(this.isDead) {
@@ -156,21 +168,17 @@ export class Projectile extends SphereObject {
         //}        
 
         
-        //this.body?.velocity.set(this.velocity.x, this.velocity.y, this.velocity.z);
         this.group.position.x += this.velocity.x;
 		this.group.position.y += this.velocity.y;
 		this.group.position.z += this.velocity.z;
 
-        //this.body?.position.addScaledVector(1, Utility.ThreeVec3ToCannonVec3(this.velocity));
         this.body?.position.set(this.group.position.x, this.group.position.y, this.group.position.z);
-        //this.body?.updateBoundingRadius();
         this.body?.updateAABB();
 
         this.pointLightObject?.setPosition(this.group.position);
 
         if(this.particleEmitterObject != null) {     
             this.particleEmitterObject.setEmitPosition(this.getPosition());   
-            //this.particleEmitterObject.update(this.getPosition());
         }
     }
 }
