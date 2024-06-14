@@ -538,7 +538,7 @@ export default class GameScene extends THREE.Scene {
         );
         this.flamethrowerEmitters.push(flamethrowerEmitter2);
 
-        this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
+        //this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
                 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -749,6 +749,8 @@ export default class GameScene extends THREE.Scene {
         this.projectiles.push(projectile);
         if(projectile.particleEmitterObject != null)
             this.addToParticleEmitters(projectile.particleEmitterObject);	
+        if(projectile.particleEmitterSmokeObject != null)
+            this.addToParticleEmitters(projectile.particleEmitterSmokeObject);	
     }
 
     public firePlayerFlamethrower() {

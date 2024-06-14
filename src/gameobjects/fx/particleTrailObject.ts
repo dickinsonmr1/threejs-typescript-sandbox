@@ -98,14 +98,31 @@ export class ParticleTrailObject extends ParticleEmitter {
             });
 
             let sprite = new THREE.Sprite(particleMaterial);
-
+            let spriteScale = 1;
             switch(this.type) {
                 case ParticleEmitterType.SmokeTrail:
                 case ParticleEmitterType.SmokeEmit:
                     sprite.material.blending = THREE.NormalBlending;
+                    spriteScale = Math.random() * 0.1 + 0.1;
+
+                    sprite.userData.velocity = new THREE.Vector3(
+                        Math.random() * this.velocity - this.velocity / 2,
+                        Math.random() * this.velocity - this.velocity / 2,
+                        Math.random() * this.velocity - this.velocity / 2
+                    );
+                    sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 1);
                     break;
+                case ParticleEmitterType.GlowingParticles:
                 default:
                     sprite.material.blending = THREE.AdditiveBlending;
+                    spriteScale = 0.33;
+
+                    sprite.userData.velocity = new THREE.Vector3(
+                        Math.random() * this.velocity - this.velocity / 2,
+                        Math.random() * this.velocity - this.velocity / 2,
+                        Math.random() * this.velocity - this.velocity / 2
+                    );
+                    sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
                     break;
             }            
             
@@ -120,8 +137,8 @@ export class ParticleTrailObject extends ParticleEmitter {
 
             sprite.material.opacity = Math.random() * 0.2 + 0.6;
 
-            let size = 0.33;//Math.random() * 0.1 + 0.1;
-            sprite.scale.set(size, size, size);
+            
+            sprite.scale.set(spriteScale, spriteScale, spriteScale);
 
             sprite.position.set(emitPosition.x, emitPosition.y, emitPosition.z);
 
@@ -134,7 +151,7 @@ export class ParticleTrailObject extends ParticleEmitter {
 
         setTimeout(() => {
             this.isDead = true;
-        }, 1000);
+        }, this.type == ParticleEmitterType.GlowingParticles ? 3000 : 5000);
     }
 
     pause(): void {
@@ -160,11 +177,23 @@ export class ParticleTrailObject extends ParticleEmitter {
             let item = <THREE.Sprite>child;
 
             item.position.add(child.userData.velocity);
-            item.material.opacity -= 0.01;
             
-            item.scale.x *= 0.98;
-            item.scale.y *= 0.98;
-            item.scale.z *= 0.98;
+            
+            switch(this.type) {
+                case ParticleEmitterType.SmokeTrail:
+                case ParticleEmitterType.SmokeEmit:
+                    item.material.opacity -= 0.008;
+                    item.scale.x *= 1.02;
+                    item.scale.y *= 1.02;
+                    item.scale.z *= 1.02;        
+                    break;
+                default:
+                    item.material.opacity -= 0.01;
+                    item.scale.x *= 0.98;
+                    item.scale.y *= 0.98;
+                    item.scale.z *= 0.98;        
+                    break;
+            }       
 
             const color1 = item.material.color;
             item.material.color.copy(color1);      

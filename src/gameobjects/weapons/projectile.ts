@@ -28,6 +28,7 @@ export class Projectile extends SphereObject {
 
     pointLightObject!: PointLightObject;
     particleEmitterObject!: ParticleTrailObject;
+    particleEmitterSmokeObject!: ParticleTrailObject;
     
 	private readonly velocity = new THREE.Vector3();    
 
@@ -93,6 +94,17 @@ export class Projectile extends SphereObject {
                     1,
                     0.0025
                 )
+                this.particleEmitterSmokeObject = new ParticleTrailObject(
+                    scene,
+                    ParticleEmitterType.SmokeTrail,
+                    particleTexture,
+                    new THREE.Color('black'),
+                    new THREE.Color('black'),
+                    new THREE.Color('gray'),
+                    new THREE.Color('gray'),
+                    1,
+                    0.0025
+                )
             };
         }
         
@@ -143,6 +155,7 @@ export class Projectile extends SphereObject {
 
         if(this.particleEmitterObject != null) {
             this.particleEmitterObject.stop();
+            this.particleEmitterSmokeObject.stop();
         }
         if(this.pointLightObject != null) {
             this.pointLightObject.kill();
@@ -179,6 +192,9 @@ export class Projectile extends SphereObject {
 
         if(this.particleEmitterObject != null) {     
             this.particleEmitterObject.setEmitPosition(this.getPosition());   
+        }
+        if(this.particleEmitterSmokeObject != null) {     
+            this.particleEmitterSmokeObject.setEmitPosition(this.getPosition());   
         }
     }
 }
