@@ -66,7 +66,16 @@ export class Player {
         this.playerName = playerName;      
         let gameScene = <GameScene>scene;
         
-        this.turboParticleEmitter = new ParticleTrailObject(scene, ParticleEmitterType.GlowingParticles, gameScene.explosionTexture, new THREE.Color('yellow'), this.getPosition(), 1, 20, 0);
+        this.turboParticleEmitter = new ParticleTrailObject(
+            scene,
+            ParticleEmitterType.GlowingParticles,
+            gameScene.explosionTexture,
+            new THREE.Color('white'),
+            this.getPosition(),
+            1,
+            20,
+            0.01);
+            
         this.turboParticleEmitter.pause();
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
     }

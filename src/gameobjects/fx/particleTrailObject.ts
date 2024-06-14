@@ -81,6 +81,8 @@ export class ParticleTrailObject extends ParticleEmitter {
     }
 
     private emitParticles(emitPosition: THREE.Vector3, color: THREE.Color) {
+
+        let newEmitColor = new THREE.Color('white');
         for(let i = 0; i < this.numberParticles; i++) {
             let particleMaterial = new THREE.SpriteMaterial({
                 map: this.particleTexture,
@@ -106,11 +108,11 @@ export class ParticleTrailObject extends ParticleEmitter {
             );
             sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
 
-            sprite.material.color = color;
+            sprite.material.color = newEmitColor;
 
             sprite.material.opacity = Math.random() * 0.2 + 0.6;
 
-            let size = 0.1;//Math.random() * 0.1 + 0.1;
+            let size = 0.33;//Math.random() * 0.1 + 0.1;
             sprite.scale.set(size, size, size);
 
             sprite.position.set(emitPosition.x, emitPosition.y, emitPosition.z);
@@ -150,17 +152,28 @@ export class ParticleTrailObject extends ParticleEmitter {
             let item = <THREE.Sprite>child;
 
             item.position.add(child.userData.velocity);
-            item.material.opacity -= 0.03;
+            item.material.opacity -= 0.01;
             
-            let scaleFactor = 0.015;
-            let scale = new THREE.Vector3(item.scale.x + scaleFactor, item.scale.y + scaleFactor, item.scale.z + scaleFactor);
-            item.scale.set(scale.x, scale.y, scale.z);
+            item.scale.x *= 0.98;
+            item.scale.y *= 0.98;
+            item.scale.z *= 0.98;
+
+            const color1 = item.material.color;
+            item.material.color.copy(color1);      
+            
+            //THREE.MathUtils.lerp
+            if(item.material.opacity < 0.98 && item.material.opacity >= 0.80)      
+                item.material.color.lerp(new THREE.Color('yellow'), 0.5);
+            else if(item.material.opacity < 0.80 && item.material.opacity >= 0.50)      
+                item.material.color.lerp(new THREE.Color('orange'), 0.5);
+            else if(item.material.opacity < 0.50)
+                item.material.color.lerp(new THREE.Color('red'), 0.5);
         });
 
         this.particleGroup.children = this.particleGroup.children
             .filter((child) => {
                 let item = <THREE.Sprite>child;
-                return item.material.opacity > 0.0;
+                return item.material.opacity > 0.0;// && item.scale.x > 0;
             });       
 
         //if(this.particleGroup.children.length === 0) {

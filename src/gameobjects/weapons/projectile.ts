@@ -86,14 +86,14 @@ export class Projectile extends SphereObject {
                     position,
                     1,
                     20,
-                    0
+                    0.0025
                 )
             };
         }
         
         setTimeout(() => {            
             this.isDead = true
-        }, 3000);
+        }, 5000);
         
 
         this.setVelocity(

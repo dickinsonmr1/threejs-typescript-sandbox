@@ -48,8 +48,8 @@ export default class ProjectileFactory {
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
                     0.3,
-                    color,
-                    color,
+                    new THREE.Color('white'),
+                    new THREE.Color('white'),
                     new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
                     explosionTexture,
                     world);          
