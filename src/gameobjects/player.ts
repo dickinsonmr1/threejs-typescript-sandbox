@@ -332,7 +332,9 @@ export class Player {
     }
 
     tryRespawn() {
-        this.refillHealth();
+        this.refillHealth();        
+
+        
         this.playerState = PlayerState.Alive;
         this.vehicleObject.getModel().visible = true;
         this.tryStopTurbo();
@@ -384,6 +386,9 @@ export class Player {
     refillHealth(): void {
         this.currentHealth = this.maxHealth;
         this.healthBar.updateValue(this.currentHealth);
+
+        if(this.playerId == this.getScene().player1.playerId)
+            this.getScene().sceneController.updateHealthOnHud(this.currentHealth);
     }
 
     refillShield(): void {

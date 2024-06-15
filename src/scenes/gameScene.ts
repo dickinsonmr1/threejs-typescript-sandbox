@@ -502,7 +502,7 @@ export default class GameScene extends THREE.Scene {
             }
         );
         this.water.rotation.x = - Math.PI / 2;
-        this.water.position.y += 1.5;
+        this.water.position.y += 0.75; // 1.5
         this.add( this.water );
 
         // TODO: sun from https://threejs.org/examples/?q=water#webgl_shaders_ocean
@@ -931,6 +931,10 @@ export default class GameScene extends THREE.Scene {
                         projectile.kill();
                         this.remove(projectile.group);
                         player.tryDamage(projectile.projectileType, projectile.getPosition());
+                        
+                        if(player.playerId == this.player1.playerId) {
+                            this.sceneController.updateHealthOnHud(this.player1.currentHealth);
+                        }
                     }
                 });
 
@@ -1035,11 +1039,19 @@ export default class GameScene extends THREE.Scene {
             
             let cpuPlayer = cpuPlayers[i];
 
-            let temp = THREE.MathUtils.randInt(0, 60);
+            let temp = THREE.MathUtils.randInt(0, 80);
             switch(temp) {
             case 1:
                 cpuPlayer.tryAccelerateWithKeyboard();
                 break;
+            case 2:
+                cpuPlayer.tryAccelerateWithKeyboard();
+                cpuPlayer.tryTurnLeftWithKeyboard();
+                break
+            case 3:
+                cpuPlayer.tryAccelerateWithKeyboard();
+                cpuPlayer.tryTurnRightWithKeyboard();
+                break
             case 10:
             case 11:
                 var projectile = cpuPlayer.createProjectile(ProjectileType.Bullet);

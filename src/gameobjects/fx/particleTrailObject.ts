@@ -79,6 +79,9 @@ export class ParticleTrailObject extends ParticleEmitter {
     setEmitPosition(position: THREE.Vector3): void {
         this.emitPosition = position;
     }
+    setEmitQuaternion(quaternion: THREE.Quaternion): void {
+        // TODO: always aim particles directly behind vehicle
+    }
 
     setPosition(position: THREE.Vector3): void {
         throw new Error("Method not implemented.");
