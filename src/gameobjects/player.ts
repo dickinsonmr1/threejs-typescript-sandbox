@@ -72,6 +72,10 @@ export class Player {
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
     }
 
+    private getScene(): GameScene {
+        return <GameScene>this.scene;
+    }
+
     getPosition(): THREE.Vector3{
         if(!this.vehicleObject?.getChassis().body) return new THREE.Vector3(0,10,0);
 
@@ -300,8 +304,7 @@ export class Player {
         if(this.playerState == PlayerState.Alive) {
             this.playerState = PlayerState.Dead;
 
-
-            let scene = <GameScene>this.scene;
+            var scene = this.getScene();
             
             if(this.headLights != null)
                 this.headLights.group.visible = false;
@@ -334,9 +337,18 @@ export class Player {
         this.vehicleObject.getModel().visible = true;
         this.tryStopTurbo();
 
+        var mapDimensions = this.getScene().getMapDimensions();
+        
+        let randX = THREE.MathUtils.randFloat(-mapDimensions.x / 2, mapDimensions.x / 2);        
+        let randZ = THREE.MathUtils.randFloat(-mapDimensions.z / 2, mapDimensions.z / 2);
+
+        let worldPosition = this.getScene().getWorldPositionOnTerrain(randX, randZ);
+
+        this.vehicleObject.respawnPosition(worldPosition.x, worldPosition.y + 2, worldPosition.z);
+
         if(this.headLights != null)
             this.headLights.group.visible = true;
-        this.turboParticleEmitter.isEmitting = true;
+        //this.turboParticleEmitter.isEmitting = true;
     }
 
     tryFirePrimaryWeapon(): void {

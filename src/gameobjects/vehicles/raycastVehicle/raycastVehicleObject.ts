@@ -122,6 +122,17 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             this.model.rotateY(Math.PI / 2);
         }
     }
+
+    respawnPosition(x: number, y: number, z: number): void {
+        if(!this.raycastVehicle) return;
+
+        this.raycastVehicle.chassisBody.position.x = x;
+        this.raycastVehicle.chassisBody.position.y = y;
+        this.raycastVehicle.chassisBody.position.z = z;        
+
+        this.raycastVehicle.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
+    }
+
     tryJump(): void {        
         this.raycastVehicle?.chassisBody.applyImpulse(new CANNON.Vec3(0, 4000, 0));
     }

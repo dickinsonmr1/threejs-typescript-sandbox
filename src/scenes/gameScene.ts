@@ -63,6 +63,9 @@ export default class GameScene extends THREE.Scene {
 
     private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
 
+    public getMapDimensions(): THREE.Vector3 {
+        return new THREE.Vector3(this.heightMapTextureAsArray.getImageWidth(), 0, this.heightMapTextureAsArray.getImageHeight());
+    }
 
     world: CANNON.World = new CANNON.World({
         gravity: new CANNON.Vec3(0, -14.81, 0)
@@ -989,7 +992,7 @@ export default class GameScene extends THREE.Scene {
         });
     }
 
-    getWorldPositionOnTerrain(x: number, z: number): THREE.Vector3 {
+    public getWorldPositionOnTerrain(x: number, z: number): THREE.Vector3 {
 
         let worldPosition = new THREE.Vector3(0,0,0);
 

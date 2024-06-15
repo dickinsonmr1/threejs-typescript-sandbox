@@ -11,7 +11,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
     wheels: SphereWheelObject[] = [];
     chassis: ChassisObject;
 
-    private rigidVehicleObject?: CANNON.RigidVehicle;
+    private rigidVehicle?: CANNON.RigidVehicle;
 
     private model!: THREE.Group;
     modelOffset?: THREE.Vector3;
@@ -43,7 +43,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
             centerOfMassAdjust
         );
 
-        this.rigidVehicleObject = new CANNON.RigidVehicle({
+        this.rigidVehicle = new CANNON.RigidVehicle({
             chassisBody: this.chassis.body
         });
         
@@ -62,7 +62,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
             wheelMaterial,
             wheelMass
         );
-        this.rigidVehicleObject.addWheel({
+        this.rigidVehicle.addWheel({
             body: frontLeftWheel.wheelBody,
             position: new CANNON.Vec3(-chassisLength, 0, axisWidth / 2).vadd(wheelOffset),
             axis: new CANNON.Vec3(0, 0, 1),
@@ -79,7 +79,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
             wheelMaterial,
             wheelMass
         );
-        this.rigidVehicleObject.addWheel({
+        this.rigidVehicle.addWheel({
             body: frontRightWheel.wheelBody,
             position: new CANNON.Vec3(-chassisLength, 0, -axisWidth / 2).vadd(wheelOffset),
             axis: new CANNON.Vec3(0, 0, 1),
@@ -96,7 +96,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
             wheelMaterial,
             wheelMass
         );
-        this.rigidVehicleObject.addWheel({
+        this.rigidVehicle.addWheel({
             body: rearLeftWheel.wheelBody,
             position: new CANNON.Vec3(chassisLength, 0, axisWidth / 2).vadd(wheelOffset),
             axis: new CANNON.Vec3(0, 0, -1),
@@ -113,7 +113,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
             wheelMaterial,
             wheelMass
         );
-        this.rigidVehicleObject.addWheel({
+        this.rigidVehicle.addWheel({
             body: rearRightWheel.wheelBody,
             position: new CANNON.Vec3(chassisLength, 0, -axisWidth / 2).vadd(wheelOffset),
             axis: new CANNON.Vec3(0, 0, -1),
@@ -121,7 +121,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
         });
         this.wheels.push(rearRightWheel);        
       
-        this.rigidVehicleObject.addToWorld(world);
+        this.rigidVehicle.addToWorld(world);
 
 
         if(modelData != null) {
@@ -158,72 +158,82 @@ export class RigidVehicleObject implements IPlayerVehicle {
     }
 
     getCannonVehicleChassisBody(): CANNON.Body | undefined {
-        return this.rigidVehicleObject?.chassisBody;
+        return this.rigidVehicle?.chassisBody;
     }
 
     getPosition() {
         return this.chassis.mesh.position;
     }
 
-    resetPosition(): void {
-        if(!this.rigidVehicleObject) return;
+    respawnPosition(x: number, y: number, z: number): void {
+        if(!this.rigidVehicle) return;
 
-        this.rigidVehicleObject.chassisBody.position.y = 5;
-        this.rigidVehicleObject.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
+        this.rigidVehicle.chassisBody.position.x = x;
+        this.rigidVehicle.chassisBody.position.y = y;
+        this.rigidVehicle.chassisBody.position.z = z;        
+
+        this.rigidVehicle.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
+    }
+
+    resetPosition(): void {
+        if(!this.rigidVehicle) return;
+
+        this.rigidVehicle.chassisBody.position.y = 5;
+        this.rigidVehicle.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
     }
 
     tryTurn(gamepadStickX: number): void {
         // front wheels
-        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal * gamepadStickX, 0);
-        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal * gamepadStickX, 1);
+        this.rigidVehicle?.setSteeringValue(this.rigidMaxSteerVal * gamepadStickX, 0);
+        this.rigidVehicle?.setSteeringValue(this.rigidMaxSteerVal * gamepadStickX, 1);
 
         // rear wheels
-        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal * gamepadStickX, 2);
-        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal * gamepadStickX, 3);
+        this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal * gamepadStickX, 2);
+        this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal * gamepadStickX, 3);
     }
 
     tryTurnLeft(): void {
         // front wheels
-        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 0);
-        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 1);
+        this.rigidVehicle?.setSteeringValue(this.rigidMaxSteerVal, 0);
+        this.rigidVehicle?.setSteeringValue(this.rigidMaxSteerVal, 1);
 
         // rear wheels
-        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal, 2);
-        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal, 3);
+        this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal, 2);
+        this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal, 3);
     }
     tryStopTurnLeft(): void {
         // front wheels
-        this.rigidVehicleObject?.setSteeringValue(0, 0);
-        this.rigidVehicleObject?.setSteeringValue(0, 1);
+        this.rigidVehicle?.setSteeringValue(0, 0);
+        this.rigidVehicle?.setSteeringValue(0, 1);
 
         // rear wheels
-        this.rigidVehicleObject?.setSteeringValue(0, 2);
-        this.rigidVehicleObject?.setSteeringValue(0, 3);
+        this.rigidVehicle?.setSteeringValue(0, 2);
+        this.rigidVehicle?.setSteeringValue(0, 3);
     }
 
     tryTurnRight(): void {
         // front wheels
-        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal, 0);
-        this.rigidVehicleObject?.setSteeringValue(-this.rigidMaxSteerVal, 1);
+        this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal, 0);
+        this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal, 1);
 
         // rear wheels
-        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 2);
-        this.rigidVehicleObject?.setSteeringValue(this.rigidMaxSteerVal, 3);
+        this.rigidVehicle?.setSteeringValue(this.rigidMaxSteerVal, 2);
+        this.rigidVehicle?.setSteeringValue(this.rigidMaxSteerVal, 3);
     }
     tryStopTurnRight(): void {
         // front wheels
-        this.rigidVehicleObject?.setSteeringValue(0, 0);
-        this.rigidVehicleObject?.setSteeringValue(0, 1);
+        this.rigidVehicle?.setSteeringValue(0, 0);
+        this.rigidVehicle?.setSteeringValue(0, 1);
 
         // rear wheels
-        this.rigidVehicleObject?.setSteeringValue(0, 2);
-        this.rigidVehicleObject?.setSteeringValue(0, 3);
+        this.rigidVehicle?.setSteeringValue(0, 2);
+        this.rigidVehicle?.setSteeringValue(0, 3);
     }
 
     tryAccelerate(): void {
         // rear wheels
-        this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 2);
-        this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 3);
+        this.rigidVehicle?.setWheelForce(-this.maxForceRigidBodyVehicle, 2);
+        this.rigidVehicle?.setWheelForce(-this.maxForceRigidBodyVehicle, 3);
 
         // front wheels
         //this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 0);
@@ -231,8 +241,8 @@ export class RigidVehicleObject implements IPlayerVehicle {
     }
     tryStopAccelerate(): void {
        // rear wheels
-       this.rigidVehicleObject?.setWheelForce(0, 2);
-       this.rigidVehicleObject?.setWheelForce(0, 3);
+       this.rigidVehicle?.setWheelForce(0, 2);
+       this.rigidVehicle?.setWheelForce(0, 3);
 
        // front wheels
        //this.rigidVehicleObject?.setWheelForce(0, 0);
@@ -241,8 +251,8 @@ export class RigidVehicleObject implements IPlayerVehicle {
 
     tryReverse(): void {
         // rear wheels
-        this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 2);
-        this.rigidVehicleObject?.setWheelForce(this.maxForceRigidBodyVehicle, 3);
+        this.rigidVehicle?.setWheelForce(this.maxForceRigidBodyVehicle, 2);
+        this.rigidVehicle?.setWheelForce(this.maxForceRigidBodyVehicle, 3);
 
         // front wheels
         //this.rigidVehicleObject?.setWheelForce(-this.maxForceRigidBodyVehicle, 0);
@@ -250,8 +260,8 @@ export class RigidVehicleObject implements IPlayerVehicle {
     }
     tryStopReverse(): void {
         // rear wheels
-        this.rigidVehicleObject?.setWheelForce(0, 2);
-        this.rigidVehicleObject?.setWheelForce(0, 3);
+        this.rigidVehicle?.setWheelForce(0, 2);
+        this.rigidVehicle?.setWheelForce(0, 3);
 
         //this.rigidVehicleObject?.setWheelForce(0, 0);
         //this.rigidVehicleObject?.setWheelForce(0, 1);
