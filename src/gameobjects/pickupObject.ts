@@ -26,7 +26,8 @@ export class PickupObject {
             side: THREE.DoubleSide,
             wireframe: true,
             transparent: true,
-            opacity: 0.5
+            opacity: 0.5,
+            depthTest: true
         })
 
         this.mesh = new THREE.Mesh(

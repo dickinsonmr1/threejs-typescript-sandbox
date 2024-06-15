@@ -409,7 +409,7 @@ export default class GameScene extends THREE.Scene {
         this.allRigidVehicleObjects.push(this.player1.vehicleObject);
         
         let crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
-        let material = new THREE.SpriteMaterial( { map: crosshairTexture, color: 0xffffff, depthTest: false });//,transparent: true, opacity: 0.5 } );
+        let material = new THREE.SpriteMaterial( { map: crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
         this.add(this.crosshairSprite);
 
@@ -563,7 +563,7 @@ export default class GameScene extends THREE.Scene {
 
         geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
-        var material = new THREE.PointsMaterial( { size: 1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true } );
+        var material = new THREE.PointsMaterial( { size: 1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true, depthTest: true, depthWrite: true } );
         //material.color.setHSL( 1.0, 0.3, 0.7, THREE.SRGBColorSpace );
 
         const particles = new THREE.Points( geometry, material );

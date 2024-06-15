@@ -32,7 +32,7 @@ export class Player {
     playerState: PlayerState = PlayerState.Alive;
 
     healthBar: HealthBar;
-    headLights: Headlights;
+    headLights!: Headlights;
 
     vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
@@ -52,10 +52,8 @@ export class Player {
 
         this.currentHealth = this.maxHealth;
 
-        this.headLights = new Headlights(scene);
-        //super();
+        //this.headLights = new Headlights(scene);
 
-        //this.playerId = uuidv4();
         this.playerName = playerName;      
         let gameScene = <GameScene>scene;
         
@@ -105,12 +103,16 @@ export class Player {
 
         this.vehicleObject.update();
 
-        this.healthBar.update(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position));
+        let healthBarOffset = new THREE.Vector3(0, 0, 0.5);
+        healthBarOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
 
-        this.headLights.update(
-            Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
-            Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
-        );
+        this.healthBar.update(Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), healthBarOffset));
+
+        if(this.headLights != null)
+            this.headLights.update(
+                Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
+                Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
+            );
 
         let turboOffset = new THREE.Vector3(1, 0, 0);
         /*
@@ -273,7 +275,9 @@ export class Player {
 
             let scene = <GameScene>this.scene;
             
-            this.headLights.group.visible = false;
+            if(this.headLights != null)
+                this.headLights.group.visible = false;
+
             this.vehicleObject.getModel().visible = false;
             this.turboParticleEmitter.pause();
 
@@ -301,7 +305,8 @@ export class Player {
         this.playerState = PlayerState.Alive;
         this.vehicleObject.getModel().visible = true;
 
-        this.headLights.group.visible = true;
+        if(this.headLights != null)
+            this.headLights.group.visible = true;
         this.turboParticleEmitter.isEmitting = true;
     }
 

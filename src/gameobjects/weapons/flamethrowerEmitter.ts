@@ -77,7 +77,8 @@ export class FlamethrowerEmitter {
         for(let i = 0; i < this.numberParticles; i++) {
             let particleMaterial = new THREE.SpriteMaterial({
                 map: this.particleTexture,
-                depthTest: true
+                depthTest: true,
+                depthWrite: true
             });
 
             let sprite = new THREE.Sprite(particleMaterial);

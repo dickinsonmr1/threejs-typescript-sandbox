@@ -151,7 +151,7 @@ export class ParticleTrailObject extends ParticleEmitter {
 
         setTimeout(() => {
             this.isDead = true;
-        }, this.type == ParticleEmitterType.GlowingParticles ? 3000 : 5000);
+        }, this.type == ParticleEmitterType.GlowingParticles ? 3000 : 3000);
     }
 
     pause(): void {

@@ -233,7 +233,9 @@ export class TerrainObject {
                 displacementMap: { value: displacementMap },
                 displacementScale: {value: displacementHeightFactor},
                 lightMap: { value: displacementMap },
-                wireFrame: { value: true }
+                wireFrame: { value: true },
+                //depthTest: {value: true },
+                //depthWrite: {value: true },
             },
             vertexShader: this.vertexShader3(),
             fragmentShader: this.fragmentShader3(),
