@@ -138,7 +138,7 @@ export default class SceneController {
 
                 if(buttonIndex == GamepadEnums.SELECT && !this.gamepadPrevious.buttons[GamepadEnums.SELECT].pressed) {
                     console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene.player1.vehicleObject.resetPosition();
+                    this.gameScene.player1.getVehicleObject().resetPosition();
                 }
                 
                 if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {

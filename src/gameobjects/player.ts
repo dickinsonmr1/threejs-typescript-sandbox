@@ -11,7 +11,7 @@ import ProjectileFactory from "./weapons/projectileFactory";
 import { Projectile, ProjectileLaunchLocation } from "./weapons/projectile";
 import { IPlayerVehicle } from "./vehicles/IPlayerVehicle";
 import { ParticleEmitterType, ParticleTrailObject } from "./fx/particleTrailObject";
-
+import * as CANNON from 'cannon-es';
 
 export enum PlayerState {
     Alive,
@@ -34,7 +34,7 @@ export class Player {
     healthBar: HealthBar;
     headLights!: Headlights;
 
-    vehicleObject!: IPlayerVehicle;    
+    private vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
 
     fireObjects: FireObject[] = [];
@@ -76,6 +76,26 @@ export class Player {
         if(!this.vehicleObject?.getChassis().body) return new THREE.Vector3(0,10,0);
 
         return Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position);
+    }
+
+    isVehicleObjectNull(): boolean {
+        return !this.vehicleObject;
+    }
+
+    getChassisBody(): CANNON.Body {
+        return this.vehicleObject.getChassis().body;
+    }
+
+    isModelNull(): boolean {
+        return !this.vehicleObject.getModel();
+    }
+
+    getModelQuaternion(): THREE.Quaternion {
+        return this.vehicleObject.getModel().quaternion;
+    }
+
+    getModelPosition(): THREE.Vector3 {
+        return this.vehicleObject.getModel().position;
     }
 
     update(): void {
@@ -205,6 +225,14 @@ export class Player {
             scene.getWorld());              
     }
 
+    setVehicleObject(vehicle: IPlayerVehicle) {
+        this.vehicleObject = vehicle;
+    }
+
+    getVehicleObject(): IPlayerVehicle {
+        return this.vehicleObject;
+    }
+
 
     tryAccelerateWithKeyboard(): void {
         this.vehicleObject.tryAccelerate();
@@ -304,6 +332,7 @@ export class Player {
         this.refillHealth();
         this.playerState = PlayerState.Alive;
         this.vehicleObject.getModel().visible = true;
+        this.tryStopTurbo();
 
         if(this.headLights != null)
             this.headLights.group.visible = true;
@@ -355,6 +384,10 @@ export class Player {
 
     trySelectNextWeapon(): void {
 
+    }
+    
+    tryResetPosition(): void {
+        this.vehicleObject.resetPosition();
     }
 
     getTotalParticleCount(): number {

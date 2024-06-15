@@ -322,7 +322,7 @@ export default class GameScene extends THREE.Scene {
             //new THREE.Vector3(0, -0.35, 0) // model offset
         );
 
-        this.player1.vehicleObject = new RaycastVehicleObject(
+        this.player1.setVehicleObject(new RaycastVehicleObject(
             this,
             new THREE.Vector3(-10, 5, -10),   // position
             this.world,            
@@ -337,10 +337,10 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
-        );
+        ));
         this.allPlayers.push(this.player1);
         
-        this.player2.vehicleObject = new RaycastVehicleObject(
+        this.player2.setVehicleObject(new RaycastVehicleObject(
             this,
             new THREE.Vector3(5, 4, 5),   // position
             this.world,            
@@ -355,10 +355,10 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
-        );
+        ));
         this.allPlayers.push(this.player2);
 
-        this.player3.vehicleObject = new RaycastVehicleObject(
+        this.player3.setVehicleObject(new RaycastVehicleObject(
             this,
             new THREE.Vector3(-5, 4, -5),   // position
             this.world,            
@@ -373,10 +373,10 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
-        );
+        ));
         this.allPlayers.push(this.player3);
 
-        this.player4.vehicleObject = new RaycastVehicleObject(
+        this.player4.setVehicleObject(new RaycastVehicleObject(
             this,
             new THREE.Vector3(-5, 4, -5),   // position
             this.world,            
@@ -391,7 +391,7 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
-        );       
+        ));
         this.allPlayers.push(this.player4);
 
         //this.rigidVehicleObject.model?.add(this.camera);        
@@ -403,10 +403,10 @@ export default class GameScene extends THREE.Scene {
 		this.followCam.position.copy(this.camera.position);
 		this.add(this.followCam);   
         
-        this.player1.vehicleObject.getModel()?.add(this.followCam);
+        this.player1.getVehicleObject().getModel()?.add(this.followCam);
         this.followCam.position.set(5, 3, 0); // camera target offset related to car
 
-        this.allRigidVehicleObjects.push(this.player1.vehicleObject);
+        this.allRigidVehicleObjects.push(this.player1.getVehicleObject());
         
         let crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
         let material = new THREE.SpriteMaterial( { map: crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
@@ -631,7 +631,7 @@ export default class GameScene extends THREE.Scene {
 		}      
         if (event.key === 'Escape')
 		{
-			this.player1.vehicleObject?.resetPosition();
+			this.player1.tryResetPosition();
 		}
 
         if(event.key === 'w') {
@@ -650,17 +650,17 @@ export default class GameScene extends THREE.Scene {
 
         // player 1
         if(event.key === 'ArrowUp') {
-            this.player1.vehicleObject?.tryStopAccelerate();
+            this.player1.tryStopAccelerateWithKeyboard();
         }
         else if(event.key === 'ArrowDown') {
-            this.player1.vehicleObject?.tryStopReverse();
+            this.player1.tryStopReverseWithKeyboard();
         }
 
         if(event.key === 'ArrowLeft') {
-            this.player1.vehicleObject?.tryStopTurnLeft();
+            this.player1.tryStopTurnLeftWithKeyboard();
         }
         else if(event.key === 'ArrowRight') {
-            this.player1.vehicleObject?.tryStopTurnRight();
+            this.player1.tryStopTurnRightWithKeyboard();
         }
 
         if(event.key === ' ') {
@@ -712,17 +712,17 @@ export default class GameScene extends THREE.Scene {
 
         // rigid body vehicle controls
         if(this.keyDown.has('arrowup')) {
-            this.player1.vehicleObject?.tryAccelerate();
+            this.player1.tryAccelerateWithKeyboard();
         }
         else if(this.keyDown.has('arrowdown')) {
-            this.player1.vehicleObject?.tryReverse();
+            this.player1.tryStopReverseWithKeyboard();
         }
 
         if(this.keyDown.has('arrowleft')) {
-            this.player1.vehicleObject?.tryTurnLeft();
+            this.player1.tryTurnLeftWithKeyboard();
         }
         else if(this.keyDown.has('arrowright')) {
-            this.player1.vehicleObject?.tryTurnRight();
+            this.player1.tryTurnRightWithKeyboard();
         }
         
         if (this.keyDown.has('z')) {
@@ -741,8 +741,8 @@ export default class GameScene extends THREE.Scene {
 
         if(this.followCam != null)
             this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.05);
-		if(this.player1.vehicleObject?.getChassis().mesh != null)
-            this.camera.lookAt(this.player1.vehicleObject?.getChassis().mesh?.position);
+		if(!this.player1.isModelNull())
+            this.camera.lookAt(this.player1.getModelPosition());
     }
 
     public async addNewProjectile(projectile: Projectile) {
@@ -757,8 +757,8 @@ export default class GameScene extends THREE.Scene {
 
         let flamethrowerEmitter = this.flamethrowerEmitters[0];
         flamethrowerEmitter.setPosition(this.player1.getPosition());
-        if(this.player1.vehicleObject && this.player1.vehicleObject.getModel()) {                
-            flamethrowerEmitter.setQuaternion(this.player1.vehicleObject.getModel().quaternion);
+        if(!this.player1.isVehicleObjectNull() && !this.player1.isModelNull()) {                
+            flamethrowerEmitter.setQuaternion(this.player1.getModelQuaternion());
         }
     
         flamethrowerEmitter.emitParticles();
@@ -770,8 +770,8 @@ export default class GameScene extends THREE.Scene {
 
         let flamethrowerEmitter = this.flamethrowerEmitters[1];
         flamethrowerEmitter.setPosition(this.player2.getPosition());
-        if(this.player2.vehicleObject && this.player2.vehicleObject.getModel()) {                
-            flamethrowerEmitter.setQuaternion(this.player2.vehicleObject.getModel().quaternion);
+        if(!this.player2.isVehicleObjectNull() && !this.player2.isModelNull()) {                
+            flamethrowerEmitter.setQuaternion(this.player2.getModelQuaternion());
         }
     
         flamethrowerEmitter.emitParticles();
@@ -1022,9 +1022,34 @@ export default class GameScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
-        if(!this.player1 || !this.player1.vehicleObject) return;
+        if(!this.player1 || this.player1.isVehicleObjectNull()) return;
 
         this.updateInput();          
+
+        var cpuPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
+
+        for(var i = 0; i < cpuPlayers.length; i++) {
+            
+            let cpuPlayer = cpuPlayers[i];
+
+            let temp = THREE.MathUtils.randInt(0, 60);
+            switch(temp) {
+            case 1:
+                cpuPlayer.tryAccelerateWithKeyboard();
+                break;
+            case 10:
+            case 11:
+                var projectile = cpuPlayer.createProjectile(ProjectileType.Bullet);
+                this.addNewProjectile(projectile);
+                break;
+            case 20:
+                var projectile = cpuPlayer.createProjectile(ProjectileType.Rocket);
+                this.addNewProjectile(projectile);
+                break;
+            default:
+            }
+        }
+
         this.updateCamera(); 
         
         this.terrain?.update();
@@ -1056,8 +1081,8 @@ export default class GameScene extends THREE.Scene {
         this.checkPickupsForCollisionWithPlayers();
 
         this.world.contacts.forEach((contact) => {
-            if ((contact.bi === this.player1.vehicleObject.getChassis().body && contact.bj === this.player2.vehicleObject.getChassis().body) || 
-                (contact.bj === this.player1.vehicleObject.getChassis().body && contact.bi === this.player2.vehicleObject.getChassis().body)) {
+            if ((contact.bi === this.player1.getChassisBody() && contact.bj === this.player2.getChassisBody()) || 
+                (contact.bj === this.player1.getChassisBody() && contact.bi === this.player2.getChassisBody())) {
                 console.log('Collision detected between player 1 and player 2');
                 // Perform additional collision handling logic here
         }
@@ -1084,10 +1109,10 @@ export default class GameScene extends THREE.Scene {
 
         let playerPosition = this.player1.getPosition();
 
-        if(this.player1.vehicleObject.getModel() != null) {
+        if(!this.player1.isModelNull()) {
             let forwardVector = new THREE.Vector3(-10, 0, 0);
-            forwardVector.applyQuaternion(this.player1.vehicleObject.getModel().quaternion);
-            this.crosshairSprite.position.addVectors(this.player1.vehicleObject.getModel().position, forwardVector);//playerPosition.x, playerPosition.y - 2, playerPosition.z);
+            forwardVector.applyQuaternion(this.player1.getModelQuaternion());
+            this.crosshairSprite.position.addVectors(this.player1.getModelPosition(), forwardVector);//playerPosition.x, playerPosition.y - 2, playerPosition.z);
             //let size = 10;
             //this.crosshairSprite.scale.set(size, size, size);
 
@@ -1096,8 +1121,8 @@ export default class GameScene extends THREE.Scene {
 
             var otherPlayerBodies: CANNON.Body[] = [];
             for(var i = 0; i < otherPlayersStillAlive.length; i++) {
-                if(otherPlayersStillAlive[i].vehicleObject != null && otherPlayersStillAlive[i].vehicleObject?.getChassis().body != null) {
-                    let body = otherPlayersStillAlive[i].vehicleObject?.getChassis().body ?? new CANNON.Body();
+                if(!otherPlayersStillAlive[i].isVehicleObjectNull() && otherPlayersStillAlive[i].getChassisBody() != null) {
+                    let body = otherPlayersStillAlive[i].getChassisBody() ?? new CANNON.Body();
                     otherPlayerBodies.push(body); 
                 }
             }
@@ -1109,12 +1134,12 @@ export default class GameScene extends THREE.Scene {
             var temp = otherPlayerBodies as CANNON.Body[];
             */
 
-            if(this.player2.vehicleObject?.getCannonVehicleChassisBody() != null) {
+            if(this.player2.getChassisBody() != null) {
                 let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(playerPosition), Utility.ThreeVec3ToCannonVec3(this.crosshairSprite.position));
                 
                 var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
 
-                var otherVehicleObject = this.player2.vehicleObject?.getCannonVehicleChassisBody();
+                var otherVehicleObject = this.player2.getChassisBody();
                 if(otherVehicleObject != null) {
                     // intersect single body
                     ray.intersectBody(otherVehicleObject, raycastResult);
