@@ -1,9 +1,9 @@
 import * as THREE from "three";
 
-export class Target {
+export class PlayerMarker {
 
 
-    crosshairSprite!: THREE.Sprite;
+    sprite!: THREE.Sprite;
     targetLocation: THREE.Vector3
 
     /**
@@ -14,13 +14,13 @@ export class Target {
         this.targetLocation = position
 
         let material = new THREE.SpriteMaterial( { map: texture, color: color, depthTest: depthRender, depthWrite: depthRender, sizeAttenuation: false });//,transparent: true, opacity: 0.5 } );
-        this.crosshairSprite = new THREE.Sprite( material );
-        this.crosshairSprite.scale.set(scale, scale, scale);
-        scene.add(this.crosshairSprite);
+        this.sprite = new THREE.Sprite( material );
+        this.sprite.scale.set(scale, scale, scale);
+        scene.add(this.sprite);
 
     }
 
     setTargetLocation(position: THREE.Vector3) {
-        this.crosshairSprite.position.set(position.x, position.y, position.z);
+        this.sprite.position.set(position.x, position.y, position.z);
     }
 }

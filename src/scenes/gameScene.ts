@@ -61,6 +61,7 @@ export default class GameScene extends THREE.Scene {
     private particleEmitters: ParticleEmitter[] = [];
     public explosionTexture: THREE.Texture = new THREE.Texture();
     public crosshairTexture: THREE.Texture = new THREE.Texture();
+    public playerMarkerTexture: THREE.Texture = new THREE.Texture();
 
     private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
 
@@ -165,6 +166,7 @@ export default class GameScene extends THREE.Scene {
 
         this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
         this.crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
+        this.playerMarkerTexture = this.textureLoader.load('assets/playerMarkerIcon.png');
 
         // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
 
@@ -263,10 +265,10 @@ export default class GameScene extends THREE.Scene {
             new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.world, objectMaterial);
 
-        this.player1 = new Player(this, "Ambulance", new THREE.Color('red'), this.crosshairTexture);
-        this.player2 = new Player(this, "Taxi", new THREE.Color('blue'), this.crosshairTexture);
-        this.player3 = new Player(this, "Police", new THREE.Color('green'), this.crosshairTexture);
-        this.player4 = new Player(this, "Trash Truck", new THREE.Color('yellow'), this.crosshairTexture);
+        this.player1 = new Player(this, "Ambulance", new THREE.Color('red'), this.crosshairTexture, this.playerMarkerTexture);
+        this.player2 = new Player(this, "Taxi", new THREE.Color('blue'), this.crosshairTexture, this.playerMarkerTexture);
+        this.player3 = new Player(this, "Police", new THREE.Color('green'), this.crosshairTexture, this.playerMarkerTexture);
+        this.player4 = new Player(this, "Trash Truck", new THREE.Color('yellow'), this.crosshairTexture, this.playerMarkerTexture);
 
 
         this.gltfVehiclePlayer1 = new GltfObject(this,

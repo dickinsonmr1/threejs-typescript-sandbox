@@ -13,6 +13,7 @@ import { IPlayerVehicle } from "./vehicles/IPlayerVehicle";
 import { ParticleEmitterType, ParticleTrailObject } from "./fx/particleTrailObject";
 import * as CANNON from 'cannon-es';
 import { Target } from "./target";
+import { PlayerMarker } from "./playerMarker";
 
 export enum PlayerState {
     Alive,
@@ -42,12 +43,13 @@ export class Player {
 
     playerColor: THREE.Color;
     target!: Target;
+    playerMarker!: PlayerMarker;
 
     private fireLeft: boolean = false;
     private projectileFactory: ProjectileFactory = new ProjectileFactory();
 
     constructor(scene: THREE.Scene,
-        playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture) {
+        playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture) {
 
         this.scene = scene;
 
@@ -76,7 +78,8 @@ export class Player {
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
 
         this.playerColor = playerColor;
-        this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), true);
+        this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), 0.075, true);
+        this.playerMarker = new PlayerMarker(scene, markerTexture, playerColor, new THREE.Vector3(0,0,0), 0.05, true);
     }
 
     private getScene(): GameScene {
@@ -136,18 +139,22 @@ export class Player {
 
         let healthBarOffset = new THREE.Vector3(0, 0, 0.5);
         healthBarOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
-
         this.healthBar.update(Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), healthBarOffset));
+
+        let targetOffset = new THREE.Vector3(-5, 0, 0);
+        targetOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
+        this.target.setTargetLocation(Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), targetOffset));
+
+        this.playerMarker.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 1, this.getPosition().z));
+        
 
         if(this.headLights != null)
             this.headLights.update(
                 Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
                 Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
-            );
+            );        
 
-        let turboOffset = new THREE.Vector3(1, 0, 0);
-
-        this.target.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 2, this.getPosition().z));
+        
         /*
         switch(launchLocation) {
             case ProjectileLaunchLocation.Left:                
@@ -161,6 +168,7 @@ export class Player {
                 break;
         }
         */
+        let turboOffset = new THREE.Vector3(1, 0, 0);
         turboOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
         let turboEmitPosition = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), turboOffset);
 
