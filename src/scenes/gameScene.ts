@@ -60,6 +60,7 @@ export default class GameScene extends THREE.Scene {
 
     private particleEmitters: ParticleEmitter[] = [];
     public explosionTexture: THREE.Texture = new THREE.Texture();
+    public crosshairTexture: THREE.Texture = new THREE.Texture();
 
     private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
 
@@ -163,6 +164,7 @@ export default class GameScene extends THREE.Scene {
         this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
         this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
+        this.crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
 
         // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
 
@@ -261,10 +263,10 @@ export default class GameScene extends THREE.Scene {
             new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.world, objectMaterial);
 
-        this.player1 = new Player(this, "Ambulance");
-        this.player2 = new Player(this, "Taxi");
-        this.player3 = new Player(this, "Police");
-        this.player4 = new Player(this, "Trash Truck");
+        this.player1 = new Player(this, "Ambulance", new THREE.Color('red'), this.crosshairTexture);
+        this.player2 = new Player(this, "Taxi", new THREE.Color('blue'), this.crosshairTexture);
+        this.player3 = new Player(this, "Police", new THREE.Color('green'), this.crosshairTexture);
+        this.player4 = new Player(this, "Trash Truck", new THREE.Color('yellow'), this.crosshairTexture);
 
 
         this.gltfVehiclePlayer1 = new GltfObject(this,
@@ -354,7 +356,7 @@ export default class GameScene extends THREE.Scene {
             0.25,                           // wheel radius
             new CANNON.Vec3(0, 0, 0),   // wheel offset
             20,                              // wheel mass
-            this.taxiModel,             // model            
+            this.ambulanceModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
@@ -411,8 +413,8 @@ export default class GameScene extends THREE.Scene {
 
         this.allRigidVehicleObjects.push(this.player1.getVehicleObject());
         
-        let crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
-        let material = new THREE.SpriteMaterial( { map: crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
+
+        let material = new THREE.SpriteMaterial( { map: this.crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
         this.add(this.crosshairSprite);
 
@@ -1047,11 +1049,19 @@ export default class GameScene extends THREE.Scene {
             case 2:
                 cpuPlayer.tryAccelerateWithKeyboard();
                 cpuPlayer.tryTurnLeftWithKeyboard();
-                break
+                break;
             case 3:
                 cpuPlayer.tryAccelerateWithKeyboard();
+                cpuPlayer.tryTurn(-0.5);
+                break;
+            case 4:
+                cpuPlayer.tryAccelerateWithKeyboard();
                 cpuPlayer.tryTurnRightWithKeyboard();
-                break
+                break;
+            case 5:
+                cpuPlayer.tryAccelerateWithKeyboard();
+                cpuPlayer.tryTurn(0.5);
+                break;
             case 10:
             case 11:
                 var projectile = cpuPlayer.createProjectile(ProjectileType.Bullet);

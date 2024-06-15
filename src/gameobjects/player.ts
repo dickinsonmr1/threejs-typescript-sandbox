@@ -12,6 +12,7 @@ import { Projectile, ProjectileLaunchLocation } from "./weapons/projectile";
 import { IPlayerVehicle } from "./vehicles/IPlayerVehicle";
 import { ParticleEmitterType, ParticleTrailObject } from "./fx/particleTrailObject";
 import * as CANNON from 'cannon-es';
+import { Target } from "./target";
 
 export enum PlayerState {
     Alive,
@@ -39,11 +40,14 @@ export class Player {
 
     fireObjects: FireObject[] = [];
 
+    playerColor: THREE.Color;
+    target!: Target;
+
     private fireLeft: boolean = false;
     private projectileFactory: ProjectileFactory = new ProjectileFactory();
 
     constructor(scene: THREE.Scene,
-        playerName: string) {
+        playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture) {
 
         this.scene = scene;
 
@@ -70,6 +74,9 @@ export class Player {
 
         this.turboParticleEmitter.pause();
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
+
+        this.playerColor = playerColor;
+        this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), true);
     }
 
     private getScene(): GameScene {
@@ -139,6 +146,8 @@ export class Player {
             );
 
         let turboOffset = new THREE.Vector3(1, 0, 0);
+
+        this.target.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 2, this.getPosition().z));
         /*
         switch(launchLocation) {
             case ProjectileLaunchLocation.Left:                
