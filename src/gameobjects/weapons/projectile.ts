@@ -6,6 +6,7 @@ import { ProjectileType } from "./projectileType";
 import { v4 as uuidv4 } from 'uuid';
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
+import GameScene from "../../scenes/gameScene";
 
 export enum ProjectileLaunchLocation {
     Left,
@@ -179,11 +180,15 @@ export class Projectile extends SphereObject {
             //this.kill();
             //return;
         //}        
-
         
         this.group.position.x += this.velocity.x;
-		this.group.position.y += this.velocity.y;
 		this.group.position.z += this.velocity.z;
+        this.group.position.y += this.velocity.y;             
+
+        // TODO: homing rockets that avoid hitting the ground   
+        //let scene = <GameScene>this.scene;
+        //let worldPosition = scene.getWorldPositionOnTerrain(this.group.position.x, this.group.position.z );        
+        //this.group.position.y = worldPosition.y + 1;
 
         this.body?.position.set(this.group.position.x, this.group.position.y, this.group.position.z);
         this.body?.updateAABB();

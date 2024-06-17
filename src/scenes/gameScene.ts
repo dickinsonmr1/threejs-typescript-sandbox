@@ -947,14 +947,20 @@ export default class GameScene extends THREE.Scene {
                 /*
                 this.world.contacts.forEach((contact) => {
 
-                    if(contact.bi === projectile.body || contact.bj === projectile.body)
+                    if(contact.bi === projectile.body || contact.bj === projectile.body) {
                         console.log('Collision detected involving projectile');
+                    }
+                    else 
+                        return;
 
 
-                    if(contact.bi === this.terrain?.body || contact.bj === this.terrain?.body)
+                    if(contact.bi === this.terrain?.body || contact.bj === this.terrain?.body) {
                         console.log('Collision detected involving ground');
+                    }
+                    else
+                        return;
 
-                    if ((contact.bi === projectile.body && contact.bj === this.terrain?.body) |s| 
+                    if ((contact.bi === projectile.body && contact.bj === this.terrain?.body) || 
                         (contact.bj === projectile.body && contact.bi === this.terrain?.body)) {
                         
                         console.log('Collision detected between projectile and ground');
@@ -964,8 +970,25 @@ export default class GameScene extends THREE.Scene {
                 }
                 });
                 */
-        
 
+                // alternate collision: based on calculating height of terrain
+                let worldPosition = this.getWorldPositionOnTerrain(projectile.group.position.x, projectile.group.position.z );        
+                if(projectile.group.position.y <= worldPosition.y) {
+                    
+                    this.generateRandomExplosion(
+                        projectile.projectileType,
+                        projectile.getPosition(),
+                        projectile.getLightColor(),
+                        projectile.getParticleColor1(),
+                        projectile.getParticleColor2(),
+                        projectile.getParticleColor3(),
+                        projectile.getParticleColor4(),
+                    );
+                    
+                    projectile.kill();
+                    this.remove(projectile.group);
+                }
+            
                 /*
                 this.allRigidVehicleObjects.forEach(player => {
                     if(player.getPosition().distanceTo(projectile.getPosition()) < 1){

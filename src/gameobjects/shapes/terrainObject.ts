@@ -134,7 +134,7 @@ export class TerrainObject {
           elementSize: 1, //100 / sizeX,
         });
 
-        const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial });
+        const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial, isTrigger: true });
         heightfieldBody.addShape(this.heightfieldShape);
 
         heightfieldBody.position.set(
@@ -148,6 +148,11 @@ export class TerrainObject {
         
         world.addBody(heightfieldBody);
         this.body = heightfieldBody;
+
+        heightfieldBody.addEventListener('collide', (event: any) => {
+          let body = <CANNON.Body>event.body;
+          console.log('body collided with terrain', event);
+        });
     }    
 
     generateThreeMeshFromCannonHeightField(scene: THREE.Scene, sizeX: number, sizeZ: number, material: THREE.Material) {
