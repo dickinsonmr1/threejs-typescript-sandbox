@@ -673,7 +673,7 @@ export default class GameScene extends THREE.Scene {
         if(event.key === ' ') {
             this.player1.tryJump();
         }
-        if (event.key === 'shift') {
+        if (event.key === 'Shift') {
             this.player1.tryStopTurbo();
         }
 	}

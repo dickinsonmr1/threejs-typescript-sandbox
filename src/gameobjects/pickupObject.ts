@@ -3,6 +3,7 @@ import * as CANNON from 'cannon-es'
 
 export class PickupObject {
     mesh: THREE.Mesh;
+    sprite: THREE.Sprite;
     body: CANNON.Body = new CANNON.Body();
 
     //iconTexture: THREE.Texture | undefined;
@@ -26,13 +27,20 @@ export class PickupObject {
             side: THREE.DoubleSide,
             wireframe: true,
             transparent: true,
-            opacity: 0.5,
-            depthTest: true
+            opacity: 0.7,
+            depthTest: true,
+            //map: iconTexture,
+            //alphaMap: iconTexture,            
+            //lightMap: iconTexture,
+            //specularMap: iconTexture,
         })
 
         this.mesh = new THREE.Mesh(
             
             new THREE.BoxGeometry( height, width, depth),            
+            //new THREE.SphereGeometry(0.5),
+            //new THREE.CylinderGeometry(0.5, 0.25, 1, 8),
+            //new THREE.TorusGeometry(0.5, 0.1, 2),
             //new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } 
             this.meshMaterial
         );
@@ -48,13 +56,14 @@ export class PickupObject {
             depthTest: true
         }));
         sprite.material.blending = THREE.AdditiveBlending;         
-        sprite.material.opacity = 0.6;
+        sprite.material.opacity = 0.8;
         sprite.material.color = new THREE.Color('white');
 
         let size = textureScale;//0.5;
         sprite.scale.set(size, size, size);
         //sprite.position.set(position.x, position.y + 1, position.z);
         this.group.add(sprite);
+        this.sprite = sprite;
 
         this.group.position.set(position.x, position.y, position.z);
 
@@ -74,7 +83,7 @@ export class PickupObject {
     }
 
     update() {
-        this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 32);
+        this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 32);        
     }
 
     remove() {

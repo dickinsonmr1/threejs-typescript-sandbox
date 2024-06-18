@@ -89,10 +89,10 @@ export default class HudScene extends THREE.Scene {
         //const spriteWidth = material.map?.image.width;
         //const spriteHeight = material.map?.image.height;
 
-        let spriteCenter = this.generateIcon(freezeIconTexture, new THREE.Color('white'), HudIconLocation.Center);
+        //let spriteCenter = this.generateIcon(freezeIconTexture, new THREE.Color('white'), HudIconLocation.Center);
         let spriteCenterBottom = this.generateIcon(freezeIconTexture, new THREE.Color('white'), HudIconLocation.CenterBottom);
-        let spriteTL = this.generateIcon(rocketTexture, new THREE.Color('white'), HudIconLocation.UpperLeft);    
-        let spriteTR = this.generateIcon(fireIconTexture, new THREE.Color('white'), HudIconLocation.UpperRight);
+        //let spriteTL = this.generateIcon(rocketTexture, new THREE.Color('white'), HudIconLocation.UpperLeft);    
+        //let spriteTR = this.generateIcon(fireIconTexture, new THREE.Color('white'), HudIconLocation.UpperRight);
         //let spriteLL = this.generateIcon(healthIconTexture, new THREE.Color('white'), HudIconLocation.LowerLeft);
         //let spriteLR = this.generateIcon(turboIconTexture, new THREE.Color('white'), HudIconLocation.LowerRight);    
     }
