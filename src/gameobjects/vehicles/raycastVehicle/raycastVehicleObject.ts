@@ -120,6 +120,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             this.model.position.set(position.x + modelOffset.x, position.y + modelOffset.y, position.z + modelOffset.z);
             this.model.scale.set(modelScale.x, modelScale.y, modelScale.z);         
             this.model.rotateY(Math.PI / 2);
+
+            scene.add(this.model);
         }
     }
 
@@ -161,7 +163,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     getModel(): THREE.Group<THREE.Object3DEventMap> {
-        return this.model
+        return this.model;
     }
     
     getCannonVehicleChassisBody(): CANNON.Body | undefined {

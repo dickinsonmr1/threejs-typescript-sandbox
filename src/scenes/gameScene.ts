@@ -42,6 +42,7 @@ export default class GameScene extends THREE.Scene {
     private ambulanceModel?: GLTF;
     private trashTruckModel?: GLTF;
     private sedanSportsModel?: GLTF;
+    private tractorModel?: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
 
@@ -164,6 +165,10 @@ export default class GameScene extends THREE.Scene {
         this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
+        this.tractorModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/tractorPolice.glb');
+        this.tractorModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.tractorModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+
         this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
         this.crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
         this.playerMarkerTexture = this.textureLoader.load('assets/playerMarkerIcon.png');
@@ -270,9 +275,9 @@ export default class GameScene extends THREE.Scene {
         this.player3 = new Player(this, "Police", new THREE.Color('green'), this.crosshairTexture, this.playerMarkerTexture);
         this.player4 = new Player(this, "Trash Truck", new THREE.Color('yellow'), this.crosshairTexture, this.playerMarkerTexture);
 
-
+/*
         this.gltfVehiclePlayer1 = new GltfObject(this,
-            this.sedanSportsModel,
+            this.tractorModel,
             //'assets/kenney-vehicles/taxi.glb',
             new THREE.Vector3(2, 2, -2), // position
             new THREE.Vector3(0.5, 0.5, 0.5), // scale
@@ -311,7 +316,7 @@ export default class GameScene extends THREE.Scene {
             this.world,
             objectMaterial);
         this.allGltfPlayers.push(this.gltfVehiclePlayer4);
-              
+*/            
         this.raycastVehicleObject = new RaycastVehicleObject(
             this,
             new THREE.Vector3(-5, 4, -15),   // position
