@@ -5,8 +5,10 @@ import { ProjectileType } from "./projectileType";
  import { v4 as uuidv4 } from 'uuid';
 
 export default class ProjectileFactory {
-    constructor() {
+    particleMaterial: THREE.SpriteMaterial;
+    constructor(particleMaterial: THREE.SpriteMaterial) {
 
+        this.particleMaterial = particleMaterial;
     }
 
     generateProjectile(scene: THREE.Scene,
@@ -14,7 +16,6 @@ export default class ProjectileFactory {
         type: ProjectileType,
         launchPosition: THREE.Vector3,
         launchVector: THREE.Vector3,
-        explosionTexture?: THREE.Texture,
         world?: CANNON.World) : Projectile
     {
 
@@ -63,7 +64,7 @@ export default class ProjectileFactory {
                     new THREE.Color('white'),
                     new THREE.Color('white'),
                     new THREE.MeshBasicMaterial( { color: 0xffffff, depthWrite: true }),
-                    explosionTexture,
+                    this.particleMaterial,
                     world);      
         
                 break;
@@ -81,7 +82,7 @@ export default class ProjectileFactory {
                     particleColor3,
                     particleColor4,
                     new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
-                    explosionTexture,
+                    this.particleMaterial,
                     world);          
                 break;
         }

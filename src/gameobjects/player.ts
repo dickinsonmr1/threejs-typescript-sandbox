@@ -46,10 +46,10 @@ export class Player {
     playerMarker!: PlayerMarker;
 
     private fireLeft: boolean = false;
-    private projectileFactory: ProjectileFactory = new ProjectileFactory();
+    private projectileFactory: ProjectileFactory;// = new ProjectileFactory();
 
     constructor(scene: THREE.Scene,
-        playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture) {
+        playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial) {
 
         this.scene = scene;
 
@@ -58,21 +58,27 @@ export class Player {
 
         this.currentHealth = this.maxHealth;
 
+        this.projectileFactory = new ProjectileFactory(particleMaterial);
         //this.headLights = new Headlights(scene);
 
         this.playerName = playerName;      
         let gameScene = <GameScene>scene;
+
+        let material = new THREE.SpriteMaterial({
+            map: gameScene.explosionTexture,
+            depthTest: true
+        });
         
         this.turboParticleEmitter = new ParticleTrailObject(
             scene,
             ParticleEmitterType.GlowingParticles,
-            gameScene.explosionTexture,
             new THREE.Color('white'),
             new THREE.Color('yellow'),
             new THREE.Color('orange'),
             new THREE.Color('red'),
             1,
-            0.01);
+            0.01,
+            material);
 
         this.turboParticleEmitter.pause();
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
@@ -242,7 +248,6 @@ export class Player {
             projectileType,            
             tempPosition,           // launchPosition relative to chassis
             projectileLaunchVector,            
-            scene.explosionTexture,
             scene.getWorld());              
     }
 

@@ -1,11 +1,17 @@
 import * as THREE from "three";
 import { ParticleEmitter } from "./particleEmitter";
-import { ParticleEmitterType } from "./particleEmitterType";
+import { ParticleEmitterType } from "./particleTrailObject";
+/*
+TODO: rewrite using BufferGeometry and PointsMaterial
+*/
 
-export class ParticleTrailObject extends ParticleEmitter { 
+export class ParticleTrailPointsObject extends ParticleEmitter { 
     scene: THREE.Scene;
     type: ParticleEmitterType;
     particleGroup: THREE.Group;
+
+    particles: THREE.BufferGeometry;
+    particleSystem!: THREE.Points;
 
     startColor: THREE.Color;
     lerpColor1: THREE.Color;
@@ -34,7 +40,8 @@ export class ParticleTrailObject extends ParticleEmitter {
         lerpColor3: THREE.Color,
         numberParticles: number,
         velocity: number,
-        particleMaterial: THREE.SpriteMaterial) {
+        particleMaterial: THREE.SpriteMaterial,
+        maxParticleCount: number) {
                   
         super();
 
@@ -62,6 +69,10 @@ export class ParticleTrailObject extends ParticleEmitter {
             Math.random() * 5 + 3,
             Math.random() * 10 - 5);
         */
+
+        this.particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(maxParticleCount * 3);
+        const velocities = new Float32Array(maxParticleCount * 3);
 
         this.scene.add(this.particleGroup);
     }
@@ -229,4 +240,107 @@ export class ParticleTrailObject extends ParticleEmitter {
     }
 }
 
-export { ParticleEmitterType };
+/*
+// example from ChatGPT:
+// question: using three.js, create a particle emitter using PointsMaterial
+that adds one particle at a time and removes particle after 5 seconds
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Three.js Particle Emitter</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Basic Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Particle setup
+        let particleCount = 0;
+        const positions = [];
+        const velocities = [];
+        const lifetimes = [];
+        const maxLifetime = 5 * 1000; // 5 seconds in milliseconds
+
+        // Geometry and Material
+        const geometry = new THREE.BufferGeometry();
+        const material = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05 });
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        camera.position.z = 5;
+
+        // Function to add a new particle
+        function addParticle() {
+            const x = (Math.random() - 0.5) * 2;
+            const y = (Math.random() - 0.5) * 2;
+            const z = (Math.random() - 0.5) * 2;
+
+            positions.push(x, y, z);
+            velocities.push((Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1);
+            lifetimes.push(Date.now());
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 3));
+        }
+
+        // Add particles at regular intervals
+        setInterval(addParticle, 100); // Add a particle every 100ms
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const currentTime = Date.now();
+            const positionsArray = geometry.attributes.position.array;
+            const velocitiesArray = geometry.attributes.velocity.array;
+
+            for (let i = particleCount - 1; i >= 0; i--) {
+                const lifetime = currentTime - lifetimes[i];
+                if (lifetime > maxLifetime) {
+                    // Remove particle by swapping it with the last one
+                    positionsArray[i * 3] = positionsArray[(particleCount - 1) * 3];
+                    positionsArray[i * 3 + 1] = positionsArray[(particleCount - 1) * 3 + 1];
+                    positionsArray[i * 3 + 2] = positionsArray[(particleCount - 1) * 3 + 2];
+
+                    velocitiesArray[i * 3] = velocitiesArray[(particleCount - 1) * 3];
+                    velocitiesArray[i * 3 + 1] = velocitiesArray[(particleCount - 1) * 3 + 1];
+                    velocitiesArray[i * 3 + 2] = velocitiesArray[(particleCount - 1) * 3 + 2];
+
+                    lifetimes[i] = lifetimes[particleCount - 1];
+
+                    particleCount--;
+                    positions.length = particleCount * 3;
+                    velocities.length = particleCount * 3;
+                    lifetimes.length = particleCount;
+
+                    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                    geometry.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 3));
+                } else {
+                    positionsArray[i * 3] += velocitiesArray[i * 3];
+                    positionsArray[i * 3 + 1] += velocitiesArray[i * 3 + 1];
+                    positionsArray[i * 3 + 2] += velocitiesArray[i * 3 + 2];
+                }
+            }
+
+            geometry.attributes.position.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
+
+*/

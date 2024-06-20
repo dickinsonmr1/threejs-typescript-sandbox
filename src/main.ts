@@ -20,7 +20,7 @@ renderer.outputColorSpace = 'srgb';
 // https://threejs.org/examples/?q=sprites#webgl_sprites
 renderer.autoClear = false; // To allow render overlay
 
-const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 100);
+const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 75);
 
 // needed for GLTF models to light correctly
 // https://discourse.threejs.org/t/directional-light-and-gltf-model-not-working-together/49358
@@ -73,7 +73,7 @@ function tick() {
   scene.updateWater();
   scene.update();
   sceneOrtho.update();
-  cannonDebugger.update();
+  //cannonDebugger.update();
 
   renderer.clear();
   renderer.render(scene, mainCamera);

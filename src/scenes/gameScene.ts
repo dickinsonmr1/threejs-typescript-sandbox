@@ -17,7 +17,6 @@ import { PickupObject } from '../gameobjects/pickupObject';
 import SceneController from './sceneController';
 import { Player } from '../gameobjects/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
-import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
 import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
@@ -77,6 +76,8 @@ export default class GameScene extends THREE.Scene {
     getWorld(): CANNON.World {
         return this.world;
     }
+
+    basicMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial( { color: 0xFFFF00 });
     
     terrain?: TerrainObject;
     water?: Water;
@@ -133,18 +134,16 @@ export default class GameScene extends THREE.Scene {
         
         this.camera = camera;
         this.sceneController = sceneController;
+
+        //const color = 0xFFFFFF;
+        //const density = 0.1;
+        //this.fog = new THREE.FogExp2(color, density);
+
+        //this.overrideMaterial = new THREE.MeshBasicMaterial({ color: "green" });
         //this.background = new THREE.Color(0xB1E1FF);
     }
 
     async initialize() {
-
-        // load a shared MTL (Material Template Library) for the targets
-        const targetMtl = await this.mtlLoader.loadAsync('assets/targetA.mtl');
-        targetMtl.preload();
-
-        this.bulletMtl = await this.mtlLoader.loadAsync('assets/foamBulletB.mtl');
-        this.bulletMtl.preload();
-
         this.taxiModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/taxi.glb');
         this.taxiModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.taxiModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
@@ -169,7 +168,7 @@ export default class GameScene extends THREE.Scene {
         this.tractorModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.tractorModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
-        this.explosionTexture = this.textureLoader.load('assets/particle-32x32.png');
+        this.explosionTexture = this.textureLoader.load('assets/particle-16x16.png');
         this.crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
         this.playerMarkerTexture = this.textureLoader.load('assets/playerMarkerIcon.png');
 
@@ -183,6 +182,7 @@ export default class GameScene extends THREE.Scene {
 
         // width and height need to match dimensions of heightmap
         this.terrain = new TerrainObject(this,
+            /*
             new THREE.MeshPhongMaterial(
                 {
                     color: 0x44dd44,
@@ -192,15 +192,14 @@ export default class GameScene extends THREE.Scene {
                     bumpMap: normalMap,                    
                     //vertexColors: true
                 }),
-                 /*
+            */                 
             new THREE.MeshBasicMaterial({
-                //color: 0x007700,
+                color: 0x007700,
                 //wireframe: false,
                 //depthWrite: true,
                 //fog: true,
-                map: texture
+                //map: texture
             }),
-            */
             /*
             new THREE.MeshStandardMaterial({
                 color: 0x004400, 
@@ -238,9 +237,7 @@ export default class GameScene extends THREE.Scene {
         body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
         this.world.addBody(body);
 
-
         this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight(), 2, 4);
-
             
         var wheelMaterial = new CANNON.Material("wheelMaterial");
         var wheelGroundContactMaterial = new CANNON.ContactMaterial(
@@ -255,25 +252,34 @@ export default class GameScene extends THREE.Scene {
         var objectMaterial = new CANNON.Material();
     
         this.cube = new BoxObject(this, 1,1,1, new THREE.Vector3(0, 20, -9.5), 0xffff00,
-                        new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
+                        //new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
+                        this.basicMaterial,
                         this.world, objectMaterial);
 
         this.cube2 = new BoxObject(this, 1,1,1, new THREE.Vector3(0, 10, -8), 0xffff00,
-                        new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
+                        //new THREE.MeshPhongMaterial( { color: 0xFFFF00, depthWrite: true }),
+                        this.basicMaterial,
                         this.world, objectMaterial);
 
         this.sphere = new SphereObject(this, 1, new THREE.Vector3(0.5, 5, -10), 0x00ff00,
-                        new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
+                        //new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
+                        this.basicMaterial,
                         this.world, objectMaterial);
 
         this.cylinder = new CylinderObject(this, 1, 0.25, new THREE.Vector3(0, 3, -12), 0x00ff00,
-            new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
+            //new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
+            this.basicMaterial,
             this.world, objectMaterial);
 
-        this.player1 = new Player(this, "Ambulance", new THREE.Color('red'), this.crosshairTexture, this.playerMarkerTexture);
-        this.player2 = new Player(this, "Taxi", new THREE.Color('blue'), this.crosshairTexture, this.playerMarkerTexture);
-        this.player3 = new Player(this, "Police", new THREE.Color('green'), this.crosshairTexture, this.playerMarkerTexture);
-        this.player4 = new Player(this, "Trash Truck", new THREE.Color('yellow'), this.crosshairTexture, this.playerMarkerTexture);
+        let particleMaterial = new THREE.SpriteMaterial({
+            map: this.explosionTexture,
+            depthTest: true
+        });
+
+        this.player1 = new Player(this, "Ambulance", new THREE.Color('red'), this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
+        this.player2 = new Player(this, "Taxi", new THREE.Color('blue'), this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
+        this.player3 = new Player(this, "Police", new THREE.Color('green'), this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
+        this.player4 = new Player(this, "Trash Truck", new THREE.Color('yellow'), this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
 /*
         this.gltfVehiclePlayer1 = new GltfObject(this,
@@ -425,6 +431,7 @@ export default class GameScene extends THREE.Scene {
         this.crosshairSprite = new THREE.Sprite( material );
         this.add(this.crosshairSprite);
 
+        /*
         // bounding box to show shadows
         const cubeSize = 30;
         const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
@@ -436,6 +443,7 @@ export default class GameScene extends THREE.Scene {
         mesh.receiveShadow = true;
         mesh.position.set(0, cubeSize / 2 - 0.1, 0);
         //this.add(mesh);
+        */
         
         var groundCubeContactMaterial = new CANNON.ContactMaterial(
             this.terrain.getPhysicsMaterial(),
@@ -560,7 +568,7 @@ export default class GameScene extends THREE.Scene {
         const geometry = new THREE.BufferGeometry();
         const vertices = [];
 
-        const sprite = new THREE.TextureLoader().load( 'assets/billboard_grass_256x256.png' );
+        const sprite = new THREE.TextureLoader().load( 'assets/billboard_grass_32x32.png' );
         sprite.colorSpace = THREE.SRGBColorSpace;
 
         for ( let i = 0; i < 500000; i ++ ) {

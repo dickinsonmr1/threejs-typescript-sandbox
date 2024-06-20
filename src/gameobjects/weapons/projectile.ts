@@ -54,7 +54,8 @@ export class Projectile extends SphereObject {
         particleColor4: THREE.Color,
 
         meshMaterial?: THREE.Material,
-        particleTexture?: THREE.Texture,
+        //particleTexture?: THREE.Texture,
+        particleMaterial?: THREE.SpriteMaterial,
         world?: CANNON.World) {
         
         super(scene, radius, position, particleColor1.getHex(), meshMaterial, world);
@@ -83,28 +84,30 @@ export class Projectile extends SphereObject {
             );
             */
 
-            if(particleTexture != null) {
+            if(particleMaterial != null) {
                 this.particleEmitterObject = new ParticleTrailObject(
                     scene,
                     ParticleEmitterType.GlowingParticles,
-                    particleTexture,
+                    //particleTexture,
                     particleColor1,//new THREE.Color('grey'),
                     particleColor2, //new THREE.Color(0x663399),
                     particleColor3, //new THREE.Color(0x663399),
                     particleColor4, //new THREE.Color(0x4d0099),
                     1,
-                    0.0025
+                    0.0025,
+                    particleMaterial
                 )
                 this.particleEmitterSmokeObject = new ParticleTrailObject(
                     scene,
                     ParticleEmitterType.SmokeTrail,
-                    particleTexture,
+                    //particleTexture,
                     new THREE.Color('black'),
                     new THREE.Color('black'),
                     new THREE.Color('gray'),
                     new THREE.Color('gray'),
                     1,
-                    0.0025
+                    0.0025,
+                    particleMaterial
                 )
             };
         }
