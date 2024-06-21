@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
 import GameScene from "../../scenes/gameScene";
+import { ParticleTrailPointsObject } from "../fx/particleTrailPointsObject";
+import { ParticleEmitter } from "../fx/particleEmitter";
 
 export enum ProjectileLaunchLocation {
     Left,
@@ -28,7 +30,7 @@ export class Projectile extends SphereObject {
     scene: THREE.Scene;
 
     pointLightObject!: PointLightObject;
-    particleEmitterObject!: ParticleTrailObject;
+    particleEmitterObject!: ParticleEmitter;
     particleEmitterSmokeObject!: ParticleTrailObject;
     
 	private readonly velocity = new THREE.Vector3();    
@@ -85,6 +87,7 @@ export class Projectile extends SphereObject {
             */
 
             if(particleMaterial != null) {
+                /*
                 this.particleEmitterObject = new ParticleTrailObject(
                     scene,
                     ParticleEmitterType.GlowingParticles,
@@ -96,7 +99,21 @@ export class Projectile extends SphereObject {
                     1,
                     0.0025,
                     particleMaterial
-                )
+                );
+                */
+                this.particleEmitterObject = new ParticleTrailPointsObject(
+                    scene,
+                    ParticleEmitterType.GlowingParticles,
+                    //particleTexture,
+                    particleColor1,//new THREE.Color('grey'),
+                    particleColor2, //new THREE.Color(0x663399),
+                    particleColor3, //new THREE.Color(0x663399),
+                    particleColor4, //new THREE.Color(0x4d0099),
+                    1,
+                    0.0025
+                );
+
+                /*
                 this.particleEmitterSmokeObject = new ParticleTrailObject(
                     scene,
                     ParticleEmitterType.SmokeTrail,
@@ -108,7 +125,8 @@ export class Projectile extends SphereObject {
                     1,
                     0.0025,
                     particleMaterial
-                )
+                );
+                */
             };
         }
         
@@ -159,6 +177,9 @@ export class Projectile extends SphereObject {
 
         if(this.particleEmitterObject != null) {
             this.particleEmitterObject.stop();
+            
+        }
+        if(this.particleEmitterSmokeObject != null) {
             this.particleEmitterSmokeObject.stop();
         }
         if(this.pointLightObject != null) {

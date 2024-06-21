@@ -10,9 +10,6 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
     type: ParticleEmitterType;
     particleGroup: THREE.Group;
 
-    particles: THREE.BufferGeometry;
-    particleSystem!: THREE.Points;
-
     startColor: THREE.Color;
     lerpColor1: THREE.Color;
     lerpColor2: THREE.Color;
@@ -27,7 +24,14 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
     isDead: boolean = false;
     isEmitting: boolean = true;
 
-    particleMaterial: THREE.SpriteMaterial;
+    //particleMaterial: THREE.SpriteMaterial;
+
+    //private particles: THREE.Points[] = [];
+    private particles: { mesh: THREE.Points, birthTime: number, initialSize: number }[] = [];
+    private particleSystem: THREE.Group;
+    particleMaterial: THREE.PointsMaterial;
+
+    private maxLifeTime: number = 2000;
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
@@ -40,8 +44,13 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
         lerpColor3: THREE.Color,
         numberParticles: number,
         velocity: number,
-        particleMaterial: THREE.SpriteMaterial,
-        maxParticleCount: number) {
+        particleMaterial: THREE.PointsMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 0.1,   
+            map: new THREE.TextureLoader().load( 'assets/particle-16x16.png'),
+            transparent: true
+        }),
+        maxParticleCount: number = 1000) {
                   
         super();
 
@@ -53,28 +62,67 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
         this.lerpColor1 = lerpColor1;
         this.lerpColor2 = lerpColor2;
         this.lerpColor3 = lerpColor3;
-        //this.position = position;
+
         this.numberParticles = numberParticles;
         this.velocity = velocity;
-        this.particleMaterial = particleMaterial;
 
-        this.isEmitting = true;
-       
+        this.isEmitting = true;        
+
         this.particleGroup.position.set(0,0,0);//position.x, position.y, position.z);
         this.emitPosition = this.particleGroup.position;
+       
+        this.particleMaterial = particleMaterial;
+        this.particleSystem = new THREE.Group();
+        scene.add(this.particleSystem);
+    }
 
-        /*
-        this.particleGroup.position.set(
-            Math.random() * 20 - 10,
-            Math.random() * 5 + 3,
-            Math.random() * 10 - 5);
-        */
+    addParticle(position: THREE.Vector3): void {
+        const geometry = new THREE.BufferGeometry();
+        const vertices = new Float32Array(3); // Single particle
+    
+        vertices[0] = position.x + (Math.random() - 0.5) * 2;
+        vertices[1] = position.y + (Math.random() - 0.5) * 2;
+        vertices[2] = position.z + (Math.random() - 0.5) * 2;
+    
+        geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    
+        const particle = new THREE.Points(geometry, this.particleMaterial.clone());
+        const birthTime = Date.now();
+        const initialSize = this.particleMaterial.size;
 
-        this.particles = new THREE.BufferGeometry();
-        const positions = new Float32Array(maxParticleCount * 3);
-        const velocities = new Float32Array(maxParticleCount * 3);
+        this.particleSystem.add(particle);
+    
+        this.particles.push({ mesh: particle, birthTime, initialSize });
+    }
 
-        this.scene.add(this.particleGroup);
+    updateParticles(): void {
+        const now = Date.now();
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            
+            const { mesh, birthTime, initialSize } = this.particles[i];
+            const elapsedTime = now - birthTime;
+            if (elapsedTime > this.maxLifeTime) {
+                this.particleSystem.remove(mesh);
+                this.particles.splice(i, 1);
+                continue;
+            }
+            
+            /*
+            // Calculate size reduction over time
+            const lifeFraction = elapsedTime / 1000;
+            let material = (mesh.material as THREE.PointsMaterial);
+
+            material.size = initialSize * (1 - lifeFraction);           
+            material.opacity -= 0.008;
+
+            if(material.opacity < 0.98 && material.opacity >= 0.80)      
+                material.color.lerp(this.lerpColor1, 0.5);
+            else if(material.opacity < 0.80 && material.opacity >= 0.50)      
+                material.color.lerp(this.lerpColor2, 0.5);
+            else if(material.opacity < 0.50)
+                material.color.lerp(this.lerpColor3, 0.5);            
+            */
+        }
     }
 
     getPosition(): THREE.Vector3 {
@@ -100,12 +148,13 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
     }
 
     private emitParticles(emitPosition: THREE.Vector3) {
-
+        /*
         let newEmitColor = this.startColor.clone();// new THREE.Color('white');
+
         
         for(let i = 0; i < this.numberParticles; i++) {            
 
-            let sprite = new THREE.Sprite(this.particleMaterial.clone());
+            let sprite = new THREE.Sprite(this.particleMaterial);
             let spriteScale = 1;
             switch(this.type) {
                 case ParticleEmitterType.SmokeTrail:
@@ -152,6 +201,7 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
 
             this.particleGroup.add(sprite);
         }
+        */
     }
 
     stop(): void {
@@ -178,9 +228,13 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
         }
 
         if(this.isEmitting) {
-            this.emitParticles(this.emitPosition);
+            this.addParticle(this.emitPosition);
+            //this.emitParticles(this.emitPosition);
         }
 
+        this.updateParticles();
+
+        /*
         this.particleGroup.children.forEach((child) => {
             let item = <THREE.Sprite>child;
 
@@ -224,19 +278,58 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
         //if(this.particleGroup.children.length === 0) {
             //this.isActive = false;
         //} 
+        */
     }
 
     kill(): void {
         this.isDead = true;
 
-        this.particleGroup.children = this.particleGroup.children
-        .filter((child) => {
-            let item = <THREE.Sprite>child;
-            //item.remove();
-            this.particleGroup.remove(item);
-        });   
+        this.particleSystem.children = this.particleSystem.children
+            .filter((child) => {
+                let item = <THREE.Points>child;
+                //item.remove();
+                this.particleSystem.remove(item);
+            });   
 
         this.scene.remove(this.particleGroup);
+    }
+
+    vertexShader() {
+        return `
+        uniform float pointMultiplier;
+
+        attribute float size;
+        attribute float angle;
+        attribute vec4 colour;
+        
+        varying vec4 vColour;
+        varying vec2 vAngle;
+        
+        void main() {
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        
+          gl_Position = projectionMatrix * mvPosition;
+          gl_PointSize = size * pointMultiplier / gl_Position.w;
+        
+          vAngle = vec2(cos(angle), sin(angle));
+          vColour = colour;
+        }
+        `
+    }
+
+    fragmentShader() {
+        return `
+       
+        uniform sampler2D diffuseTexture;
+
+        varying vec4 vColour;
+        varying vec2 vAngle;
+
+        void main() {
+        vec2 coords = (gl_PointCoord - 0.5) * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x) + 0.5;
+        gl_FragColor = texture2D(diffuseTexture, coords) * vColour;
+        }
+        `
     }
 }
 
