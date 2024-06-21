@@ -4,10 +4,10 @@ import { ParticleEmitterType } from "./particleTrailObject";
 import { Material } from "cannon-es";
 import GameScene from "../../scenes/gameScene";
 /*
-TODO: rewrite using BufferGeometry and PointsMaterial
+TODO: fix me
 */
 
-export class ParticleTrailPointsObject extends ParticleEmitter { 
+export class ParticleTrailPointsShaderObject extends ParticleEmitter { 
     scene: THREE.Scene;
     type: ParticleEmitterType;
     particleGroup: THREE.Group;

@@ -9,6 +9,7 @@ import { Utility } from "../../utility";
 import GameScene from "../../scenes/gameScene";
 import { ParticleTrailPointsObject } from "../fx/particleTrailPointsObject";
 import { ParticleEmitter } from "../fx/particleEmitter";
+import { ParticleTrailPointsShaderObject } from "../fx/particleTrailPointsShaderObject";
 
 export enum ProjectileLaunchLocation {
     Left,
@@ -113,6 +114,20 @@ export class Projectile extends SphereObject {
                     particleMaterial
                 );
                 */
+                this.particleEmitterObject = new ParticleTrailPointsShaderObject(
+                    scene,
+                    ParticleEmitterType.GlowingParticles,
+                    //particleTexture,
+                    particleColor1,//new THREE.Color('grey'),
+                    particleColor2, //new THREE.Color(0x663399),
+                    particleColor3, //new THREE.Color(0x663399),
+                    particleColor4, //new THREE.Color(0x4d0099),
+                    1, // number particle
+                    0.7, // velocity
+                    0.1, // size
+                    0.25 // max position jitter
+                );
+                /*
                 this.particleEmitterObject = new ParticleTrailPointsObject(
                     scene,
                     ParticleEmitterType.GlowingParticles,
@@ -126,6 +141,7 @@ export class Projectile extends SphereObject {
                     0.1, // size
                     0.25 // max position jitter
                 );
+                */
                 /*
                 this.particleEmitterSmokeObject = new ParticleTrailPointsObject(
                     scene,
