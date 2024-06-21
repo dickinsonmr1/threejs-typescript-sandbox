@@ -14,6 +14,7 @@ export abstract class ParticleEmitter {
     abstract pause(): void;
     abstract resume(): void;
     abstract stop(): void;
+    abstract setEmitPosition(position: THREE.Vector3): void;
     getParticleCount(): number {
         return this.particleGroup.children.length;
     }

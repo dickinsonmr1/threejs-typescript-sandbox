@@ -31,6 +31,7 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
     private particleSystem: THREE.Group;
     particleMaterial: THREE.PointsMaterial;
 
+    private maxPositionJitter: number;
     private maxLifeTime: number = 2000;
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
@@ -44,15 +45,20 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
         lerpColor3: THREE.Color,
         numberParticles: number,
         velocity: number,
-        particleMaterial: THREE.PointsMaterial = new THREE.PointsMaterial({
-            color: 0xffffff,
-            size: 0.1,   
-            map: new THREE.TextureLoader().load( 'assets/particle-16x16.png'),
-            transparent: true
-        }),
-        maxParticleCount: number = 1000) {
+        size: number,
+        maxPositionJitter: number
+        ) {
                   
         super();
+
+        this.particleMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: size,   
+            map: new THREE.TextureLoader().load( 'assets/particle-16x16.png'),
+            transparent: true,
+            blending: THREE.AdditiveBlending
+        });
+        // todo: max particle count
 
         this.scene = scene;
         this.type = type;
@@ -70,8 +76,9 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
 
         this.particleGroup.position.set(0,0,0);//position.x, position.y, position.z);
         this.emitPosition = this.particleGroup.position;
+
+        this.maxPositionJitter = maxPositionJitter;
        
-        this.particleMaterial = particleMaterial;
         this.particleSystem = new THREE.Group();
         scene.add(this.particleSystem);
     }
@@ -80,15 +87,16 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
         const geometry = new THREE.BufferGeometry();
         const vertices = new Float32Array(3); // Single particle
     
-        vertices[0] = position.x + (Math.random() - 0.5) * 2;
-        vertices[1] = position.y + (Math.random() - 0.5) * 2;
-        vertices[2] = position.z + (Math.random() - 0.5) * 2;
+        vertices[0] = position.x + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
+        vertices[1] = position.y + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
+        vertices[2] = position.z + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
     
         geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     
         const particle = new THREE.Points(geometry, this.particleMaterial.clone());
         const birthTime = Date.now();
-        const initialSize = this.particleMaterial.size;
+        //const initialSize = this.particleMaterial.size;
+        const initialSize = this.particleMaterial.size +(Math.random() * 0.1) + 0.05;
 
         this.particleSystem.add(particle);
     
@@ -106,14 +114,13 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
                 this.particles.splice(i, 1);
                 continue;
             }
-            
-            /*
+                        
             // Calculate size reduction over time
-            const lifeFraction = elapsedTime / 1000;
+            const lifeFraction = elapsedTime / this.maxLifeTime;
             let material = (mesh.material as THREE.PointsMaterial);
 
             material.size = initialSize * (1 - lifeFraction);           
-            material.opacity -= 0.008;
+            material.opacity -= 0.012;
 
             if(material.opacity < 0.98 && material.opacity >= 0.80)      
                 material.color.lerp(this.lerpColor1, 0.5);
@@ -121,7 +128,7 @@ export class ParticleTrailPointsObject extends ParticleEmitter {
                 material.color.lerp(this.lerpColor2, 0.5);
             else if(material.opacity < 0.50)
                 material.color.lerp(this.lerpColor3, 0.5);            
-            */
+            
         }
     }
 

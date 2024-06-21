@@ -31,7 +31,7 @@ export class Projectile extends SphereObject {
 
     pointLightObject!: PointLightObject;
     particleEmitterObject!: ParticleEmitter;
-    particleEmitterSmokeObject!: ParticleTrailObject;
+    particleEmitterSmokeObject!: ParticleEmitter;
     
 	private readonly velocity = new THREE.Vector3();    
 
@@ -100,20 +100,6 @@ export class Projectile extends SphereObject {
                     0.0025,
                     particleMaterial
                 );
-                */
-                this.particleEmitterObject = new ParticleTrailPointsObject(
-                    scene,
-                    ParticleEmitterType.GlowingParticles,
-                    //particleTexture,
-                    particleColor1,//new THREE.Color('grey'),
-                    particleColor2, //new THREE.Color(0x663399),
-                    particleColor3, //new THREE.Color(0x663399),
-                    particleColor4, //new THREE.Color(0x4d0099),
-                    1,
-                    0.0025
-                );
-
-                /*
                 this.particleEmitterSmokeObject = new ParticleTrailObject(
                     scene,
                     ParticleEmitterType.SmokeTrail,
@@ -125,6 +111,32 @@ export class Projectile extends SphereObject {
                     1,
                     0.0025,
                     particleMaterial
+                );
+                */
+                this.particleEmitterObject = new ParticleTrailPointsObject(
+                    scene,
+                    ParticleEmitterType.GlowingParticles,
+                    //particleTexture,
+                    particleColor1,//new THREE.Color('grey'),
+                    particleColor2, //new THREE.Color(0x663399),
+                    particleColor3, //new THREE.Color(0x663399),
+                    particleColor4, //new THREE.Color(0x4d0099),
+                    1, // number particle
+                    0.7, // velocity
+                    0.1, // size
+                    0.25 // max position jitter
+                );
+                /*
+                this.particleEmitterSmokeObject = new ParticleTrailPointsObject(
+                    scene,
+                    ParticleEmitterType.SmokeTrail,
+                    //particleTexture,
+                    new THREE.Color('black'),
+                    new THREE.Color('black'),
+                    new THREE.Color('gray'),
+                    new THREE.Color('gray'),
+                    1,
+                    0.5
                 );
                 */
             };
