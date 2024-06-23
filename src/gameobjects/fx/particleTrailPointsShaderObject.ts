@@ -34,7 +34,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     particleMaterial: THREE.Material;
 
     private maxPositionJitter: number;
-    private maxLifeTime: number = 2000;
+    private maxLifeTime: number = 500;
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
@@ -69,7 +69,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
         this.particleMaterial = new THREE.ShaderMaterial({
             uniforms: {
-                texture: { value: gameScene.explosionTexture },
+                uTexture: { value: gameScene.explosionTexture },
                 //tDiffuse: { value: particleTexture1 } // https://stackoverflow.com/questions/40715234/three-js-wrong-texture-on-shadermaterial
             },
             vertexShader: this.vertexShader(),
@@ -109,7 +109,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
         vertices[1] = position.y + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
         vertices[2] = position.z + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
     
-        const sizes = new Float32Array([20]);
+        const sizes = new Float32Array([20]);        
         const alphas = new Float32Array([1.0]);
     
         geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
@@ -345,12 +345,12 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
     fragmentShader() {
         return `
-            uniform sampler2D particleTexture5;
+            uniform sampler2D uTexture;
             varying float vAlpha;
 
             void main()
             {
-                vec4 texColor = texture2D(particleTexture5, gl_PointCoord);
+                vec4 texColor = texture2D(uTexture, gl_PointCoord);
                 gl_FragColor = vec4(texColor.rgb, texColor.a * vAlpha);
             }
             `
