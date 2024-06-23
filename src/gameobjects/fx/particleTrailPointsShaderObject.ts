@@ -111,11 +111,11 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     
         const sizes = new Float32Array([20]);        
         const alphas = new Float32Array([1.0]);
-    
+        
         geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
         geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
         geometry.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
-    
+
         const particle = new THREE.Points(geometry, this.particleMaterial);
         const birthTime = Date.now();
     
@@ -141,6 +141,9 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             const alpha = (mesh.geometry.attributes.alpha.array as Float32Array);
             alpha[0] =  1.0 - lifeFraction;
             mesh.geometry.attributes.alpha.needsUpdate = true;
+
+            //let elapsedTimeInSeconds = (Date.now() - startTime) / 1000; // Time in seconds
+            //particleMaterial.uniforms.time.value = elapsedTimeInSeconds;
 
             /*
             let material = (mesh.material as THREE.PointsMaterial);
@@ -337,7 +340,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             {
                 vAlpha = alpha;
                 vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_PointSize = size * (3.0 / -mvPosition.z);
+                gl_PointSize = size * (10.0 / -mvPosition.z);
                 gl_Position = projectionMatrix * mvPosition;
             }
         `
@@ -347,11 +350,22 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
         return `
             uniform sampler2D uTexture;
             varying float vAlpha;
-
+            
             void main()
             {
+                float t = 1.0 - vAlpha;
+
+                vec3 color;
+                if (t < 0.33) {
+                    color = mix(vec3(1.0), vec3(1.0, 1.0, 0.0), t / 0.33); // White to Yellow
+                } else if (t < 0.66) {
+                    color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.65, 0.0), (t - 0.33) / 0.33); // Yellow to Orange
+                } else {
+                    color = mix(vec3(1.0, 0.65, 0.0), vec3(1.0, 0.0, 0.0), (t - 0.66) / 0.34); // Orange to Red
+                }
+                
                 vec4 texColor = texture2D(uTexture, gl_PointCoord);
-                gl_FragColor = vec4(texColor.rgb, texColor.a * vAlpha);
+                gl_FragColor = vec4(color * texColor.rgb, texColor.a * vAlpha);
             }
             `
     }
