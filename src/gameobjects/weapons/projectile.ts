@@ -122,10 +122,10 @@ export class Projectile extends SphereObject {
                     particleColor2, //new THREE.Color(0x663399),
                     particleColor3, //new THREE.Color(0x663399),
                     particleColor4, //new THREE.Color(0x4d0099),
-                    1, // number particle
-                    0.7, // velocity
-                    0.1, // size
-                    0.25 // max position jitter
+                    1, // number of particle
+                    0.5, // TODO: particle velocity
+                    0.3, // initial particle size
+                    0.1 // max position jitter
                 );
                 /*
                 this.particleEmitterObject = new ParticleTrailPointsObject(
@@ -155,6 +155,19 @@ export class Projectile extends SphereObject {
                     0.5
                 );
                 */
+                this.particleEmitterSmokeObject = new ParticleTrailPointsShaderObject(
+                    scene,
+                    ParticleEmitterType.SmokeTrail,
+                    //particleTexture,
+                    new THREE.Color('gray'),
+                    new THREE.Color('gray'),
+                    new THREE.Color('gray'),
+                    new THREE.Color('gray'),
+                    1, // number of particles
+                    0.5, // TODO: particle velocity
+                    0.3, // initial particle size
+                    0.1 // max position jitter
+                );
             };
         }
         

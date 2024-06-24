@@ -53,19 +53,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
                   
         super();
 
-        /*
-        this.particleMaterial = new THREE.PointsMaterial({
-            color: 0xffffff,
-            size: size,   
-            map: new THREE.TextureLoader().load( 'assets/particle-16x16.png'),
-            transparent: true,
-            blending: THREE.AdditiveBlending
-        });
-        */
-
         let gameScene = <GameScene>scene;
-        const loader = new THREE.TextureLoader();
-        //var particleTexture1 = loader.load('assets/particle-16x16.png');
 
         this.particleMaterial = new THREE.ShaderMaterial({
             uniforms: {
@@ -81,7 +69,6 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
         this.scene = scene;
         this.type = type;
         this.particleGroup = new THREE.Group();
-        //this.particleTexture = particleTexture;
         this.startColor = startColor;
         this.lerpColor1 = lerpColor1;
         this.lerpColor2 = lerpColor2;
@@ -103,18 +90,63 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
     addParticle(position: THREE.Vector3): void {
         const geometry = new THREE.BufferGeometry();
-        const vertices = new Float32Array(3); // Single particle
-    
+
+        const vertices = new Float32Array(3); // Single particle   
         vertices[0] = position.x + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
         vertices[1] = position.y + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
         vertices[2] = position.z + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
     
-        const sizes = new Float32Array([20]);        
+        const sizes = new Float32Array([1]);        
+        sizes[0] = 10.0;
+        const sizeMultiplier = new Float32Array([1]);
+
+
+        switch(this.type) {
+            case ParticleEmitterType.SmokeTrail:
+            case ParticleEmitterType.SmokeEmit:
+                //item.material.opacity -= 0.008;
+                //item.scale.x *= 1.02; item.scale.y *= 1.02; item.scale.z *= 1.02;        
+                sizeMultiplier[0] = 1.5;
+                break;
+            default:
+                //item.material.opacity -= 0.01;
+                //item.scale.x *= 0.98; item.scale.y *= 0.98; item.scale.z *= 0.98;        
+                sizeMultiplier[0] = 0.98;
+                break;
+        }       
+
+
         const alphas = new Float32Array([1.0]);
+
+        const startColor = new Float32Array(3); // Single particle
+        const lerpColor1 = new Float32Array(3); // Single particle
+        const lerpColor2 = new Float32Array(3); // Single particle
+        const lerpColor3 = new Float32Array(3); // Single particle
+    
+        startColor[0] = this.startColor.r;
+        startColor[1] = this.startColor.g;
+        startColor[2] = this.startColor.b;
+
+        lerpColor1[0] = this.lerpColor1.r;
+        lerpColor1[1] = this.lerpColor1.g;
+        lerpColor1[2] = this.lerpColor1.b;
+        
+        lerpColor2[0] = this.lerpColor2.r;
+        lerpColor2[1] = this.lerpColor2.g;
+        lerpColor2[2] = this.lerpColor2.b;
+
+        lerpColor3[0] = this.lerpColor3.r;
+        lerpColor3[1] = this.lerpColor3.g;
+        lerpColor3[2] = this.lerpColor3.b;
         
         geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        geometry.setAttribute('initialSize', new THREE.BufferAttribute(sizes, 1));
+        geometry.setAttribute('sizeMultiplier', new THREE.BufferAttribute(sizeMultiplier, 1));
         geometry.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
+        geometry.setAttribute('startColor', new THREE.BufferAttribute(startColor, 3));
+        geometry.setAttribute('lerpColor1', new THREE.BufferAttribute(lerpColor1, 3));
+        geometry.setAttribute('lerpColor2', new THREE.BufferAttribute(lerpColor2, 3));
+        geometry.setAttribute('lerpColor3', new THREE.BufferAttribute(lerpColor3, 3));
 
         const particle = new THREE.Points(geometry, this.particleMaterial);
         const birthTime = Date.now();
@@ -140,24 +172,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
             const alpha = (mesh.geometry.attributes.alpha.array as Float32Array);
             alpha[0] =  1.0 - lifeFraction;
-            mesh.geometry.attributes.alpha.needsUpdate = true;
-
-            //let elapsedTimeInSeconds = (Date.now() - startTime) / 1000; // Time in seconds
-            //particleMaterial.uniforms.time.value = elapsedTimeInSeconds;
-
-            /*
-            let material = (mesh.material as THREE.PointsMaterial);
-
-            //material.size = initialSize * (1 - lifeFraction);           
-            material.opacity -= 0.012;
-
-            if(material.opacity < 0.98 && material.opacity >= 0.80)      
-                material.color.lerp(this.lerpColor1, 0.5);
-            else if(material.opacity < 0.80 && material.opacity >= 0.50)      
-                material.color.lerp(this.lerpColor2, 0.5);
-            else if(material.opacity < 0.50)
-                material.color.lerp(this.lerpColor3, 0.5);            
-            */
+            mesh.geometry.attributes.alpha.needsUpdate = true;        
         }
     }
 
@@ -184,60 +199,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     }
 
     private emitParticles(emitPosition: THREE.Vector3) {
-        /*
-        let newEmitColor = this.startColor.clone();// new THREE.Color('white');
-
-        
-        for(let i = 0; i < this.numberParticles; i++) {            
-
-            let sprite = new THREE.Sprite(this.particleMaterial);
-            let spriteScale = 1;
-            switch(this.type) {
-                case ParticleEmitterType.SmokeTrail:
-                case ParticleEmitterType.SmokeEmit:
-                    sprite.material.blending = THREE.NormalBlending;
-                    spriteScale = Math.random() * 0.1 + 0.1;
-
-                    sprite.userData.velocity = new THREE.Vector3(
-                        Math.random() * this.velocity - this.velocity / 2,
-                        Math.random() * this.velocity - this.velocity / 2,
-                        Math.random() * this.velocity - this.velocity / 2
-                    );
-                    sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 1);
-                    break;
-                case ParticleEmitterType.GlowingParticles:
-                default:
-                    sprite.material.blending = THREE.AdditiveBlending;
-                    spriteScale = 0.33;
-
-                    sprite.userData.velocity = new THREE.Vector3(
-                        Math.random() * this.velocity - this.velocity / 2,
-                        Math.random() * this.velocity - this.velocity / 2,
-                        Math.random() * this.velocity - this.velocity / 2
-                    );
-                    sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
-                    break;
-            }            
-            
-            sprite.userData.velocity = new THREE.Vector3(
-                Math.random() * this.velocity - this.velocity / 2,
-                Math.random() * this.velocity - this.velocity / 2,
-                Math.random() * this.velocity - this.velocity / 2
-            );
-            sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
-
-            sprite.material.color = newEmitColor;
-
-            sprite.material.opacity = Math.random() * 0.2 + 0.6;
-
-            
-            sprite.scale.set(spriteScale, spriteScale, spriteScale);
-
-            sprite.position.set(emitPosition.x, emitPosition.y, emitPosition.z);
-
-            this.particleGroup.add(sprite);
-        }
-        */
+        throw new Error("Method not implemented.");
     }
 
     stop(): void {
@@ -268,53 +230,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             //this.emitParticles(this.emitPosition);
         }
 
-        this.updateParticles();
-
-        /*
-        this.particleGroup.children.forEach((child) => {
-            let item = <THREE.Sprite>child;
-
-            item.position.add(child.userData.velocity);
-            
-            
-            switch(this.type) {
-                case ParticleEmitterType.SmokeTrail:
-                case ParticleEmitterType.SmokeEmit:
-                    item.material.opacity -= 0.008;
-                    item.scale.x *= 1.02;
-                    item.scale.y *= 1.02;
-                    item.scale.z *= 1.02;        
-                    break;
-                default:
-                    item.material.opacity -= 0.01;
-                    item.scale.x *= 0.98;
-                    item.scale.y *= 0.98;
-                    item.scale.z *= 0.98;        
-                    break;
-            }       
-
-            const color1 = item.material.color;
-            item.material.color.copy(color1);      
-            
-            //THREE.MathUtils.lerp
-            if(item.material.opacity < 0.98 && item.material.opacity >= 0.80)      
-                item.material.color.lerp(this.lerpColor1, 0.5);
-            else if(item.material.opacity < 0.80 && item.material.opacity >= 0.50)      
-                item.material.color.lerp(this.lerpColor2, 0.5);
-            else if(item.material.opacity < 0.50)
-                item.material.color.lerp(this.lerpColor3, 0.5);
-        });
-
-        this.particleGroup.children = this.particleGroup.children
-            .filter((child) => {
-                let item = <THREE.Sprite>child;
-                return item.material.opacity > 0.0;// && item.scale.x > 0;
-            });       
-
-        //if(this.particleGroup.children.length === 0) {
-            //this.isActive = false;
-        //} 
-        */
+        this.updateParticles();       
     }
 
     kill(): void {
@@ -332,15 +248,36 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
    
     vertexShader(){
         return `
-            attribute float size;
+            attribute float initialSize;
+            attribute float sizeMultiplier;
             attribute float alpha;
+            attribute vec3 startColor;
+            attribute vec3 lerpColor1;
+            attribute vec3 lerpColor2;
+            attribute vec3 lerpColor3;
+            
             varying float vAlpha;
+            varying vec3 vStartColor;
+            varying vec3 vLerpColor1;
+            varying vec3 vLerpColor2;
+            varying vec3 vLerpColor3;
 
             void main()
             {
                 vAlpha = alpha;
+                vStartColor = startColor;
+                vLerpColor1 = lerpColor1;
+                vLerpColor2 = lerpColor2;
+                vLerpColor3 = lerpColor3;
+
                 vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_PointSize = size * (10.0 / -mvPosition.z);
+                //gl_PointSize = size * (10.0 / -mvPosition.z) * sizeMultiplier;
+                if(sizeMultiplier < 1.0) {
+                    gl_PointSize = initialSize * sizeMultiplier * vAlpha;    
+                }
+                else {
+                    gl_PointSize = initialSize * sizeMultiplier * (1.0 - vAlpha);
+                }                
                 gl_Position = projectionMatrix * mvPosition;
             }
         `
@@ -349,7 +286,13 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     fragmentShader() {
         return `
             uniform sampler2D uTexture;
+            
             varying float vAlpha;
+            //varying float vSize;
+            varying vec3 vStartColor;
+            varying vec3 vLerpColor1;
+            varying vec3 vLerpColor2;
+            varying vec3 vLerpColor3;
             
             void main()
             {
@@ -357,11 +300,14 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
                 vec3 color;
                 if (t < 0.33) {
-                    color = mix(vec3(1.0), vec3(1.0, 1.0, 0.0), t / 0.33); // White to Yellow
+                    //color = mix(vec3(1.0), vec3(1.0, 1.0, 0.0), t / 0.33); // White to Yellow
+                    color = mix(vStartColor, vLerpColor1, t / 0.33); // White to Yellow
                 } else if (t < 0.66) {
-                    color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.65, 0.0), (t - 0.33) / 0.33); // Yellow to Orange
+                    //color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.65, 0.0), (t - 0.33) / 0.33); // Yellow to Orange
+                    color = mix(vLerpColor1, vLerpColor2, (t - 0.33) / 0.33); // Yellow to Orange
                 } else {
-                    color = mix(vec3(1.0, 0.65, 0.0), vec3(1.0, 0.0, 0.0), (t - 0.66) / 0.34); // Orange to Red
+                    //color = mix(vec3(1.0, 0.65, 0.0), vec3(1.0, 0.0, 0.0), (t - 0.66) / 0.34); // Orange to Red
+                    color = mix(vLerpColor2, vLerpColor3, (t - 0.66) / 0.34); // Orange to Red
                 }
                 
                 vec4 texColor = texture2D(uTexture, gl_PointCoord);
