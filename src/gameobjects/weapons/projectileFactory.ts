@@ -22,6 +22,7 @@ export default class ProjectileFactory {
 
         let randRocketType = THREE.MathUtils.randInt(0, 1);
 
+        let startColor;
         let particleColor1; //= new THREE.Color(0x663399);
         let particleColor2; //= new THREE.Color(0x663399);
         let particleColor3; //= new THREE.Color(0x663399);
@@ -29,13 +30,15 @@ export default class ProjectileFactory {
 
         switch(randRocketType) {
             case 0:
-                particleColor1 = new THREE.Color(0xffffff);
-                particleColor2 = new THREE.Color(0x663399);
-                particleColor3 = new THREE.Color(0x663399);
-                particleColor4 = new THREE.Color(0x4d0099);
+                startColor = new THREE.Color('white');
+                particleColor1 = new THREE.Color('white');
+                particleColor2 = new THREE.Color('mediumpurple');
+                particleColor3 = new THREE.Color('mediumpurple');
+                particleColor4 = new THREE.Color('pink');
                 break;
             case 1:
             default:
+                startColor = new THREE.Color('white');    
                 particleColor1 = new THREE.Color('white');    
                 particleColor2 = new THREE.Color('yellow');
                 particleColor3 = new THREE.Color('orange');
@@ -76,7 +79,7 @@ export default class ProjectileFactory {
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
                     0.4,
-                    new THREE.Color('white'),
+                    startColor,
                     particleColor1,
                     particleColor2,
                     particleColor3,

@@ -126,6 +126,8 @@ export default class GameScene extends THREE.Scene {
     divElementParticleCount!: HTMLDivElement;
     divElementPhysicsObjectCount!: HTMLDivElement;
     divElementLightObjectCount!: HTMLDivElement;
+    divElementParticleEmitterCount!: HTMLDivElement;
+    divElementShaderParticleCount!: HTMLDivElement;
 
     crosshairSprite!: THREE.Sprite;
 
@@ -486,6 +488,8 @@ export default class GameScene extends THREE.Scene {
         this.divElementWeaponParticleCount = this.generateDivElement(10, 200, "Weapon count");
         this.divElementPhysicsObjectCount = this.generateDivElement(10, 250, "Physics object count");
         this.divElementLightObjectCount = this.generateDivElement(10, 300, "Light object count");
+        this.divElementParticleEmitterCount = this.generateDivElement(10, 350, "Particle emitter count");
+        this.divElementShaderParticleCount = this.generateDivElement(10, 400, "Shader particle count");
 
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky
@@ -571,7 +575,7 @@ export default class GameScene extends THREE.Scene {
         const sprite = new THREE.TextureLoader().load( 'assets/billboard_grass_32x32.png' );
         sprite.colorSpace = THREE.SRGBColorSpace;
 
-        for ( let i = 0; i < 500000; i ++ ) {
+        for ( let i = 0; i < 100000; i ++ ) {
 
             const x = mapWidth * Math.random() - mapWidth / 2;
             const z = mapHeight * Math.random() - mapHeight / 2;
@@ -586,8 +590,8 @@ export default class GameScene extends THREE.Scene {
         var material = new THREE.PointsMaterial( { size: 1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true, depthTest: true, depthWrite: true } );
         //material.color.setHSL( 1.0, 0.3, 0.7, THREE.SRGBColorSpace );
 
-        const particles = new THREE.Points( geometry, material );
-        this.add( particles );
+        this.grassBillboards = new THREE.Points( geometry, material );
+        this.add( this.grassBillboards );
     }
 
     private handleKeyDown = (event: KeyboardEvent) => {
@@ -1069,6 +1073,10 @@ export default class GameScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
+        this.traverseVisible(x => {
+            
+        });
+
         if(!this.player1 || this.player1.isVehicleObjectNull()) return;
 
         this.updateInput();          
@@ -1236,8 +1244,8 @@ export default class GameScene extends THREE.Scene {
         this.flamethrowerEmitters.forEach(x => {
             flameThrowerEmitterTotalParticleCount += x.sprites.length;
         });
-        this.divElementWeaponParticleCount.innerHTML = `flamethrower particles: ${flameThrowerEmitterTotalParticleCount}`; 
-        this.divElementParticleCount.innerHTML = `total emitter particles: ${emitterTotalParticleCount}`; 
+        this.divElementWeaponParticleCount.innerHTML = `flamethrower particles (sprites): ${flameThrowerEmitterTotalParticleCount}`; 
+        this.divElementParticleCount.innerHTML = `total emitter particles (sprites): ${emitterTotalParticleCount}`; 
 
         let totalPhysicsObjectCount: number = this.world.bodies.length;        
         this.divElementPhysicsObjectCount.innerHTML = `total physics objects: ${totalPhysicsObjectCount}`; 
@@ -1253,6 +1261,12 @@ export default class GameScene extends THREE.Scene {
 
         let totalLightObjectCount: number = this.children.filter(x => arrayLightTypes.includes(x.type)).length;
         this.divElementLightObjectCount.innerHTML = `total light objects: ${totalLightObjectCount + totalLightCountInGroup}`; 
+
+        let particleEmitterCount: number = this.particleEmitters.length;
+        this.divElementParticleEmitterCount.innerHTML = `Particle emitter count: ${particleEmitterCount}`; 
+        
+        let shaderParticleCount = this.grassBillboards?.geometry.attributes.position.count;
+        this.divElementShaderParticleCount.innerHTML = `grass billboard count: ${shaderParticleCount}`; 
         
         this.stats.update();
     }

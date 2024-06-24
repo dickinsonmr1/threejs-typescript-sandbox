@@ -155,6 +155,7 @@ export class Projectile extends SphereObject {
                     0.5
                 );
                 */
+               /*
                 this.particleEmitterSmokeObject = new ParticleTrailPointsShaderObject(
                     scene,
                     ParticleEmitterType.SmokeTrail,
@@ -168,6 +169,7 @@ export class Projectile extends SphereObject {
                     0.3, // initial particle size
                     0.1 // max position jitter
                 );
+                */
             };
         }
         
