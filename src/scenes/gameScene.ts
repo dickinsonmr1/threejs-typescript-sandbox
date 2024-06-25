@@ -23,6 +23,7 @@ import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
 import { TextureToArray } from '../gameobjects/shapes/textureToArray';
 import { TerrainObject } from '../gameobjects/shapes/terrainObject';
 import { Water } from 'three/addons/objects/Water.js';
+import { DebugDivElementManager } from './debugDivElementManager';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -120,6 +121,9 @@ export default class GameScene extends THREE.Scene {
 
     sceneController: SceneController;
 
+    debugDivElementManager!: DebugDivElementManager;
+
+    /*
     divElementPlayerStats!: HTMLDivElement;
     divElementObjective!: HTMLDivElement;
     divElementWeaponParticleCount!: HTMLDivElement;
@@ -128,6 +132,7 @@ export default class GameScene extends THREE.Scene {
     divElementLightObjectCount!: HTMLDivElement;
     divElementParticleEmitterCount!: HTMLDivElement;
     divElementShaderParticleCount!: HTMLDivElement;
+    */
 
     crosshairSprite!: THREE.Sprite;
 
@@ -482,14 +487,16 @@ export default class GameScene extends THREE.Scene {
 
         document.body.appendChild(this.stats.dom);
 
-        this.divElementPlayerStats = this.generateDivElement(10, 50, "Player location");
-        this.divElementObjective = this.generateDivElement(10, 100, "Objective");
-        this.divElementParticleCount = this.generateDivElement(10, 150, "Particle count");
-        this.divElementWeaponParticleCount = this.generateDivElement(10, 200, "Weapon count");
-        this.divElementPhysicsObjectCount = this.generateDivElement(10, 250, "Physics object count");
-        this.divElementLightObjectCount = this.generateDivElement(10, 300, "Light object count");
-        this.divElementParticleEmitterCount = this.generateDivElement(10, 350, "Particle emitter count");
-        this.divElementShaderParticleCount = this.generateDivElement(10, 400, "Shader particle count");
+        this.debugDivElementManager = new DebugDivElementManager(25, 25);
+
+        this.debugDivElementManager.addElement("PlayerLocation", "");
+        this.debugDivElementManager.addElement("Objective", "");
+        this.debugDivElementManager.addElement("ParticleCount", "");
+        this.debugDivElementManager.addElement("WeaponCount", "");
+        this.debugDivElementManager.addElement("PhysicsObjectCount", "");
+        this.debugDivElementManager.addElement("LightObjectCount", "");
+        this.debugDivElementManager.addElement("ParticleEmitterCount", "");
+        this.debugDivElementManager.addElement("ShaderParticleCount", "");
 
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky
@@ -1231,7 +1238,27 @@ export default class GameScene extends THREE.Scene {
                 }
             }
         }
+        
+        this.updateDebugDivElements();
 
+        this.stats.update();
+    }
+
+    updateDebugDivElements() {
+
+        let playerPosition = this.player1.getPosition();
+        this.debugDivElementManager.updateElementText("PlayerLocation", `Player 1 position: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`);
+        
+        this.debugDivElementManager.updateElementText("Objective", `Scene objects: ${this.children.length}`);
+        
+        // flamethrower particles
+        let flameThrowerEmitterTotalParticleCount: number = 0;
+        this.flamethrowerEmitters.forEach(x => {
+            flameThrowerEmitterTotalParticleCount += x.sprites.length;
+        });
+        this.debugDivElementManager.updateElementText("WeaponCount", `flamethrower particles (sprites): ${flameThrowerEmitterTotalParticleCount}`);
+
+        // total particles
         let emitterTotalParticleCount: number = 0;
         this.particleEmitters.forEach(x => {
             emitterTotalParticleCount += x.getParticleCount();
@@ -1240,55 +1267,29 @@ export default class GameScene extends THREE.Scene {
         this.allPlayers.forEach(x => {
             emitterTotalParticleCount += x.getTotalParticleCount();
         })
+        this.debugDivElementManager.updateElementText("ParticleCount", `total emitter particles (sprites): ${emitterTotalParticleCount}`);
 
-        this.divElementPlayerStats.innerHTML = `location: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`;
-        this.divElementObjective.innerHTML = `scene objects: ${this.children.length}`;
-
-        let flameThrowerEmitterTotalParticleCount: number = 0;
-        this.flamethrowerEmitters.forEach(x => {
-            flameThrowerEmitterTotalParticleCount += x.sprites.length;
-        });
-        this.divElementWeaponParticleCount.innerHTML = `flamethrower particles (sprites): ${flameThrowerEmitterTotalParticleCount}`; 
-        this.divElementParticleCount.innerHTML = `total emitter particles (sprites): ${emitterTotalParticleCount}`; 
-
+        // physics objects
         let totalPhysicsObjectCount: number = this.world.bodies.length;        
-        this.divElementPhysicsObjectCount.innerHTML = `total physics objects: ${totalPhysicsObjectCount}`; 
+        this.debugDivElementManager.updateElementText("PhysicsObjectCount", `total physics objects: ${totalPhysicsObjectCount}`);
 
+        // lights
         var arrayLightTypes = ['SpotLight', 'HemisphereLight', 'AmbientLight', 'DirectionalLight', 'PointLight', 'RectAreaLight'];
-
-        var totalLightCountInGroup = 0;
-        
+        var totalLightCountInGroup = 0;        
         var allGroups = this.children.filter(x => x.type == 'Group');
         allGroups.forEach(x => {
             totalLightCountInGroup += x.children.filter(y => arrayLightTypes.includes(y.type)).length;
         });
-
         let totalLightObjectCount: number = this.children.filter(x => arrayLightTypes.includes(x.type)).length;
-        this.divElementLightObjectCount.innerHTML = `total light objects: ${totalLightObjectCount + totalLightCountInGroup}`; 
+        this.debugDivElementManager.updateElementText("LightObjectCount", `total light objects: ${totalLightObjectCount + totalLightCountInGroup}`);
 
+        // particle emitters
         let particleEmitterCount: number = this.particleEmitters.length;
-        this.divElementParticleEmitterCount.innerHTML = `Particle emitter count: ${particleEmitterCount}`; 
-        
-        let shaderParticleCount = this.grassBillboards?.geometry.attributes.position.count;
-        this.divElementShaderParticleCount.innerHTML = `grass billboard count: ${shaderParticleCount}`; 
-        
-        this.stats.update();
-    }
+        this.debugDivElementManager.updateElementText("ParticleEmitterCount", `Particle emitter count: ${particleEmitterCount}`);
 
-    generateDivElement(screenX: number, screenY: number, text: string): HTMLDivElement {
-        let div = document.createElement('div');
-        div.style.position = 'absolute';
-        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        div.style.width = "200";
-        div.style.height = "200";
-        //text2.style.backgroundColor = "blue";
-        div.style.color = "white";
-        div.innerHTML = text;
-        div.style.left = screenX + 'px';
-        div.style.top = screenY + 'px';
-        document.body.appendChild(div);
-        
-        return div;
+        // grass billboards
+        let shaderParticleCount = this.grassBillboards?.geometry.attributes.position.count;
+        this.debugDivElementManager.updateElementText("ShaderParticleCount", `Shader particle count: ${shaderParticleCount}`);
     }
 
     //generateArrayFromTexture() {
