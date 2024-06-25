@@ -8,7 +8,8 @@ import { vec2 } from "three/examples/jsm/nodes/Nodes.js";
 TODO: fix me
 */
 
-export class ParticleTrailPointsShaderObject extends ParticleEmitter { 
+export class ParticleTrailPointsShaderObject extends ParticleEmitter {
+
     scene: THREE.Scene;
     type: ParticleEmitterType;
     particleGroup: THREE.Group;
@@ -271,6 +272,21 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
         this.scene.remove(this.particleGroup);
     }
+
+    getParticleCount(): number {
+        
+        let particleCount = 0;
+        let points = this.particleGroup.children.filter(x => x.type == "Points");
+
+        points.forEach(x => {
+            let item = <THREE.Points>x;
+
+            if(item.geometry != null) 
+                particleCount += item.geometry.attributes.position.count;
+        });
+
+        return particleCount;
+    } 
    
     vertexShader(){
         return `

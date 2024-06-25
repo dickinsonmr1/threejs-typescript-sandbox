@@ -50,7 +50,6 @@ export default class GameScene extends THREE.Scene {
 
     private readonly keyDown = new Set<string>();
 
-    private bulletMtl?: MTLLoader.MaterialCreator;
     private directionVector = new THREE.Vector3();
 
     private cubes: BoxObject[] = [];
@@ -1288,7 +1287,11 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.updateElementText("ParticleEmitterCount", `Particle emitter count: ${particleEmitterCount}`);
 
         // grass billboards
-        let shaderParticleCount = this.grassBillboards?.geometry.attributes.position.count;
+        let shaderParticleCount = this.grassBillboards?.geometry.attributes.position.count ?? 0;
+        this.projectiles.forEach(x => {
+            if(x.particleEmitterObject != null)
+                shaderParticleCount += x.particleEmitterObject.getParticleCount();
+        });
         this.debugDivElementManager.updateElementText("ShaderParticleCount", `Shader particle count: ${shaderParticleCount}`);
     }
 

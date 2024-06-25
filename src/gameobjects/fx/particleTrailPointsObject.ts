@@ -7,7 +7,10 @@ import GameScene from "../../scenes/gameScene";
 TODO: rewrite using BufferGeometry and PointsMaterial
 */
 
-export class ParticleTrailPointsObject extends ParticleEmitter { 
+export class ParticleTrailPointsObject extends ParticleEmitter {
+    getParticleCount(): number {
+        throw new Error("Method not implemented.");
+    } 
     scene: THREE.Scene;
     type: ParticleEmitterType;
     particleGroup: THREE.Group;

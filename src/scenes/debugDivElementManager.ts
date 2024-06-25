@@ -31,9 +31,9 @@ export class DebugDivElementManager {
         div.style.position = 'absolute';
         //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
         div.style.width = "200";
-        div.style.height = "200";
-        //text2.style.backgroundColor = "blue";
+        div.style.height = "200";        
         div.style.color = "white";
+        div.style.backgroundColor = "blue";
         div.innerHTML = text;
         div.style.left = screenX + 'px';
         div.style.top = screenY + 'px';

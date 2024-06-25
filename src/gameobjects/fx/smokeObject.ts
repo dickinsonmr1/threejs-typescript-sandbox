@@ -3,6 +3,13 @@ import { PointLightObject } from "./pointLightObject";
 import { ParticleEmitter } from "./particleEmitter";
 
 export class SmokeObject extends ParticleEmitter {
+    
+    setEmitPosition(position: THREE.Vector3): void {
+        throw new Error("Method not implemented.");
+    }
+    getParticleCount(): number {
+        throw new Error("Method not implemented.");
+    }
 
     scene: THREE.Scene;
     particleGroup: THREE.Group;

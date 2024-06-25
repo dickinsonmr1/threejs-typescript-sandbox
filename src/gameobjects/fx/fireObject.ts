@@ -3,6 +3,16 @@ import { PointLightObject } from "./pointLightObject";
 import { ParticleEmitter } from "./particleEmitter";
 
 export class FireObject extends ParticleEmitter {
+        
+    pause(): void {
+        throw new Error("Method not implemented.");
+    }
+    resume(): void {
+        throw new Error("Method not implemented.");
+    }
+    setEmitPosition(position: THREE.Vector3): void {
+        throw new Error("Method not implemented.");
+    }
 
     scene: THREE.Scene;
     particleGroup: THREE.Group;
@@ -178,5 +188,9 @@ export class FireObject extends ParticleEmitter {
 
     stop() {
         // todo: implement
+    }
+
+    getParticleCount(): number {
+        return this.particleGroup.children.length;
     }
 }

@@ -227,6 +227,10 @@ export class ParticleTrailObject extends ParticleEmitter {
 
         this.scene.remove(this.particleGroup);
     }
+
+    getParticleCount(): number {    
+        return this.particleGroup.children.length;
+    } 
 }
 
 export { ParticleEmitterType };

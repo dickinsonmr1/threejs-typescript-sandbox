@@ -3,6 +3,13 @@ import { PointLightObject } from "./pointLightObject";
 import { ParticleEmitter } from "./particleEmitter";
 
 export class VehicleExplosionObject extends ParticleEmitter {
+    
+    setEmitPosition(position: THREE.Vector3): void {
+        throw new Error("Method not implemented.");
+    }
+    getParticleCount(): number {
+        return this.particleGroup.children.length;
+    }
 
 
     isEmitting: boolean;
