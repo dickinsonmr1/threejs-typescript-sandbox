@@ -123,9 +123,9 @@ export class Projectile extends SphereObject {
                     particleColor3, //new THREE.Color(0x663399),
                     particleColor4, //new THREE.Color(0x4d0099),
                     1, // number of particle
-                    0.5, // TODO: particle velocity
-                    0.3, // initial particle size
-                    0.1 // max position jitter
+                    0.01, // TODO: max particle velocity
+                    20, // initial particle size
+                    0.01 // max position jitter
                 );
                 /*
                 this.particleEmitterObject = new ParticleTrailPointsObject(

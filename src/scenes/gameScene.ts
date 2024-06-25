@@ -1073,6 +1073,10 @@ export default class GameScene extends THREE.Scene {
         if(this.world != null)
             this.world.fixedStep();
 
+        this.traverse(x => {
+        
+        });
+        
         this.traverseVisible(x => {
             
         });

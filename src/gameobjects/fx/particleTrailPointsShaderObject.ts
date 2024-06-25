@@ -3,6 +3,7 @@ import { ParticleEmitter } from "./particleEmitter";
 import { ParticleEmitterType } from "./particleTrailObject";
 import { Material } from "cannon-es";
 import GameScene from "../../scenes/gameScene";
+import { vec2 } from "three/examples/jsm/nodes/Nodes.js";
 /*
 TODO: fix me
 */
@@ -16,6 +17,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     lerpColor1: THREE.Color;
     lerpColor2: THREE.Color;
     lerpColor3: THREE.Color;
+    initialSize: number;
 
     position!: THREE.Vector3;
     emitPosition!: THREE.Vector3;
@@ -30,7 +32,6 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
     //private particles: THREE.Points[] = [];
     private particles: { mesh: THREE.Points, birthTime: number }[] = [];
-    private particleSystem: THREE.Group;
     particleMaterial: THREE.Material;
 
     private maxPositionJitter: number;
@@ -62,8 +63,14 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             },
             vertexShader: this.vertexShader(),
             fragmentShader: this.fragmentShader(),
-            transparent: true
+            transparent: true,
+            
         });
+        if(type == ParticleEmitterType.GlowingParticles)
+            this.particleMaterial.blending = THREE.AdditiveBlending;
+        else
+            this.particleMaterial.blending = THREE.NormalBlending;
+
         // todo: max particle count
 
         this.scene = scene;
@@ -76,6 +83,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
         this.numberParticles = numberParticles;
         this.velocity = velocity;
+        this.initialSize = size;
 
         this.isEmitting = true;        
 
@@ -84,39 +92,49 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
 
         this.maxPositionJitter = maxPositionJitter;
        
-        this.particleSystem = new THREE.Group();
-        scene.add(this.particleSystem);
+        scene.add(this.particleGroup);
     }
 
     addParticle(position: THREE.Vector3): void {
         const geometry = new THREE.BufferGeometry();
 
         const vertices = new Float32Array(3); // Single particle   
-        vertices[0] = position.x + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
-        vertices[1] = position.y + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
-        vertices[2] = position.z + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
+        vertices[0] = position.x;// + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
+        vertices[1] = position.y;// + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
+        vertices[2] = position.z;// + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
+
+
+        var randVelocity = new THREE.Vector3(
+                        Math.random() * this.velocity - this.velocity / 2,
+                        Math.random() * this.velocity - this.velocity / 2,
+                        Math.random() * this.velocity - this.velocity / 2
+                    ).multiplyScalar(Math.random() * Math.random() * 3 + 1);
+
+        const velocity = new Float32Array(3);
+        velocity[0] = randVelocity.x;
+        velocity[1] = randVelocity.y;
+        velocity[2] = randVelocity.z;
     
         const sizes = new Float32Array([1]);        
-        sizes[0] = 10.0;
+        sizes[0] = this.initialSize;
         const sizeMultiplier = new Float32Array([1]);
-
 
         switch(this.type) {
             case ParticleEmitterType.SmokeTrail:
             case ParticleEmitterType.SmokeEmit:
                 //item.material.opacity -= 0.008;
                 //item.scale.x *= 1.02; item.scale.y *= 1.02; item.scale.z *= 1.02;        
-                sizeMultiplier[0] = 1.5;
+                sizeMultiplier[0] = 5;
                 break;
             default:
                 //item.material.opacity -= 0.01;
                 //item.scale.x *= 0.98; item.scale.y *= 0.98; item.scale.z *= 0.98;        
-                sizeMultiplier[0] = 0.98;
+                sizeMultiplier[0] = 0.9;
                 break;
         }       
 
 
-        const alphas = new Float32Array([1.0]);
+        const alphas = new Float32Array([0.9]);
 
         const startColor = new Float32Array(3); // Single particle
         const lerpColor1 = new Float32Array(3); // Single particle
@@ -140,6 +158,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
         lerpColor3[2] = this.lerpColor3.b;
         
         geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        geometry.setAttribute('velocity', new THREE.BufferAttribute(velocity, 3));
         geometry.setAttribute('initialSize', new THREE.BufferAttribute(sizes, 1));
         geometry.setAttribute('sizeMultiplier', new THREE.BufferAttribute(sizeMultiplier, 1));
         geometry.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
@@ -151,7 +170,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
         const particle = new THREE.Points(geometry, this.particleMaterial);
         const birthTime = Date.now();
     
-        this.particleSystem.add(particle);
+        this.particleGroup.add(particle);
         this.particles.push({ mesh: particle, birthTime });
     }
 
@@ -162,7 +181,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             const { mesh, birthTime } = this.particles[i];
             const elapsedTime = now - birthTime;
             if (elapsedTime > this.maxLifeTime) {
-                this.particleSystem.remove(mesh);
+                this.particleGroup.remove(mesh);
                 this.particles.splice(i, 1);
                 continue;
             }
@@ -171,8 +190,15 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             const lifeFraction = elapsedTime / this.maxLifeTime;
 
             const alpha = (mesh.geometry.attributes.alpha.array as Float32Array);
-            alpha[0] =  1.0 - lifeFraction;
-            mesh.geometry.attributes.alpha.needsUpdate = true;        
+            alpha[0] = 1.0 - lifeFraction;
+            mesh.geometry.attributes.alpha.needsUpdate = true;    
+            
+            const position = (mesh.geometry.attributes.position.array as Float32Array);
+            const velocity = (mesh.geometry.attributes.velocity.array as Float32Array);
+            position[0] = position[0] + velocity[0];
+            position[1] = position[1] + velocity[1];
+            position[2] = position[2] + velocity[2];
+            mesh.geometry.attributes.position.needsUpdate = true;    
         }
     }
 
@@ -236,11 +262,11 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     kill(): void {
         this.isDead = true;
 
-        this.particleSystem.children = this.particleSystem.children
+        this.particleGroup.children = this.particleGroup.children
             .filter((child) => {
                 let item = <THREE.Points>child;
                 //item.remove();
-                this.particleSystem.remove(item);
+                this.particleGroup.remove(item);
             });   
 
         this.scene.remove(this.particleGroup);
@@ -255,6 +281,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             attribute vec3 lerpColor1;
             attribute vec3 lerpColor2;
             attribute vec3 lerpColor3;
+            attribute vec3 velocity;
             
             varying float vAlpha;
             varying vec3 vStartColor;
@@ -270,7 +297,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
                 vLerpColor2 = lerpColor2;
                 vLerpColor3 = lerpColor3;
 
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                vec4 mvPosition = modelViewMatrix * vec4(position + velocity, 1.0);
                 //gl_PointSize = size * (10.0 / -mvPosition.z) * sizeMultiplier;
                 if(sizeMultiplier < 1.0) {
                     gl_PointSize = initialSize * sizeMultiplier * vAlpha;    
