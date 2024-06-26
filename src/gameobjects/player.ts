@@ -59,7 +59,7 @@ export class Player {
         this.currentHealth = this.maxHealth;
 
         this.projectileFactory = new ProjectileFactory(particleMaterial);
-        //this.headLights = new Headlights(scene);
+        this.headLights = new Headlights(scene);
 
         this.playerName = playerName;      
         let gameScene = <GameScene>scene;

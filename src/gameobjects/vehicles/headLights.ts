@@ -9,7 +9,7 @@ export default class Headlights {
      *
      */
     constructor(scene: THREE.Scene) {        
-        let meshMaterial = new THREE.MeshBasicMaterial({
+        /*let meshMaterial = new THREE.MeshBasicMaterial({
             color: 'white',
             //side: THREE.DoubleSide,
             wireframe: false,
@@ -17,9 +17,18 @@ export default class Headlights {
             transparent: true,
             opacity: 0.05
         });
+        */
+
+        const meshMaterial = new THREE.ShaderMaterial({
+            vertexShader: this.vertexShader(),
+            fragmentShader: this.fragmentShader(),
+            transparent: true, // Enable transparency,
+            blending: THREE.AdditiveBlending,
+            side: THREE.DoubleSide
+        });
         
         this.mesh1 = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.1, 0.5, 2, 16),    
+            new THREE.CylinderGeometry(0.1, 0.6, 3, 16),    
             meshMaterial
         );
         
@@ -36,7 +45,7 @@ export default class Headlights {
         this.group.add(this.mesh1);
 
         this.mesh2 = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.1, 0.5, 2, 16),    
+            new THREE.CylinderGeometry(0.1, 0.6, 3, 16),    
             meshMaterial
         );
         
@@ -58,5 +67,32 @@ export default class Headlights {
     update(position: THREE.Vector3, quaternion: THREE.Quaternion) {
         this.group.position.set(position.x, position.y, position.z);
         this.group.quaternion.copy(quaternion);
+    }
+
+    // Vertex shader
+    vertexShader() {    
+        return `
+            varying vec3 vPosition;
+            void main()
+            {
+                vPosition = position;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+            `
+    }
+
+
+    // Fragment shader
+    fragmentShader() {
+        return `
+            varying vec3 vPosition;
+            void main()
+            {
+                // Map the y position to a 0-1 range for alpha
+                //float alpha =  vPosition.x / 5.0 + 0.05;
+                float alpha =  vPosition.y + 0.05;
+                gl_FragColor = vec4(1.0, 1.0, 1.0, alpha); // Green color with varying alpha
+            }
+            `
     }
 }
