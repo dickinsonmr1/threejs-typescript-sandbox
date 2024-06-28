@@ -24,6 +24,7 @@ import { TextureToArray } from '../gameobjects/shapes/textureToArray';
 import { TerrainObject } from '../gameobjects/shapes/terrainObject';
 import { Water } from 'three/addons/objects/Water.js';
 import { DebugDivElementManager } from './debugDivElementManager';
+import { TerrainObjectv2 } from '../gameobjects/shapes/terrainObjectv2';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -79,7 +80,7 @@ export default class GameScene extends THREE.Scene {
 
     basicMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial( { color: 0xFFFF00 });
     
-    terrain?: TerrainObject;
+    terrain?: TerrainObjectv2;
     water?: Water;
 
     grassBillboards?: THREE.Points;
@@ -187,7 +188,7 @@ export default class GameScene extends THREE.Scene {
         
 
         // width and height need to match dimensions of heightmap
-        this.terrain = new TerrainObject(this,
+        this.terrain = new TerrainObjectv2(this,
             /*
             new THREE.MeshPhongMaterial(
                 {
@@ -227,10 +228,7 @@ export default class GameScene extends THREE.Scene {
             this.world,
             groundMaterial,
             this.heightMapTextureAsArray,
-            2,
-            false,
-            true,
-            false
+            5
         );
 
         // adding phyics plane to avoid falling through
