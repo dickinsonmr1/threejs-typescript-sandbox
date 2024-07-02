@@ -4,6 +4,7 @@ import { ParticleEmitterType } from "./particleTrailObject";
 import { Material } from "cannon-es";
 import GameScene from "../../scenes/gameScene";
 import { vec2 } from "three/examples/jsm/nodes/Nodes.js";
+import { Utility } from "../../utility";
 /*
 TODO: fix me
 */
@@ -268,6 +269,8 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
                 let item = <THREE.Points>child;
                 //item.remove();
                 this.particleGroup.remove(item);
+
+                Utility.disposePoints(item);
             });   
 
         this.scene.remove(this.particleGroup);

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { ParticleEmitter } from "./particleEmitter";
 import { ParticleEmitterType } from "./particleEmitterType";
+import { Utility } from "../../utility";
 
 export class ParticleTrailObject extends ParticleEmitter { 
     scene: THREE.Scene;
@@ -223,6 +224,9 @@ export class ParticleTrailObject extends ParticleEmitter {
             let item = <THREE.Sprite>child;
             //item.remove();
             this.particleGroup.remove(item);
+            
+            if(item)
+                Utility.disposeSprite(item);
         });   
 
         this.scene.remove(this.particleGroup);

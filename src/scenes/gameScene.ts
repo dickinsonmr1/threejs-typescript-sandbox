@@ -182,6 +182,8 @@ export default class GameScene extends THREE.Scene {
         // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
 
         this.world.broadphase = new CANNON.SAPBroadphase(this.world);
+        //this.world.broadphase = new CANNON.NaiveBroadphase;        
+        //(this.world.solver as CANNON.GSSolver).iterations = 20;
 
         var groundMaterial = new CANNON.Material("groundMaterial");
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
@@ -1074,9 +1076,10 @@ export default class GameScene extends THREE.Scene {
     }
 
     update() {
-        if(this.world != null)
-            this.world.fixedStep();
-
+        if(this.world != null) {
+            //// called in main.ts
+            //this.world.fixedStep();
+        }
         this.traverse(x => {
         
         });

@@ -72,8 +72,8 @@ export class TerrainObjectv2 {
     }
 
     generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = []) {           
-        // generate physics object
-        var height =  heightFactor;        
+
+      // generate physics object
         var matrix: number[][] = [];
 
         // scale by heightFactor
@@ -88,7 +88,7 @@ export class TerrainObjectv2 {
         
         const groundMaterial = new CANNON.Material('ground');
         this.heightfieldShape = new CANNON.Heightfield(matrix, {
-          elementSize: 1, //100 / sizeX,
+          elementSize: 1
         });
 
         const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial, isTrigger: true });

@@ -34,27 +34,65 @@ export class Utility {
     }
 
     static cylinderBodyToMesh(body: CANNON.Body, material: THREE.Material, radius: number, numSegments: number): THREE.Group {
-        const group = new THREE.Group()
-      
-        group.position.copy(Utility.CannonVec3ToThreeVec3(body.position));
-        group.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(body.quaternion));
-      
-        const meshes = body.shapes.map((shape) => {
-          //const geometry = shapeToGeometry(shape)
-          const cylinderGeometry = new THREE.CylinderGeometry(radius, radius, radius / 2, numSegments);
-      
-          return new THREE.Mesh(cylinderGeometry, material)
-        })
-      
-        meshes.forEach((mesh, i) => {
-          const offset = body.shapeOffsets[i];
-          const orientation = body.shapeOrientations[i];
-          mesh.position.copy(Utility.CannonVec3ToThreeVec3(offset));
-          mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(orientation));
-      
-          group.add(mesh)
-        })
-      
-        return group
+      const group = new THREE.Group()
+    
+      group.position.copy(Utility.CannonVec3ToThreeVec3(body.position));
+      group.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(body.quaternion));
+    
+      const meshes = body.shapes.map((shape) => {
+        //const geometry = shapeToGeometry(shape)
+        const cylinderGeometry = new THREE.CylinderGeometry(radius, radius, radius / 2, numSegments);
+    
+        return new THREE.Mesh(cylinderGeometry, material)
+      })
+    
+      meshes.forEach((mesh, i) => {
+        const offset = body.shapeOffsets[i];
+        const orientation = body.shapeOrientations[i];
+        mesh.position.copy(Utility.CannonVec3ToThreeVec3(offset));
+        mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(orientation));
+    
+        group.add(mesh)
+      })
+    
+      return group
+    }
+
+    static disposeMesh(object: THREE.Mesh) {
+      if (object.geometry) {
+        object.geometry.dispose();
       }
+
+      if (object.material) {
+        if (Array.isArray(object.material)) {
+            object.material.forEach(material => material.dispose());
+        } else {
+            object.material.dispose();
+        }
+      }
+    }
+
+    static disposeSprite(sprite: THREE.Sprite) {
+
+      if (sprite.material) {
+        if (sprite.material.map) {
+            sprite.material.map.dispose(); // Dispose of the texture
+        }
+        sprite.material.dispose(); // Dispose of the material
+      }
+    
+      if(sprite.geometry)
+        sprite.geometry.dispose();      
+    }
+
+    static disposePoints(points: THREE.Points) {
+
+      if (points.geometry) {
+        points.geometry.dispose(); // Dispose of the geometry
+      }
+
+      //if (points.material) {
+          //<THREE.PointsMaterial>(points.material).dispose(); // Dispose of the material
+      //}   
+    }
 }

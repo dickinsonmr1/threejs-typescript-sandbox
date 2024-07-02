@@ -73,13 +73,15 @@ function tick() {
   scene.updateWater();
   scene.update();
   sceneOrtho.update();
-  //cannonDebugger.update();
+  cannonDebugger.update();
 
   renderer.clear();
   renderer.render(scene, mainCamera);
   renderer.clearDepth();
   renderer.render(sceneOrtho, cameraOrtho);
   requestAnimationFrame(tick);
+
+  scene.world.fixedStep();
 }
 
 tick()
