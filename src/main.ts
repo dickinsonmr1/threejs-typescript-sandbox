@@ -38,7 +38,7 @@ window.addEventListener("gamepaddisconnected", (event) => {
   console.log(event.gamepad);
 });
 
-var sceneController = new SceneController();
+var sceneController = new SceneController(renderer);
 
 const scene = new GameScene(mainCamera, sceneController);
 scene.initialize();

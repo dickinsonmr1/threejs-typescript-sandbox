@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { PointLightObject } from "./pointLightObject";
 import { ParticleEmitter } from "./particleEmitter";
+import { Utility } from "../../utility";
 
 export class FireObject extends ParticleEmitter {
         
@@ -165,6 +166,13 @@ export class FireObject extends ParticleEmitter {
             else if(item.material.opacity < 0.50)
                 item.material.color.lerp(new THREE.Color('red'), 0.5);
 
+            if(item.material.opacity <= 0) {
+                this.scene.remove(item);
+
+                Utility.disposeSprite(item);
+                //item.material.dispose();
+                //item.geometry.dispose();                
+            }
             //todo: investigate: THREE.MathUtils.lerp
         });
 

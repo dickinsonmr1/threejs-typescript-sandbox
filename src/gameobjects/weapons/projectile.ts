@@ -233,8 +233,7 @@ export class Projectile extends SphereObject {
         this.scene.remove(this.mesh);
         Utility.disposeMesh(this.mesh);
 
-        this.scene.remove(this.group);        
-
+        this.scene.remove(this.group);
 	}
 
     update() {

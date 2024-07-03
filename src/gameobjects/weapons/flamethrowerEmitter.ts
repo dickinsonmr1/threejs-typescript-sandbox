@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { PointLightObject } from "../fx/pointLightObject";
+import { Utility } from "../../utility";
 
 export class FlamethrowerEmitter {
 
@@ -153,6 +154,8 @@ export class FlamethrowerEmitter {
 
             if(item.material.opacity <= 0) {
                 this.scene.remove(item);
+
+                Utility.disposeSprite(item);
                 //item.material.dispose();
                 //item.geometry.dispose();                
             }

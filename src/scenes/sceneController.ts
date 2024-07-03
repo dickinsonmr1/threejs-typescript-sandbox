@@ -12,8 +12,10 @@ export default class SceneController {
     gamepadPrevious!: Gamepad;
     gamepadControlScheme!: GamepadControlScheme;
 
-    constructor() {
+    renderer: THREE.WebGLRenderer;
 
+    constructor(renderer: THREE.WebGLRenderer) {
+        this.renderer = renderer;
     }
 
 
@@ -188,5 +190,9 @@ export default class SceneController {
 
     updateTurboOnHud(currentValue: number) {
         this.hudScene?.updateTurboBar(currentValue);
+    }
+
+    getWebGLRenderer(): THREE.WebGLRenderer {
+        return this.renderer;
     }
 }

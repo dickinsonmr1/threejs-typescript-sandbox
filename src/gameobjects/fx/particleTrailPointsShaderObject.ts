@@ -39,6 +39,8 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     private maxPositionJitter: number;
     private maxLifeTime: number = 500;
 
+    //private geometry: THREE.BufferGeometry = new THREE.BufferGeometry();
+
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
     constructor(scene: THREE.Scene,
@@ -98,7 +100,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     }
 
     addParticle(position: THREE.Vector3): void {
-        const geometry = new THREE.BufferGeometry();
+        let geometry = new THREE.BufferGeometry();
 
         const vertices = new Float32Array(3); // Single particle   
         vertices[0] = position.x;// + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
@@ -185,6 +187,8 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             if (elapsedTime > this.maxLifeTime) {
                 this.particleGroup.remove(mesh);
                 this.particles.splice(i, 1);
+
+                Utility.disposePoints(mesh);
                 continue;
             }
                         

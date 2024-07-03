@@ -496,6 +496,9 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.addElement("LightObjectCount", "");
         this.debugDivElementManager.addElement("ParticleEmitterCount", "");
         this.debugDivElementManager.addElement("ShaderParticleCount", "");
+        this.debugDivElementManager.addElement("TotalGeometry", "");
+        this.debugDivElementManager.addElement("TotalTextures", "");
+        this.debugDivElementManager.addElement("TotalRendererPrograms", "");
 
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky
@@ -1294,6 +1297,13 @@ export default class GameScene extends THREE.Scene {
                 shaderParticleCount += x.particleEmitterObject.getParticleCount();
         });
         this.debugDivElementManager.updateElementText("ShaderParticleCount", `Shader particle count: ${shaderParticleCount}`);
+
+        const renderer = this.sceneController.getWebGLRenderer();
+        if(renderer.info != null) {
+            this.debugDivElementManager.updateElementText("TotalGeometry", `WebGLRenderer total geometry: ${renderer.info.memory.geometries}`);
+            this.debugDivElementManager.updateElementText("TotalTextures", `WebGLRenderer total textures: ${renderer.info.memory.textures}`);
+            this.debugDivElementManager.updateElementText("TotalRendererPrograms", `WebGLRenderer total programs: ${renderer.info?.programs?.length ?? 0}`);
+        }
     }
 
     //generateArrayFromTexture() {

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { PointLightObject } from "./pointLightObject";
 import { ParticleEmitter } from "./particleEmitter";
+import { Utility } from "../../utility";
 
 export class VehicleExplosionObject extends ParticleEmitter {
     
@@ -136,6 +137,11 @@ export class VehicleExplosionObject extends ParticleEmitter {
                 item.material.color.lerp(this.particleColor3, 0.5);
             else if(item.material.opacity < 0.50)
                 item.material.color.lerp(this.particleColor4, 0.5);
+
+            if(item.material.opacity <= 0.0) {
+                this.particleGroup.remove(item);
+                Utility.disposeSprite(item);
+            }
         });
 
         this.particleGroup.children = this.particleGroup.children
