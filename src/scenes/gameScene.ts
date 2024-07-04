@@ -15,7 +15,7 @@ import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/ray
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import { PickupObject } from '../gameobjects/pickupObject';
 import SceneController from './sceneController';
-import { Player } from '../gameobjects/player';
+import { Player, PlayerState } from '../gameobjects/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
@@ -239,9 +239,22 @@ export default class GameScene extends THREE.Scene {
             mass: 0,
             type: CANNON.Body.STATIC,
             material: new CANNON.Material});
-        body.addShape(groundShape);            
+        body.addShape(groundShape);     
+
         body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
         this.world.addBody(body);
+
+        /*
+        const wallShape = new CANNON.Plane();
+        var wallBody = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody.addShape(wallShape);            
+        wallBody.position.set(this.terrain., 20, 20);       
+        wallBody.quaternion.setFromEuler(Math.PI, 0, 0);        
+        this.world.addBody(wallBody);
+        */
 
         this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight(), 2, 4);
             
@@ -329,6 +342,7 @@ export default class GameScene extends THREE.Scene {
             objectMaterial);
         this.allGltfPlayers.push(this.gltfVehiclePlayer4);
 */            
+/*
         this.raycastVehicleObject = new RaycastVehicleObject(
             this,
             new THREE.Vector3(-5, 4, -15),   // position
@@ -345,7 +359,7 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
         );
-
+*/
         this.player1.setVehicleObject(new RaycastVehicleObject(
             this,
             new THREE.Vector3(-10, 5, -10),   // position
@@ -496,9 +510,11 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.addElement("LightObjectCount", "");
         this.debugDivElementManager.addElement("ParticleEmitterCount", "");
         this.debugDivElementManager.addElement("ShaderParticleCount", "");
-        this.debugDivElementManager.addElement("TotalGeometry", "");
-        this.debugDivElementManager.addElement("TotalTextures", "");
-        this.debugDivElementManager.addElement("TotalRendererPrograms", "");
+        this.debugDivElementManager.addElement("RendererTotalGeometry", "");
+        this.debugDivElementManager.addElement("RendererTotalTextures", "");
+        this.debugDivElementManager.addElement("RendererTotalPrograms", "");
+        this.debugDivElementManager.addElement("TraverseTotalTextures", "");
+        
 
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky
@@ -533,7 +549,7 @@ export default class GameScene extends THREE.Scene {
         );
         this.water.rotation.x = - Math.PI / 2;
         this.water.position.y += 0.75; // 1.5
-        this.add( this.water );
+        //this.add( this.water );
 
         // TODO: sun from https://threejs.org/examples/?q=water#webgl_shaders_ocean
         /*
@@ -550,6 +566,7 @@ export default class GameScene extends THREE.Scene {
         this.water.material.uniforms[ 'sunDirection' ].value.copy( sun ).normalize();        
         */
 
+        /*
         var flamethrowerEmitter = new FlamethrowerEmitter(this,
             this.player1.playerId,
             this.explosionTexture,
@@ -570,6 +587,7 @@ export default class GameScene extends THREE.Scene {
             5
         );
         this.flamethrowerEmitters.push(flamethrowerEmitter2);
+        */
 
         //this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
                 
@@ -759,11 +777,11 @@ export default class GameScene extends THREE.Scene {
         }
         
         if (this.keyDown.has('z')) {
-            this.firePlayerFlamethrower();
+            this.player1.tryFireFlamethrower();
         }
 
         if (this.keyDown.has('q')) {
-            this.fireEnemyFlamethrower();
+            this.player2.tryFireFlamethrower();
         }
         if (this.keyDown.has('shift')) {
             this.player1.tryTurbo();
@@ -786,32 +804,12 @@ export default class GameScene extends THREE.Scene {
             this.addToParticleEmitters(projectile.particleEmitterSmokeObject);	
     }
 
-    public firePlayerFlamethrower() {
-
-        let flamethrowerEmitter = this.flamethrowerEmitters[0];
-        flamethrowerEmitter.setPosition(this.player1.getPosition());
-        if(!this.player1.isVehicleObjectNull() && !this.player1.isModelNull()) {                
-            flamethrowerEmitter.setQuaternion(this.player1.getModelQuaternion());
-        }
-    
-        flamethrowerEmitter.emitParticles();
-    }
-
-    public fireEnemyFlamethrower() {
-
-        // TODO: refactor and link to specific enemies
-
-        let flamethrowerEmitter = this.flamethrowerEmitters[1];
-        flamethrowerEmitter.setPosition(this.player2.getPosition());
-        if(!this.player2.isVehicleObjectNull() && !this.player2.isModelNull()) {                
-            flamethrowerEmitter.setQuaternion(this.player2.getModelQuaternion());
-        }
-    
-        flamethrowerEmitter.emitParticles();
-    }
-
     public addToParticleEmitters(emitter: ParticleEmitter) {
         this.particleEmitters.push(emitter);
+    }
+
+    public addToFlamethrowerEmitters(emitter: FlamethrowerEmitter) {
+        this.flamethrowerEmitters.push(emitter);
     }
 
     private async generateRandomCube() {
@@ -1101,35 +1099,58 @@ export default class GameScene extends THREE.Scene {
             
             let cpuPlayer = cpuPlayers[i];
 
-            let temp = THREE.MathUtils.randInt(0, 80);
+            if(cpuPlayer.playerState != PlayerState.Alive)
+                continue;
+
+            let temp = THREE.MathUtils.randInt(0, 200);
             switch(temp) {
             case 1:
+            case 2:
                 cpuPlayer.tryAccelerateWithKeyboard();
                 break;
-            case 2:
+            case 3:
+            case 4:
                 cpuPlayer.tryAccelerateWithKeyboard();
                 cpuPlayer.tryTurnLeftWithKeyboard();
                 break;
-            case 3:
+            case 5:
+            case 6:
                 cpuPlayer.tryAccelerateWithKeyboard();
                 cpuPlayer.tryTurn(-0.5);
                 break;
-            case 4:
+            case 7:
+            case 8:
                 cpuPlayer.tryAccelerateWithKeyboard();
                 cpuPlayer.tryTurnRightWithKeyboard();
                 break;
-            case 5:
+            case 9:
+            case 10:
                 cpuPlayer.tryAccelerateWithKeyboard();
                 cpuPlayer.tryTurn(0.5);
                 break;
-            case 10:
-            case 11:
+            case 50:
+                cpuPlayer.tryReverseWithKeyboard();
+                //cpuPlayer.tryTurn(0.5);
+                break;
+            case 60:
+                cpuPlayer.tryJump();                
+                //cpuPlayer.tryTurn(0.5);
+                break;
+            case 70:
+                cpuPlayer.tryTurbo();
+                break;
+            case 80:
+            case 81:
                 var projectile = cpuPlayer.createProjectile(ProjectileType.Bullet);
                 this.addNewProjectile(projectile);
                 break;
-            case 20:
+            case 90:
                 var projectile = cpuPlayer.createProjectile(ProjectileType.Rocket);
                 this.addNewProjectile(projectile);
+                break;
+            case 100:
+            case 101:
+                cpuPlayer.tryFireFlamethrower();
                 break;
             default:
             }
@@ -1300,10 +1321,51 @@ export default class GameScene extends THREE.Scene {
 
         const renderer = this.sceneController.getWebGLRenderer();
         if(renderer.info != null) {
-            this.debugDivElementManager.updateElementText("TotalGeometry", `WebGLRenderer total geometry: ${renderer.info.memory.geometries}`);
-            this.debugDivElementManager.updateElementText("TotalTextures", `WebGLRenderer total textures: ${renderer.info.memory.textures}`);
-            this.debugDivElementManager.updateElementText("TotalRendererPrograms", `WebGLRenderer total programs: ${renderer.info?.programs?.length ?? 0}`);
+            this.debugDivElementManager.updateElementText("RendererTotalGeometry", `WebGLRenderer total geometry: ${renderer.info.memory.geometries}`);
+            this.debugDivElementManager.updateElementText("RendererTotalTextures", `WebGLRenderer total textures: ${renderer.info.memory.textures}`);
+            this.debugDivElementManager.updateElementText("RendererTotalPrograms", `WebGLRenderer total programs: ${renderer.info?.programs?.length ?? 0}`);
         }
+
+        //let textureCount = this.getAllLoadedTextures(this);
+        //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);
+    }
+   
+    // Function to get all loaded textures in the scene
+    getAllLoadedTextures(scene: THREE.Scene): THREE.Texture[] {
+        const textures = new Set<THREE.Texture>();
+    
+        scene.traverse((object) => {
+            if ((object as THREE.Mesh).isMesh) {
+                const mesh = object as THREE.Mesh;
+                const material = mesh.material;
+                if (Array.isArray(material)) {
+                    material.forEach((mat) => {
+                        this.collectTextures(mat, textures);
+                    });
+                } else if (material) {
+                    this.collectTextures(material, textures);
+                }
+            }
+        });
+    
+        return Array.from(textures);
+    }
+
+    collectTextures(material: THREE.Material, textures: Set<THREE.Texture>): void {
+        const textureProps: string[] = [
+            'map', 'lightMap', 'aoMap', 'emissiveMap', 'bumpMap', 'normalMap',
+            'displacementMap', 'roughnessMap', 'metalnessMap', 'alphaMap',
+            'envMap', 'clearcoatMap', 'clearcoatNormalMap', 'clearcoatRoughnessMap',
+            'sheenColorMap', 'sheenRoughnessMap', 'transmissionMap', 'thicknessMap'
+        ];
+    
+        textureProps.forEach((prop) => {
+            //var temp = prop as keyof THREE.Material;
+            const texture = material[prop as keyof THREE.Material] as THREE.Texture | undefined;
+            if (texture) {
+                textures.add(texture);
+            }
+        });
     }
 
     //generateArrayFromTexture() {

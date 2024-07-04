@@ -14,6 +14,7 @@ import { ParticleEmitterType, ParticleTrailObject } from "./fx/particleTrailObje
 import * as CANNON from 'cannon-es';
 import { Target } from "./target";
 import { PlayerMarker } from "./playerMarker";
+import { FlamethrowerEmitter } from "./weapons/flamethrowerEmitter";
 
 export enum PlayerState {
     Alive,
@@ -38,6 +39,8 @@ export class Player {
 
     private vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
+
+    flamethrowerEmitter: FlamethrowerEmitter;
 
     fireObjects: FireObject[] = [];
 
@@ -82,6 +85,16 @@ export class Player {
 
         this.turboParticleEmitter.pause();
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
+
+        this.flamethrowerEmitter = new FlamethrowerEmitter(gameScene,
+            this.playerId,
+            gameScene.explosionTexture,
+            new THREE.Color('yellow'),
+            new THREE.Color('orange'),
+            new THREE.Vector3(0, 1, 0),
+            5
+        );
+        gameScene.addToFlamethrowerEmitters(this.flamethrowerEmitter);
 
         this.playerColor = playerColor;
         this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), 0.075, true);
@@ -385,6 +398,15 @@ export class Player {
 
     tryFireRocket(): void {
 
+    }
+
+    tryFireFlamethrower(): void {        
+        this.flamethrowerEmitter.setPosition(this.getPosition());
+        if(!this.isVehicleObjectNull() && !this.isModelNull()) {                
+            this.flamethrowerEmitter.setQuaternion(this.getModelQuaternion());
+        }
+    
+        this.flamethrowerEmitter.emitParticles();
     }
 
     tryFireBullets(): void {
