@@ -293,6 +293,10 @@ export class Player {
         this.vehicleObject.tryTurn(x);
     }
     
+    tryTightTurn(x: number): void {
+        this.vehicleObject.tryTightTurn(x);
+    }
+    
     tryTurnLeftWithKeyboard(): void {
         this.vehicleObject.tryTurnLeft();
     }

@@ -225,6 +225,16 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 3);
     }
 
+    tryTightTurn(gamepadStickX: number): void {
+        // front wheels
+        this.raycastVehicle?.setSteeringValue(1.0 * gamepadStickX, 0);
+        this.raycastVehicle?.setSteeringValue(1.0 * gamepadStickX, 1);
+
+        // rear wheels
+        //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 2);
+        //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 3);
+    }
+
     tryTurnLeft() {
         this.raycastVehicle?.setSteeringValue(this.maxSteerVal, 0);
         this.raycastVehicle?.setSteeringValue(this.maxSteerVal, 1);

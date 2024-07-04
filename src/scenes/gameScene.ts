@@ -244,17 +244,53 @@ export default class GameScene extends THREE.Scene {
         body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
         this.world.addBody(body);
 
-        /*
-        const wallShape = new CANNON.Plane();
-        var wallBody = new CANNON.Body({
+        const wallShape = new CANNON.Box(new CANNON.Vec3(64, 20, 5));
+
+        var wallBody1 = new CANNON.Body({
             mass: 0,
             type: CANNON.Body.STATIC,
             material: new CANNON.Material});
-        wallBody.addShape(wallShape);            
-        wallBody.position.set(this.terrain., 20, 20);       
-        wallBody.quaternion.setFromEuler(Math.PI, 0, 0);        
-        this.world.addBody(wallBody);
-        */
+        wallBody1.addShape(wallShape);            
+        wallBody1.position.set(0, 0, 64);       
+        wallBody1.quaternion.setFromEuler(Math.PI, 0, 0);        
+        this.world.addBody(wallBody1);
+
+        var wallBody2 = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody2.addShape(wallShape);            
+        wallBody2.position.set(0, 0, -64);       
+        wallBody2.quaternion.setFromEuler(Math.PI, 0, 0);        
+        this.world.addBody(wallBody2);
+
+        var wallBody3 = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody3.addShape(wallShape);            
+        wallBody3.position.set(64, 0, 0);       
+        wallBody3.quaternion.setFromEuler(Math.PI, Math.PI/2, 0);        
+        this.world.addBody(wallBody3);
+
+        var wallBody4 = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody4.addShape(wallShape);            
+        wallBody4.position.set(-64, 0, 0);       
+        wallBody4.quaternion.setFromEuler(Math.PI, Math.PI/2, 0);        
+        this.world.addBody(wallBody4);
+/*
+        var wallBody4 = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody2.addShape(wallShape);            
+        wallBody2.position.set(-64, 0, 0);       
+        wallBody2.quaternion.setFromEuler(0, 0, 0);        
+        this.world.addBody(wallBody4);
+*/
 
         this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight(), 2, 4);
             

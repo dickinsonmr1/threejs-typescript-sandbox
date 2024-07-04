@@ -88,6 +88,13 @@ export default class SceneController {
         const gamepad = navigator.getGamepads()[0];
         if(!gamepad) return;
 
+        
+        /*
+        if(gamepad.buttons[this.brakeOrReverseGamepadIndex].pressed) {
+            this.gameScene?.player1.tryTightTurn(-gamepad.axes[0]);
+        }
+        else 
+        */
         this.gameScene?.player1.tryTurn(-gamepad.axes[0]);
 
         /*
