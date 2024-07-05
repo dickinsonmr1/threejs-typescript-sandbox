@@ -244,14 +244,16 @@ export default class GameScene extends THREE.Scene {
         body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
         this.world.addBody(body);
 
-        const wallShape = new CANNON.Box(new CANNON.Vec3(64, 20, 5));
+
+        var height = this.heightMapTextureAsArray.getImageHeight();
+        const wallShape = new CANNON.Box(new CANNON.Vec3(height / 2, 20, 1));
 
         var wallBody1 = new CANNON.Body({
             mass: 0,
             type: CANNON.Body.STATIC,
             material: new CANNON.Material});
         wallBody1.addShape(wallShape);            
-        wallBody1.position.set(0, 0, 64);       
+        wallBody1.position.set(0, 0, height / 2);       
         wallBody1.quaternion.setFromEuler(Math.PI, 0, 0);        
         this.world.addBody(wallBody1);
 
@@ -260,7 +262,7 @@ export default class GameScene extends THREE.Scene {
             type: CANNON.Body.STATIC,
             material: new CANNON.Material});
         wallBody2.addShape(wallShape);            
-        wallBody2.position.set(0, 0, -64);       
+        wallBody2.position.set(0, 0, -height / 2);       
         wallBody2.quaternion.setFromEuler(Math.PI, 0, 0);        
         this.world.addBody(wallBody2);
 
@@ -269,7 +271,7 @@ export default class GameScene extends THREE.Scene {
             type: CANNON.Body.STATIC,
             material: new CANNON.Material});
         wallBody3.addShape(wallShape);            
-        wallBody3.position.set(64, 0, 0);       
+        wallBody3.position.set(height / 2, 0, 0);       
         wallBody3.quaternion.setFromEuler(Math.PI, Math.PI/2, 0);        
         this.world.addBody(wallBody3);
 
@@ -278,7 +280,7 @@ export default class GameScene extends THREE.Scene {
             type: CANNON.Body.STATIC,
             material: new CANNON.Material});
         wallBody4.addShape(wallShape);            
-        wallBody4.position.set(-64, 0, 0);       
+        wallBody4.position.set(-height / 2, 0, 0);       
         wallBody4.quaternion.setFromEuler(Math.PI, Math.PI/2, 0);        
         this.world.addBody(wallBody4);
 /*

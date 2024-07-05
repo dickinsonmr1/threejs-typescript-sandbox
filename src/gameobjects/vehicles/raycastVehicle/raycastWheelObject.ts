@@ -27,7 +27,8 @@ export class RaycastWheelObject {
         })
         this.physicsMaterial = wheelMaterial;
 
-        const cylinderShape = new CANNON.Cylinder(radius, radius, radius / 2, 20);
+        let wheelHeight = radius * 1.5;
+        const cylinderShape = new CANNON.Cylinder(radius, radius, wheelHeight, 20);
         this.wheelBody = new CANNON.Body({
           mass: 0,
           material: wheelMaterial,
@@ -43,7 +44,7 @@ export class RaycastWheelObject {
                 
         // visual body
         this.mesh = new THREE.Mesh(
-            new THREE.CylinderGeometry(radius, radius, radius / 2, 20),                
+            new THREE.CylinderGeometry(radius, radius, wheelHeight, 20),                
             //Utility.cylinderBodyToMesh(this.wheelBody, this.meshMaterial, radius, 20),
             this.meshMaterial
         );
