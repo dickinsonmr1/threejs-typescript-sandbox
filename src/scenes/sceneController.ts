@@ -130,7 +130,7 @@ export default class SceneController {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene.player1.tryFireBullets();
                 }
-                if(buttonIndex == this.fireSecondaryWeaponGamepadIndex && !this.gamepadPrevious.buttons[this.fireSecondaryWeaponGamepadIndex].pressed) {
+                if(buttonIndex == this.fireSecondaryWeaponGamepadIndex) { // && !this.gamepadPrevious.buttons[this.fireSecondaryWeaponGamepadIndex].pressed) {
                     console.log(`pressed: ${buttonIndex}`);
 
                     this.gameScene.player1.tryFireRocket();

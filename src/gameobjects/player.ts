@@ -51,9 +51,12 @@ export class Player {
     private fireLeft: boolean = false;
     private projectileFactory: ProjectileFactory;// = new ProjectileFactory();
 
-    private bulletCooldownTime: number = 0
     private maxBulletCooldownTimeInSeconds: number = 0.20;
     private bulletCooldownClock: THREE.Clock = new THREE.Clock(false);
+
+    private maxRocketCooldownTimeInSeconds: number = 0.5;
+    private rocketCooldownClock: THREE.Clock = new THREE.Clock(false);
+
 
     constructor(scene: THREE.Scene,
         playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial) {
@@ -201,6 +204,10 @@ export class Player {
         if(this.bulletCooldownClock.getElapsedTime() > this.maxBulletCooldownTimeInSeconds) {
             this.bulletCooldownClock.stop();
         }        
+
+        if(this.rocketCooldownClock.getElapsedTime() > this.maxRocketCooldownTimeInSeconds) {
+            this.rocketCooldownClock.stop();
+        }
         //if(this.bulletCooldownTime > 0) this.bulletCooldownTime--;
     }
 
@@ -411,10 +418,16 @@ export class Player {
     }
 
     tryFireRocket(): void {
-        let projectile = this.createProjectile(ProjectileType.Rocket);
 
-        let gameScene = <GameScene>this.scene;
-        gameScene.addNewProjectile(projectile);
+        if(!this.rocketCooldownClock.running) {
+
+            let projectile = this.createProjectile(ProjectileType.Rocket);
+
+            let gameScene = <GameScene>this.scene;
+            gameScene.addNewProjectile(projectile);
+
+            this.rocketCooldownClock.start();
+        }       
     }
 
     tryFireFlamethrower(): void {        
