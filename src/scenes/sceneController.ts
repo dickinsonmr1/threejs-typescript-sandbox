@@ -126,15 +126,14 @@ export default class SceneController {
                     console.log(`pressed: ${buttonIndex}`);
                     this.gameScene?.player1.tryReverseWithKeyboard();
                 }
-                if(buttonIndex == this.firePrimaryWeaponGamepadIndex && !this.gamepadPrevious.buttons[this.firePrimaryWeaponGamepadIndex].pressed) {
+                if(buttonIndex == this.firePrimaryWeaponGamepadIndex) { // && !this.gamepadPrevious.buttons[this.firePrimaryWeaponGamepadIndex].pressed) {
                     console.log(`pressed: ${buttonIndex}`);
-                    var projectile = this.gameScene.player1.createProjectile(ProjectileType.Bullet);
-                    this.gameScene?.addNewProjectile(projectile);
+                    this.gameScene.player1.tryFireBullets();
                 }
                 if(buttonIndex == this.fireSecondaryWeaponGamepadIndex && !this.gamepadPrevious.buttons[this.fireSecondaryWeaponGamepadIndex].pressed) {
                     console.log(`pressed: ${buttonIndex}`);
-                    var projectile = this.gameScene.player1.createProjectile(ProjectileType.Rocket);
-                    this.gameScene?.addNewProjectile(projectile);
+
+                    this.gameScene.player1.tryFireRocket();
                 }
                 if(buttonIndex == this.fireFlameThrowerGamepadIndex) {
                     console.log(`pressed: ${buttonIndex}`);

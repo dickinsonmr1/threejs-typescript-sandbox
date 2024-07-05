@@ -51,6 +51,10 @@ export class Player {
     private fireLeft: boolean = false;
     private projectileFactory: ProjectileFactory;// = new ProjectileFactory();
 
+    private bulletCooldownTime: number = 0
+    private maxBulletCooldownTimeInSeconds: number = 0.20;
+    private bulletCooldownClock: THREE.Clock = new THREE.Clock(false);
+
     constructor(scene: THREE.Scene,
         playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial) {
 
@@ -192,6 +196,12 @@ export class Player {
         let turboEmitPosition = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), turboOffset);
 
         this.turboParticleEmitter.setEmitPosition(turboEmitPosition);
+
+
+        if(this.bulletCooldownClock.getElapsedTime() > this.maxBulletCooldownTimeInSeconds) {
+            this.bulletCooldownClock.stop();
+        }        
+        //if(this.bulletCooldownTime > 0) this.bulletCooldownTime--;
     }
 
     public createProjectile(projectileType: ProjectileType): Projectile {
@@ -393,7 +403,7 @@ export class Player {
     }
 
     tryFirePrimaryWeapon(): void {
-
+        
     }
 
     tryFireSecondaryWeapon(): void {
@@ -401,7 +411,10 @@ export class Player {
     }
 
     tryFireRocket(): void {
+        let projectile = this.createProjectile(ProjectileType.Rocket);
 
+        let gameScene = <GameScene>this.scene;
+        gameScene.addNewProjectile(projectile);
     }
 
     tryFireFlamethrower(): void {        
@@ -414,7 +427,17 @@ export class Player {
     }
 
     tryFireBullets(): void {
+        //if(this.bulletCooldownTime <= 0) {
+        if(!this.bulletCooldownClock.running) {
 
+            let projectile = this.createProjectile(ProjectileType.Bullet);
+
+            let gameScene = <GameScene>this.scene;
+            gameScene.addNewProjectile(projectile);
+
+            //this.bulletCooldownTime = this.maxBulletCooldownTime;
+            this.bulletCooldownClock.start();
+        }
     }
     
     // TODO: try fire additional weapons
