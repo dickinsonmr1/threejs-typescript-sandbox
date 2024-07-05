@@ -91,7 +91,7 @@ export class TerrainObjectv2 {
           elementSize: 1
         });
 
-        const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial, isTrigger: true });
+        const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial, isTrigger: false });
         heightfieldBody.addShape(this.heightfieldShape);
 
         heightfieldBody.position.set(
