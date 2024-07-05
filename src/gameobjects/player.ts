@@ -171,6 +171,15 @@ export class Player {
         targetOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
         this.target.setTargetLocation(Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), targetOffset));
 
+        // TODO: move to projectile        
+        let groundTargetOffset = new THREE.Vector3(-10, 0, 0);
+        groundTargetOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
+        let groundTargetMeshLocation = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), groundTargetOffset);
+        let positionOnTerrain = this.getScene().getWorldPositionOnTerrain(groundTargetMeshLocation.x, groundTargetMeshLocation.z);
+        this.target.setTargetMeshPosition(positionOnTerrain);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
+        this.target.rotateTargetToFaceDown();
+
+        
         this.playerMarker.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 1, this.getPosition().z));
         
 
