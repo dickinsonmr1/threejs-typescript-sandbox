@@ -79,6 +79,7 @@ export default class GameScene extends THREE.Scene {
     }
 
     basicMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial( { color: 0xFFFF00 });
+    basicSemitransparentMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial( { color: 0xFFFF00, transparent: true, opacity: 0.5 });
     
     terrain?: TerrainObjectv2;
     water?: Water;
@@ -327,6 +328,12 @@ export default class GameScene extends THREE.Scene {
             //new THREE.MeshPhongMaterial( { color: 0x00ff00, depthWrite: true }), 
             this.basicMaterial,
             this.world, objectMaterial);
+
+        let cylinderMesh = new THREE.Mesh(
+            new THREE.CylinderGeometry(1, 1, 200, 16, 1, true),
+            this.basicSemitransparentMaterial);
+        cylinderMesh.position.set(20, 0, 20);            
+        this.add(cylinderMesh);
 
         let particleMaterial = new THREE.SpriteMaterial({
             map: this.explosionTexture,
@@ -926,7 +933,7 @@ export default class GameScene extends THREE.Scene {
         this.pickups.push(cube);
     }
 
-    private async generateRandomExplosion(
+    async generateRandomExplosion(
         projectileType: ProjectileType,
         position: THREE.Vector3,
         lightColor: THREE.Color,
@@ -949,13 +956,14 @@ export default class GameScene extends THREE.Scene {
             */
 
             let numberParticles: number;
-            switch(projectileType) {
+            switch(projectileType) {                
                 case ProjectileType.Bullet:
                     numberParticles = 5;
                     break;
                 case ProjectileType.Rocket:
+                default:
                     numberParticles = 100;
-                    break;
+                    break;                
             }
 
             this.addToParticleEmitters(new VehicleExplosionObject(

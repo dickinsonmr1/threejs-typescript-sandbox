@@ -1,15 +1,14 @@
 import * as THREE from "three";
 import { PointLightObject } from "../fx/pointLightObject";
 import { SphereObject } from "../shapes/sphereObject";
-import { ParticleTrailObject, ParticleEmitterType } from "../fx/particleTrailObject";
+import {  ParticleEmitterType } from "../fx/particleTrailObject";
 import { ProjectileType } from "./projectileType";
-import { v4 as uuidv4 } from 'uuid';
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
-import GameScene from "../../scenes/gameScene";
-import { ParticleTrailPointsObject } from "../fx/particleTrailPointsObject";
 import { ParticleEmitter } from "../fx/particleEmitter";
 import { ParticleTrailPointsShaderObject } from "../fx/particleTrailPointsShaderObject";
+import { Target } from "../target";
+import GameScene from "../../scenes/gameScene";
 
 export enum ProjectileLaunchLocation {
     Left,
@@ -33,14 +32,22 @@ export class Projectile extends SphereObject {
     pointLightObject!: PointLightObject;
     particleEmitterObject!: ParticleEmitter;
     particleEmitterSmokeObject!: ParticleEmitter;
+
+    airstrikeTarget!: Target;
     
 	private readonly velocity = new THREE.Vector3();    
 
-	private isDead = false;
+	private isDead: boolean = false;
+
+    isDetonated: boolean = false;
 
     private maxLifespanInSeconds: number = 3;
 
     //private expiryTimer: THREE.Clock;
+    private maxDetonationLifetimeInSeconds: number = 15;
+    private maxDetonationCooldownTimeInSeconds: number = 0.1;    
+    private detonationClock: THREE.Clock  = new THREE.Clock(false);
+    private detonationLifetimeClock: THREE.Clock  = new THREE.Clock(false);
 
     constructor(scene: THREE.Scene,
         playerId: string,
@@ -76,6 +83,11 @@ export class Projectile extends SphereObject {
         
         this.group.position.set(position.x, position.y, position.z);
 
+        let gameScene = <GameScene>scene;
+
+        if(this.projectileType == ProjectileType.Airstrike) {
+            this.airstrikeTarget = new Target(scene, gameScene.crosshairTexture, new THREE.Color('white'), this.group.position, 1, true);
+        }
         if(this.projectileType == ProjectileType.Rocket) {
 
             /*
@@ -213,6 +225,27 @@ export class Projectile extends SphereObject {
 		this.velocity.set(x, y, z);
 	}
 
+    detonate() {
+        if(this.projectileType == ProjectileType.Airstrike && !this.detonationClock.running) {
+
+            let gameScene = <GameScene>this.scene;
+
+            gameScene.generateRandomExplosion(this.projectileType,
+                this.airstrikeTarget.groundTargetMesh.position,
+                new THREE.Color('white'),
+                new THREE.Color('white'),
+                new THREE.Color('yellow'),
+                new THREE.Color('orange'),
+                new THREE.Color('red'),
+                );
+
+            this.isDetonated = true;
+
+            this.detonationClock.start();
+            this.detonationLifetimeClock.start();
+        }
+    }
+
 	kill(): void {
 
         super.kill();
@@ -232,6 +265,12 @@ export class Projectile extends SphereObject {
 
         this.scene.remove(this.mesh);
         Utility.disposeMesh(this.mesh);
+
+        if(this.airstrikeTarget != null) 
+        {
+            this.scene.remove(this.airstrikeTarget.groundTargetMesh);
+            Utility.disposeMesh(this.airstrikeTarget.groundTargetMesh);
+        }
 
         this.scene.remove(this.group);
 	}
@@ -269,6 +308,43 @@ export class Projectile extends SphereObject {
         }
         if(this.particleEmitterSmokeObject != null) {     
             this.particleEmitterSmokeObject.setEmitPosition(this.getPosition());   
+        }
+
+        if(this.projectileType == ProjectileType.Airstrike) {
+            if(this.airstrikeTarget != null) {
+                let gameScene = <GameScene>this.scene;
+                let groundTargetMeshLocation = this.getPosition();
+                let positionOnTerrain = gameScene.getWorldPositionOnTerrain(groundTargetMeshLocation.x, groundTargetMeshLocation.z);
+                this.airstrikeTarget.setTargetMeshPosition(positionOnTerrain);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
+                this.airstrikeTarget.rotateTargetToFaceDown();
+            }
+
+            /*
+            if(this.detonationLifetimeClock.running
+                //&& this.detonationClock.running
+                && this.detonationLifetimeClock.getElapsedTime() >= this.maxDetonationLifetimeInSeconds) {
+
+                this.detonationLifetimeClock.stop();
+                this.detonationClock.stop();
+                this.kill();
+            }
+            */
+
+            if(this.detonationClock.running && this.detonationClock.getElapsedTime() >= this.maxDetonationCooldownTimeInSeconds) {
+                let gameScene = <GameScene>this.scene;
+
+                gameScene.generateRandomExplosion(this.projectileType,
+                    this.airstrikeTarget.groundTargetMesh.position,
+                    new THREE.Color('white'),
+                    new THREE.Color('white'),
+                    new THREE.Color('white'),
+                    new THREE.Color('white'),
+                    new THREE.Color('white'),
+                    );
+
+                this.detonationClock.start();
+                //this.detonationClock.start();
+            }      
         }
     }
 }

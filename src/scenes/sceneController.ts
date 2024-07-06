@@ -141,7 +141,8 @@ export default class SceneController {
                 }
                 if(buttonIndex == GamepadEnums.FACE_4) {
                     console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene?.player2.tryFireFlamethrower();
+                    //this.gameScene?.player2.tryFireFlamethrower();
+                    this.gameScene?.player1.tryFireAirStrike();
                 }
 
                 if(buttonIndex == GamepadEnums.SELECT && !this.gamepadPrevious.buttons[GamepadEnums.SELECT].pressed) {

@@ -20,7 +20,7 @@ export default class ProjectileFactory {
     {
 
 
-        let randRocketType = THREE.MathUtils.randInt(0, 1);
+        let randRocketType = THREE.MathUtils.randInt(0, 2);
 
         let startColor;
         let particleColor1; //= new THREE.Color(0x663399);
@@ -87,6 +87,23 @@ export default class ProjectileFactory {
                     new THREE.MeshPhongMaterial( { color: 0xff0000, depthWrite: true }),
                     this.particleMaterial,
                     world);          
+                break;
+            case ProjectileType.Airstrike:            
+                return new Projectile(scene,
+                    playerId,
+                    ProjectileType.Airstrike,
+                    0.05,                   // radius
+                    launchPosition,           // launchPosition relative to chassis
+                    launchVector,
+                    0.25,
+                    startColor,
+                    particleColor1,
+                    particleColor2,
+                    particleColor3,
+                    particleColor4,
+                    new THREE.MeshBasicMaterial( { color: 0xffffff, depthWrite: true }),
+                    this.particleMaterial,
+                    world);      
                 break;
         }
     }

@@ -1,7 +1,7 @@
 export enum ProjectileType {
     Rocket,
-    Bullet
-    //Airstrike,
+    Bullet,
+    Airstrike,
     //Freeze,
     //Rocks,
     //FlamingSkull,

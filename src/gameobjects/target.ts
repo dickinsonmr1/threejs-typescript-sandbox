@@ -29,7 +29,7 @@ export class Target {
         });
 
         this.groundTargetMesh = new THREE.Mesh(        
-            new THREE.PlaneGeometry(5, 5),
+            new THREE.PlaneGeometry(2, 2),
             meshMaterial 
         );
         this.groundTargetMesh.rotateX(Math.PI);
@@ -39,6 +39,7 @@ export class Target {
     }
 
     setTargetLocation(position: THREE.Vector3) {
+        this.targetLocation = position;
         this.crosshairSprite.position.set(position.x, position.y, position.z);    
     }
 

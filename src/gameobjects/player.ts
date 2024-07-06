@@ -57,6 +57,10 @@ export class Player {
     private maxRocketCooldownTimeInSeconds: number = 0.5;
     private rocketCooldownClock: THREE.Clock = new THREE.Clock(false);
 
+    private maxAirstrikeCooldownTimeInSeconds: number = 0.25;
+    private airstrikeCooldownClock: THREE.Clock = new THREE.Clock(false);
+    
+    private activeAirstrike!: Projectile;
 
     constructor(scene: THREE.Scene,
         playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial) {
@@ -217,6 +221,11 @@ export class Player {
         if(this.rocketCooldownClock.getElapsedTime() > this.maxRocketCooldownTimeInSeconds) {
             this.rocketCooldownClock.stop();
         }
+
+        if(this.airstrikeCooldownClock.getElapsedTime() > this.maxAirstrikeCooldownTimeInSeconds) {
+            this.airstrikeCooldownClock.stop();
+        }
+        
         //if(this.bulletCooldownTime > 0) this.bulletCooldownTime--;
     }
 
@@ -273,6 +282,10 @@ export class Player {
                 sideVector.clone().multiplyScalar(-size.z * 0.12)
         );
 
+        if(projectileType == ProjectileType.Airstrike) {
+            vec.y += 20;
+        }
+
         // offset to side of car
         // +x is in left of car, -x is to right of car
         // +z is in front of car, -z is to rear of car
@@ -281,13 +294,18 @@ export class Player {
         //);
         //tempPosition.add(this.directionVector.clone().multiplyScalar(size.z * 1.5));
 
-        return this.projectileFactory.generateProjectile(
+        var projectile = this.projectileFactory.generateProjectile(
             this.scene,
             this.playerId,
             projectileType,            
             tempPosition,           // launchPosition relative to chassis
             projectileLaunchVector,            
             scene.getWorld());              
+
+        if(projectileType == ProjectileType.Airstrike)
+            this.activeAirstrike = projectile;
+
+        return projectile;
     }
 
     setVehicleObject(vehicle: IPlayerVehicle) {
@@ -436,6 +454,25 @@ export class Player {
             gameScene.addNewProjectile(projectile);
 
             this.rocketCooldownClock.start();
+        }       
+    }
+
+    tryFireAirStrike(): void {
+
+        if(!this.airstrikeCooldownClock.running) {
+
+            if(this.activeAirstrike == null || this.activeAirstrike.isDetonated) {
+                let projectile = this.createProjectile(ProjectileType.Airstrike);
+
+                let gameScene = <GameScene>this.scene;
+                gameScene.addNewProjectile(projectile);
+
+                this.airstrikeCooldownClock.start();
+            }
+            else {
+                this.activeAirstrike.detonate();
+                this.airstrikeCooldownClock.start();
+            }
         }       
     }
 
