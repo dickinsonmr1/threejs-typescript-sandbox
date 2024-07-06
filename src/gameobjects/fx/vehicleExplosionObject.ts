@@ -29,6 +29,8 @@ export class VehicleExplosionObject extends ParticleEmitter {
     position: THREE.Vector3;
     numberParticles: number;
     velocity: number;
+    opacityReduction: number;
+    scaleMultiplier: number;
 
     pointLightObject?: PointLightObject;
 
@@ -45,7 +47,10 @@ export class VehicleExplosionObject extends ParticleEmitter {
 
         position: THREE.Vector3,
         numberParticles: number,
-        velocity: number) {
+        velocity: number,
+        particleInitialScale: number,
+        opacityReduction: number,
+        scaleMultiplier: number) {
 
         super();
 
@@ -62,6 +67,8 @@ export class VehicleExplosionObject extends ParticleEmitter {
         this.position = position;
         this.numberParticles = numberParticles;
         this.velocity = velocity;
+        this.opacityReduction = opacityReduction;
+        this.scaleMultiplier = scaleMultiplier;
 
         this.isEmitting = true;
         this.isDead = false;
@@ -77,7 +84,7 @@ export class VehicleExplosionObject extends ParticleEmitter {
             
             sprite.userData.velocity = new THREE.Vector3(
                 Math.random() * this.velocity - this.velocity / 2,
-                Math.random() * this.velocity - this.velocity / 2,
+                Math.random() * this.velocity - this.velocity / 4, // particles should go upwards more
                 Math.random() * this.velocity - this.velocity / 2
             );
             sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
@@ -86,7 +93,7 @@ export class VehicleExplosionObject extends ParticleEmitter {
 
             sprite.material.opacity = Math.random() * 0.2 + 0.8;
 
-            let size = Math.random() * 0.1 + 0.1;
+            let size = Math.random() * 0.1 + particleInitialScale;
             sprite.scale.set(size, size, size);
 
             this.particleGroup.add(sprite);
@@ -125,17 +132,21 @@ export class VehicleExplosionObject extends ParticleEmitter {
             let item = <THREE.Sprite>child;
 
             item.position.add(child.userData.velocity);
-            item.material.opacity -= 0.02;
+            item.material.opacity -= this.opacityReduction;
+            item.scale.x *= this.scaleMultiplier;
+            item.scale.y *= this.scaleMultiplier;
+            item.scale.z *= this.scaleMultiplier;
+            //item.material.opacity *= this.opacityMultiplier;
             
             const color1 = item.material.color;
             item.material.color.copy(color1);      
             
             //THREE.MathUtils.lerp
-            if(item.material.opacity < 0.98 && item.material.opacity >= 0.80)      
+            if(item.material.opacity < 0.60 && item.material.opacity >= 0.50)      
                 item.material.color.lerp(this.particleColor2, 0.5);
-            else if(item.material.opacity < 0.80 && item.material.opacity >= 0.50)      
+            else if(item.material.opacity < 0.50 && item.material.opacity >= 0.25)      
                 item.material.color.lerp(this.particleColor3, 0.5);
-            else if(item.material.opacity < 0.50)
+            else if(item.material.opacity < 0.25)
                 item.material.color.lerp(this.particleColor4, 0.5);
 
             if(item.material.opacity <= 0.0) {

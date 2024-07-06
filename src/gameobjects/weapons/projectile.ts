@@ -44,8 +44,8 @@ export class Projectile extends SphereObject {
     private maxLifespanInSeconds: number = 3;
 
     //private expiryTimer: THREE.Clock;
-    private maxDetonationLifetimeInSeconds: number = 15;
-    private maxDetonationCooldownTimeInSeconds: number = 0.1;    
+    private maxDetonationLifetimeInSeconds: number = 0.75;
+    private maxDetonationCooldownTimeInSeconds: number = 0.05;    
     private detonationClock: THREE.Clock  = new THREE.Clock(false);
     private detonationLifetimeClock: THREE.Clock  = new THREE.Clock(false);
 
@@ -236,8 +236,8 @@ export class Projectile extends SphereObject {
                 new THREE.Color('white'),
                 new THREE.Color('yellow'),
                 new THREE.Color('orange'),
-                new THREE.Color('red'),
-                );
+                new THREE.Color('red')
+            );
 
             this.isDetonated = true;
 
@@ -319,7 +319,7 @@ export class Projectile extends SphereObject {
                 this.airstrikeTarget.rotateTargetToFaceDown();
             }
 
-            /*
+            
             if(this.detonationLifetimeClock.running
                 //&& this.detonationClock.running
                 && this.detonationLifetimeClock.getElapsedTime() >= this.maxDetonationLifetimeInSeconds) {
@@ -328,7 +328,7 @@ export class Projectile extends SphereObject {
                 this.detonationClock.stop();
                 this.kill();
             }
-            */
+            
 
             if(this.detonationClock.running && this.detonationClock.getElapsedTime() >= this.maxDetonationCooldownTimeInSeconds) {
                 let gameScene = <GameScene>this.scene;
@@ -337,10 +337,10 @@ export class Projectile extends SphereObject {
                     this.airstrikeTarget.groundTargetMesh.position,
                     new THREE.Color('white'),
                     new THREE.Color('white'),
-                    new THREE.Color('white'),
-                    new THREE.Color('white'),
-                    new THREE.Color('white'),
-                    );
+                    new THREE.Color('yellow'),
+                    new THREE.Color('orange'),
+                    new THREE.Color('red')
+                );
 
                 this.detonationClock.start();
                 //this.detonationClock.start();

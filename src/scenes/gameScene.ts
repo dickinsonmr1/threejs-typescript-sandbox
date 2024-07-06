@@ -177,6 +177,7 @@ export default class GameScene extends THREE.Scene {
         this.tractorModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
         this.explosionTexture = this.textureLoader.load('assets/particle-16x16.png');
+        //this.explosionTexture = this.textureLoader.load('assets/tank_explosion3.png');
         this.crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
         this.playerMarkerTexture = this.textureLoader.load('assets/playerMarkerIcon.png');
 
@@ -955,14 +956,29 @@ export default class GameScene extends THREE.Scene {
             }
             */
 
+            let particleInitialScale = 0.1;
             let numberParticles: number;
+            let scaleMultiplier = 1;
+            let opacityReduction = 0.01;
             switch(projectileType) {                
                 case ProjectileType.Bullet:
                     numberParticles = 5;
+                    particleInitialScale = 0.1;
+                    scaleMultiplier = 0.95;
+                    opacityReduction = 0.0075;
                     break;
-                case ProjectileType.Rocket:
+                case ProjectileType.Rocket:                
+                    numberParticles = 20;
+                    particleInitialScale = 0.1;
+                    scaleMultiplier = 0.96;
+                    opacityReduction = 0.0075;
+                    break;
+                case ProjectileType.Airstrike:
                 default:
-                    numberParticles = 100;
+                    numberParticles = 20;
+                    particleInitialScale = 0.5;
+                    scaleMultiplier = 1.01;
+                    opacityReduction = 0.0075;
                     break;                
             }
 
@@ -976,7 +992,10 @@ export default class GameScene extends THREE.Scene {
                 particleColor4,
                 position,
                 numberParticles,
-                0.03)
+                0.02,
+                particleInitialScale,
+                opacityReduction,
+                scaleMultiplier)            
             );
         }
     }
@@ -1000,7 +1019,7 @@ export default class GameScene extends THREE.Scene {
                             projectile.getParticleColor1(),
                             projectile.getParticleColor2(),
                             projectile.getParticleColor3(),
-                            projectile.getParticleColor4(),
+                            projectile.getParticleColor4()
                         );
                         projectile.kill();
                         this.remove(projectile.group);
@@ -1052,7 +1071,7 @@ export default class GameScene extends THREE.Scene {
                         projectile.getParticleColor1(),
                         projectile.getParticleColor2(),
                         projectile.getParticleColor3(),
-                        projectile.getParticleColor4(),
+                        projectile.getParticleColor4()
                     );
                     
                     projectile.kill();
