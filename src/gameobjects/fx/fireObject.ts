@@ -106,7 +106,9 @@ export class FireObject extends ParticleEmitter {
             sprite.position.x += Math.random() * 1.0 - 0.5;
             sprite.position.z += Math.random() * 1.0 - 0.5;
             sprite.rotation.setFromVector3(new THREE.Vector3(
-                Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI,));
+                Math.random() * Math.PI,
+                0, //Math.random() * Math.PI,
+                Math.random() * Math.PI,));
 
             this.particleGroup.add(sprite);
         }

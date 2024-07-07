@@ -1219,6 +1219,10 @@ export default class GameScene extends THREE.Scene {
             case 101:
                 cpuPlayer.tryFireFlamethrower();
                 break;
+            case 110:
+            case 111:
+                    cpuPlayer.tryFireAirStrike();
+                    break;
             default:
             }
         }

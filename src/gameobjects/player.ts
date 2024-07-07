@@ -15,6 +15,7 @@ import * as CANNON from 'cannon-es';
 import { Target } from "./target";
 import { PlayerMarker } from "./playerMarker";
 import { FlamethrowerEmitter } from "./weapons/flamethrowerEmitter";
+import { Shield } from "./vehicles/shield";
 
 export enum PlayerState {
     Alive,
@@ -61,6 +62,8 @@ export class Player {
     private airstrikeCooldownClock: THREE.Clock = new THREE.Clock(false);
     
     private activeAirstrike!: Projectile;
+
+    private shield: Shield;
 
     constructor(scene: THREE.Scene,
         playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial) {
@@ -110,6 +113,8 @@ export class Player {
         this.playerColor = playerColor;
         this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), 0.075, true);
         this.playerMarker = new PlayerMarker(scene, markerTexture, playerColor, new THREE.Vector3(0,0,0), 0.05, true);
+
+        this.shield = new Shield(scene, this.getPosition());
     }
 
     private getScene(): GameScene {
@@ -227,6 +232,8 @@ export class Player {
         }
         
         //if(this.bulletCooldownTime > 0) this.bulletCooldownTime--;
+
+        this.shield.updatePosition(this.getPosition());
     }
 
     public createProjectile(projectileType: ProjectileType): Projectile {
