@@ -960,6 +960,7 @@ export default class GameScene extends THREE.Scene {
             let numberParticles: number;
             let scaleMultiplier = 1;
             let opacityReduction = 0.01;
+            let velocityMultiplier = 0.98;
             switch(projectileType) {                
                 case ProjectileType.Bullet:
                     numberParticles = 5;
@@ -968,16 +969,16 @@ export default class GameScene extends THREE.Scene {
                     opacityReduction = 0.0075;
                     break;
                 case ProjectileType.Rocket:                
-                    numberParticles = 20;
-                    particleInitialScale = 0.1;
-                    scaleMultiplier = 0.96;
+                    numberParticles = 25;
+                    particleInitialScale = 0.5;
+                    scaleMultiplier = 0.99;
                     opacityReduction = 0.0075;
                     break;
                 case ProjectileType.Airstrike:
                 default:
                     numberParticles = 20;
-                    particleInitialScale = 0.5;
-                    scaleMultiplier = 1.01;
+                    particleInitialScale = 2;
+                    scaleMultiplier = 0.99;
                     opacityReduction = 0.0075;
                     break;                
             }
@@ -993,6 +994,7 @@ export default class GameScene extends THREE.Scene {
                 position,
                 numberParticles,
                 0.02,
+                velocityMultiplier,
                 particleInitialScale,
                 opacityReduction,
                 scaleMultiplier)            

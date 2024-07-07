@@ -28,7 +28,9 @@ export class VehicleExplosionObject extends ParticleEmitter {
 
     position: THREE.Vector3;
     numberParticles: number;
-    velocity: number;
+    initialVelocity: number;
+    velocityMultiplier: number;
+
     opacityReduction: number;
     scaleMultiplier: number;
 
@@ -47,7 +49,8 @@ export class VehicleExplosionObject extends ParticleEmitter {
 
         position: THREE.Vector3,
         numberParticles: number,
-        velocity: number,
+        initialVelocity: number,
+        velocityMultiplier: number,
         particleInitialScale: number,
         opacityReduction: number,
         scaleMultiplier: number) {
@@ -66,7 +69,8 @@ export class VehicleExplosionObject extends ParticleEmitter {
 
         this.position = position;
         this.numberParticles = numberParticles;
-        this.velocity = velocity;
+        this.initialVelocity = initialVelocity;
+        this.velocityMultiplier = velocityMultiplier;
         this.opacityReduction = opacityReduction;
         this.scaleMultiplier = scaleMultiplier;
 
@@ -83,9 +87,9 @@ export class VehicleExplosionObject extends ParticleEmitter {
             sprite.material.blending = THREE.AdditiveBlending;
             
             sprite.userData.velocity = new THREE.Vector3(
-                Math.random() * this.velocity - this.velocity / 2,
-                Math.random() * this.velocity - this.velocity / 4, // particles should go upwards more
-                Math.random() * this.velocity - this.velocity / 2
+                Math.random() * this.initialVelocity - this.initialVelocity / 2,
+                Math.random() * this.initialVelocity - this.initialVelocity / 4, // particles should go upwards more
+                Math.random() * this.initialVelocity - this.initialVelocity / 2
             );
             sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
 
@@ -130,6 +134,10 @@ export class VehicleExplosionObject extends ParticleEmitter {
     update() {
         this.particleGroup.children.forEach((child) => {
             let item = <THREE.Sprite>child;
+
+            child.userData.velocity.x *= this.velocityMultiplier;
+            //child.userData.velocity.y *= this.velocityMultiplier;
+            child.userData.velocity.z *= this.velocityMultiplier;
 
             item.position.add(child.userData.velocity);
             item.material.opacity -= this.opacityReduction;
