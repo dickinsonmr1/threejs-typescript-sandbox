@@ -154,9 +154,12 @@ export class TerrainObjectv2 {
         const texture = loader.load(asset);                
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.magFilter = THREE.NearestFilter;
+        texture.magFilter = THREE.LinearFilter;
+        //texture.minFilter = THREE.NearestMipMapLinearFilter;
+        //texture.anisotropy = 16;
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.repeat.set(repeats, repeats);
+        texture.needsUpdate = true;
 
         return texture;
     }
@@ -187,11 +190,14 @@ export class TerrainObjectv2 {
 
       void main() {
         float height = vPosition.z / heightFactor; // Normalize height to 0.0 - 1.0
-        vec4 lowColor = texture2D(lowTexture, vUv);
-        vec4 lowMidColor = texture2D(lowMidTexture, vUv);
-        vec4 midColor = texture2D(midTexture, vUv);
-        vec4 highMidColor = texture2D(highMidTexture, vUv);
-        vec4 highColor = texture2D(highTexture, vUv);
+
+        vec2 repeatedUv = vUv * 10.0; // Adjust the number of repetitions here
+
+        vec4 lowColor = texture2D(lowTexture, repeatedUv);
+        vec4 lowMidColor = texture2D(lowMidTexture, repeatedUv);
+        vec4 midColor = texture2D(midTexture, repeatedUv);
+        vec4 highMidColor = texture2D(highMidTexture, repeatedUv);
+        vec4 highColor = texture2D(highTexture, repeatedUv);
 
         vec4 color = mix(lowColor, lowMidColor, smoothstep(0.0, 0.25, height));
         color = mix(color, midColor, smoothstep(0.25, 0.5, height));
