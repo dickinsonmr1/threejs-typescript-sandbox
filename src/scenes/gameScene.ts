@@ -25,6 +25,7 @@ import { TerrainObject } from '../gameobjects/shapes/terrainObject';
 import { Water } from 'three/addons/objects/Water.js';
 import { DebugDivElementManager } from './debugDivElementManager';
 import { TerrainObjectv2 } from '../gameobjects/shapes/terrainObjectv2';
+import { PickupObject2 } from '../gameobjects/pickupObject2';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -55,7 +56,7 @@ export default class GameScene extends THREE.Scene {
 
     private cubes: BoxObject[] = [];
 
-    private pickups: PickupObject[] = [];
+    private pickups: PickupObject2[] = [];
 
     private projectiles: Projectile[] = [];
 
@@ -168,9 +169,29 @@ export default class GameScene extends THREE.Scene {
         this.trashTruckModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.trashTruckModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
-        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/sedanSports.glb');
-        this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        // vehicles v2 have wheels as separate children
+        /*
+        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-v2/sedan-sports.glb');
+        this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
         this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+
+        // back left        
+        this.sedanSportsModel.scene.children[1].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        this.sedanSportsModel.scene.children[1].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        this.sedanSportsModel.scene.children[1].position.add(new THREE.Vector3(0.4, -0.5, 1.25));
+                
+        // back right
+        this.sedanSportsModel.scene.children[2].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        this.sedanSportsModel.scene.children[2].position.add(new THREE.Vector3(1.0, -0.5, 0));
+        
+        // front left
+        this.sedanSportsModel.scene.children[3].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        this.sedanSportsModel.scene.children[3].position.add(new THREE.Vector3(-1, -0.5, 0));
+        
+        // front right
+        this.sedanSportsModel.scene.children[4].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        this.sedanSportsModel.scene.children[4].position.add(new THREE.Vector3(-0.4, -0.5, -1.4));        
+        */
 
         this.tractorModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/tractorPolice.glb');
         this.tractorModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
@@ -417,7 +438,7 @@ export default class GameScene extends THREE.Scene {
             0.25,                           // wheel radius
             new CANNON.Vec3(0, 0, 0),   // wheel offset
             20,                              // wheel mass
-            this.sedanSportsModel,             // model            
+            this.taxiModel,             // model            
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
@@ -595,7 +616,7 @@ export default class GameScene extends THREE.Scene {
         );
         this.water.rotation.x = - Math.PI / 2;
         this.water.position.y += 0.75; // 1.5
-        //this.add( this.water );
+        this.add( this.water );
 
         // TODO: sun from https://threejs.org/examples/?q=water#webgl_shaders_ocean
         /*
@@ -881,36 +902,56 @@ export default class GameScene extends THREE.Scene {
     private async generateRandomPickup(mapWidth: number, mapHeight: number) {
 
         
-        let pickupTextureRocket = this.textureLoader.load('assets/rocketIcon-multiple.png');
-        let pickupTextureHealth = this.textureLoader.load('assets/DPAD.png');
-        let pickupTextureFlamethrower = this.textureLoader.load('assets/fire.png');
-        let pickupTextureFreeze = this.textureLoader.load('assets/freezeIcon.png');
-        let pickupTextureLightning = this.textureLoader.load('assets/shockwaveIcon2.png');
-        let pickupTextureShockwave = this.textureLoader.load('assets/shockwaveIcon3.png');
+        let pickupTextureRocket = this.textureLoader.load('assets/pickup-rockets.png');
+        let pickupTextureHealth = this.textureLoader.load('assets/pickup-health.png');
+        let pickupTextureFlamethrower = this.textureLoader.load('assets/pickup-fire.png');
+        let pickupTextureFreeze = this.textureLoader.load('assets/pickup-freeze.png');
+        let pickupTextureLightning = this.textureLoader.load('assets/pickup-lightning-2.png');
+        let pickupTextureShockwave = this.textureLoader.load('assets/pickup-shockwave.png');
+        let pickupTextureShield = this.textureLoader.load('assets/pickup-shield.png');
+        let pickupTextureAirstrike = this.textureLoader.load('assets/pickup-airstrike.png');
+
+        //let boxTextureArmor = this.textureLoader.load('assets/pickup-fire.png');
         
         let texture: THREE.Texture;
-        let randIconIndex = THREE.MathUtils.randInt(0, 5);
+        let randIconIndex = THREE.MathUtils.randInt(0, 7);
+        let outlineColor = 0xffffff;
         switch(randIconIndex) {
             case 0:
                 texture = pickupTextureRocket;
+                outlineColor = 0xff0000;
                 break;
             case 1:
                 texture = pickupTextureHealth;
+                outlineColor = 0x22ff22;
                 break;
             case 2:
                 texture = pickupTextureFlamethrower;
+                outlineColor = 0xffcc00;
                 break;
             case 3:
                 texture = pickupTextureFreeze;
+                outlineColor = 0x7777dd;
                 break;
             case 4:
                 texture = pickupTextureLightning;
+                outlineColor = 0xffff11;
                 break;
             case 5:
                 texture = pickupTextureShockwave;
+                outlineColor = 0xADFFDE;
                 break;
+            case 6:
+                texture = pickupTextureShield;
+                outlineColor = 0x7777ff;
+                break;
+            case 7:
+                texture = pickupTextureAirstrike;
+                outlineColor = 0xdf6620;
+                break;                
             default:
                 texture = pickupTextureRocket;
+                outlineColor = 0xff0000;
                 break;
         }
 
@@ -921,14 +962,25 @@ export default class GameScene extends THREE.Scene {
         spawnPosition.y += 0.75;
 
         let randCubeSize = 0.75; //randFloat(0.5, 2);
-        let randColor = THREE.MathUtils.randInt(0, 0xffffff);
+        //let randColor = THREE.MathUtils.randInt(0, 0xffffff);
 
+        /*
         const cube = new PickupObject(this,
             randCubeSize, randCubeSize, randCubeSize,
             spawnPosition,
-            randColor,
+            outlineColor,
             texture,
             0.75
+        );
+        */
+
+        const cube = new PickupObject2(this,
+            randCubeSize, randCubeSize, randCubeSize,
+            spawnPosition,
+            0xffffff,
+            outlineColor,
+            texture,
+            1
         );
 
         this.pickups.push(cube);

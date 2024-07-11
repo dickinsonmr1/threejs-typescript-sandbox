@@ -399,6 +399,8 @@ export class Player {
             if(this.headLights != null)
                 this.headLights.group.visible = false;
 
+            this.shield.setVisible(false);
+
             this.vehicleObject.getModel().visible = false;
             this.turboParticleEmitter.pause();
 

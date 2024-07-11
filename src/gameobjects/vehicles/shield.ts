@@ -25,4 +25,8 @@ export class Shield {
     updatePosition(position: THREE.Vector3) {
         this.shieldMesh.position.copy(position)
     }
+
+    setVisible(isVisible: boolean) {
+        this.shieldMesh.visible = isVisible;
+    }
 }
