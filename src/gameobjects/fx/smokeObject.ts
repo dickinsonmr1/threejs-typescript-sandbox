@@ -9,7 +9,7 @@ export class SmokeObject extends ParticleEmitter {
         throw new Error("Method not implemented.");
     }
     getParticleCount(): number {
-        throw new Error("Method not implemented.");
+        return this.particleGroup.children.length;
     }
 
     scene: THREE.Scene;
@@ -147,9 +147,9 @@ export class SmokeObject extends ParticleEmitter {
 
             item.position.add(child.userData.velocity);
             item.material.opacity -= 0.01;
-            item.scale.x *= 1.02;
-            item.scale.y *= 1.02;
-            item.scale.z *= 1.02;
+            item.scale.x *= 1.005;
+            item.scale.y *= 1.005;
+            item.scale.z *= 1.005;
 
             const color1 = item.material.color;
             item.material.color.copy(color1);      

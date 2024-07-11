@@ -14,7 +14,7 @@ export class Shield {
         });
         
         this.shieldMesh = new THREE.Mesh(
-            new THREE.SphereGeometry(1.5),            
+            new THREE.SphereGeometry(1.25, 16, 16),            
             meshMaterial
         );
 

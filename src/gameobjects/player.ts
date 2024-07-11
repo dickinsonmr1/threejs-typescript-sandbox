@@ -16,6 +16,8 @@ import { Target } from "./target";
 import { PlayerMarker } from "./playerMarker";
 import { FlamethrowerEmitter } from "./weapons/flamethrowerEmitter";
 import { Shield } from "./vehicles/shield";
+import { ParticleEmitter } from "./fx/particleEmitter";
+import { SmokeObject } from "./fx/smokeObject";
 
 export enum PlayerState {
     Alive,
@@ -43,7 +45,7 @@ export class Player {
 
     flamethrowerEmitter: FlamethrowerEmitter;
 
-    fireObjects: FireObject[] = [];
+    fireObjects: ParticleEmitter[] = [];
 
     playerColor: THREE.Color;
     target!: Target;
@@ -414,8 +416,10 @@ export class Player {
                 this.getPosition(),
                 10
             );
-
             this.fireObjects.push(deathFire);
+
+            let smokeObject = new SmokeObject(this.scene, scene.explosionTexture, this.getPosition(), 3, 2000);
+            this.fireObjects.push(smokeObject);
 
             setTimeout(() => {
                 this.playerState = PlayerState.Respawning

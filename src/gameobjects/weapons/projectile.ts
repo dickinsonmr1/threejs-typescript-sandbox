@@ -239,6 +239,8 @@ export class Projectile extends SphereObject {
                 new THREE.Color('red')
             );
 
+            //gameScene.generateSmoke(this.airstrikeTarget.groundTargetMesh.position);
+
             this.isDetonated = true;
 
             this.detonationClock.start();
@@ -341,6 +343,8 @@ export class Projectile extends SphereObject {
                     new THREE.Color('orange'),
                     new THREE.Color('red')
                 );
+
+                //gameScene.generateSmoke(this.airstrikeTarget.groundTargetMesh.position);
 
                 this.detonationClock.start();
                 //this.detonationClock.start();

@@ -26,6 +26,7 @@ import { Water } from 'three/addons/objects/Water.js';
 import { DebugDivElementManager } from './debugDivElementManager';
 import { TerrainObjectv2 } from '../gameobjects/shapes/terrainObjectv2';
 import { PickupObject2 } from '../gameobjects/pickupObject2';
+import { SmokeObject } from '../gameobjects/fx/smokeObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -1052,6 +1053,10 @@ export default class GameScene extends THREE.Scene {
                 scaleMultiplier)            
             );
         }
+    }
+
+    async generateSmoke(position: THREE.Vector3) {
+        this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, position, 2, 500));
     }
 
     private checkProjectilesForCollision() { 
