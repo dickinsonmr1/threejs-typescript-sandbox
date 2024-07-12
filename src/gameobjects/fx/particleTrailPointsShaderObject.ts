@@ -37,7 +37,9 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
     particleMaterial: THREE.Material;
 
     private maxPositionJitter: number;
-    private maxLifeTime: number = 500;
+    private maxParticleLifeTime: number = 500;
+    
+    //private maxEmitterLifeTime: number;
 
     //private geometry: THREE.BufferGeometry = new THREE.BufferGeometry();
 
@@ -53,7 +55,8 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
         numberParticles: number,
         velocity: number,
         size: number,
-        maxPositionJitter: number
+        maxPositionJitter: number,
+        maxEmitterLifetime: number        
         ) {
                   
         super();
@@ -88,15 +91,22 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
         this.numberParticles = numberParticles;
         this.velocity = velocity;
         this.initialSize = size;
-
-        this.isEmitting = true;        
+        this.maxPositionJitter = maxPositionJitter;
+        this.maxParticleLifeTime = this.maxParticleLifeTime ?? 10000;
+        
+        this.isEmitting = true;     
 
         this.particleGroup.position.set(0,0,0);//position.x, position.y, position.z);
         this.emitPosition = this.particleGroup.position;
 
-        this.maxPositionJitter = maxPositionJitter;
-       
         scene.add(this.particleGroup);
+
+        
+        if(maxEmitterLifetime != null) {
+            setTimeout(() => {
+                this.isEmitting = false
+            }, maxEmitterLifetime);     
+        }         
     }
 
     addParticle(position: THREE.Vector3): void {
@@ -107,13 +117,18 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
         vertices[1] = position.y;// + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
         vertices[2] = position.z;// + (Math.random() - this.maxPositionJitter/2) * this.maxPositionJitter;
 
-
         var randVelocity = new THREE.Vector3(
                         Math.random() * this.velocity - this.velocity / 2,
                         Math.random() * this.velocity - this.velocity / 2,
                         Math.random() * this.velocity - this.velocity / 2
                     ).multiplyScalar(Math.random() * Math.random() * 3 + 1);
-
+            
+        if(this.type != ParticleEmitterType.GlowingParticles) {
+            randVelocity.x = 0;
+            randVelocity.y *= 2;
+            randVelocity.z = 0;
+        }        
+       
         const velocity = new Float32Array(3);
         velocity[0] = randVelocity.x;
         velocity[1] = randVelocity.y;
@@ -128,7 +143,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             case ParticleEmitterType.SmokeEmit:
                 //item.material.opacity -= 0.008;
                 //item.scale.x *= 1.02; item.scale.y *= 1.02; item.scale.z *= 1.02;        
-                sizeMultiplier[0] = 5;
+                sizeMultiplier[0] = 1.5;
                 break;
             default:
                 //item.material.opacity -= 0.01;
@@ -184,7 +199,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             
             const { mesh, birthTime } = this.particles[i];
             const elapsedTime = now - birthTime;
-            if (elapsedTime > this.maxLifeTime) {
+            if (elapsedTime > this.maxParticleLifeTime) {
                 this.particleGroup.remove(mesh);
                 this.particles.splice(i, 1);
 
@@ -193,7 +208,7 @@ export class ParticleTrailPointsShaderObject extends ParticleEmitter {
             }
                         
             // Calculate size reduction over time
-            const lifeFraction = elapsedTime / this.maxLifeTime;
+            const lifeFraction = elapsedTime / this.maxParticleLifeTime;
 
             const alpha = (mesh.geometry.attributes.alpha.array as Float32Array);
             alpha[0] = 1.0 - lifeFraction;

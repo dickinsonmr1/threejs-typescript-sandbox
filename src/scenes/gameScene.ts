@@ -27,6 +27,7 @@ import { DebugDivElementManager } from './debugDivElementManager';
 import { TerrainObjectv2 } from '../gameobjects/shapes/terrainObjectv2';
 import { PickupObject2 } from '../gameobjects/pickupObject2';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
+import { CpuPlayerPattern } from '../gameobjects/cpuPlayerPatternEnums';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -107,6 +108,8 @@ export default class GameScene extends THREE.Scene {
     player2!: Player;
     player3!: Player;
     player4!: Player;
+
+    cpuPlayerBehavior: CpuPlayerPattern = CpuPlayerPattern.Patrol;
 
     private allRigidVehicleObjects: IPlayerVehicle[] = [];
 
@@ -582,7 +585,8 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.addElement("RendererTotalTextures", "");
         this.debugDivElementManager.addElement("RendererTotalPrograms", "");
         this.debugDivElementManager.addElement("TraverseTotalTextures", "");
-        
+        this.debugDivElementManager.addElement("cpuOverrideBehavior", "");
+       
 
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky
@@ -723,26 +727,32 @@ export default class GameScene extends THREE.Scene {
         if (event.key === '1')
 		{
             this.sceneController.updateHealthOnHud(19);
+            this.cpuPlayerBehavior = CpuPlayerPattern.Follow;
 		}
         if (event.key === '2')
 		{
             this.sceneController.updateHealthOnHud(50);
+            this.cpuPlayerBehavior = CpuPlayerPattern.FollowAndAttack;
 		}
         if (event.key === '3')
 		{
             this.sceneController.updateHealthOnHud(80);
+            this.cpuPlayerBehavior = CpuPlayerPattern.Stop;
 		}
         if (event.key === '4')
 		{
             this.sceneController.updateShieldOnHud(25);
+            this.cpuPlayerBehavior = CpuPlayerPattern.StopAndAttack;
 		}
         if (event.key === '5')
 		{
             this.sceneController.updateTurboOnHud(50);
+            this.cpuPlayerBehavior = CpuPlayerPattern.Flee;
 		}        
         if (event.key === '6')
 		{
             this.player1.healthBar.updateValue(50);
+            this.cpuPlayerBehavior = CpuPlayerPattern.Patrol;
 		}      
         if (event.key === '7')
 		{
@@ -1226,6 +1236,13 @@ export default class GameScene extends THREE.Scene {
             if(cpuPlayer.playerState != PlayerState.Alive)
                 continue;
 
+            if(this.cpuPlayerBehavior == CpuPlayerPattern.Stop) {
+                cpuPlayer.tryStopAccelerateWithKeyboard();
+                cpuPlayer.tryStopReverseWithKeyboard();
+                continue;
+            }
+
+
             let temp = THREE.MathUtils.randInt(0, 200);
             switch(temp) {
             case 1:
@@ -1368,26 +1385,25 @@ export default class GameScene extends THREE.Scene {
             var temp = otherPlayerBodies as CANNON.Body[];
             */
 
-            if(this.player2.getChassisBody() != null) {
-                let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(playerPosition), Utility.ThreeVec3ToCannonVec3(this.crosshairSprite.position));
-                
-                var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
+            let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(playerPosition), Utility.ThreeVec3ToCannonVec3(this.crosshairSprite.position));                
+            var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
 
-                var otherVehicleObject = this.player2.getChassisBody();
-                if(otherVehicleObject != null) {
-                    // intersect single body
-                    ray.intersectBody(otherVehicleObject, raycastResult);
-                }
+            /*
+            var otherVehicleObject = this.player2.getChassisBody();
+            if(otherVehicleObject != null) {
+                // intersect single body
+                ray.intersectBody(otherVehicleObject, raycastResult);
+            }
+            */
 
-                // intersect multiple bodies
-                ray.intersectBodies(otherPlayerBodies, raycastResult);
+            // intersect multiple bodies
+            ray.intersectBodies(otherPlayerBodies, raycastResult);
 
-                if(raycastResult != null && raycastResult.hasHit) {
-                    this.crosshairSprite.material.color.set(new THREE.Color('red'));
-                }
-                else {
-                    this.crosshairSprite.material.color.set(new THREE.Color('white'));
-                }
+            if(raycastResult != null && raycastResult.hasHit) {
+                this.crosshairSprite.material.color.set(new THREE.Color('red'));
+            }
+            else {
+                this.crosshairSprite.material.color.set(new THREE.Color('white'));
             }
         }
         
@@ -1453,6 +1469,8 @@ export default class GameScene extends THREE.Scene {
             this.debugDivElementManager.updateElementText("RendererTotalTextures", `WebGLRenderer total textures: ${renderer.info.memory.textures}`);
             this.debugDivElementManager.updateElementText("RendererTotalPrograms", `WebGLRenderer total programs: ${renderer.info?.programs?.length ?? 0}`);
         }
+
+        this.debugDivElementManager.updateElementText("cpuOverrideBehavior", `CPU Override Behavior: ${this.cpuPlayerBehavior.toString()}`);
 
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);

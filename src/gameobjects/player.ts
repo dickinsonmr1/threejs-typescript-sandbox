@@ -18,6 +18,8 @@ import { FlamethrowerEmitter } from "./weapons/flamethrowerEmitter";
 import { Shield } from "./vehicles/shield";
 import { ParticleEmitter } from "./fx/particleEmitter";
 import { SmokeObject } from "./fx/smokeObject";
+import { ParticleTrailPointsShaderObject } from "./fx/particleTrailPointsShaderObject";
+import { SmokeObject2 } from "./fx/smokeObject2";
 
 export enum PlayerState {
     Alive,
@@ -414,12 +416,32 @@ export class Player {
                 new THREE.Color('yellow'),
                 new THREE.Color('orange'),
                 this.getPosition(),
-                10
+                10,
+                3000
             );
             this.fireObjects.push(deathFire);
 
-            let smokeObject = new SmokeObject(this.scene, scene.explosionTexture, this.getPosition(), 3, 2000);
-            this.fireObjects.push(smokeObject);
+            let smokeEmitPosition = this.getPosition().add(new THREE.Vector3(0, 0.5, 0));
+            let smokeObject = new SmokeObject2(this.scene, scene.explosionTexture, smokeEmitPosition, 3, 3000);
+            /*
+            let smokeObject = new ParticleTrailPointsShaderObject(
+                scene,
+                ParticleEmitterType.SmokeEmit,
+                //particleTexture,
+                new THREE.Color('grey'),
+                new THREE.Color(0x663399),
+                new THREE.Color(0x663399),
+                new THREE.Color(0x4d0099),
+                1, // number of particle
+                0.01, // TODO: max particle velocity
+                100, // initial particle size
+                0.01, // max position jitter
+                3000
+            );
+            smokeObject.setEmitPosition(this.getPosition());
+            */
+
+            this.fireObjects.push(smokeObject);            
 
             setTimeout(() => {
                 this.playerState = PlayerState.Respawning

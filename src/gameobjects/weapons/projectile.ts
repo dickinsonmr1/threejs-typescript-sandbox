@@ -137,7 +137,8 @@ export class Projectile extends SphereObject {
                     1, // number of particle
                     0.01, // TODO: max particle velocity
                     20, // initial particle size
-                    0.01 // max position jitter
+                    0.01, // max position jitter
+                    3000
                 );
                 /*
                 this.particleEmitterObject = new ParticleTrailPointsObject(
@@ -320,7 +321,6 @@ export class Projectile extends SphereObject {
                 this.airstrikeTarget.setTargetMeshPosition(positionOnTerrain);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
                 this.airstrikeTarget.rotateTargetToFaceDown();
             }
-
             
             if(this.detonationLifetimeClock.running
                 //&& this.detonationClock.running
