@@ -19,7 +19,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     modelOffset?: THREE.Vector3;
     
     private readonly maxSteerVal: number = 0.7;
-    private readonly maxForce: number = 1000;
+    private readonly maxForce: number = 1500;
 
     //mesh: THREE.Mesh;
     //body?: CANNON.Body;
@@ -59,7 +59,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             directionLocal: new CANNON.Vec3(0, -1, 0),
             suspensionStiffness: 30,
             suspensionRestLength: 0.3,
-            frictionSlip: 2.0, // 1.4
+            frictionSlip: 3.0, // 1.4
             dampingRelaxation: 2.3,
             dampingCompression: 4.4,
             maxSuspensionForce: 100000,

@@ -60,7 +60,7 @@ export default class ProjectileFactory {
                     0.05,                   // radius
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
-                    0.5,
+                    0.75,
                     new THREE.Color('white'),
                     new THREE.Color('white'),
                     new THREE.Color('white'),

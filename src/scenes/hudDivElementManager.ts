@@ -1,25 +1,34 @@
 
 
-export class DebugDivElementManager {
+export class HudDivElementManager {
 
-    debugDivElements: HTMLDivElement[] = [];
+    divElements: HTMLDivElement[] = [];
+    
+    currentX: number;
     currentY: number;
+
+    paddingX: number;
     paddingY: number;
     
-    constructor(startY: number, paddingY: number) {
+    // TODO: add texture
+    constructor(startX: number, startY: number, paddingX: number, paddingY: number) {
+        this.currentX = startX;
         this.currentY = startY;  
+
+        this.paddingX = paddingX;      
         this.paddingY = paddingY;      
     }
 
     addElement(name: string, text: string) {
-        this.currentY += this.paddingY;
+        //this.currentX += this.paddingX;
+        this.currentY += this.paddingY;        
 
-        let divElement = this.generateDivElement(name, 25, this.currentY, text);
-        this.debugDivElements.push(divElement);
+        let divElement = this.generateDivElement(name, this.currentX, this.currentY, text);
+        this.divElements.push(divElement);
     }
 
     updateElementText(name: string, text: string) {
-        let element = this.debugDivElements.find(x => x.id == name);
+        let element = this.divElements.find(x => x.id == name);
         
         if(element != null)
             element.innerHTML = text;

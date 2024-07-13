@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import HudHealthBar, { HudBarType } from '../gameobjects/hudHealthBar';
 import SceneController from './sceneController';
+import { HudDivElementManager } from './hudDivElementManager';
 
 export enum HudIconLocation {
     UpperLeft,
@@ -21,6 +22,8 @@ export default class HudScene extends THREE.Scene {
     private shieldBar?: HudHealthBar;
 
     sceneController: SceneController;
+
+    hudDivElementManager!: HudDivElementManager;
 
     constructor(camera: THREE.OrthographicCamera, sceneController: SceneController) {
         super();
@@ -95,6 +98,16 @@ export default class HudScene extends THREE.Scene {
         //let spriteTR = this.generateIcon(fireIconTexture, new THREE.Color('white'), HudIconLocation.UpperRight);
         //let spriteLL = this.generateIcon(healthIconTexture, new THREE.Color('white'), HudIconLocation.LowerLeft);
         //let spriteLR = this.generateIcon(turboIconTexture, new THREE.Color('white'), HudIconLocation.LowerRight);    
+
+        this.hudDivElementManager = new HudDivElementManager(window.innerWidth * 0.9, window.innerHeight * 0.75, 0, 20);
+
+        this.hudDivElementManager.addElement("Special", "");        
+        this.hudDivElementManager.addElement("Rockets", "");        
+        this.hudDivElementManager.addElement("Flamethrower", "");        
+        this.hudDivElementManager.addElement("Airstrike", "");        
+        this.hudDivElementManager.addElement("Shockwave", "");        
+        this.hudDivElementManager.addElement("Freeze", "");        
+        this.hudDivElementManager.addElement("Lightning", "");        
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color, location: HudIconLocation): THREE.Sprite {
@@ -148,6 +161,14 @@ export default class HudScene extends THREE.Scene {
     }
 
     update() {
+
+        this.hudDivElementManager.updateElementText("Special", `Special: 5`);
+        this.hudDivElementManager.updateElementText("Rockets", `Rockets: 5`);
+        this.hudDivElementManager.updateElementText("Flamethrower", `Flamethrower: 5`);
+        this.hudDivElementManager.updateElementText("Airstrike", `Airstrike: 5`);
+        this.hudDivElementManager.updateElementText("Shockwave", `Shockwave: 5`);
+        this.hudDivElementManager.updateElementText("Freeze", `Freeze: 5`);
+        this.hudDivElementManager.updateElementText("Lightning", `Lightning: 5`);
     }
 
     updateHealthBar(currentValue: number) {
