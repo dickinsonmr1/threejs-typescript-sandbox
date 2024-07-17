@@ -520,7 +520,7 @@ export default class GameScene extends THREE.Scene {
 
         let material = new THREE.SpriteMaterial( { map: this.crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
-        this.add(this.crosshairSprite);
+        //this.add(this.crosshairSprite);
 
         /*
         // bounding box to show shadows

@@ -20,6 +20,7 @@ import { ParticleEmitter } from "./fx/particleEmitter";
 import { SmokeObject } from "./fx/smokeObject";
 import { ParticleTrailPointsShaderObject } from "./fx/particleTrailPointsShaderObject";
 import { SmokeObject2 } from "./fx/smokeObject2";
+import Brakelights from "./vehicles/brakeLights";
 
 export enum PlayerState {
     Alive,
@@ -41,6 +42,7 @@ export class Player {
 
     healthBar: HealthBar;
     headLights!: Headlights;
+    brakeLights!: Brakelights;
 
     private vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
@@ -67,7 +69,7 @@ export class Player {
     
     private activeAirstrike!: Projectile;
 
-    private shield: Shield;
+    private shield!: Shield;
 
     constructor(scene: THREE.Scene,
         playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial) {
@@ -81,6 +83,9 @@ export class Player {
 
         this.projectileFactory = new ProjectileFactory(particleMaterial);
         this.headLights = new Headlights(scene);
+        this.brakeLights = new Brakelights(scene);
+        if(this.brakeLights != null)
+            this.brakeLights.setVisible(false);
 
         this.playerName = playerName;      
         let gameScene = <GameScene>scene;
@@ -118,7 +123,7 @@ export class Player {
         this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), 0.075, true);
         this.playerMarker = new PlayerMarker(scene, markerTexture, playerColor, new THREE.Vector3(0,0,0), 0.05, true);
 
-        this.shield = new Shield(scene, this.getPosition());
+        //this.shield = new Shield(scene, this.getPosition());
     }
 
     private getScene(): GameScene {
@@ -200,7 +205,13 @@ export class Player {
             this.headLights.update(
                 Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
                 Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
-            );        
+            );
+        
+        if(this.brakeLights != null)
+            this.brakeLights.update(
+                Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
+                Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
+            );              
 
         
         /*
@@ -237,7 +248,8 @@ export class Player {
         
         //if(this.bulletCooldownTime > 0) this.bulletCooldownTime--;
 
-        this.shield.updatePosition(this.getPosition());
+        if(this.shield != null)
+            this.shield.updatePosition(this.getPosition());
     }
 
     public createProjectile(projectileType: ProjectileType): Projectile {
@@ -338,10 +350,12 @@ export class Player {
     
     tryReverseWithKeyboard(): void {
         this.vehicleObject.tryReverse();
+        this.brakeLights.setVisible(true);
     }
 
     tryStopReverseWithKeyboard(): void {
         this.vehicleObject.tryStopReverse();
+        this.brakeLights.setVisible(false);
     }
 
     tryTurn(x: number): void {
@@ -402,6 +416,9 @@ export class Player {
             
             if(this.headLights != null)
                 this.headLights.group.visible = false;
+
+            if(this.brakeLights != null)
+                this.brakeLights.group.visible = false;
 
             this.shield.setVisible(false);
 
