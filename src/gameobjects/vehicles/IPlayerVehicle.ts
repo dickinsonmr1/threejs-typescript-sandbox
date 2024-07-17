@@ -20,7 +20,7 @@ export interface IPlayerVehicle {
     tryJump(): void;
     tryTurbo(): void;
 
-    resetPosition(): void;
+    resetPosition(position: THREE.Vector3): void;
     respawnPosition(x: number, y: number, z: number): void;
 
     update(): void;

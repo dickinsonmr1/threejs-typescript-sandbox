@@ -149,10 +149,13 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         this.raycastVehicle?.chassisBody.applyImpulse(vec3);
     }
 
-    resetPosition(): void {
+    resetPosition(position: THREE.Vector3): void {
         if(!this.raycastVehicle) return;
 
-        this.raycastVehicle.chassisBody.position.y = 10;
+        this.raycastVehicle.chassisBody.position.x = position.x;
+        this.raycastVehicle.chassisBody.position.y = position.y;
+        this.raycastVehicle.chassisBody.position.z = position.z;
+
         this.raycastVehicle.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
         this.raycastVehicle.chassisBody.angularVelocity = new CANNON.Vec3(0, 0, 0);
         this.raycastVehicle.chassisBody.velocity.set(0, 0, 0);

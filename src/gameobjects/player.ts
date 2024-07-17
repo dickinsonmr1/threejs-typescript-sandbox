@@ -569,7 +569,13 @@ export class Player {
     }
     
     tryResetPosition(): void {
-        this.vehicleObject.resetPosition();
+
+        let gameScene = <GameScene>this.scene;
+
+        var position = gameScene.getWorldPositionOnTerrain(this.getPosition().x, this.getPosition().z)
+        position.y += 2;
+
+        this.vehicleObject.resetPosition(position);
     }
 
     getTotalParticleCount(): number {
