@@ -47,6 +47,7 @@ export default class GameScene extends THREE.Scene {
     private trashTruckModel?: GLTF;
     private sedanSportsModel?: GLTF;
     private tractorModel?: GLTF;
+    private wheelModel?: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
 
@@ -174,14 +175,20 @@ export default class GameScene extends THREE.Scene {
         this.trashTruckModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
         // vehicles v2 have wheels as separate children
-        /*
-        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-v2/sedan-sports.glb');
+        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/sedan-sports.glb');
         this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
         this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
+        //// remove wheels
+        //this.sedanSportsModel.scene.children[1].remove();
+        //this.sedanSportsModel.scene.children[2].remove();
+        //this.sedanSportsModel.scene.children[3].remove();
+        //this.sedanSportsModel.scene.children[4].remove();
+
+        /*
         // back left        
         this.sedanSportsModel.scene.children[1].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        this.sedanSportsModel.scene.children[1].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        //this.sedanSportsModel.scene.children[1].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
         this.sedanSportsModel.scene.children[1].position.add(new THREE.Vector3(0.4, -0.5, 1.25));
                 
         // back right
@@ -196,6 +203,10 @@ export default class GameScene extends THREE.Scene {
         this.sedanSportsModel.scene.children[4].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
         this.sedanSportsModel.scene.children[4].position.add(new THREE.Vector3(-0.4, -0.5, -1.4));        
         */
+
+        this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
+        this.wheelModel.scene.scale.set(1, 1, 1);
+        this.add(this.wheelModel.scene);
 
         this.tractorModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/tractorPolice.glb');
         this.tractorModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
@@ -442,7 +453,8 @@ export default class GameScene extends THREE.Scene {
             0.25,                           // wheel radius
             new CANNON.Vec3(0, 0, 0),   // wheel offset
             20,                              // wheel mass
-            this.taxiModel,             // model            
+            this.sedanSportsModel,             // model        
+            this.wheelModel,    
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
@@ -460,7 +472,8 @@ export default class GameScene extends THREE.Scene {
             0.25,                           // wheel radius
             new CANNON.Vec3(0, 0, 0),   // wheel offset
             20,                              // wheel mass
-            this.ambulanceModel,             // model            
+            this.ambulanceModel,             // model      
+            this.wheelModel,          
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
@@ -478,7 +491,8 @@ export default class GameScene extends THREE.Scene {
             0.25,                           // wheel radius
             new CANNON.Vec3(0, 0, 0),   // wheel offset
             20,                              // wheel mass
-            this.policeModel,             // model            
+            this.policeModel,             // model        
+            this.wheelModel,        
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
@@ -496,7 +510,8 @@ export default class GameScene extends THREE.Scene {
             0.25,                           // wheel radius
             new CANNON.Vec3(0, 0, 0),   // wheel offset
             20,                              // wheel mass
-            this.trashTruckModel,             // model            
+            this.trashTruckModel,             // model         
+            this.wheelModel,       
             new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
             new THREE.Vector3(0, 0, 0) // model offset
             //new THREE.Vector3(0, -0.35, 0) // model offset
@@ -520,7 +535,7 @@ export default class GameScene extends THREE.Scene {
 
         let material = new THREE.SpriteMaterial( { map: this.crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
-        //this.add(this.crosshairSprite);
+        this.add(this.crosshairSprite);
 
         /*
         // bounding box to show shadows
@@ -691,6 +706,16 @@ export default class GameScene extends THREE.Scene {
 
         this.grassBillboards = new THREE.Points( geometry, material );
         this.add( this.grassBillboards );
+    }
+
+    async generateWheelModel(): Promise<GLTF>{
+
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
+        
+        model.scene.scale.set(10, 10, 10);
+        model.scene.position.set(10, 10, 10);
+        //this.add(wheelModel2.scene);
+        return model;
     }
 
     private handleKeyDown = (event: KeyboardEvent) => {
@@ -1360,10 +1385,11 @@ export default class GameScene extends THREE.Scene {
 
         let playerPosition = this.player1.getPosition();
 
-        if(!this.player1.isModelNull()) {
+        if(!this.player1.isModelNull() && this.crosshairSprite != null) {
             let forwardVector = new THREE.Vector3(-10, 0, 0);
             forwardVector.applyQuaternion(this.player1.getModelQuaternion());
             this.crosshairSprite.position.addVectors(this.player1.getModelPosition(), forwardVector);//playerPosition.x, playerPosition.y - 2, playerPosition.z);
+            
             //let size = 10;
             //this.crosshairSprite.scale.set(size, size, size);
 
@@ -1404,15 +1430,16 @@ export default class GameScene extends THREE.Scene {
             }
             else {
                 this.crosshairSprite.material.color.set(new THREE.Color('white'));
-            }
+            }        
         }
         
         this.updateDebugDivElements();
-
         this.stats.update();
     }
 
     updateDebugDivElements() {
+
+        if(this.debugDivElementManager == null) return;
 
         let playerPosition = this.player1.getPosition();
         this.debugDivElementManager.updateElementText("PlayerLocation", `Player 1 position: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`);

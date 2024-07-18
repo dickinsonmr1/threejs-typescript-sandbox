@@ -420,7 +420,8 @@ export class Player {
             if(this.brakeLights != null)
                 this.brakeLights.group.visible = false;
 
-            this.shield.setVisible(false);
+            if(this.shield != null)
+                this.shield.setVisible(false);
 
             this.vehicleObject.getModel().visible = false;
             this.turboParticleEmitter.pause();

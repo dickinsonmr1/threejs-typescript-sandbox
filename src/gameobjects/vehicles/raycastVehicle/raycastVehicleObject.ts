@@ -16,6 +16,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
     // TODO: use these
     private model!: THREE.Group;
+    private wheelModels: THREE.Group[] = [];
+
     modelOffset?: THREE.Vector3;
     
     private readonly maxSteerVal: number = 0.7;
@@ -41,6 +43,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         wheelOffset: CANNON.Vec3,
         wheelMass: number,
         modelData?: GLTF,
+        wheelModelData?: GLTF,
         modelScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1),
         modelOffset: THREE.Vector3 = new THREE.Vector3(0, 0, 0)) {
 
@@ -110,6 +113,17 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             
             const temp = new RaycastWheelObject(scene, wheel.radius, wheelColor, world, wheelMaterial);                    
             this.wheels.push(temp);
+            
+            if(wheelModelData != null) {
+
+                let temp = wheelModelData.scene.clone()
+                temp.position.set(i, i, i);
+                temp.rotateX(Math.PI);
+                this.wheelModels.push(temp);
+
+                scene.add(this.wheelModels[i]);
+            }
+
             i++;
 		});
 
@@ -117,12 +131,38 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             this.model = modelData.scene;//.children[0];
             this.modelOffset = modelOffset;
 
+            
+            if(this.model.children[1] != null) this.model.children[1].remove();
+            if(this.model.children[2] != null) this.model.children[2].remove();
+            if(this.model.children[3] != null) this.model.children[3].remove();
+            if(this.model.children[4] != null) this.model.children[4].remove();
+
             this.model.position.set(position.x + modelOffset.x, position.y + modelOffset.y, position.z + modelOffset.z);
             this.model.scale.set(modelScale.x, modelScale.y, modelScale.z);         
             this.model.rotateY(Math.PI / 2);
 
             scene.add(this.model);
         }
+
+        
+        if(wheelModelData != null) {
+
+                    
+            let temp = wheelModelData.scene;
+            temp.position.set(5, 5, 5);
+            scene.add(temp);
+            
+            /*
+            if(this.raycastVehicle != null) {
+                for(let i = 0; i < this.raycastVehicle.wheelInfos.length; i++) {
+                    
+                    this.wheelModels[i].copy(wheelModelData.scene);
+                    scene.add(this.wheelModels[i]);
+                }
+            } 
+            */           
+        }
+        
     }
 
     respawnPosition(x: number, y: number, z: number): void {
@@ -274,9 +314,29 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                 wheel.wheelBody.position.copy(transform.position);
                 wheel.wheelBody.quaternion.copy(transform.quaternion);
 
-
                 wheel.mesh.position.copy(Utility.CannonVec3ToThreeVec3(transform.position));
                 wheel.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(transform.quaternion));
+
+                this.wheelModels[i].position.copy(wheel.mesh.position);
+                this.wheelModels[i].quaternion.copy(wheel.mesh.quaternion);                
+                if(i == 0 || i == 2)
+                    this.wheelModels[i].rotateY(Math.PI / 2);
+                else
+                    this.wheelModels[i].rotateY(3 * Math.PI / 2);
+
+                //if(i < 2)
+                    //this.wheelModels[i].rotateX(Math.PI);
+                //else
+                    //this.wheelModels[i].rotateX(Math.PI/2);
+
+                if(this.model != null) {
+                    //if(this.model.children[i+1] != null) {
+                        //this.model.children[i+1].position.copy(wheel.mesh.position);
+                        //this.model.children[i+1].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI);
+                        //this.model.children[i+1].applyQuaternion(Utility.CannonQuaternionToThreeQuaternion(transform.quaternion));
+                        //this.model.children[i+1].quaternion.copy(wheel.mesh.quaternion);
+                    //}
+                }
 
                 /*
                 if(t?.position != null)
@@ -293,6 +353,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             
             this.model.position.copy(Utility.CannonVec3ToThreeVec3(this.chassis.body.position));//.add(this.modelOffset));
             this.model.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.chassis.body.quaternion));
+        
 
             /*
             var temp = new THREE.Quaternion().multiplyQuaternions(
