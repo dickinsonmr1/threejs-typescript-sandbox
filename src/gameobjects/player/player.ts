@@ -94,7 +94,7 @@ export class Player {
     private shield!: Shield;
 
     constructor(scene: THREE.Scene,
-        playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial) {
+        playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial, vehicle: IPlayerVehicle) {
 
         this.scene = scene;
 
@@ -146,6 +146,8 @@ export class Player {
         this.playerMarker = new PlayerMarker(scene, markerTexture, playerColor, new THREE.Vector3(0,0,0), 0.05, true);
 
         //this.shield = new Shield(scene, this.getPosition());
+
+        this.setVehicleObject(vehicle);
     }
 
     private getScene(): GameScene {
@@ -353,7 +355,7 @@ export class Player {
         return projectile;
     }
 
-    setVehicleObject(vehicle: IPlayerVehicle) {
+    private setVehicleObject(vehicle: IPlayerVehicle) {
         this.vehicleObject = vehicle;
     }
 

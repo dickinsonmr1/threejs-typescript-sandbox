@@ -367,145 +367,17 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, "Ambulance", VehicleType.Ambulance, new THREE.Color('red'));
-        this.player2 = vehicleFactory.generatePlayer(this, "Taxi", VehicleType.Taxi, new THREE.Color('blue'));
-        this.player3 = vehicleFactory.generatePlayer(this, "Police", VehicleType.Ambulance, new THREE.Color('green'));
-        this.player4 = vehicleFactory.generatePlayer(this, "Trash Truck", VehicleType.Ambulance, new THREE.Color('yellow'));
+        this.player1 = vehicleFactory.generatePlayer(this, this.world, "RaceCar", VehicleType.RaceCar, new THREE.Color('red'), this.sedanSportsModel, this.wheelModel, wheelMaterial);
 
-/*
-        this.gltfVehiclePlayer1 = new GltfObject(this,
-            this.tractorModel,
-            //'assets/kenney-vehicles/taxi.glb',
-            new THREE.Vector3(2, 2, -2), // position
-            new THREE.Vector3(0.5, 0.5, 0.5), // scale
-            new THREE.Vector3(0.5, 0.5, 1), // bounding boxf size,
-            new THREE.Vector3(0, -0.25, 0), // physics offset,
-            this.world,
-            objectMaterial);
-        this.allGltfPlayers.push(this.gltfVehiclePlayer1);
+        this.player2 = vehicleFactory.generatePlayer(this, this.world, "Taxi", VehicleType.Taxi, new THREE.Color('blue'), this.taxiModel, this.wheelModel, wheelMaterial);;
 
-        this.gltfVehiclePlayer2 = new GltfObject(this,
-            this.policeModel,
-            new THREE.Vector3(-2, 2, -2), // position
-            new THREE.Vector3(0.5, 0.5, 0.5), // scale
-            new THREE.Vector3(0.5, 0.5, 1), // bounding box size,
-            new THREE.Vector3(0, -0.25, 0), // physics offset,
-            this.world,
-            objectMaterial);
-        this.allGltfPlayers.push(this.gltfVehiclePlayer2);
+        this.player3 = vehicleFactory.generatePlayer(this, this.world, "Police", VehicleType.Ambulance, new THREE.Color('green'), this.policeModel, this.wheelModel, wheelMaterial);
 
-        this.gltfVehiclePlayer3 = new GltfObject(this,
-            this.trashTruckModel,
-            new THREE.Vector3(-6, 2, -2), // position
-            new THREE.Vector3(0.5, 0.5, 0.5), // scale
-            new THREE.Vector3(1, 1, 1.5), // bounding box size,
-            new THREE.Vector3(0, -0.5, 0), // physics offset,
-            this.world,
-            objectMaterial);
-        this.allGltfPlayers.push(this.gltfVehiclePlayer3);
+        this.player4 = vehicleFactory.generatePlayer(this, this.world, "Trash Truck", VehicleType.Ambulance, new THREE.Color('yellow'), this.tractorModel, this.wheelModel, wheelMaterial);
 
-        this.gltfVehiclePlayer4 = new GltfObject(this,
-            this.ambulanceModel,
-            new THREE.Vector3(-3, 5, -2), // position
-            new THREE.Vector3(0.5, 0.5, 0.5), // scale
-            new THREE.Vector3(1, 1, 1.5), // bounding box size,
-            new THREE.Vector3(0, -0.5, 0), // physics offset,
-            this.world,
-            objectMaterial);
-        this.allGltfPlayers.push(this.gltfVehiclePlayer4);
-*/            
-/*
-        this.raycastVehicleObject = new RaycastVehicleObject(
-            this,
-            new THREE.Vector3(-5, 4, -15),   // position
-            this.world,            
-            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-            new CANNON.Vec3(0, 0.5, 0),    // center of mass adjust
-            500,                            // chassis mass
-            wheelMaterial,
-            0.25,                           // wheel radius
-            new CANNON.Vec3(0, 0, 0),   // wheel offset
-            20,                              // wheel mass
-            this.trashTruckModel,             // model            
-            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-            new THREE.Vector3(0, 0, 0) // model offset
-            //new THREE.Vector3(0, -0.35, 0) // model offset
-        );
-*/
-        this.player1.setVehicleObject(new RaycastVehicleObject(
-            this,
-            new THREE.Vector3(-10, 5, -10),   // position
-            this.world,            
-            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-            new CANNON.Vec3(0, 0.5, 0),    // center of mass adjust
-            500,                            // chassis mass
-            wheelMaterial,
-            0.25,                           // wheel radius
-            new CANNON.Vec3(0, 0, 0),   // wheel offset
-            20,                              // wheel mass
-            this.sedanSportsModel,             // model        
-            this.wheelModel,    
-            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-            new THREE.Vector3(0, 0, 0) // model offset
-            //new THREE.Vector3(0, -0.35, 0) // model offset
-        ));
-        this.allPlayers.push(this.player1);
-        
-        this.player2.setVehicleObject(new RaycastVehicleObject(
-            this,
-            new THREE.Vector3(5, 4, 5),   // position
-            this.world,            
-            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-            new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            500,                            // chassis mass
-            wheelMaterial,
-            0.25,                           // wheel radius
-            new CANNON.Vec3(0, 0, 0),   // wheel offset
-            20,                              // wheel mass
-            this.ambulanceModel,             // model      
-            this.wheelModel,          
-            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-            new THREE.Vector3(0, 0, 0) // model offset
-            //new THREE.Vector3(0, -0.35, 0) // model offset
-        ));
+        this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
-
-        this.player3.setVehicleObject(new RaycastVehicleObject(
-            this,
-            new THREE.Vector3(-5, 4, -5),   // position
-            this.world,            
-            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-            new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            500,                            // chassis mass
-            wheelMaterial,
-            0.25,                           // wheel radius
-            new CANNON.Vec3(0, 0, 0),   // wheel offset
-            20,                              // wheel mass
-            this.policeModel,             // model        
-            this.wheelModel,        
-            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-            new THREE.Vector3(0, 0, 0) // model offset
-            //new THREE.Vector3(0, -0.35, 0) // model offset
-        ));
         this.allPlayers.push(this.player3);
-
-        this.player4.setVehicleObject(new RaycastVehicleObject(
-            this,
-            new THREE.Vector3(-5, 4, -5),   // position
-            this.world,            
-            new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-            new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-            500,                            // chassis mass
-            wheelMaterial,
-            0.25,                           // wheel radius
-            new CANNON.Vec3(0, 0, 0),   // wheel offset
-            20,                              // wheel mass
-            this.trashTruckModel,             // model         
-            this.wheelModel,       
-            new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-            new THREE.Vector3(0, 0, 0) // model offset
-            //new THREE.Vector3(0, -0.35, 0) // model offset
-        ));
         this.allPlayers.push(this.player4);
 
         //this.rigidVehicleObject.model?.add(this.camera);        
