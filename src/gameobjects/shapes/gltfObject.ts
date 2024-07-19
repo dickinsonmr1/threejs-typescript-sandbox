@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as CANNON from 'cannon-es'
-import { Utility } from "../utility";
+import { Utility } from "../../utility";
 
 export class GltfObject {
     

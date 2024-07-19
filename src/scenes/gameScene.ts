@@ -7,7 +7,7 @@ import Stats from 'three/addons/libs/stats.module.js';
 import SpotlightObject from '../gameobjects/shapes/spotlightObject';
 import { randFloat } from 'three/src/math/MathUtils.js';
 import { ParticleEmitter } from '../gameobjects/fx/particleEmitter';
-import { GltfObject } from '../gameobjects/gltfObject';
+import { GltfObject } from '../gameobjects/shapes/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Projectile } from '../gameobjects/weapons/projectile';
 import { CylinderObject } from '../gameobjects/shapes/cylinderObject';
@@ -15,7 +15,7 @@ import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/ray
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import { PickupObject } from '../gameobjects/pickupObject';
 import SceneController from './sceneController';
-import { Player, PlayerState } from '../gameobjects/player';
+import { Player, PlayerState } from '../gameobjects/player/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
@@ -27,7 +27,7 @@ import { DebugDivElementManager } from './debugDivElementManager';
 import { TerrainObjectv2 } from '../gameobjects/shapes/terrainObjectv2';
 import { PickupObject2 } from '../gameobjects/pickupObject2';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
-import { CpuPlayerPattern } from '../gameobjects/cpuPlayerPatternEnums';
+import { CpuPlayerPattern } from '../gameobjects/player/cpuPlayerPatternEnums';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
