@@ -15,7 +15,7 @@ import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/ray
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import { PickupObject } from '../gameobjects/pickupObject';
 import SceneController from './sceneController';
-import { Player, PlayerState } from '../gameobjects/player/player';
+import { Player, PlayerState, VehicleType } from '../gameobjects/player/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
@@ -28,6 +28,7 @@ import { TerrainObjectv2 } from '../gameobjects/shapes/terrainObjectv2';
 import { PickupObject2 } from '../gameobjects/pickupObject2';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { CpuPlayerPattern } from '../gameobjects/player/cpuPlayerPatternEnums';
+import { VehicleFactory } from '../gameobjects/player/vehicleFactory';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -364,10 +365,12 @@ export default class GameScene extends THREE.Scene {
             depthTest: true
         });
 
-        this.player1 = new Player(this, "Ambulance", new THREE.Color('red'), this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
-        this.player2 = new Player(this, "Taxi", new THREE.Color('blue'), this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
-        this.player3 = new Player(this, "Police", new THREE.Color('green'), this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
-        this.player4 = new Player(this, "Trash Truck", new THREE.Color('yellow'), this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
+        var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
+
+        this.player1 = vehicleFactory.generatePlayer(this, "Ambulance", VehicleType.Ambulance, new THREE.Color('red'));
+        this.player2 = vehicleFactory.generatePlayer(this, "Taxi", VehicleType.Taxi, new THREE.Color('blue'));
+        this.player3 = vehicleFactory.generatePlayer(this, "Police", VehicleType.Ambulance, new THREE.Color('green'));
+        this.player4 = vehicleFactory.generatePlayer(this, "Trash Truck", VehicleType.Ambulance, new THREE.Color('yellow'));
 
 /*
         this.gltfVehiclePlayer1 = new GltfObject(this,

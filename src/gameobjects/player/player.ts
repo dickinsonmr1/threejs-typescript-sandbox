@@ -28,6 +28,28 @@ export enum PlayerState {
     Respawning
 }
 
+
+export enum VehicleType {
+    
+    //TrashMan,
+    Taxi,
+    Ambulance,
+    RaceCar,
+    PickupTruck,
+    Hearse,
+    Killdozer,
+    MonsterTruck,
+    Police
+}
+
+export enum PlayerTeam {
+    Red,
+    Blue,
+    Green,
+    Yellow
+}
+
+// TODO: convert to abstract class and add 1 child class per vehicle type
 export class Player {
 
     scene: THREE.Scene;
