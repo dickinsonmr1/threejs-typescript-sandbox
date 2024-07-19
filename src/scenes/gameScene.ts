@@ -175,38 +175,25 @@ export default class GameScene extends THREE.Scene {
         this.trashTruckModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
         // vehicles v2 have wheels as separate children
-        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/sedan-sports.glb');
+        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
         this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
         this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
 
-        //// remove wheels
-        //this.sedanSportsModel.scene.children[1].remove();
-        //this.sedanSportsModel.scene.children[2].remove();
-        //this.sedanSportsModel.scene.children[3].remove();
-        //this.sedanSportsModel.scene.children[4].remove();
+        var model = this.sedanSportsModel.scene;
+        
+        var wheel1 = model.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = model.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = model.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = model.children.find(x => x.name == 'wheel-front-right');
 
-        /*
-        // back left        
-        this.sedanSportsModel.scene.children[1].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        //this.sedanSportsModel.scene.children[1].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        this.sedanSportsModel.scene.children[1].position.add(new THREE.Vector3(0.4, -0.5, 1.25));
-                
-        // back right
-        this.sedanSportsModel.scene.children[2].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        this.sedanSportsModel.scene.children[2].position.add(new THREE.Vector3(1.0, -0.5, 0));
-        
-        // front left
-        this.sedanSportsModel.scene.children[3].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        this.sedanSportsModel.scene.children[3].position.add(new THREE.Vector3(-1, -0.5, 0));
-        
-        // front right
-        this.sedanSportsModel.scene.children[4].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        this.sedanSportsModel.scene.children[4].position.add(new THREE.Vector3(-0.4, -0.5, -1.4));        
-        */
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
 
         this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
-        this.wheelModel.scene.scale.set(1, 1, 1);
-        this.add(this.wheelModel.scene);
+        //this.wheelModel.scene.scale.set(1, 1, 1);
+        //this.add(this.wheelModel.scene);
 
         this.tractorModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/tractorPolice.glb');
         this.tractorModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);

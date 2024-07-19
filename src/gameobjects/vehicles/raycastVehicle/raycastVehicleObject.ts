@@ -132,10 +132,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             this.modelOffset = modelOffset;
 
             
-            if(this.model.children[1] != null) this.model.children[1].remove();
-            if(this.model.children[2] != null) this.model.children[2].remove();
-            if(this.model.children[3] != null) this.model.children[3].remove();
-            if(this.model.children[4] != null) this.model.children[4].remove();
+            //if(this.model.children[1] != null) this.model.children[1].remove();
+            //if(this.model.children[2] != null) this.model.children[2].remove();
+            //if(this.model.children[3] != null) this.model.children[3].remove();
+            //if(this.model.children[4] != null) this.model.children[4].remove();
 
             this.model.position.set(position.x + modelOffset.x, position.y + modelOffset.y, position.z + modelOffset.z);
             this.model.scale.set(modelScale.x, modelScale.y, modelScale.z);         
@@ -150,7 +150,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                     
             let temp = wheelModelData.scene;
             temp.position.set(5, 5, 5);
-            scene.add(temp);
+            //scene.add(temp);
             
             /*
             if(this.raycastVehicle != null) {
