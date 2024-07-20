@@ -16,7 +16,7 @@ export class VehicleFactory {
         
     }
 
-    generatePlayer(scene: THREE.Scene, world: CANNON.World,
+    generatePlayer(scene: THREE.Scene, world: CANNON.World, isCpuPlayer: boolean,
         playerName: string, vehicleType: VehicleType, playerColor: THREE.Color,
         model: GLTF, wheelModel: GLTF,
         wheelMaterial: CANNON.Material) : Player {
@@ -109,6 +109,6 @@ export class VehicleFactory {
                 break;
         }
         
-        return new Player(scene, playerName, playerColor, this.crosshairTexture, this.markerTexture, this.particleMaterial, vehicle)
+        return new Player(scene, playerName, playerColor, this.crosshairTexture, this.markerTexture, this.particleMaterial, vehicle);
     }
 }

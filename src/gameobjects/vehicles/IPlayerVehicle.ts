@@ -4,6 +4,8 @@ import * as CANNON from 'cannon-es'
 export interface IPlayerVehicle {
     getChassis(): ChassisObject;
     getModel(): THREE.Group;
+    getWheelModels(): THREE.Group[];
+    
     getCannonVehicleChassisBody(): CANNON.Body | undefined; 
 
     tryTurn(x: number): void;

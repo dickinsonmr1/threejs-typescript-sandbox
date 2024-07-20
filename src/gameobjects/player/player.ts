@@ -28,7 +28,6 @@ export enum PlayerState {
     Respawning
 }
 
-
 export enum VehicleType {
     
     //TrashMan,
@@ -318,11 +317,7 @@ export class Player {
         const size = aabb.getSize(new THREE.Vector3());
 
         const vec = new THREE.Vector3();
-        this.vehicleObject.getModel().getWorldPosition(vec) ;//this.rigidVehicleObject?.model?.position.clone();
-        
-        //if(vec == null) return;
-        // distance off ground
-        //vec.y += 2;
+        this.vehicleObject.getModel().getWorldPosition(vec);
 
         // offset to front of gun
         var tempPosition = vec.add(
@@ -448,6 +443,7 @@ export class Player {
                 this.shield.setVisible(false);
 
             this.vehicleObject.getModel().visible = false;
+            this.vehicleObject.getWheelModels().forEach(x => x.visible = false);            
             this.turboParticleEmitter.pause();
 
             if(!scene.explosionTexture) return;
@@ -495,8 +491,7 @@ export class Player {
         this.refillHealth();        
 
         
-        this.playerState = PlayerState.Alive;
-        this.vehicleObject.getModel().visible = true;
+        this.playerState = PlayerState.Alive;        
         this.tryStopTurbo();
 
         var mapDimensions = this.getScene().getMapDimensions();
@@ -507,6 +502,9 @@ export class Player {
         let worldPosition = this.getScene().getWorldPositionOnTerrain(randX, randZ);
 
         this.vehicleObject.respawnPosition(worldPosition.x, worldPosition.y + 2, worldPosition.z);
+
+        this.vehicleObject.getModel().visible = true;
+        this.vehicleObject.getWheelModels().forEach(x => x.visible = true);            
 
         if(this.headLights != null)
             this.headLights.group.visible = true;

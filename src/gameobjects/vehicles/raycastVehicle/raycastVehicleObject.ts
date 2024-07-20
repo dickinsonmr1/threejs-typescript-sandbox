@@ -208,6 +208,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     getModel(): THREE.Group<THREE.Object3DEventMap> {
         return this.model;
     }
+
+    getWheelModels(): THREE.Group<THREE.Object3DEventMap>[] {
+        return this.wheelModels;
+    }
     
     getCannonVehicleChassisBody(): CANNON.Body | undefined {
         return this.raycastVehicle?.chassisBody;

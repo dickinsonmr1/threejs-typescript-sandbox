@@ -42,13 +42,13 @@ export default class GameScene extends THREE.Scene {
     private readonly mtlLoader = new MTLLoader();
 
     private readonly gltfLoader = new GLTFLoader();
-    private taxiModel?: GLTF;
-    private policeModel?: GLTF;
-    private ambulanceModel?: GLTF;
-    private trashTruckModel?: GLTF;
-    private sedanSportsModel?: GLTF;
-    private tractorModel?: GLTF;
-    private wheelModel?: GLTF;
+    private taxiModel!: GLTF;
+    private policeModel!: GLTF;
+    private ambulanceModel!: GLTF;
+    private trashTruckModel!: GLTF;
+    private sedanSportsModel!: GLTF;
+    private tractorModel!: GLTF;
+    private wheelModel!: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
 
@@ -69,6 +69,9 @@ export default class GameScene extends THREE.Scene {
     public crosshairTexture: THREE.Texture = new THREE.Texture();
     public playerMarkerTexture: THREE.Texture = new THREE.Texture();
 
+    public groundMaterial!: CANNON.Material;
+    public wheelGroundContactMaterial!: CANNON.ContactMaterial;
+
     private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
 
     public getMapDimensions(): THREE.Vector3 {
@@ -86,24 +89,14 @@ export default class GameScene extends THREE.Scene {
     basicMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial( { color: 0xFFFF00 });
     basicSemitransparentMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial( { color: 0xFFFF00, transparent: true, opacity: 0.5 });
     
-    terrain?: TerrainObjectv2;
-    water?: Water;
+    terrain!: TerrainObjectv2;
+    water!: Water;
 
     grassBillboards?: THREE.Points;
     
     cube?: BoxObject;
     cube2?: BoxObject;
     cylinder?: CylinderObject;
-
-    private allGltfPlayers: GltfObject[] = [];
-
-    gltfVehiclePlayer1?: GltfObject;
-    gltfVehiclePlayer2?: GltfObject;
-    gltfVehiclePlayer3?: GltfObject;
-    gltfVehiclePlayer4?: GltfObject;
-
-    raycastVehicleObject?: RaycastVehicleObject;
-    //rigidVehicleObject?: RigidVehicleObject;
 
     private allPlayers: Player[] = [];
     player1!: Player;
@@ -113,7 +106,7 @@ export default class GameScene extends THREE.Scene {
 
     cpuPlayerBehavior: CpuPlayerPattern = CpuPlayerPattern.Patrol;
 
-    private allRigidVehicleObjects: IPlayerVehicle[] = [];
+    //private allRigidVehicleObjects: IPlayerVehicle[] = [];
 
     private followCam?: THREE.Object3D;
 
@@ -158,47 +151,9 @@ export default class GameScene extends THREE.Scene {
         //this.background = new THREE.Color(0xB1E1FF);
     }
 
-    async initialize() {
-        this.taxiModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/taxi.glb');
-        this.taxiModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.taxiModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-
-        this.policeModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/police.glb');        
-        this.policeModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.policeModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-                        
-        this.ambulanceModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/ambulance.glb');
-        this.ambulanceModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.ambulanceModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-                
-        this.trashTruckModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/garbageTruck.glb');
-        this.trashTruckModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.trashTruckModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-
-        // vehicles v2 have wheels as separate children
-        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
-        this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-
-        var model = this.sedanSportsModel.scene;
-        
-        var wheel1 = model.children.find(x => x.name == 'wheel-back-left');
-        var wheel2 = model.children.find(x => x.name == 'wheel-back-right');
-        var wheel3 = model.children.find(x => x.name == 'wheel-front-left');
-        var wheel4 = model.children.find(x => x.name == 'wheel-front-right');
-
-        wheel1?.removeFromParent();
-        wheel2?.removeFromParent();
-        wheel3?.removeFromParent();
-        wheel4?.removeFromParent();
-
-        this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
-        //this.wheelModel.scene.scale.set(1, 1, 1);
-        //this.add(this.wheelModel.scene);
-
-        this.tractorModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/tractorPolice.glb');
-        this.tractorModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.tractorModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+    async initialize(): Promise<void> {
+       
+        await this.loadVehicleAssets();
 
         this.explosionTexture = this.textureLoader.load('assets/particle-16x16.png');
         //this.explosionTexture = this.textureLoader.load('assets/tank_explosion3.png');
@@ -211,126 +166,9 @@ export default class GameScene extends THREE.Scene {
         //this.world.broadphase = new CANNON.NaiveBroadphase;        
         //(this.world.solver as CANNON.GSSolver).iterations = 20;
 
-        var groundMaterial = new CANNON.Material("groundMaterial");
-        const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
+        this.generateMap();
+
         
-
-        // width and height need to match dimensions of heightmap
-        this.terrain = new TerrainObjectv2(this,
-            /*
-            new THREE.MeshPhongMaterial(
-                {
-                    color: 0x44dd44,
-                    depthWrite: true,
-                    //wireframe: true,
-                    side: THREE.DoubleSide,
-                    bumpMap: normalMap,                    
-                    //vertexColors: true
-                }),
-            */                 
-            new THREE.MeshBasicMaterial({
-                color: 0x007700,
-                //wireframe: false,
-                //depthWrite: true,
-                //fog: true,
-                //map: texture
-            }),
-            /*
-            new THREE.MeshStandardMaterial({
-                color: 0x004400, 
-                emissive: 0x004400,
-                roughness: 0.9,
-                metalness: 0.3,
-                map: texture 
-            }),            
-            */
-            /*
-            new THREE.MeshLambertMaterial({
-                color: 0x004400,
-                emissive: 0x004400,
-                emissiveIntensity: 0.5,
-                map: texture,
-
-            }),
-            */
-            this.world,
-            groundMaterial,
-            this.heightMapTextureAsArray,
-            5
-        );
-
-        // adding phyics plane to avoid falling through
-        const groundShape = new CANNON.Plane();
-        var body = new CANNON.Body({
-            mass: 0,
-            type: CANNON.Body.STATIC,
-            material: new CANNON.Material});
-        body.addShape(groundShape);     
-
-        body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
-        this.world.addBody(body);
-
-
-        var height = this.heightMapTextureAsArray.getImageHeight();
-        const wallShape = new CANNON.Box(new CANNON.Vec3(height / 2, 20, 1));
-
-        var wallBody1 = new CANNON.Body({
-            mass: 0,
-            type: CANNON.Body.STATIC,
-            material: new CANNON.Material});
-        wallBody1.addShape(wallShape);            
-        wallBody1.position.set(0, 0, height / 2);       
-        wallBody1.quaternion.setFromEuler(Math.PI, 0, 0);        
-        this.world.addBody(wallBody1);
-
-        var wallBody2 = new CANNON.Body({
-            mass: 0,
-            type: CANNON.Body.STATIC,
-            material: new CANNON.Material});
-        wallBody2.addShape(wallShape);            
-        wallBody2.position.set(0, 0, -height / 2);       
-        wallBody2.quaternion.setFromEuler(Math.PI, 0, 0);        
-        this.world.addBody(wallBody2);
-
-        var wallBody3 = new CANNON.Body({
-            mass: 0,
-            type: CANNON.Body.STATIC,
-            material: new CANNON.Material});
-        wallBody3.addShape(wallShape);            
-        wallBody3.position.set(height / 2, 0, 0);       
-        wallBody3.quaternion.setFromEuler(Math.PI, Math.PI/2, 0);        
-        this.world.addBody(wallBody3);
-
-        var wallBody4 = new CANNON.Body({
-            mass: 0,
-            type: CANNON.Body.STATIC,
-            material: new CANNON.Material});
-        wallBody4.addShape(wallShape);            
-        wallBody4.position.set(-height / 2, 0, 0);       
-        wallBody4.quaternion.setFromEuler(Math.PI, Math.PI/2, 0);        
-        this.world.addBody(wallBody4);
-/*
-        var wallBody4 = new CANNON.Body({
-            mass: 0,
-            type: CANNON.Body.STATIC,
-            material: new CANNON.Material});
-        wallBody2.addShape(wallShape);            
-        wallBody2.position.set(-64, 0, 0);       
-        wallBody2.quaternion.setFromEuler(0, 0, 0);        
-        this.world.addBody(wallBody4);
-*/
-
-        this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight(), 2, 4);
-            
-        var wheelMaterial = new CANNON.Material("wheelMaterial");
-        var wheelGroundContactMaterial = new CANNON.ContactMaterial(
-            wheelMaterial,
-            groundMaterial,
-            {
-                friction: 0.3, restitution: 0, contactEquationStiffness: 1000
-            }
-        );
-        this.world.addContactMaterial(wheelGroundContactMaterial);
 
         var objectMaterial = new CANNON.Material();
     
@@ -365,35 +203,7 @@ export default class GameScene extends THREE.Scene {
             depthTest: true
         });
 
-        var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
-
-        this.player1 = vehicleFactory.generatePlayer(this, this.world, "RaceCar", VehicleType.RaceCar, new THREE.Color('red'), this.sedanSportsModel, this.wheelModel, wheelMaterial);
-
-        this.player2 = vehicleFactory.generatePlayer(this, this.world, "Taxi", VehicleType.Taxi, new THREE.Color('blue'), this.taxiModel, this.wheelModel, wheelMaterial);;
-
-        this.player3 = vehicleFactory.generatePlayer(this, this.world, "Police", VehicleType.Ambulance, new THREE.Color('green'), this.policeModel, this.wheelModel, wheelMaterial);
-
-        this.player4 = vehicleFactory.generatePlayer(this, this.world, "Trash Truck", VehicleType.Ambulance, new THREE.Color('yellow'), this.tractorModel, this.wheelModel, wheelMaterial);
-
-        this.allPlayers.push(this.player1);          
-        this.allPlayers.push(this.player2);
-        this.allPlayers.push(this.player3);
-        this.allPlayers.push(this.player4);
-
-        //this.rigidVehicleObject.model?.add(this.camera);        
-        this.camera.position.x = 0;
-        this.camera.position.y = 2;        
-        this.camera.position.z = 5;
-
-        this.followCam = new THREE.Object3D();
-		this.followCam.position.copy(this.camera.position);
-		this.add(this.followCam);   
-        
-        this.player1.getVehicleObject().getModel()?.add(this.followCam);
-        this.followCam.position.set(5, 3, 0); // camera target offset related to car
-
-        this.allRigidVehicleObjects.push(this.player1.getVehicleObject());
-        
+        await this.generatePlayers(particleMaterial);
 
         let material = new THREE.SpriteMaterial( { map: this.crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
@@ -464,7 +274,6 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.addElement("TraverseTotalTextures", "");
         this.debugDivElementManager.addElement("cpuOverrideBehavior", "");
        
-
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky
         let skyTexture = this.textureLoader.load(
@@ -513,29 +322,6 @@ export default class GameScene extends THREE.Scene {
         sun.setFromSphericalCoords( 1, phi, theta );
         //sky.material.uniforms[ 'sunPosition' ].value.copy( sun );
         this.water.material.uniforms[ 'sunDirection' ].value.copy( sun ).normalize();        
-        */
-
-        /*
-        var flamethrowerEmitter = new FlamethrowerEmitter(this,
-            this.player1.playerId,
-            this.explosionTexture,
-            new THREE.Color('yellow'),
-            new THREE.Color('orange'),
-            new THREE.Vector3(0, 1, 0),
-            5
-        );
-        this.flamethrowerEmitters.push(flamethrowerEmitter);
-
-        
-        var flamethrowerEmitter2 = new FlamethrowerEmitter(this,
-            this.player2.playerId,
-            this.explosionTexture,
-            new THREE.Color('yellow'),
-            new THREE.Color('orange'),
-            new THREE.Vector3(0, 1, 0),
-            5
-        );
-        this.flamethrowerEmitters.push(flamethrowerEmitter2);
         */
 
         //this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
@@ -650,20 +436,6 @@ export default class GameScene extends THREE.Scene {
 			this.player1.tryResetPosition();
 		}
 
-        if(event.key === 'w') {
-            this.raycastVehicleObject?.tryStopAccelerate();
-        }
-        else if(event.key === 's') {
-            this.raycastVehicleObject?.tryStopReverse();
-        }
-
-        if(event.key === 'a') {
-            this.raycastVehicleObject?.tryStopTurnLeft();
-        }
-        else if(event.key === 'd') {
-            this.raycastVehicleObject?.tryStopTurnRight();
-        }
-
         // player 1
         if(event.key === 'ArrowUp') {
             this.player1.tryStopAccelerateWithKeyboard();
@@ -689,44 +461,9 @@ export default class GameScene extends THREE.Scene {
 
     private updateInput() {
 
-        /*
-        if(!this.blaster) {
-            return;
-        }
-
-        const shiftKey = this.keyDown.has('shift');
-        if(!shiftKey){
-            if(this.keyDown.has('arrowleft')) {
-                this.blaster.rotateY(0.02);
-            }
-            else if(this.keyDown.has('arrowright')) {
-                this.blaster.rotateY(-0.02);
-            }
-        }
-        */
-
-        const dir = this.directionVector;
-
-        this.camera.getWorldDirection(dir);
-
         this.sceneController.pollGamepads();
 
-        // raycast vehicle controls
-        if(this.keyDown.has('w')) {
-            this.raycastVehicleObject?.tryAccelerate();
-        }
-        else if(this.keyDown.has('s')) {
-            this.raycastVehicleObject?.tryReverse();
-        }
-
-        if(this.keyDown.has('a')) {
-            this.raycastVehicleObject?.tryTurnLeft();
-        }
-        else if(this.keyDown.has('d')) {
-            this.raycastVehicleObject?.tryTurnRight();
-        }
-
-        // rigid body vehicle controls
+        // player 1 vehicle controls
         if(this.keyDown.has('arrowup')) {
             this.player1.tryAccelerateWithKeyboard();
         }
@@ -954,6 +691,202 @@ export default class GameScene extends THREE.Scene {
 
     async generateSmoke(position: THREE.Vector3) {
         this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, position, 2, 500));
+    }
+
+    private async loadVehicleAssets(): Promise<void> {
+        this.taxiModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/taxi.glb');
+        this.taxiModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.taxiModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+
+        this.policeModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/police.glb');        
+        this.policeModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.policeModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+                        
+        this.ambulanceModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/ambulance.glb');
+        this.ambulanceModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.ambulanceModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+                
+        this.trashTruckModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/garbageTruck.glb');
+        this.trashTruckModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.trashTruckModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+
+        // vehicles v2 have wheels as separate children
+        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
+        this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+
+        var model = this.sedanSportsModel.scene;
+        
+        var wheel1 = model.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = model.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = model.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = model.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+
+        this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
+        //this.wheelModel.scene.scale.set(1, 1, 1);
+        //this.add(this.wheelModel.scene);
+
+        this.tractorModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/tractorPolice.glb');
+        this.tractorModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        this.tractorModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+    }
+
+    async generatePlayers(particleMaterial: THREE.SpriteMaterial): Promise<void> {
+
+        await this.loadVehicleAssets();
+
+        var wheelMaterial = new CANNON.Material("wheelMaterial");
+        var wheelGroundContactMaterial = new CANNON.ContactMaterial(
+            wheelMaterial,
+            this.groundMaterial,
+            {
+                friction: 0.3, restitution: 0, contactEquationStiffness: 1000
+            }
+        );
+        this.world.addContactMaterial(wheelGroundContactMaterial);
+
+        var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
+
+        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, "RaceCar", VehicleType.RaceCar, new THREE.Color('red'), this.sedanSportsModel, this.wheelModel, wheelMaterial);
+        this.player2 = vehicleFactory.generatePlayer(this, this.world, true, "Taxi", VehicleType.Taxi, new THREE.Color('blue'), this.taxiModel, this.wheelModel, wheelMaterial);
+        this.player3 = vehicleFactory.generatePlayer(this, this.world, true, "Police", VehicleType.Ambulance, new THREE.Color('green'), this.policeModel, this.wheelModel, wheelMaterial);
+        this.player4 = vehicleFactory.generatePlayer(this, this.world, true, "Trash Truck", VehicleType.Ambulance, new THREE.Color('yellow'), this.tractorModel, this.wheelModel, wheelMaterial);
+
+        this.allPlayers.push(this.player1);          
+        this.allPlayers.push(this.player2);
+        this.allPlayers.push(this.player3);
+        this.allPlayers.push(this.player4);
+
+        //this.rigidVehicleObject.model?.add(this.camera);        
+        this.camera.position.x = 0;
+        this.camera.position.y = 2;        
+        this.camera.position.z = 5;
+
+        this.followCam = new THREE.Object3D();
+		this.followCam.position.copy(this.camera.position);
+		this.add(this.followCam);   
+        
+        // attach follow camera to player 1
+        this.player1.getVehicleObject().getModel()?.add(this.followCam);
+        this.followCam.position.set(5, 3, 0); // camera target offset related to car
+
+        //this.allRigidVehicleObjects.push(this.player1.getVehicleObject());        
+    }
+
+    private generateMap(): void {
+        this.groundMaterial = new CANNON.Material("groundMaterial");
+        const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
+        
+
+        // width and height need to match dimensions of heightmap
+        this.terrain = new TerrainObjectv2(this,
+            /*
+            new THREE.MeshPhongMaterial(
+                {
+                    color: 0x44dd44,
+                    depthWrite: true,
+                    //wireframe: true,
+                    side: THREE.DoubleSide,
+                    bumpMap: normalMap,                    
+                    //vertexColors: true
+                }),
+            */                 
+            new THREE.MeshBasicMaterial({
+                color: 0x007700,
+                //wireframe: false,
+                //depthWrite: true,
+                //fog: true,
+                //map: texture
+            }),
+            /*
+            new THREE.MeshStandardMaterial({
+                color: 0x004400, 
+                emissive: 0x004400,
+                roughness: 0.9,
+                metalness: 0.3,
+                map: texture 
+            }),            
+            */
+            /*
+            new THREE.MeshLambertMaterial({
+                color: 0x004400,
+                emissive: 0x004400,
+                emissiveIntensity: 0.5,
+                map: texture,
+
+            }),
+            */
+            this.world,
+            this.groundMaterial,
+            this.heightMapTextureAsArray,
+            5
+        );
+
+        this.generateGroundPlane();
+        this.generateBoundingWalls();
+
+        this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight(), 2, 4);
+            
+    }
+
+    private generateGroundPlane(): void {
+       
+        // adding phyics plane to avoid falling through
+        const groundShape = new CANNON.Plane();
+        var body = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        body.addShape(groundShape);     
+
+        body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
+        this.world.addBody(body);
+    }
+    private generateBoundingWalls(): void {
+
+        var height = this.heightMapTextureAsArray.getImageHeight();
+        const wallShape = new CANNON.Box(new CANNON.Vec3(height / 2, 20, 1));
+
+        var wallBody1 = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody1.addShape(wallShape);            
+        wallBody1.position.set(0, 0, height / 2);       
+        wallBody1.quaternion.setFromEuler(Math.PI, 0, 0);        
+        this.world.addBody(wallBody1);
+
+        var wallBody2 = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody2.addShape(wallShape);            
+        wallBody2.position.set(0, 0, -height / 2);       
+        wallBody2.quaternion.setFromEuler(Math.PI, 0, 0);        
+        this.world.addBody(wallBody2);
+
+        var wallBody3 = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody3.addShape(wallShape);            
+        wallBody3.position.set(height / 2, 0, 0);       
+        wallBody3.quaternion.setFromEuler(Math.PI, Math.PI/2, 0);        
+        this.world.addBody(wallBody3);
+
+        var wallBody4 = new CANNON.Body({
+            mass: 0,
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material});
+        wallBody4.addShape(wallShape);            
+        wallBody4.position.set(-height / 2, 0, 0);       
+        wallBody4.quaternion.setFromEuler(Math.PI, Math.PI/2, 0);        
+        this.world.addBody(wallBody4);
     }
 
     private checkProjectilesForCollision() { 
@@ -1196,17 +1129,6 @@ export default class GameScene extends THREE.Scene {
         this.cube2?.update();
         this.sphere?.update();
         this.cylinder?.update();
-
-        //const time = performance.now() * 0.001;
-
-        this.gltfVehiclePlayer1?.update();
-        this.gltfVehiclePlayer2?.update();
-        this.gltfVehiclePlayer3?.update();
-        this.gltfVehiclePlayer4?.update();
-
-        this.raycastVehicleObject?.update();    
-        //this.player1.rigidVehicleObject?.update();
-
         
         this.cubes.forEach(x => x.update());
 
