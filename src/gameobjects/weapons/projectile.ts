@@ -298,7 +298,7 @@ export class Projectile extends SphereObject {
 
         // TODO: homing rockets that avoid hitting the ground   
         //let scene = <GameScene>this.scene;
-        //let worldPosition = scene.getWorldPositionOnTerrain(this.group.position.x, this.group.position.z );        
+        //let worldPosition = scene.getWorldPositionOnTerrainAndWater(this.group.position.x, this.group.position.z );        
         //this.group.position.y = worldPosition.y + 1;
 
         this.body?.position.set(this.group.position.x, this.group.position.y, this.group.position.z);
@@ -317,8 +317,10 @@ export class Projectile extends SphereObject {
             if(this.airstrikeTarget != null) {
                 let gameScene = <GameScene>this.scene;
                 let groundTargetMeshLocation = this.getPosition();
-                let positionOnTerrain = gameScene.getWorldPositionOnTerrain(groundTargetMeshLocation.x, groundTargetMeshLocation.z);
-                this.airstrikeTarget.setTargetMeshPosition(positionOnTerrain);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
+                
+                let positionOnTerrainAndWater = gameScene.getWorldPositionOnTerrainAndWater(groundTargetMeshLocation.x, groundTargetMeshLocation.z);
+
+                this.airstrikeTarget.setTargetMeshPosition(positionOnTerrainAndWater);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
                 this.airstrikeTarget.rotateTargetToFaceDown();
             }
             
@@ -335,6 +337,7 @@ export class Projectile extends SphereObject {
             if(this.detonationClock.running && this.detonationClock.getElapsedTime() >= this.maxDetonationCooldownTimeInSeconds) {
                 let gameScene = <GameScene>this.scene;
 
+                // todo: account for scenario where crosshair is on top of water but explosions should happen on terrain underwater
                 gameScene.generateRandomExplosion(this.projectileType,
                     this.airstrikeTarget.groundTargetMesh.position,
                     new THREE.Color('white'),

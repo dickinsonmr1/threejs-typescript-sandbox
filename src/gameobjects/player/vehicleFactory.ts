@@ -40,10 +40,10 @@ export class VehicleFactory {
                     new CANNON.Vec3(0, 0, 0),   // wheel offset
                     20,                              // wheel mass
                     model,             // model        
-                    wheelModel,        
+                    wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-                    new THREE.Vector3(0, 0, 0) // model offset
-                    //new THREE.Vector3(0, -0.35, 0) // model offset
+                    new THREE.Vector3(0, 0, 0), // model offset  new THREE.Vector3(0, -0.35, 0)
+                    new THREE.Vector3(1, 1, 1) // wheel model scale
                 );
                 break;
             case VehicleType.RaceCar:
@@ -55,14 +55,14 @@ export class VehicleFactory {
                     new CANNON.Vec3(0, 0.5, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
-                    0.25,                           // wheel radius
-                    new CANNON.Vec3(0, 0, 0),   // wheel offset
+                    0.20,                           // wheel radius
+                    new CANNON.Vec3(0.5, 0, 0),   // wheel offset
                     20,                              // wheel mass
                     model,             // model        
-                    wheelModel,    
+                    wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-                    new THREE.Vector3(0, 0, 0) // model offset
-                    //new THREE.Vector3(0, -0.35, 0) // model offset
+                    new THREE.Vector3(0, 0, 0), // model offset
+                    new THREE.Vector3(0.75, 0.75, 0.75) // wheel model scale
                 );
                 break;
             case VehicleType.Police:
@@ -78,10 +78,10 @@ export class VehicleFactory {
                     new CANNON.Vec3(0, 0, 0),   // wheel offset
                     20,                              // wheel mass
                     model,             // model        
-                    wheelModel,        
+                    wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-                    new THREE.Vector3(0, 0, 0) // model offset
-                    //new THREE.Vector3(0, -0.35, 0) // model offset
+                    new THREE.Vector3(0, 0, 0), // model offset
+                    new THREE.Vector3(0.75, 0.75, 0.75) // wheel model scale
                 )
                 break;
             case VehicleType.PickupTruck:
@@ -101,10 +101,10 @@ export class VehicleFactory {
                     new CANNON.Vec3(0, 0, 0),   // wheel offset
                     20,                              // wheel mass
                     model,             // model         
-                    wheelModel,       
+                    wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-                    new THREE.Vector3(0, 0, 0) // model offset
-                    //new THREE.Vector3(0, -0.35, 0) // model offset
+                    new THREE.Vector3(0, 0, 0), // model offset
+                    new THREE.Vector3(0.75, 0.75, 0.75) // wheel model scale
                 )
                 break;
         }

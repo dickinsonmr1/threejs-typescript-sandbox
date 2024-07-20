@@ -612,7 +612,7 @@ export class Player {
 
         let gameScene = <GameScene>this.scene;
 
-        var position = gameScene.getWorldPositionOnTerrain(this.getPosition().x, this.getPosition().z)
+        var position = gameScene.getWorldPositionOnTerrain(this.getPosition().x, this.getPosition().z);
         position.y += 2;
 
         this.vehicleObject.resetPosition(position);

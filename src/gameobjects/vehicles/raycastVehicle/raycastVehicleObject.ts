@@ -45,7 +45,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         modelData?: GLTF,
         wheelModelData?: GLTF,
         modelScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1),
-        modelOffset: THREE.Vector3 = new THREE.Vector3(0, 0, 0)) {
+        modelOffset: THREE.Vector3 = new THREE.Vector3(0, 0, 0),
+        wheelModelScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1)) {
 
         this.chassis = new ChassisObject(
             scene,
@@ -87,19 +88,19 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const chassisLength = chassisDimensions.x;
 
         // front right
-        wheelOptions.chassisConnectionPointLocal.set(-chassisLength, 0, -axisWidth / 2);
+        wheelOptions.chassisConnectionPointLocal.set(-chassisLength + wheelOffset.x, 0, -axisWidth / 2);
         this.raycastVehicle.addWheel(wheelOptions);
         
         // front left
-        wheelOptions.chassisConnectionPointLocal.set(-chassisLength, 0, axisWidth / 2);
+        wheelOptions.chassisConnectionPointLocal.set(-chassisLength + wheelOffset.x, 0, axisWidth / 2);
         this.raycastVehicle.addWheel(wheelOptions);
         
         // rear right
-        wheelOptions.chassisConnectionPointLocal.set(chassisLength, 0, -axisWidth / 2);
+        wheelOptions.chassisConnectionPointLocal.set(chassisLength - wheelOffset.x, 0, -axisWidth / 2);
         this.raycastVehicle.addWheel(wheelOptions);
 
         // rear left
-        wheelOptions.chassisConnectionPointLocal.set(chassisLength, 0, axisWidth / 2);        
+        wheelOptions.chassisConnectionPointLocal.set(chassisLength - wheelOffset.x, 0, axisWidth / 2);        
         this.raycastVehicle.addWheel(wheelOptions);
 
         this.raycastVehicle.addToWorld(world);
@@ -119,6 +120,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                 let temp = wheelModelData.scene.clone()
                 temp.position.set(i, i, i);
                 temp.rotateX(Math.PI);
+                temp.scale.set(wheelModelScale.x, wheelModelScale.y, wheelModelScale.z);
+
                 this.wheelModels.push(temp);
 
                 scene.add(this.wheelModels[i]);

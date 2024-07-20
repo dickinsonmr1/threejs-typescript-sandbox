@@ -1017,10 +1017,25 @@ export default class GameScene extends THREE.Scene {
             ray.intersectBody(this.terrain.body, raycastResult);
         }
         if(raycastResult != null && raycastResult.hasHit) {
-            worldPosition = Utility.CannonVec3ToThreeVec3(raycastResult.hitPointWorld);
+            worldPosition = Utility.CannonVec3ToThreeVec3(raycastResult.hitPointWorld);           
         }
 
         return worldPosition;
+    }
+
+    public getWorldPositionOnTerrainAndWater(x: number, z: number): THREE.Vector3 {
+
+        let waterPosition = new THREE.Vector3(0,0,0);
+        
+        if(this.water != null)
+            waterPosition = this.water.position;
+
+        var position = this.getWorldPositionOnTerrain(x, z);
+
+        if(this.water != null && waterPosition.y > position.y)
+            position.y = waterPosition.y;
+
+        return position;
     }
 
     updateWater() {
