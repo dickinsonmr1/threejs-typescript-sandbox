@@ -42,11 +42,11 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         wheelRadius: number,
         wheelOffset: CANNON.Vec3,
         wheelMass: number,
-        modelData?: GLTF,
-        wheelModelData?: GLTF,
-        modelScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1),
-        modelOffset: THREE.Vector3 = new THREE.Vector3(0, 0, 0),
-        wheelModelScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1)) {
+        modelData: GLTF,
+        wheelModelData: GLTF,
+        modelScale: THREE.Vector3, // = new THREE.Vector3(1, 1, 1),
+        modelOffset: THREE.Vector3, // = new THREE.Vector3(0, 0, 0),
+        wheelModelScale: THREE.Vector3) { //} = new THREE.Vector3(1, 1, 1)) {
 
         this.chassis = new ChassisObject(
             scene,

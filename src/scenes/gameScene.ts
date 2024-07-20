@@ -42,13 +42,13 @@ export default class GameScene extends THREE.Scene {
     private readonly mtlLoader = new MTLLoader();
 
     private readonly gltfLoader = new GLTFLoader();
-    private taxiModel!: GLTF;
-    private policeModel!: GLTF;
-    private ambulanceModel!: GLTF;
-    private trashTruckModel!: GLTF;
-    private sedanSportsModel!: GLTF;
-    private tractorModel!: GLTF;
-    private wheelModel!: GLTF;
+    public taxiModel!: GLTF;
+    public policeModel!: GLTF;
+    public ambulanceModel!: GLTF;
+    public trashTruckModel!: GLTF;
+    public sedanSportsModel!: GLTF;
+    public tractorModel!: GLTF;
+    public wheelModel!: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
 
@@ -494,7 +494,7 @@ export default class GameScene extends THREE.Scene {
 
         if(this.followCam != null)
             this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.05);
-		if(!this.player1.isModelNull())
+		if(this.player1 != null && !this.player1.isModelNull())
             this.camera.lookAt(this.player1.getModelPosition());
     }
 
@@ -694,46 +694,163 @@ export default class GameScene extends THREE.Scene {
     }
 
     private async loadVehicleAssets(): Promise<void> {
-        this.taxiModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/taxi.glb');
-        this.taxiModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.taxiModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-
-        this.policeModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/police.glb');        
-        this.policeModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.policeModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-                        
-        this.ambulanceModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/ambulance.glb');
-        this.ambulanceModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.ambulanceModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-                
-        this.trashTruckModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/garbageTruck.glb');
-        this.trashTruckModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.trashTruckModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-
-        // vehicles v2 have wheels as separate children
-        this.sedanSportsModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
-        this.sedanSportsModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        this.sedanSportsModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
-
-        var model = this.sedanSportsModel.scene;
+       
+        this.taxiModel = await this.loadTaxiModel();
+        this.policeModel = await this.loadPoliceModel();
+        this.ambulanceModel = await this.loadAmbulanceModel();
+        this.trashTruckModel = await this.loadTrashTruckModel();
+        this.sedanSportsModel = await this.loadSedanSportsModel();
+        this.tractorModel = await this.loadTractorModel();
         
-        var wheel1 = model.children.find(x => x.name == 'wheel-back-left');
-        var wheel2 = model.children.find(x => x.name == 'wheel-back-right');
-        var wheel3 = model.children.find(x => x.name == 'wheel-front-left');
-        var wheel4 = model.children.find(x => x.name == 'wheel-front-right');
+        this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
+        //this.wheelModel.scene.scale.set(1, 1, 1);
+        //this.add(this.wheelModel.scene);
+    }
+
+    private async loadTaxiModel(): Promise<GLTF> {        
+
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/taxi.glb');
+        var modelScene = model.scene;
+        
+        var body = modelScene.children.find(x => x.name == 'body');
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
 
         wheel1?.removeFromParent();
         wheel2?.removeFromParent();
         wheel3?.removeFromParent();
         wheel4?.removeFromParent();
 
-        this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
-        //this.wheelModel.scene.scale.set(1, 1, 1);
-        //this.add(this.wheelModel.scene);
+        return model;
+    }
 
-        this.tractorModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles/tractorPolice.glb');
-        this.tractorModel.scene.children[0].rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-        this.tractorModel.scene.children[0].position.add(new THREE.Vector3(0, -0.5, 0));
+    private async loadPoliceModel(): Promise<GLTF> {        
+
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
+        var modelScene = model.scene;
+
+        var body = modelScene.children.find(x => x.name == 'body');
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+
+        return model;
+    }
+
+    private async loadAmbulanceModel(): Promise<GLTF> {        
+
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/ambulance.glb');
+        var modelScene = model.scene;
+
+        var body = modelScene.children.find(x => x.name == 'body');
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+
+        var doorLeft = modelScene.children.find(x => x.name == 'door-left');
+        doorLeft?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        doorLeft?.position.add(new THREE.Vector3(0, -0.5, 0));
+
+        var doorRight = modelScene.children.find(x => x.name == 'door-right');
+        doorRight?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        doorRight?.position.add(new THREE.Vector3(0, -0.5, 0));
+
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+
+        return model;          
+    }
+
+    private async loadTrashTruckModel(): Promise<GLTF> {        
+
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/garbage-truck.glb');
+        var modelScene = model.scene;
+
+        var body = modelScene.children.find(x => x.name == 'body');
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+
+        var arm = modelScene.children.find(x => x.name == 'arm');
+        arm?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        arm?.position.add(new THREE.Vector3(0, -0.5, 0));
+        
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+
+        return model;
+    }
+
+    private async loadSedanSportsModel(): Promise<GLTF> {        
+
+        // vehicles v2 have wheels as separate children
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
+        var modelScene = model.scene;
+        
+        var body = modelScene.children.find(x => x.name == 'body');
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+        
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+        
+        return model;
+    }
+
+    private async loadTractorModel(): Promise<GLTF> {
+        
+        // vehicles v2 have wheels as separate children
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/tractor-shovel.glb');
+        var modelScene = model.scene;
+        
+        var body = modelScene.children.find(x => x.name == 'body');
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+        
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+        
+        return model;
     }
 
     async generatePlayers(particleMaterial: THREE.SpriteMaterial): Promise<void> {
@@ -752,10 +869,10 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, "RaceCar", VehicleType.RaceCar, new THREE.Color('red'), this.sedanSportsModel, this.wheelModel, wheelMaterial);
-        this.player2 = vehicleFactory.generatePlayer(this, this.world, true, "Taxi", VehicleType.Taxi, new THREE.Color('blue'), this.taxiModel, this.wheelModel, wheelMaterial);
-        this.player3 = vehicleFactory.generatePlayer(this, this.world, true, "Police", VehicleType.Ambulance, new THREE.Color('green'), this.policeModel, this.wheelModel, wheelMaterial);
-        this.player4 = vehicleFactory.generatePlayer(this, this.world, true, "Trash Truck", VehicleType.Ambulance, new THREE.Color('yellow'), this.tractorModel, this.wheelModel, wheelMaterial);
+        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, VehicleType.Killdozer, new THREE.Color('red'), wheelMaterial);
+        this.player2 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Taxi, new THREE.Color('blue'), wheelMaterial);
+        this.player3 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Ambulance, new THREE.Color('green'), wheelMaterial);
+        this.player4 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.TrashTruck, new THREE.Color('yellow'), wheelMaterial);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
@@ -1062,7 +1179,7 @@ export default class GameScene extends THREE.Scene {
 
         this.updateInput();          
 
-        var cpuPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
+        var cpuPlayers = this.allPlayers.filter(x => x.isCpuPlayer);
 
         for(var i = 0; i < cpuPlayers.length; i++) {
             
@@ -1076,7 +1193,6 @@ export default class GameScene extends THREE.Scene {
                 cpuPlayer.tryStopReverseWithKeyboard();
                 continue;
             }
-
 
             let temp = THREE.MathUtils.randInt(0, 200);
             switch(temp) {

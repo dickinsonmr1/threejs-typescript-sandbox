@@ -3,6 +3,7 @@ import { RaycastVehicleObject } from "../vehicles/raycastVehicle/raycastVehicleO
 import { Player, PlayerTeam, VehicleType } from "./player";
 import * as CANNON from 'cannon-es'
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import GameScene from "../../scenes/gameScene";
 
 export class VehicleFactory {
     crosshairTexture: THREE.Texture;
@@ -17,16 +18,34 @@ export class VehicleFactory {
     }
 
     generatePlayer(scene: THREE.Scene, world: CANNON.World, isCpuPlayer: boolean,
-        playerName: string, vehicleType: VehicleType, playerColor: THREE.Color,
-        model: GLTF, wheelModel: GLTF,
+        vehicleType: VehicleType, playerColor: THREE.Color,        
         wheelMaterial: CANNON.Material) : Player {
         //isCpuPlayer: boolean, playerTeam: PlayerTeam, scene: THREE.Scene) : Player {        
         
-        let vehicle;
+        let gameScene = <GameScene>scene;
+
+        let vehicle = null;
 
         switch(vehicleType) {
             case VehicleType.Taxi:
-
+                vehicle = new RaycastVehicleObject(
+                    scene,
+                    new THREE.Vector3(5, 4, 5),   // position
+                    world,            
+                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    500,                            // chassis mass
+                    wheelMaterial,
+                    0.25,                           // wheel radius
+                    new CANNON.Vec3(0, 0, 0),   // wheel offset
+                    20,                              // wheel mass
+                    gameScene.taxiModel,             // model        
+                    gameScene.wheelModel,       // wheel model
+                    new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+                    new THREE.Vector3(0, 0, 0), // wheel offset  new THREE.Vector3(0, -0.35, 0)
+                    new THREE.Vector3(0.75, 0.75, 0.75) // wheel model scale
+                );
+                break;
             case VehicleType.Ambulance:
                 vehicle = new RaycastVehicleObject(
                     scene,
@@ -39,10 +58,10 @@ export class VehicleFactory {
                     0.25,                           // wheel radius
                     new CANNON.Vec3(0, 0, 0),   // wheel offset
                     20,                              // wheel mass
-                    model,             // model        
-                    wheelModel,       // wheel model
+                    gameScene.ambulanceModel,             // model        
+                    gameScene.wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-                    new THREE.Vector3(0, 0, 0), // model offset  new THREE.Vector3(0, -0.35, 0)
+                    new THREE.Vector3(0, 0, 0), // wheel offset  new THREE.Vector3(0, -0.35, 0)
                     new THREE.Vector3(1, 1, 1) // wheel model scale
                 );
                 break;
@@ -58,10 +77,10 @@ export class VehicleFactory {
                     0.20,                           // wheel radius
                     new CANNON.Vec3(0.5, 0, 0),   // wheel offset
                     20,                              // wheel mass
-                    model,             // model        
-                    wheelModel,       // wheel model
+                    gameScene.sedanSportsModel,             // model        
+                    gameScene.wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-                    new THREE.Vector3(0, 0, 0), // model offset
+                    new THREE.Vector3(0, 0, 0), // wheel offset
                     new THREE.Vector3(0.75, 0.75, 0.75) // wheel model scale
                 );
                 break;
@@ -77,17 +96,33 @@ export class VehicleFactory {
                     0.25,                           // wheel radius
                     new CANNON.Vec3(0, 0, 0),   // wheel offset
                     20,                              // wheel mass
-                    model,             // model        
-                    wheelModel,       // wheel model
+                    gameScene.policeModel,             // model        
+                    gameScene.wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-                    new THREE.Vector3(0, 0, 0), // model offset
+                    new THREE.Vector3(0, 0, 0), // wheel offset
                     new THREE.Vector3(0.75, 0.75, 0.75) // wheel model scale
                 )
                 break;
-            case VehicleType.PickupTruck:
-            case VehicleType.Hearse:
             case VehicleType.Killdozer:
-            case VehicleType.MonsterTruck:
+                vehicle = new RaycastVehicleObject(
+                    scene,
+                    new THREE.Vector3(-5, 4, -5),   // position
+                    world,            
+                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    500,                            // chassis mass
+                    wheelMaterial,
+                    0.25,                           // wheel radius
+                    new CANNON.Vec3(0, 0, 0),   // wheel offset
+                    20,                              // wheel mass
+                    gameScene.tractorModel,             // model         
+                    gameScene.wheelModel,       // wheel model
+                    new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+                    new THREE.Vector3(0, 0, 0), // wheel offset
+                    new THREE.Vector3(1, 1, 1) // wheel model scale
+                )
+                break;
+            case VehicleType.TrashTruck:
             default:
                 vehicle = new RaycastVehicleObject(
                     scene,
@@ -100,15 +135,15 @@ export class VehicleFactory {
                     0.25,                           // wheel radius
                     new CANNON.Vec3(0, 0, 0),   // wheel offset
                     20,                              // wheel mass
-                    model,             // model         
-                    wheelModel,       // wheel model
+                    gameScene.trashTruckModel,             // model         
+                    gameScene.wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
-                    new THREE.Vector3(0, 0, 0), // model offset
-                    new THREE.Vector3(0.75, 0.75, 0.75) // wheel model scale
-                )
+                    new THREE.Vector3(0, 0, 0), // wheel offset
+                    new THREE.Vector3(1, 1, 1) // wheel model scale
+                )                
                 break;
         }
         
-        return new Player(scene, playerName, playerColor, this.crosshairTexture, this.markerTexture, this.particleMaterial, vehicle);
+        return new Player(scene, isCpuPlayer, vehicleType.toString(), playerColor, this.crosshairTexture, this.markerTexture, this.particleMaterial, vehicle);
     }
 }

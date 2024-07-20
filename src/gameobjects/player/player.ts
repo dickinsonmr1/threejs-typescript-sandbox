@@ -38,7 +38,8 @@ export enum VehicleType {
     Hearse,
     Killdozer,
     MonsterTruck,
-    Police
+    Police,
+    TrashTruck
 }
 
 export enum PlayerTeam {
@@ -53,6 +54,8 @@ export class Player {
 
     scene: THREE.Scene;
     public playerName: string;
+
+    public isCpuPlayer: boolean;
     public playerId: string;
     maxHealth: number = 100;
     currentHealth: number;
@@ -92,10 +95,11 @@ export class Player {
 
     private shield!: Shield;
 
-    constructor(scene: THREE.Scene,
+    constructor(scene: THREE.Scene, isCpuPlayer: boolean,
         playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial, vehicle: IPlayerVehicle) {
 
         this.scene = scene;
+        this.isCpuPlayer = isCpuPlayer;
 
         this.playerId = uuidv4();
         this.healthBar = new HealthBar(scene, this.maxHealth);
