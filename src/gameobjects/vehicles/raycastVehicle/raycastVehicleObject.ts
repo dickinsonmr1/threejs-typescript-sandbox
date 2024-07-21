@@ -140,8 +140,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             if(i > 1) {
                 wheelColor = 0xff0000;
                 modelScale = rearWheelModelScale;
-            }
-            
+            }            
             
             const temp = new RaycastWheelObject(scene, wheel.radius, wheelColor, world, wheelMaterial);                    
             this.wheels.push(temp);

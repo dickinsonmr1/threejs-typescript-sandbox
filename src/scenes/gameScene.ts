@@ -48,6 +48,7 @@ export default class GameScene extends THREE.Scene {
     public ambulanceModel!: GLTF;
     public trashTruckModel!: GLTF;
     public sedanSportsModel!: GLTF;
+    public suvModel!: GLTF;
     public tractorModel!: GLTF;
     public wheelModel!: GLTF;
 
@@ -705,6 +706,7 @@ export default class GameScene extends THREE.Scene {
         this.ambulanceModel = await this.loadAmbulanceModel();
         this.trashTruckModel = await this.loadTrashTruckModel();
         this.sedanSportsModel = await this.loadSedanSportsModel();
+        this.suvModel = await this.loadSuvModel();
         this.tractorModel = await this.loadTractorModel();
         
         this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
@@ -815,6 +817,29 @@ export default class GameScene extends THREE.Scene {
     private async loadSedanSportsModel(): Promise<GLTF> {        
 
         // vehicles v2 have wheels as separate children
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/sedan-sports.glb');
+        var modelScene = model.scene;
+        
+        var body = modelScene.children.find(x => x.name == 'body');
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+        
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+        
+        return model;
+    }
+
+    private async loadSuvModel(): Promise<GLTF> {        
+
+        // vehicles v2 have wheels as separate children
         var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
         var modelScene = model.scene;
         
@@ -874,10 +899,10 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, VehicleType.Ambulance, new THREE.Color('red'), wheelMaterial);
-        this.player2 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Taxi, new THREE.Color('blue'), wheelMaterial);
+        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, VehicleType.RaceCar, new THREE.Color('red'), wheelMaterial);
+        this.player2 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Ambulance, new THREE.Color('blue'), wheelMaterial);
         this.player3 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Killdozer, new THREE.Color('green'), wheelMaterial);
-        this.player4 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.TrashTruck, new THREE.Color('yellow'), wheelMaterial);
+        this.player4 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Taxi, new THREE.Color('yellow'), wheelMaterial);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
