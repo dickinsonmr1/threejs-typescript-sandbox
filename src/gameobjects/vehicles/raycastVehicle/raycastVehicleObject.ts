@@ -6,6 +6,7 @@ import { ChassisObject } from "../chassisObject";
 import { IPlayerVehicle } from "../IPlayerVehicle";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Utils } from "utils/Utils";
+import { NumberController } from "three/examples/jsm/libs/lil-gui.module.min.js";
 
 export class RaycastVehicleObject implements IPlayerVehicle {
     
@@ -39,14 +40,20 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         centerOfMassAdjust: CANNON.Vec3,
         chassisMass: number,
         wheelMaterial: CANNON.Material,
-        wheelRadius: number,
-        wheelOffset: CANNON.Vec3,
+
+        frontWheelRadius: number,
+        rearWheelRadius: number,
+
+        frontWheelOffset: CANNON.Vec3,
+        rearWheelOffset: CANNON.Vec3,
+        
         wheelMass: number,
         modelData: GLTF,
         wheelModelData: GLTF,
         modelScale: THREE.Vector3, // = new THREE.Vector3(1, 1, 1),
         modelOffset: THREE.Vector3, // = new THREE.Vector3(0, 0, 0),
-        wheelModelScale: THREE.Vector3) { //} = new THREE.Vector3(1, 1, 1)) {
+        frontWheelModelScale: THREE.Vector3,
+        rearWheelModelScale: THREE.Vector3,) { //} = new THREE.Vector3(1, 1, 1)) {
 
         this.chassis = new ChassisObject(
             scene,
@@ -58,8 +65,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             centerOfMassAdjust
         );
 
-        const wheelOptions = {
-            radius: wheelRadius,
+        const frontWheelOptions = {
+            radius: frontWheelRadius,
             directionLocal: new CANNON.Vec3(0, -1, 0),
             suspensionStiffness: 30,
             suspensionRestLength: 0.3,
@@ -75,6 +82,24 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             useCustomSlidingRotationalSpeed: true,
         };
 
+        const rearWheelOptions = {
+            radius: rearWheelRadius,
+            directionLocal: new CANNON.Vec3(0, -1, 0),
+            suspensionStiffness: 30,
+            suspensionRestLength: 0.3,
+            frictionSlip: 3.0, // 1.4
+            dampingRelaxation: 2.3,
+            dampingCompression: 4.4,
+            maxSuspensionForce: 100000,
+            rollInfluence: 0.01,
+            axleLocal: new CANNON.Vec3(0, 0, 1),
+            chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
+            maxSuspensionTravel: 5, // 0.3
+            customSlidingRotationalSpeed: -30,
+            useCustomSlidingRotationalSpeed: true,
+        };
+
+
         this.raycastVehicle = new CANNON.RaycastVehicle({
             chassisBody: this.chassis.body,
             //indexRightAxis: 0,
@@ -88,20 +113,21 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const chassisLength = chassisDimensions.x;
 
         // front right
-        wheelOptions.chassisConnectionPointLocal.set(-chassisLength + wheelOffset.x, 0, -axisWidth / 2);
-        this.raycastVehicle.addWheel(wheelOptions);
+        frontWheelOptions.chassisConnectionPointLocal.set(-chassisLength + frontWheelOffset.x, frontWheelOffset.y, -axisWidth / 2);
+        this.raycastVehicle.addWheel(frontWheelOptions);
         
         // front left
-        wheelOptions.chassisConnectionPointLocal.set(-chassisLength + wheelOffset.x, 0, axisWidth / 2);
-        this.raycastVehicle.addWheel(wheelOptions);
+        frontWheelOptions.chassisConnectionPointLocal.set(-chassisLength + frontWheelOffset.x, frontWheelOffset.y, axisWidth / 2);
+        this.raycastVehicle.addWheel(frontWheelOptions);
         
         // rear right
-        wheelOptions.chassisConnectionPointLocal.set(chassisLength - wheelOffset.x, 0, -axisWidth / 2);
-        this.raycastVehicle.addWheel(wheelOptions);
+        rearWheelOptions.chassisConnectionPointLocal.set(chassisLength - rearWheelOffset.x, rearWheelOffset.y, -axisWidth / 2);
+        this.raycastVehicle.addWheel(rearWheelOptions);
 
         // rear left
-        wheelOptions.chassisConnectionPointLocal.set(chassisLength - wheelOffset.x, 0, axisWidth / 2);        
-        this.raycastVehicle.addWheel(wheelOptions);
+        rearWheelOptions.chassisConnectionPointLocal.set(chassisLength - rearWheelOffset.x, rearWheelOffset.y, axisWidth / 2);        
+        rearWheelOptions.radius = rearWheelRadius;
+        this.raycastVehicle.addWheel(rearWheelOptions);
 
         this.raycastVehicle.addToWorld(world);
 
@@ -109,8 +135,13 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         let wheelColor = 0x00ff00;
 		this.raycastVehicle.wheelInfos.forEach(wheel => {
             
-            if(i > 1)
+            var modelScale = frontWheelModelScale;
+
+            if(i > 1) {
                 wheelColor = 0xff0000;
+                modelScale = rearWheelModelScale;
+            }
+            
             
             const temp = new RaycastWheelObject(scene, wheel.radius, wheelColor, world, wheelMaterial);                    
             this.wheels.push(temp);
@@ -120,7 +151,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                 let temp = wheelModelData.scene.clone()
                 temp.position.set(i, i, i);
                 temp.rotateX(Math.PI);
-                temp.scale.set(wheelModelScale.x, wheelModelScale.y, wheelModelScale.z);
+                temp.scale.set(modelScale.x, modelScale.y, modelScale.z);
 
                 this.wheelModels.push(temp);
 

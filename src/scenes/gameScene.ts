@@ -29,6 +29,7 @@ import { PickupObject2 } from '../gameobjects/pickupObject2';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { CpuPlayerPattern } from '../gameobjects/player/cpuPlayerPatternEnums';
 import { VehicleFactory } from '../gameobjects/player/vehicleFactory';
+import { RainShaderParticleEmitter } from '../gameobjects/fx/rainShaderParticleEmitter';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -65,6 +66,8 @@ export default class GameScene extends THREE.Scene {
     private projectiles: Projectile[] = [];
 
     private particleEmitters: ParticleEmitter[] = [];
+    //private rainShaderParticleEmitter: RainShaderParticleEmitter;
+
     public explosionTexture: THREE.Texture = new THREE.Texture();
     public crosshairTexture: THREE.Texture = new THREE.Texture();
     public playerMarkerTexture: THREE.Texture = new THREE.Texture();
@@ -308,6 +311,8 @@ export default class GameScene extends THREE.Scene {
         this.water.rotation.x = - Math.PI / 2;
         this.water.position.y += 0.75; // 1.5
         this.add( this.water );
+
+        //this.rainShaderParticleEmitter = new RainShaderParticleEmitter(this);
 
         // TODO: sun from https://threejs.org/examples/?q=water#webgl_shaders_ocean
         /*
@@ -762,11 +767,11 @@ export default class GameScene extends THREE.Scene {
 
         var doorLeft = modelScene.children.find(x => x.name == 'door-left');
         doorLeft?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        doorLeft?.position.add(new THREE.Vector3(0, -0.5, 0));
+        doorLeft?.position.add(new THREE.Vector3(1, -0.5, 2));
 
         var doorRight = modelScene.children.find(x => x.name == 'door-right');
         doorRight?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        doorRight?.position.add(new THREE.Vector3(0, -0.5, 0));
+        doorRight?.position.add(new THREE.Vector3(2.1, -0.5, 0.9));
 
         var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
         var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
@@ -869,9 +874,9 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, VehicleType.Killdozer, new THREE.Color('red'), wheelMaterial);
+        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, VehicleType.Ambulance, new THREE.Color('red'), wheelMaterial);
         this.player2 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Taxi, new THREE.Color('blue'), wheelMaterial);
-        this.player3 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Ambulance, new THREE.Color('green'), wheelMaterial);
+        this.player3 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Killdozer, new THREE.Color('green'), wheelMaterial);
         this.player4 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.TrashTruck, new THREE.Color('yellow'), wheelMaterial);
 
         this.allPlayers.push(this.player1);          
@@ -1267,6 +1272,8 @@ export default class GameScene extends THREE.Scene {
 
         this.projectiles.forEach(x => x.update());
         this.particleEmitters.forEach(x => x.update());
+
+        //this.rainShaderParticleEmitter.update();
 
         this.checkProjectilesForCollision();
         this.checkPickupsForCollisionWithPlayers();
