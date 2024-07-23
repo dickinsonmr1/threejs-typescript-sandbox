@@ -90,6 +90,9 @@ export class Player {
 
     private maxAirstrikeCooldownTimeInSeconds: number = 0.25;
     private airstrikeCooldownClock: THREE.Clock = new THREE.Clock(false);
+
+    flamethrowerBoundingBox: THREE.Mesh;
+    private flamethrowerActive: boolean = false;
     
     private activeAirstrike!: Projectile;
 
@@ -151,6 +154,13 @@ export class Player {
         //this.shield = new Shield(scene, this.getPosition());
 
         this.setVehicleObject(vehicle);
+
+        //const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const cylinderGeometry = new THREE.CylinderGeometry(1, 0.4, 4);
+        //const cylinderGeometry = new THREE.BoxGeometry(1, 5, 1)
+        const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+        this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, sphereMaterial);
+        scene.add(this.flamethrowerBoundingBox);
     }
 
     private getScene(): GameScene {
@@ -226,8 +236,23 @@ export class Player {
 
         
         this.playerMarker.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 1, this.getPosition().z));
-        
 
+        let offset = new THREE.Vector3(-2, 0, 0);
+        offset.applyQuaternion(this.vehicleObject.getModel().quaternion);
+        var flamethrowerBoundingCylinderOffset = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), offset);
+        this.flamethrowerBoundingBox.position.set(flamethrowerBoundingCylinderOffset.x, flamethrowerBoundingCylinderOffset.y, flamethrowerBoundingCylinderOffset.z);
+        this.flamethrowerBoundingBox.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2);
+        this.flamethrowerBoundingBox.applyQuaternion(this.vehicleObject.getModel().quaternion);
+
+        if(this.flamethrowerActive) {
+            this.flamethrowerBoundingBox.visible = true;
+
+            this.flamethrowerActive = false;
+        }
+        else {
+            this.flamethrowerBoundingBox.visible = false;
+        }
+        
         if(this.headLights != null)
             this.headLights.update(
                 Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
@@ -429,6 +454,16 @@ export class Player {
         if(this.currentHealth <= 0)
             this.tryKill();
     }
+
+    tryDamageWithFlamethrower(): void {
+        
+        this.currentHealth -= 0.5;
+
+        this.healthBar.updateValue(this.currentHealth);
+
+        if(this.currentHealth <= 0)
+            this.tryKill();
+    }
     
     tryKill() {
 
@@ -562,6 +597,7 @@ export class Player {
         }
     
         this.flamethrowerEmitter.emitParticles();
+        this.flamethrowerActive = true;
     }
 
     tryFireBullets(): void {

@@ -61,6 +61,7 @@ export default class GameScene extends THREE.Scene {
     private directionVector = new THREE.Vector3();
 
     private cubes: BoxObject[] = [];
+    private lightning!: THREE.Line;
 
     private pickups: PickupObject2[] = [];
 
@@ -202,6 +203,8 @@ export default class GameScene extends THREE.Scene {
         cylinderMesh.position.set(20, 0, 20);            
         this.add(cylinderMesh);
 
+
+        
         let particleMaterial = new THREE.SpriteMaterial({
             map: this.explosionTexture,
             depthTest: true
@@ -331,6 +334,20 @@ export default class GameScene extends THREE.Scene {
         */
 
         //this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
+
+        /*
+        const lightningMaterial = new THREE.LineBasicMaterial({ color: 0x00ffff, linewidth: 5 });
+        const points = [];
+        points.push(this.player1.getPosition());
+        for (let i = 1; i < 10; i++) {
+            points.push(new THREE.Vector3(10 + Math.random() - 0.5, 10 - i, 10 + Math.random() - 0.5));
+        }
+        points.push(this.player2.getPosition());
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                
+        this.lightning = new THREE.Line(geometry, lightningMaterial);
+        this.add(this.lightning);
+        */
                 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -1134,6 +1151,27 @@ export default class GameScene extends THREE.Scene {
         this.projectiles = this.projectiles.filter(x => !x.shouldRemove);
     }
 
+    private checkFlamethrowerForCollision() {
+        
+        this.allPlayers.forEach(player => {
+            
+            if(player.flamethrowerBoundingBox.visible) {
+
+                var enemyPlayers = this.allPlayers.filter(x => x.playerId != player.playerId);
+                enemyPlayers.forEach(enemy => {
+                    
+                    
+                    const flamethrowerBoundingBox = new THREE.Box3().setFromObject(player.flamethrowerBoundingBox);
+                    var enemyBoundingBox = new THREE.Box3().setFromObject(enemy.getVehicleObject().getChassis().mesh);
+
+                    if(flamethrowerBoundingBox != null && enemyBoundingBox != null && flamethrowerBoundingBox?.intersectsBox(enemyBoundingBox)){
+                        enemy.tryDamageWithFlamethrower();
+                    }
+                });
+            }
+        });
+    }
+
     private checkPickupsForCollisionWithPlayers() {
         this.pickups.forEach(pickup => {
             this.allPlayers.forEach(player => {
@@ -1301,6 +1339,7 @@ export default class GameScene extends THREE.Scene {
         //this.rainShaderParticleEmitter.update();
 
         this.checkProjectilesForCollision();
+        this.checkFlamethrowerForCollision();
         this.checkPickupsForCollisionWithPlayers();
 
         this.world.contacts.forEach((contact) => {
@@ -1314,6 +1353,39 @@ export default class GameScene extends THREE.Scene {
         if(this.cube != null) 
         {
             //this.spotlight?.setPosition(this.cube?.mesh.position);
+        }
+
+        if(this.lightning != null ) {
+             // Update lightning geometry
+
+            const positions = this.lightning.geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+                if(i == 0) {
+                    var position = this.player1.getPosition();
+                    positions[i] = position.x;
+                    positions[i+1] = position.y;
+                    positions[i+2] = position.z;
+                }
+                else if(i == positions.length - 4) {
+                    var position = this.player2.getPosition();
+                    positions[i] = position.x;
+                    positions[i+1] = position.y;
+                    positions[i+2] = position.z;
+                }
+                else {
+                    positions[i] += (Math.random() - 0.5) * 1;   // x
+                    positions[i + 1] += (Math.random() - 0.5) * 1; // y
+                    positions[i + 2] += (Math.random() - 0.5) * 1; // z
+                }                            
+            }
+         
+             // Notify Three.js that the position attribute has changed
+            this.lightning.geometry.attributes.position.needsUpdate = true;
+
+            /*
+            this.remove(this.lightning);
+            this.lightning.geometry.dispose();
+            */
         }
 
         this.spotlight?.update();
@@ -1331,6 +1403,8 @@ export default class GameScene extends THREE.Scene {
         this.allPlayers.forEach(x => x.update());
 
         let playerPosition = this.player1.getPosition();
+
+        
 
         if(!this.player1.isModelNull() && this.crosshairSprite != null) {
             let forwardVector = new THREE.Vector3(-10, 0, 0);

@@ -90,7 +90,7 @@ export class FlamethrowerEmitter {
 
             sprite.userData.velocity = forwardVector;//new THREE.Vector3(-0.1, 0, 0);
                 
-            sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 2);
+            sprite.userData.velocity.multiplyScalar(Math.random() * Math.random() * 3 + 4);
 
             sprite.material.color = new THREE.Color('yellow');//  this.particleColor.lerp(new THREE.Color('red'), 0.05);
 
@@ -143,7 +143,7 @@ export class FlamethrowerEmitter {
             let item = <THREE.Sprite>child;
 
             item.position.add(child.userData.velocity);
-            item.material.opacity -= 0.03;
+            item.material.opacity -= 0.07;
             item.scale.x *= 1.05;
             item.scale.y *= 1.05;
             item.scale.z *= 1.05;
