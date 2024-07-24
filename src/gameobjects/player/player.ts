@@ -92,6 +92,7 @@ export class Player {
     private airstrikeCooldownClock: THREE.Clock = new THREE.Clock(false);
 
     flamethrowerBoundingBox: THREE.Mesh;
+    flamethrowerBoundingBoxMaterial: THREE.MeshBasicMaterial;
     private flamethrowerActive: boolean = false;
     
     private activeAirstrike!: Projectile;
@@ -156,10 +157,10 @@ export class Player {
         this.setVehicleObject(vehicle);
 
         //const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-        const cylinderGeometry = new THREE.CylinderGeometry(1, 0.4, 4);
+        const cylinderGeometry = new THREE.CylinderGeometry(0.6, 0.4, 3);
         //const cylinderGeometry = new THREE.BoxGeometry(1, 5, 1)
-        const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
-        this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, sphereMaterial);
+        this.flamethrowerBoundingBoxMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+        this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, this.flamethrowerBoundingBoxMaterial);
         scene.add(this.flamethrowerBoundingBox);
     }
 

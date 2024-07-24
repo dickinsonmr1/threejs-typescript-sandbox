@@ -1155,6 +1155,7 @@ export default class GameScene extends THREE.Scene {
         
         this.allPlayers.forEach(player => {
             
+            var anyHits = false;
             if(player.flamethrowerBoundingBox.visible) {
 
                 var enemyPlayers = this.allPlayers.filter(x => x.playerId != player.playerId);
@@ -1166,8 +1167,13 @@ export default class GameScene extends THREE.Scene {
 
                     if(flamethrowerBoundingBox != null && enemyBoundingBox != null && flamethrowerBoundingBox?.intersectsBox(enemyBoundingBox)){
                         enemy.tryDamageWithFlamethrower();
+                        player.flamethrowerBoundingBoxMaterial.color.set(0xff0000);
+                        anyHits = true;
                     }
                 });
+            }
+            if(!anyHits) {
+                player.flamethrowerBoundingBoxMaterial.color.set(0xffffff);
             }
         });
     }
