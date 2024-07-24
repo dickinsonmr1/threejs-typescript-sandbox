@@ -465,6 +465,16 @@ export class Player {
         if(this.currentHealth <= 0)
             this.tryKill();
     }
+
+    tryDamageWithAirstrike(): void {
+        
+        this.currentHealth -= 2;
+
+        this.healthBar.updateValue(this.currentHealth);
+
+        if(this.currentHealth <= 0)
+            this.tryKill();
+    }
     
     tryKill() {
 

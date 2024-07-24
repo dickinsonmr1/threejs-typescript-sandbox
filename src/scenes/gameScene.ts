@@ -1064,22 +1064,35 @@ export default class GameScene extends THREE.Scene {
             {
                 let playersToCheck = this.allPlayers.filter(x => x.playerId != projectile.playerId);
                 playersToCheck.forEach(player => {
-                    if(player.getPosition().distanceTo(projectile.getPosition()) < 1 && player.currentHealth > 0){
-                        this.generateRandomExplosion(
-                            projectile.projectileType,
-                            projectile.getPosition(),
-                            projectile.getLightColor(),
-                            projectile.getParticleColor1(),
-                            projectile.getParticleColor2(),
-                            projectile.getParticleColor3(),
-                            projectile.getParticleColor4()
-                        );
-                        projectile.kill();
-                        this.remove(projectile.group);
-                        player.tryDamage(projectile.projectileType, projectile.getPosition());
-                        
-                        if(player.playerId == this.player1.playerId) {
-                            this.sceneController.updateHealthOnHud(this.player1.currentHealth);
+
+                    if(projectile.projectileType == ProjectileType.Airstrike && projectile.detonationBoundingMesh != null) {
+
+                        if(player.getPosition().distanceTo(projectile.detonationBoundingMesh.position) < projectile.detonationDamageRadius && player.currentHealth > 0){
+                            
+                            player.tryDamageWithAirstrike();                            
+                            if(player.playerId == this.player1.playerId) {
+                                this.sceneController.updateHealthOnHud(this.player1.currentHealth);
+                            }
+                        }
+                    }
+                    else {
+                        if(player.getPosition().distanceTo(projectile.getPosition()) < 1 && player.currentHealth > 0){
+                            this.generateRandomExplosion(
+                                projectile.projectileType,
+                                projectile.getPosition(),
+                                projectile.getLightColor(),
+                                projectile.getParticleColor1(),
+                                projectile.getParticleColor2(),
+                                projectile.getParticleColor3(),
+                                projectile.getParticleColor4()
+                            );
+                            projectile.kill();
+                            this.remove(projectile.group);
+                            player.tryDamage(projectile.projectileType, projectile.getPosition());
+                            
+                            if(player.playerId == this.player1.playerId) {
+                                this.sceneController.updateHealthOnHud(this.player1.currentHealth);
+                            }
                         }
                     }
                 });

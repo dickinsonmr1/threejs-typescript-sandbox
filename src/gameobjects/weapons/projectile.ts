@@ -34,6 +34,9 @@ export class Projectile extends SphereObject {
     particleEmitterSmokeObject!: ParticleEmitter;
 
     airstrikeTarget!: Target;
+    detonationBoundingMesh!: THREE.Mesh;
+    detonationDamageRadius: number = 1.5;
+
     
 	private readonly velocity = new THREE.Vector3();    
 
@@ -240,6 +243,17 @@ export class Projectile extends SphereObject {
                 new THREE.Color('red')
             );
 
+            var geometry = new THREE.SphereGeometry(this.detonationDamageRadius);
+            var material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+            this.detonationBoundingMesh = new THREE.Mesh(geometry, material);
+
+            this.detonationBoundingMesh.position.set(
+                this.airstrikeTarget.groundTargetMesh.position.x,
+                this.airstrikeTarget.groundTargetMesh.position.y,
+                this.airstrikeTarget.groundTargetMesh.position.z);
+
+            this.scene.add(this.detonationBoundingMesh);
+        
             //gameScene.generateSmoke(this.airstrikeTarget.groundTargetMesh.position);
 
             this.isDetonated = true;
@@ -269,10 +283,14 @@ export class Projectile extends SphereObject {
         this.scene.remove(this.mesh);
         Utility.disposeMesh(this.mesh);
 
-        if(this.airstrikeTarget != null) 
-        {
+        if(this.airstrikeTarget != null) {
             this.scene.remove(this.airstrikeTarget.groundTargetMesh);
-            Utility.disposeMesh(this.airstrikeTarget.groundTargetMesh);
+            Utility.disposeMesh(this.airstrikeTarget.groundTargetMesh);            
+        }
+
+        if(this.detonationBoundingMesh != null) {
+            this.scene.remove(this.detonationBoundingMesh);
+            Utility.disposeMesh(this.detonationBoundingMesh);            
         }
 
         this.scene.remove(this.group);
@@ -322,6 +340,13 @@ export class Projectile extends SphereObject {
 
                 this.airstrikeTarget.setTargetMeshPosition(positionOnTerrainAndWater);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
                 this.airstrikeTarget.rotateTargetToFaceDown();
+
+                if(this.detonationBoundingMesh != null)
+                    this.detonationBoundingMesh.position.set(
+                        this.airstrikeTarget.groundTargetMesh.position.x,
+                        this.airstrikeTarget.groundTargetMesh.position.y,
+                        this.airstrikeTarget.groundTargetMesh.position.z
+                    );
             }
             
             if(this.detonationLifetimeClock.running
