@@ -52,6 +52,13 @@ export default class SceneController {
     setTouchScreenControls() {
         const leftButton = document.getElementById('left');
         const rightButton = document.getElementById('right');
+        const upButton = document.getElementById('up');
+        const downButton = document.getElementById('down');
+
+        const primaryWeaponButton = document.getElementById('primaryweapon');
+        const secondaryWeaponButton = document.getElementById('secondaryweapon');
+        const specialWeaponButton = document.getElementById('specialweapon');
+        const jumpButton = document.getElementById('jump');
 
         if(leftButton != null) {
 
@@ -69,6 +76,33 @@ export default class SceneController {
             });
             rightButton.addEventListener('touchend', () => {
                 this.gameScene?.player1.tryStopTurnRightWithKeyboard();
+            });
+        }
+
+        if(upButton != null) {
+            upButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryAccelerateWithKeyboard();
+            });
+            upButton.addEventListener('touchend', () => {
+                this.gameScene?.player1.tryStopAccelerateWithKeyboard();
+            });
+        }
+
+        if(upButton != null) {
+            upButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryReverseWithKeyboard();
+            });
+            upButton.addEventListener('touchend', () => {
+                this.gameScene?.player1.tryStopReverseWithKeyboard();
+            });            
+        }
+
+        if(primaryWeaponButton != null) {
+            primaryWeaponButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryFirePrimaryWeapon();
+            });
+            primaryWeaponButton.addEventListener('touchend', () => {
+                //
             });
         }
     }
