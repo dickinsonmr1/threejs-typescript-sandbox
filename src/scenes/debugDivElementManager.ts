@@ -37,6 +37,7 @@ export class DebugDivElementManager {
         div.innerHTML = text;
         div.style.left = screenX + 'px';
         div.style.top = screenY + 'px';
+        div.style.visibility = 'visible';
         document.body.appendChild(div);
         
         return div;
@@ -55,11 +56,11 @@ export class DebugDivElementManager {
     }
 
     toggleShowHideAllElements() {
-        if(this.debugDivElements[0].style.visibility == 'visible') {
+        if(this.debugDivElements[0].style.visibility === 'visible') {
             this.hideAllElements();
             return;
         }
-        if(this.debugDivElements[0].style.visibility == 'hidden') {
+        if(this.debugDivElements[0].style.visibility === 'hidden') {
             this.showAllElements();
             return;
         }

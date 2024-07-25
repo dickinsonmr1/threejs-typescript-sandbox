@@ -62,6 +62,7 @@ export default class SceneController {
         const jumpButton = document.getElementById('jump');
 
         const toggleDebugButton = document.getElementById('toggledebug');
+        const resetButton = document.getElementById('reset');
 
         if(leftButton != null) {
 
@@ -140,9 +141,22 @@ export default class SceneController {
 
         if(toggleDebugButton != null) {
             toggleDebugButton.addEventListener('touchstart', () => {
-                this.gameScene?.debugDivElementManager.hideAllElements();
+                //this.gameScene?.debugDivElementManager.toggleShowHideAllElements();
+                //this.hudScene?.hudDivElementManager.toggleShowHideAllElements();
             });
             toggleDebugButton.addEventListener('touchend', () => {
+                this.gameScene?.debugDivElementManager.toggleShowHideAllElements();
+                this.hudScene?.hudDivElementManager.toggleShowHideAllElements();
+            });
+        }
+
+        
+
+        if(resetButton != null) {
+            resetButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryResetPosition();
+            });
+            resetButton.addEventListener('touchend', () => {
                 //
             });
         }

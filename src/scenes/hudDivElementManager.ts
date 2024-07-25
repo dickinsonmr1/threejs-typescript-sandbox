@@ -46,8 +46,32 @@ export class HudDivElementManager {
         div.innerHTML = text;
         div.style.left = screenX + 'px';
         div.style.top = screenY + 'px';
+        div.style.visibility = 'visible';
         document.body.appendChild(div);
         
         return div;
+    }
+
+    showAllElements() {
+        this.divElements.forEach(x => {
+            x.style.visibility = 'visible';
+        });
+    }
+
+    hideAllElements() {
+        this.divElements.forEach(x => {
+            x.style.visibility = 'hidden';
+        });
+    }
+
+    toggleShowHideAllElements() {
+        if(this.divElements[0].style.visibility === 'visible') {
+            this.hideAllElements();
+            return;
+        }
+        if(this.divElements[0].style.visibility === 'hidden') {
+            this.showAllElements();
+            return;
+        }
     }
 }
