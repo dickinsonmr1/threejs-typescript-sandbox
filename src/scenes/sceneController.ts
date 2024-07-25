@@ -139,7 +139,7 @@ export default class SceneController {
 
         if(toggleDebugButton != null) {
             toggleDebugButton.addEventListener('touchstart', () => {
-                this.gameScene?.debugDivElementManager.toggleShowHideAllElements();
+                this.gameScene?.debugDivElementManager.hideAllElements();
             });
             toggleDebugButton.addEventListener('touchend', () => {
                 //
