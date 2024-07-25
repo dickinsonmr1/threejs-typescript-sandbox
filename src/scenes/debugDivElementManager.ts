@@ -53,4 +53,15 @@ export class DebugDivElementManager {
             x.style.visibility = 'hidden';
         });
     }
+
+    toggleShowHideAllElements() {
+        if(this.debugDivElements[0].style.visibility == 'visible') {
+            this.hideAllElements();
+            return;
+        }
+        if(this.debugDivElements[0].style.visibility == 'hidden') {
+            this.showAllElements();
+            return;
+        }
+    }
 }

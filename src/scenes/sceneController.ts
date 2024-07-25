@@ -60,7 +60,7 @@ export default class SceneController {
         const specialWeaponButton = document.getElementById('specialweapon');
         const jumpButton = document.getElementById('jump');
 
-        const toggleDebugButton = document.getElementById('jump');
+        const toggleDebugButton = document.getElementById('toggledebug');
 
         if(leftButton != null) {
 
@@ -90,11 +90,11 @@ export default class SceneController {
             });
         }
 
-        if(upButton != null) {
-            upButton.addEventListener('touchstart', () => {
+        if(downButton != null) {
+            downButton.addEventListener('touchstart', () => {
                 this.gameScene?.player1.tryReverseWithKeyboard();
             });
-            upButton.addEventListener('touchend', () => {
+            downButton.addEventListener('touchend', () => {
                 this.gameScene?.player1.tryStopReverseWithKeyboard();
             });            
         }
@@ -139,7 +139,7 @@ export default class SceneController {
 
         if(toggleDebugButton != null) {
             toggleDebugButton.addEventListener('touchstart', () => {
-                this.gameScene?.debugDivElementManager.hideAllElements();
+                this.gameScene?.debugDivElementManager.toggleShowHideAllElements();
             });
             toggleDebugButton.addEventListener('touchend', () => {
                 //
