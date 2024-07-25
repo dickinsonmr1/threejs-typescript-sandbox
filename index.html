@@ -27,18 +27,32 @@
             line-height: 50px;
             user-select: none;
         }
-        #left { bottom: 20px; left: 20px; }
-        #right { bottom: 20px; left: 80px; }
-		#primaryweapon { bottom: 20px; right: 80px; }
-		#secondaryweapon { bottom: 20px; right: 20px; }
+        #left { bottom: 50px; left: 20px; }
+        #right { bottom: 50px; left: 80px; }
+		#up { bottom: 80px; left: 50px; }
+        #down { bottom: 20px; left: 50px; }
+
+        #primaryweapon { bottom: 50px; right: 20px; }
+        #secondaryweapon { bottom: 50px; right: 80px; }
+		#specialweapon { bottom: 80px; right: 50px; }
+        #jump { bottom: 20px; right: 50px; }
+
+		#toggledebug { top: 20px; right: 20px; }
 	</style>
-    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-ahJkBkQ-.js"></script>
+    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-xQjy77Ll.js"></script>
   </head>
   <body>
     <canvas id="app"></canvas>
 	<div id="left" class="control-button">&#8592;</div>
     <div id="right" class="control-button">&#8594;</div>
-	<div id="primaryweapon" class="control-button">A</div>
-	<div id="secondaryweapon" class="control-button">B</div>
+	<div id="up" class="control-button">&#x2B06;</div>
+	<div id="down" class="control-button">&#x2B07;</div>
+	
+	<div id="primaryweapon" class="control-button">B</div>
+	<div id="secondaryweapon" class="control-button">X</div>
+	<div id="specialweapon" class="control-button">Y</div>
+	<div id="jump" class="control-button">A</div>
+
+	<div id="toggledebug" class="control-button">?</div>
   </body>
 </html>
