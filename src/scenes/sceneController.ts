@@ -60,6 +60,8 @@ export default class SceneController {
         const specialWeaponButton = document.getElementById('specialweapon');
         const jumpButton = document.getElementById('jump');
 
+        const toggleDebugButton = document.getElementById('jump');
+
         if(leftButton != null) {
 
             leftButton.addEventListener('touchstart', () => {
@@ -99,12 +101,51 @@ export default class SceneController {
 
         if(primaryWeaponButton != null) {
             primaryWeaponButton.addEventListener('touchstart', () => {
-                this.gameScene?.player1.tryFirePrimaryWeapon();
+                this.gameScene?.player1.tryFireRocket();
             });
             primaryWeaponButton.addEventListener('touchend', () => {
                 //
             });
         }
+
+        if(secondaryWeaponButton != null) {
+            secondaryWeaponButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryFireBullets();
+            });
+            secondaryWeaponButton.addEventListener('touchend', () => {
+                //
+            });
+        }
+
+        if(specialWeaponButton != null) {
+            specialWeaponButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryFireFlamethrower();
+            });
+            specialWeaponButton.addEventListener('touchend', () => {
+                //
+            });
+        }
+
+
+        if(jumpButton != null) {
+            jumpButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryJump();
+            });
+            jumpButton.addEventListener('touchend', () => {
+                //
+            });
+        }
+
+
+        if(toggleDebugButton != null) {
+            toggleDebugButton.addEventListener('touchstart', () => {
+                this.gameScene?.debugDivElementManager.hideAllElements();
+            });
+            toggleDebugButton.addEventListener('touchend', () => {
+                //
+            });
+        }
+
     }
 
     pollGamepads() {

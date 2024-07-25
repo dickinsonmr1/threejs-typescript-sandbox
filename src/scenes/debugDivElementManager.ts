@@ -41,4 +41,16 @@ export class DebugDivElementManager {
         
         return div;
     }
+
+    showAllElements() {
+        this.debugDivElements.forEach(x => {
+            x.style.visibility = 'visible';
+        });
+    }
+
+    hideAllElements() {
+        this.debugDivElements.forEach(x => {
+            x.style.visibility = 'hidden';
+        });
+    }
 }
