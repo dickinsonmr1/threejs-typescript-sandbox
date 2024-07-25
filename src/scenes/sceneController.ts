@@ -3,6 +3,7 @@ import GameScene from "./gameScene";
 import HudScene from "./hudScene";
 import { GamepadControlScheme, GamepadEnums } from "./gamePadEnums";
 import { ProjectileType } from "../gameobjects/weapons/projectileType";
+import nipplejs from 'nipplejs';
 
 export default class SceneController {
     gameScene?: GameScene;
@@ -146,6 +147,41 @@ export default class SceneController {
             });
         }
 
+        let joystickManager : nipplejs.JoystickManager = nipplejs.create({});
+        // listener to be triggered when the joystick moves
+        joystickManager.on('move',  (data : nipplejs.EventData, output : nipplejs.JoystickOutputData) => {
+             
+            
+            /*
+            // get the force and don't let it be greater than 1
+            let force : number = Math.min(output.force, 1);
+ 
+            // get the angle, in radians
+            let angle : number = output.angle.radian;
+ 
+            // determine the speed, according to force and player speed
+            let speed : number = GameOptions.playerSpeed * force;
+ 
+            // set player velocity using trigonometry
+            this.player.setVelocity(speed * Math.cos(angle), speed * Math.sin(angle) * -1);
+            */
+           this.gameScene?.player1.tryTurn(-output.vector.x);
+           
+            if(output.vector.y > 0.25)
+                this.gameScene?.player1.tryAccelerateWithKeyboard();
+            else if (output.vector.y < -0.25)
+                this.gameScene?.player1.tryReverseWithKeyboard();
+            else {
+                this.gameScene?.player1.tryStopAccelerateWithKeyboard();           
+            }
+        });
+ 
+        // listener to be triggered when the joystick stops moving
+        joystickManager.on('end',  () => {
+ 
+            // stop the player
+            //this.player.setVelocity(0, 0);
+        })
     }
 
     pollGamepads() {

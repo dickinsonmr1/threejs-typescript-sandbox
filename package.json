@@ -19,6 +19,7 @@
     "cannon-es": "^0.20.0",
     "cannon-es-debugger": "^1.0.0",
     "gh-pages": "^6.1.1",
+    "nipplejs": "^0.10.2",
     "three": "^0.159.0",
     "uuid": "^9.0.1"
   }
