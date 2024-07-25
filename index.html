@@ -45,14 +45,25 @@
 		#up { bottom: 100px; left: 60px; }
         #down { bottom: 20px; left: 60px; }
 
+		#joystickContainerStatic {
+			height: 100%;
+			width: 50%;
+        }
+		#joystickContainerDynamic {
+            position: absolute;            
+            left: 0px;
+			height: 100%;
+			width: 50%
+        }
+
         #primaryweapon { bottom: 60px; right: 20px; }
         #secondaryweapon { bottom: 60px; right: 100px; }
 		#specialweapon { bottom: 100px; right: 60px; }
         #jump { bottom: 20px; right: 60px; }
 
-		#toggledebug { top: 20px; right: 20px; }
+		#toggledebug { top: 100px; right: 100px; }
 	</style>
-    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-0tLfR905.js"></script>
+    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-XbQ9nqlg.js"></script>
   </head>
   <body>
     <canvas id="app"></canvas>
@@ -67,6 +78,9 @@
 	<div id="jump" class="control-button">A</div>
 
 	<div id="toggledebug" class="control-button">?</div>
+
+	<div id="joystickContainerStatic"></div>
+	<div id="joystickContainerDynamic"></div>
 
   </body>
 </html>
