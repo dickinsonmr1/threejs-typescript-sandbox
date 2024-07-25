@@ -391,6 +391,12 @@ export class Player {
 
     tryAccelerateWithKeyboard(): void {
         this.vehicleObject.tryAccelerate();
+        this.brakeLights.setVisible(false);
+    }
+    
+    tryAccelerateWithJoystick(joystickY: number): void {
+        this.vehicleObject.tryAccelerateWithJoystick(joystickY);
+        this.brakeLights.setVisible(false);
     }
 
     tryStopAccelerateWithKeyboard(): void {
@@ -399,6 +405,11 @@ export class Player {
     
     tryReverseWithKeyboard(): void {
         this.vehicleObject.tryReverse();
+        this.brakeLights.setVisible(true);
+    }
+        
+    tryReverseWithJoystick(joystickY: number): void {
+        this.vehicleObject.tryReverseWithJoystick(joystickY);
         this.brakeLights.setVisible(true);
     }
 

@@ -11,8 +11,10 @@ export interface IPlayerVehicle {
     tryTurn(x: number): void;
     tryTightTurn(x: number): void;
     tryAccelerate(): void;
+    tryAccelerateWithJoystick(y: number): void;
     tryStopAccelerate(): void;
     tryReverse(): void;
+    tryReverseWithJoystick(y: number): void;
     tryStopReverse(): void;
     tryTurnLeft(): void;
     tryStopTurnLeft(): void;

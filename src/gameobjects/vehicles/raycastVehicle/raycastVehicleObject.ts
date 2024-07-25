@@ -262,6 +262,16 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         // front wheels
         this.raycastVehicle?.applyEngineForce(-this.maxForce, 0);
         this.raycastVehicle?.applyEngineForce(-this.maxForce, 1);
+    }
+
+    tryAccelerateWithJoystick(joystickY: number): void {
+        // rear wheels
+        this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 2);
+        this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 3);
+
+        // front wheels
+        this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 0);
+        this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 1);
 
     }
 
@@ -283,6 +293,18 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         // front wheels
         this.raycastVehicle?.applyEngineForce(this.maxForce, 0);
         this.raycastVehicle?.applyEngineForce(this.maxForce, 1);
+    }
+
+    tryReverseWithJoystick(joystickY: number): void {
+        // rear wheels
+        var amount = Math.abs(joystickY);
+
+        this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 2);
+        this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 3);
+
+        // front wheels
+        this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 0);
+        this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 1);
     }
 
     tryStopReverse(): void {

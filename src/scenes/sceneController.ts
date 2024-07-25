@@ -187,9 +187,9 @@ export default class SceneController {
            this.gameScene?.player1.tryTurn(-output.vector.x);
            
             if(output.vector.y > 0.25)
-                this.gameScene?.player1.tryAccelerateWithKeyboard();
+                this.gameScene?.player1.tryAccelerateWithJoystick(output.vector.y);
             else if (output.vector.y < -0.25)
-                this.gameScene?.player1.tryReverseWithKeyboard();
+                this.gameScene?.player1.tryReverseWithJoystick(output.vector.y);
             else {
                 this.gameScene?.player1.tryStopAccelerateWithKeyboard();           
             }
@@ -200,6 +200,8 @@ export default class SceneController {
  
             // stop the player
             //this.player.setVelocity(0, 0);
+            this.gameScene?.player1.tryStopAccelerateWithKeyboard();       
+            this.gameScene?.player1.tryStopReverseWithKeyboard();
         })
     }
 
