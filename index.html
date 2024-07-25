@@ -14,10 +14,31 @@
 		   height: 100%;
 		   display: block;
 		}
+		.control-button {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            text-align: center;
+            line-height: 50px;
+            user-select: none;
+        }
+        #left { bottom: 20px; left: 20px; }
+        #right { bottom: 20px; left: 80px; }
+		#primaryweapon { bottom: 20px; right: 80px; }
+		#secondaryweapon { bottom: 20px; right: 20px; }
 	</style>
-    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-0fjhTwBF.js"></script>
+    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-ahJkBkQ-.js"></script>
   </head>
   <body>
-    <canvas id="app"></canvas>
+    <canvas id="app"></canvas>
+	<div id="left" class="control-button">&#8592;</div>
+    <div id="right" class="control-button">&#8594;</div>
+	<div id="primaryweapon" class="control-button">A</div>
+	<div id="secondaryweapon" class="control-button">B</div>
   </body>
 </html>
