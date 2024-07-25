@@ -39,7 +39,7 @@ export default class Bullet
 	}	
 
 	removeLight() {
-		this.pointLight?.remove();
+		//this.pointLight?.remove();
 	}
 
 	update()

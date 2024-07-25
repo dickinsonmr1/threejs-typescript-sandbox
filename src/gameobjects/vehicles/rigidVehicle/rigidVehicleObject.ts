@@ -133,6 +133,12 @@ export class RigidVehicleObject implements IPlayerVehicle {
             this.model.rotateY(Math.PI / 2);
         }
     }
+    getWheelModels(): THREE.Group[] {
+        throw new Error("Method not implemented.");
+    }
+    tryTightTurn(x: number): void {
+        throw new Error("Method not implemented.");
+    }
     tryJump(): void {
         throw new Error("Method not implemented.");
     }
