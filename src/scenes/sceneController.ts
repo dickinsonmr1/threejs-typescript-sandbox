@@ -49,6 +49,30 @@ export default class SceneController {
         }
     }
 
+    setTouchScreenControls() {
+        const leftButton = document.getElementById('left');
+        const rightButton = document.getElementById('right');
+
+        if(leftButton != null) {
+
+            leftButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryTurnLeftWithKeyboard();
+            });
+            leftButton.addEventListener('touchend', () => {
+                this.gameScene?.player1.tryStopTurnLeftWithKeyboard();
+            });
+        }
+
+        if(rightButton != null) {
+            rightButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryTurnRightWithKeyboard();
+            });
+            rightButton.addEventListener('touchend', () => {
+                this.gameScene?.player1.tryStopTurnRightWithKeyboard();
+            });
+        }
+    }
+
     pollGamepads() {
 
         /*

@@ -33,6 +33,8 @@ window.addEventListener("gamepadconnected", (event) => {
   sceneController.setGamePad1(event.gamepad, GamepadControlScheme.CarCombat);
 });
 
+
+
 window.addEventListener("gamepaddisconnected", (event) => {
   console.log("A gamepad disconnected:");
   console.log(event.gamepad);
@@ -64,7 +66,9 @@ cameraOrtho.position.z = 1;
 let sceneOrtho = new HudScene(cameraOrtho, sceneController);
 sceneOrtho.initialize();
 
-sceneController.init(scene, sceneOrtho)
+sceneController.init(scene, sceneOrtho);
+
+sceneController.setTouchScreenControls();
 
 var gamepads = navigator.getGamepads();
 console.log(gamepads);
