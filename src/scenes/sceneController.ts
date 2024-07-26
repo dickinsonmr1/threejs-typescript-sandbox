@@ -59,6 +59,8 @@ export default class SceneController {
     }
 
     setOnScreenControls() {
+        
+        // game scene buttons
         const leftButton = this.getButton('left');
         const rightButton = this.getButton('right');
         const upButton = this.getButton('up');
@@ -71,7 +73,11 @@ export default class SceneController {
 
         const toggleDebugButton = this.getButton('toggledebug');
         const resetButton = this.getButton('reset');
+
+        // menu scene buttons
         const startGameButton = this.getButton('startgame');
+        const menuLeftButton = this.getButton('menuLeft');
+        const menuRightButton = this.getButton('menuRight');
 
         if(leftButton != null) {
 
@@ -165,6 +171,32 @@ export default class SceneController {
             });
             resetButton.addEventListener('touchend', () => {
                 //
+            });
+        }
+
+        // menu scene buttons
+
+        if(menuLeftButton != null) {
+
+            menuLeftButton.addEventListener('touchstart', () => {
+                this.menuScene?.selectPreviousVehicle();
+            });
+            menuLeftButton.addEventListener('click', () => {
+                this.menuScene?.selectPreviousVehicle();
+            });
+            menuLeftButton.addEventListener('touchend', () => {
+
+            });
+        }
+        if(menuRightButton != null) {
+            menuRightButton.addEventListener('touchstart', () => {
+                this.menuScene?.selectNextVehicle();
+            });
+            menuRightButton.addEventListener('click', () => {
+                this.menuScene?.selectNextVehicle();
+            });
+            menuRightButton.addEventListener('touchend', () => {
+
             });
         }
 
@@ -387,8 +419,16 @@ export default class SceneController {
         this.currentScene = scene;
     }
 
+    switchToMenuScene() {
+        this.currentScene = this.menuScene;
+        document.getElementById('menuSceneDiv')!.style.visibility = 'visible';
+        document.getElementById('gameSceneDiv')!.style.visibility = 'hidden';
+    }
+
     switchToGameScene() {
         this.currentScene = this.gameScene;
+        document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
+        document.getElementById('gameSceneDiv')!.style.visibility = 'visible';
     }
 
     updateHealthOnHud(currentValue: number) {

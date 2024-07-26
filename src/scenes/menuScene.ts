@@ -20,6 +20,8 @@ export default class MenuScene extends THREE.Scene {
 
     private group: THREE.Group;
 
+    private selectedVehicleIndex: number = 0;
+
     constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController) {
         super();
 
@@ -41,46 +43,101 @@ export default class MenuScene extends THREE.Scene {
         this.generateVehicle();
 
         var statBar1 = new HealthBar(this, 100, new THREE.Color('orange'));
-        statBar1.update(new THREE.Vector3(0, -2, 0));
+        statBar1.update(new THREE.Vector3(0, -4, 0));
         statBar1.updateValue(80);
 
         var statBar2 = new HealthBar(this, 100, new THREE.Color('orange'));
-        statBar2.update(new THREE.Vector3(0, -2.5, 0));
+        statBar2.update(new THREE.Vector3(0, -4.5, 0));
         statBar2.updateValue(25);
 
         var statBar3 = new HealthBar(this, 100, new THREE.Color('orange'));
-        statBar3.update(new THREE.Vector3(0, -3, 0));
+        statBar3.update(new THREE.Vector3(0, -5, 0));
         statBar3.updateValue(50);
+
+        var statBar3 = new HealthBar(this, 100, new THREE.Color('orange'));
+        statBar3.update(new THREE.Vector3(0, -5.5, 0));
+        statBar3.updateValue(33);
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color): THREE.Sprite {
 
-        let spriteWidth: number = 64;
+        let spriteWidth: number = 1;
         
         let material = new THREE.SpriteMaterial( { map: texture, color: color });//,transparent: true, opacity: 0.5 } );
         let sprite = new THREE.Sprite( material );
         sprite.center.set( 0.5, 0.5 );
         sprite.scale.set( spriteWidth, spriteWidth, 1 );
         this.add(sprite);
-        sprite.position.set(50, 0, 0);
+        sprite.position.set(5, 0, 0);
 
         return sprite;
     }
 
     async generateVehicle() {
         
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/taxi.glb');
-        var modelScene = model.scene;
+        var modelPosition = new THREE.Vector3(0,-2,0);
+
+        await this.loadTaxiModel(modelPosition);
+        await this.loadPoliceModel(modelPosition);
+
+        this.group.children[0].visible = false;
+        this.group.children[1].visible = true;
+
+        this.add(this.group);
+    }
+
+    
+    private async loadTaxiModel(modelPosition: THREE.Vector3) {      
         
-        modelScene.position.set(0,0,0);
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/taxi.glb');
+        var modelScene = model.scene;        
+        modelScene.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
         modelScene.scale.set(1, 1, 1);         
         //modelScene.rotateY(Math.PI / 2);
 
-        this.camera.lookAt(modelScene.position);
+        this.camera.lookAt(modelPosition);
 
         this.group.add(modelScene);
+    }
 
-        this.add(this.group);
+    private async loadPoliceModel(modelPosition: THREE.Vector3) {      
+        
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');
+        var modelScene = model.scene;        
+        modelScene.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
+        modelScene.scale.set(1, 1, 1);         
+        //modelScene.rotateY(Math.PI / 2);
+
+        this.camera.lookAt(modelPosition);
+
+        this.group.add(modelScene);
+    }
+
+    selectPreviousVehicle() {
+
+        this.group.children[this.selectedVehicleIndex].visible = false;
+
+        this.selectedVehicleIndex--;
+        if(this.selectedVehicleIndex < 0) {
+            this.selectedVehicleIndex = this.group.children.length - 1;
+        }        
+        this.selectVehicle();
+    }
+
+    selectNextVehicle() {
+
+
+        this.group.children[this.selectedVehicleIndex].visible = false;
+
+        this.selectedVehicleIndex++;        
+        if(this.selectedVehicleIndex > this.group.children.length-1) {
+            this.selectedVehicleIndex = 0;
+        }
+        this.selectVehicle();
+    }
+
+    selectVehicle() {
+        this.group.children[this.selectedVehicleIndex].visible = true;
     }
 
     update() {

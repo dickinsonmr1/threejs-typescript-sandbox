@@ -75,7 +75,8 @@ menuScene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
 
 sceneController.init(menuScene, gameScene, sceneOrtho);
-sceneController.setCurrentScene(menuScene);
+sceneController.switchToMenuScene();
+//sceneController.setCurrentScene(menuScene);
 //sceneController.setCurrentScene(gameScene);
 
 sceneController.setOnScreenControls();
