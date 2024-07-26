@@ -22,6 +22,11 @@ export default class MenuScene extends THREE.Scene {
 
     private selectedVehicleIndex: number = 0;
 
+    private statBar1!: HealthBar;
+    private statBar2!: HealthBar;
+    private statBar3!: HealthBar;
+    private statBar4!: HealthBar;
+
     constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController) {
         super();
 
@@ -42,21 +47,21 @@ export default class MenuScene extends THREE.Scene {
 
         this.generateVehicle();
 
-        var statBar1 = new HealthBar(this, 100, new THREE.Color('orange'));
-        statBar1.update(new THREE.Vector3(0, -4, 0));
-        statBar1.updateValue(80);
+        this.statBar1 = new HealthBar(this, 100, new THREE.Color('orange'));
+        this.statBar1.update(new THREE.Vector3(0, -4, 0));
+        this.statBar1.updateValue(80);
 
-        var statBar2 = new HealthBar(this, 100, new THREE.Color('orange'));
-        statBar2.update(new THREE.Vector3(0, -4.5, 0));
-        statBar2.updateValue(25);
+        this.statBar2 = new HealthBar(this, 100, new THREE.Color('orange'));
+        this.statBar2.update(new THREE.Vector3(0, -4.5, 0));
+        this.statBar2.updateValue(25);
 
-        var statBar3 = new HealthBar(this, 100, new THREE.Color('orange'));
-        statBar3.update(new THREE.Vector3(0, -5, 0));
-        statBar3.updateValue(50);
+        this.statBar3 = new HealthBar(this, 100, new THREE.Color('orange'));
+        this.statBar3.update(new THREE.Vector3(0, -5, 0));
+        this.statBar3.updateValue(50);
 
-        var statBar3 = new HealthBar(this, 100, new THREE.Color('orange'));
-        statBar3.update(new THREE.Vector3(0, -5.5, 0));
-        statBar3.updateValue(33);
+        this.statBar4 = new HealthBar(this, 100, new THREE.Color('orange'));
+        this.statBar4.update(new THREE.Vector3(0, -5.5, 0));
+        this.statBar4.updateValue(33);
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color): THREE.Sprite {
@@ -77,35 +82,33 @@ export default class MenuScene extends THREE.Scene {
         
         var modelPosition = new THREE.Vector3(0,-2,0);
 
-        await this.loadTaxiModel(modelPosition);
-        await this.loadPoliceModel(modelPosition);
-
-        this.group.children[0].visible = false;
-        this.group.children[1].visible = true;
-
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/taxi.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/ambulance.glb', modelPosition, 100, 50, 50, 66);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/firetruck.glb', modelPosition, 100, 25, 10, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/garbage-truck.glb', modelPosition, 40, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/police.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race-future.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan-sports.glb', modelPosition, 100, 25, 50, 33);        
+        
         this.add(this.group);
+
+        this.selectVehicle();
     }
 
     
-    private async loadTaxiModel(modelPosition: THREE.Vector3) {      
+    private async loadVehicleModelAndStats(asset: string, modelPosition: THREE.Vector3,
+        health: number, special: number, speed: number, defensiveSpecial: number) {      
         
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/taxi.glb');
+        var model = await this.gltfLoader.loadAsync(asset);
         var modelScene = model.scene;        
         modelScene.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
-        modelScene.scale.set(1, 1, 1);         
-        //modelScene.rotateY(Math.PI / 2);
+        modelScene.scale.set(1, 1, 1);    
+        modelScene.visible = false;     
 
-        this.camera.lookAt(modelPosition);
-
-        this.group.add(modelScene);
-    }
-
-    private async loadPoliceModel(modelPosition: THREE.Vector3) {      
-        
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');
-        var modelScene = model.scene;        
-        modelScene.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
-        modelScene.scale.set(1, 1, 1);         
+        modelScene.userData['health'] = health;
+        modelScene.userData['special'] = special;
+        modelScene.userData['speed'] = speed;
+        modelScene.userData['defensiveSpecial'] = defensiveSpecial;
         //modelScene.rotateY(Math.PI / 2);
 
         this.camera.lookAt(modelPosition);
@@ -137,7 +140,13 @@ export default class MenuScene extends THREE.Scene {
     }
 
     selectVehicle() {
-        this.group.children[this.selectedVehicleIndex].visible = true;
+        var selectedItem = this.group.children[this.selectedVehicleIndex];
+
+        selectedItem.visible = true;
+        this.statBar1.updateValue(selectedItem.userData["health"]);
+        this.statBar2.updateValue(selectedItem.userData["special"]);
+        this.statBar3.updateValue(selectedItem.userData["speed"]);
+        this.statBar4.updateValue(selectedItem.userData["defensiveSpecial"]);
     }
 
     update() {
