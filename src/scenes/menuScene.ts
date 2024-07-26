@@ -3,6 +3,7 @@ import HudHealthBar, { HudBarType } from '../gameobjects/hudHealthBar';
 import SceneController from './sceneController';
 import { HudDivElementManager } from './hudDivElementManager';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import HealthBar from '../gameobjects/healthBar';
 
 export default class MenuScene extends THREE.Scene {
 
@@ -38,6 +39,18 @@ export default class MenuScene extends THREE.Scene {
         this.add(sprite);
 
         this.generateVehicle();
+
+        var statBar1 = new HealthBar(this, 100, new THREE.Color('orange'));
+        statBar1.update(new THREE.Vector3(0, -2, 0));
+        statBar1.updateValue(80);
+
+        var statBar2 = new HealthBar(this, 100, new THREE.Color('orange'));
+        statBar2.update(new THREE.Vector3(0, -2.5, 0));
+        statBar2.updateValue(25);
+
+        var statBar3 = new HealthBar(this, 100, new THREE.Color('orange'));
+        statBar3.update(new THREE.Vector3(0, -3, 0));
+        statBar3.updateValue(50);
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color): THREE.Sprite {

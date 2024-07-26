@@ -40,6 +40,27 @@
 			-o-user-select: none;
 			user-select: none;
         }
+		.control-button-large {
+            position: absolute;
+            width: 200px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            text-align: center;
+            line-height: 50px;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;
+			user-select: none;
+			-ms-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+        }
         #left { bottom: 60px; left: 20px; }
         #right { bottom: 60px; left: 100px; }
 		#up { bottom: 100px; left: 60px; }
@@ -56,13 +77,14 @@
 			width: 50%
         }
 
-        #primaryweapon { bottom: 60px; right: 20px; }
-        #secondaryweapon { bottom: 60px; right: 100px; }
-		#specialweapon { bottom: 100px; right: 60px; }
-        #jump { bottom: 20px; right: 60px; }
+        #primaryweapon { bottom: 60px; right: 20px; color:red; }
+        #secondaryweapon { bottom: 60px; right: 100px; color: blue;  }
+		#specialweapon { bottom: 100px; right: 60px; color: yellow; }
+        #jump { bottom: 20px; right: 60px; color:green; }
 				
 		#toggledebug { top: 100px; right: 100px; }
 		#reset { top: 100px; right: 160px; }
+		#startgame { bottom: 100px; left: 50%; }
 	</style>
   </head>
   <body>
@@ -81,6 +103,8 @@
 
 	<div id="toggledebug" class="control-button">?</div>
 	<div id="reset" class="control-button">*</div>
+
+	<div id="startgame" class="control-button-large">Start Game</div>
 
 	<div id="joystickContainerStatic"></div>
 	<div id="joystickContainerDynamic"></div>

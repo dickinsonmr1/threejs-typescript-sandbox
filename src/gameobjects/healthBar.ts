@@ -12,13 +12,18 @@ export default class HealthBar {
     private readonly maxValue: number;
     private currentValue: number;
 
+    overrideColor?: THREE.Color;
+
     /**
      *
      */
-    constructor(scene: THREE.Scene, maxValue: number) {
+    constructor(scene: THREE.Scene, maxValue: number, overrideColor?: THREE.Color) {
 
         this.maxValue = maxValue;
         this.currentValue = this.maxValue;
+
+        if(overrideColor != null)
+            this.overrideColor = overrideColor;
 
         this.healthBarSpriteOutline = new THREE.Sprite( new THREE.SpriteMaterial({
             //map: healthBarTexture,// this.explosionTexture,
@@ -36,7 +41,7 @@ export default class HealthBar {
         this.group.add( this.healthBarSpriteOutline );
         
         this.healthBarSprite = new THREE.Sprite( new THREE.SpriteMaterial({
-            color: 'green',
+            color: overrideColor ?? 'green',
             sizeAttenuation: false,
             depthTest: false,
             opacity: 0.7
@@ -52,7 +57,6 @@ export default class HealthBar {
 
         scene.add(this.group);
     }
-
     
     updateValue(value: number): void {
 
@@ -72,15 +76,17 @@ export default class HealthBar {
 
         this.healthBarSprite.scale.x =  this.calculateCurrentHealthBarWidth();
         
-        if(this.currentValue > 0.5 * this.maxValue) {
-            this.healthBarSprite.material.color.set(new THREE.Color('green'));
-        }
-        else if(this.currentValue <= 0.5 * this.maxValue &&
-            this.currentValue > 0.2 * this.maxValue) {
-                this.healthBarSprite.material.color.set(new THREE.Color('yellow'));
-        }
-        else if(this.currentValue <= 0.2 * this.maxValue) {
-                this.healthBarSprite.material.color.set(new THREE.Color('red'));
+        if(!this.overrideColor) {
+            if(this.currentValue > 0.5 * this.maxValue) {
+                this.healthBarSprite.material.color.set(new THREE.Color('green'));
+            }
+            else if(this.currentValue <= 0.5 * this.maxValue &&
+                this.currentValue > 0.2 * this.maxValue) {
+                    this.healthBarSprite.material.color.set(new THREE.Color('yellow'));
+            }
+            else if(this.currentValue <= 0.2 * this.maxValue) {
+                    this.healthBarSprite.material.color.set(new THREE.Color('red'));
+            }
         }
     }
 

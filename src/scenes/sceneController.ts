@@ -24,7 +24,6 @@ export default class SceneController {
         this.renderer = renderer;
     }
 
-
     accelerateGamepadIndex!: number;
     brakeOrReverseGamepadIndex!: number;
     firePrimaryWeaponGamepadIndex!: number;
@@ -55,19 +54,24 @@ export default class SceneController {
         }
     }
 
-    setTouchScreenControls() {
-        const leftButton = document.getElementById('left');
-        const rightButton = document.getElementById('right');
-        const upButton = document.getElementById('up');
-        const downButton = document.getElementById('down');
+    getButton(name: string): HTMLElement {
+        return document.getElementById(name)!;
+    }
 
-        const primaryWeaponButton = document.getElementById('primaryweapon');
-        const secondaryWeaponButton = document.getElementById('secondaryweapon');
-        const specialWeaponButton = document.getElementById('specialweapon');
-        const jumpButton = document.getElementById('jump');
+    setOnScreenControls() {
+        const leftButton = this.getButton('left');
+        const rightButton = this.getButton('right');
+        const upButton = this.getButton('up');
+        const downButton = this.getButton('down');
 
-        const toggleDebugButton = document.getElementById('toggledebug');
-        const resetButton = document.getElementById('reset');
+        const primaryWeaponButton = this.getButton('primaryweapon');
+        const secondaryWeaponButton = this.getButton('secondaryweapon');
+        const specialWeaponButton = this.getButton('specialweapon');
+        const jumpButton = this.getButton('jump');
+
+        const toggleDebugButton = this.getButton('toggledebug');
+        const resetButton = this.getButton('reset');
+        const startGameButton = this.getButton('startgame');
 
         if(leftButton != null) {
 
@@ -155,13 +159,25 @@ export default class SceneController {
             });
         }
 
-        
-
         if(resetButton != null) {
             resetButton.addEventListener('touchstart', () => {
                 this.gameScene?.player1.tryResetPosition();
             });
             resetButton.addEventListener('touchend', () => {
+                //
+            });
+        }
+
+        if(startGameButton != null) {
+            startGameButton.addEventListener('touchstart', () => {
+                this.switchToGameScene();
+                startGameButton.style.visibility = "hidden";
+            });
+            startGameButton.addEventListener('click', () => {
+                this.switchToGameScene();
+                startGameButton.style.visibility = "hidden";
+            });
+            startGameButton.addEventListener('touchend', () => {
                 //
             });
         }
@@ -369,6 +385,10 @@ export default class SceneController {
 
     setCurrentScene(scene: Scene) {
         this.currentScene = scene;
+    }
+
+    switchToGameScene() {
+        this.currentScene = this.gameScene;
     }
 
     updateHealthOnHud(currentValue: number) {

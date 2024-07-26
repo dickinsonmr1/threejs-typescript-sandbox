@@ -35,8 +35,6 @@ window.addEventListener("gamepadconnected", (event) => {
   sceneController.setGamePad1(event.gamepad, GamepadControlScheme.CarCombat);
 });
 
-
-
 window.addEventListener("gamepaddisconnected", (event) => {
   console.log("A gamepad disconnected:");
   console.log(event.gamepad);
@@ -73,10 +71,14 @@ menuCamera.position.set(-5, 0, 0);
 const menuScene = new MenuScene(menuCamera, sceneController);
 menuScene.initialize();
 
-sceneController.init(menuScene, gameScene, sceneOrtho);
-sceneController.setCurrentScene(gameScene);
+menuScene.environment = pmremGenerator.fromScene( environment ).texture;
+environment.dispose();
 
-sceneController.setTouchScreenControls();
+sceneController.init(menuScene, gameScene, sceneOrtho);
+sceneController.setCurrentScene(menuScene);
+//sceneController.setCurrentScene(gameScene);
+
+sceneController.setOnScreenControls();
 
 var gamepads = navigator.getGamepads();
 console.log(gamepads);
