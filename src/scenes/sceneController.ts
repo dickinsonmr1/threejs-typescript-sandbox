@@ -1,13 +1,18 @@
 
 import GameScene from "./gameScene";
 import HudScene from "./hudScene";
+import MenuScene from "./menuScene";
 import { GamepadControlScheme, GamepadEnums } from "./gamePadEnums";
 import { ProjectileType } from "../gameobjects/weapons/projectileType";
 import nipplejs from 'nipplejs';
+import { Scene } from "three";
 
 export default class SceneController {
+    menuScene?: MenuScene;
     gameScene?: GameScene;
     hudScene?: HudScene;
+
+    currentScene?: THREE.Scene;
 
     gamepad!: Gamepad;
     gamepadPrevious!: Gamepad;
@@ -352,9 +357,18 @@ export default class SceneController {
         this.gamepadPrevious = gamepad;
     }
 
-    init(gameScene: GameScene, hudScene: HudScene) {
+    init(menuScene: MenuScene, gameScene: GameScene, hudScene: HudScene) {
+        this.menuScene = menuScene;
         this.gameScene = gameScene;
         this.hudScene = hudScene;
+    }
+
+    getCurrentScene(scene: Scene) {
+        return this.currentScene;
+    }
+
+    setCurrentScene(scene: Scene) {
+        this.currentScene = scene;
     }
 
     updateHealthOnHud(currentValue: number) {

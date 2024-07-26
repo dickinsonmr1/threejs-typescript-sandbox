@@ -5,6 +5,8 @@ import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import CannonDebugger from 'cannon-es-debugger';
 import SceneController from './scenes/sceneController';
 import { GamepadControlScheme } from './scenes/gamePadEnums';
+import MenuScene from './scenes/menuScene';
+import { instance } from 'three/examples/jsm/nodes/Nodes.js';
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -42,12 +44,12 @@ window.addEventListener("gamepaddisconnected", (event) => {
 
 var sceneController = new SceneController(renderer);
 
-const scene = new GameScene(mainCamera, sceneController);
-scene.initialize();
+const gameScene = new GameScene(mainCamera, sceneController);
+gameScene.initialize();
 
-const cannonDebugger = CannonDebugger(scene, scene.world, {color: 0x0000ff });
+const cannonDebugger = CannonDebugger(gameScene, gameScene.world, {color: 0x0000ff });
 
-scene.environment = pmremGenerator.fromScene( environment ).texture;
+gameScene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
 
 
@@ -66,7 +68,13 @@ cameraOrtho.position.z = 1;
 let sceneOrtho = new HudScene(cameraOrtho, sceneController);
 sceneOrtho.initialize();
 
-sceneController.init(scene, sceneOrtho);
+const menuCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 75);
+menuCamera.position.set(-5, 0, 0);
+const menuScene = new MenuScene(menuCamera, sceneController);
+menuScene.initialize();
+
+sceneController.init(menuScene, gameScene, sceneOrtho);
+sceneController.setCurrentScene(gameScene);
 
 sceneController.setTouchScreenControls();
 
@@ -74,18 +82,31 @@ var gamepads = navigator.getGamepads();
 console.log(gamepads);
 
 function tick() {
-  scene.updateWater();
-  scene.update();
-  sceneOrtho.update();
-  cannonDebugger.update();
 
-  renderer.clear();
-  renderer.render(scene, mainCamera);
-  renderer.clearDepth();
-  renderer.render(sceneOrtho, cameraOrtho);
+  var scene = sceneController.currentScene;
+
+  if(scene instanceof GameScene) {
+
+    scene.updateWater();
+    scene.update();
+    sceneOrtho.update();
+    cannonDebugger.update();
+
+    renderer.clear();
+    renderer.render(scene, mainCamera);
+    renderer.clearDepth();
+    renderer.render(sceneOrtho, cameraOrtho);
+  }
+  else if(scene instanceof MenuScene) {
+    scene.update();
+    renderer.render(scene, menuCamera);
+  }
+  
   requestAnimationFrame(tick);
-
-  scene.world.fixedStep();
+  
+  if(scene instanceof GameScene) {
+    scene.world.fixedStep();
+  }
 }
 
 tick()
