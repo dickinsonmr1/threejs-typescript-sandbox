@@ -66,6 +66,9 @@
 		#up { bottom: 100px; left: 60px; }
         #down { bottom: 20px; left: 60px; }
 
+		#menuLeft { top: 50%; left: 25% }
+        #menuRight { top: 50%; right: 25% }
+
 		#joystickContainerStatic {
 			height: 100%;
 			width: 50%;
@@ -84,9 +87,9 @@
 				
 		#toggledebug { top: 100px; right: 100px; }
 		#reset { top: 100px; right: 160px; }
-		#startgame { bottom: 100px; left: 50%; }
+		#startgame { bottom: 5%; left: 50%; }
 	</style>
-    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-3aRICfE_.js"></script>
+    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-hiIngHxj.js"></script>
   </head>
   <body>
     <canvas id="app"></canvas>
@@ -97,18 +100,23 @@
 	<div id="down" class="control-button">&#x2B07;</div>
 	-->
 
-	<div id="primaryweapon" class="control-button">B</div>
-	<div id="secondaryweapon" class="control-button">X</div>
-	<div id="specialweapon" class="control-button">Y</div>
-	<div id="jump" class="control-button">A</div>
+	<div id="gameSceneDiv">
+		<div id="primaryweapon" class="control-button">B</div>
+		<div id="secondaryweapon" class="control-button">X</div>
+		<div id="specialweapon" class="control-button">Y</div>
+		<div id="jump" class="control-button">A</div>
 
-	<div id="toggledebug" class="control-button">?</div>
-	<div id="reset" class="control-button">*</div>
-
-	<div id="startgame" class="control-button-large">Start Game</div>
-
-	<div id="joystickContainerStatic"></div>
-	<div id="joystickContainerDynamic"></div>
-
+		<div id="toggledebug" class="control-button">?</div>
+		<div id="reset" class="control-button">*</div>
+		
+		<div id="joystickContainerStatic"></div>
+		<div id="joystickContainerDynamic"></div>
+	</div>
+	
+	<div id="menuSceneDiv">
+		<div id="menuLeft" class="control-button">&#8592;</div>
+		<div id="menuRight" class="control-button">&#8594;</div>
+		<div id="startgame" class="control-button-large">Start Game</div>
+	</div>
   </body>
 </html>
