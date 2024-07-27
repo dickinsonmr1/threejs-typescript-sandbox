@@ -162,13 +162,15 @@ export default class HudScene extends THREE.Scene {
 
     update() {
 
-        this.hudDivElementManager.updateElementText("Special", `Special: 5`);
-        this.hudDivElementManager.updateElementText("Rockets", `Rockets: 5`);
-        this.hudDivElementManager.updateElementText("Flamethrower", `Flamethrower: 5`);
-        this.hudDivElementManager.updateElementText("Airstrike", `Airstrike: 5`);
-        this.hudDivElementManager.updateElementText("Shockwave", `Shockwave: 5`);
-        this.hudDivElementManager.updateElementText("Freeze", `Freeze: 5`);
-        this.hudDivElementManager.updateElementText("Lightning", `Lightning: 5`);
+        if(this.hudDivElementManager != null) {
+            this.hudDivElementManager.updateElementText("Special", `Special: 5`);
+            this.hudDivElementManager.updateElementText("Rockets", `Rockets: 5`);
+            this.hudDivElementManager.updateElementText("Flamethrower", `Flamethrower: 5`);
+            this.hudDivElementManager.updateElementText("Airstrike", `Airstrike: 5`);
+            this.hudDivElementManager.updateElementText("Shockwave", `Shockwave: 5`);
+            this.hudDivElementManager.updateElementText("Freeze", `Freeze: 5`);
+            this.hudDivElementManager.updateElementText("Lightning", `Lightning: 5`);
+        }
     }
 
     updateHealthBar(currentValue: number) {

@@ -179,7 +179,7 @@ export default class SceneController {
         if(menuLeftButton != null) {
 
             menuLeftButton.addEventListener('touchstart', () => {
-                this.menuScene?.selectPreviousVehicle();
+                //this.menuScene?.selectPreviousVehicle();
             });
             menuLeftButton.addEventListener('click', () => {
                 this.menuScene?.selectPreviousVehicle();
@@ -190,7 +190,7 @@ export default class SceneController {
         }
         if(menuRightButton != null) {
             menuRightButton.addEventListener('touchstart', () => {
-                this.menuScene?.selectNextVehicle();
+                //this.menuScene?.selectNextVehicle();
             });
             menuRightButton.addEventListener('click', () => {
                 this.menuScene?.selectNextVehicle();
@@ -202,8 +202,8 @@ export default class SceneController {
 
         if(startGameButton != null) {
             startGameButton.addEventListener('touchstart', () => {
-                this.switchToGameScene();
-                startGameButton.style.visibility = "hidden";
+                //this.switchToGameScene();
+                //startGameButton.style.visibility = "hidden";
             });
             startGameButton.addEventListener('click', () => {
                 this.switchToGameScene();
