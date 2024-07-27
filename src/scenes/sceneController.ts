@@ -215,6 +215,7 @@ export default class SceneController {
         }
 
         // static
+        /*
         let joystickManager : nipplejs.JoystickManager = nipplejs.create({
             zone: document.getElementById('joystickContainerStatic')!,
             mode: 'static',
@@ -222,17 +223,17 @@ export default class SceneController {
             color: 'blue',
             restOpacity: 0.75
         });
+        */
 
-        /*
         // dynamic
         let joystickManager : nipplejs.JoystickManager = nipplejs.create({
-            //zone: document.getElementById('joystickContainerDynamic')!,
+            zone: document.getElementById('joystickContainerDynamic')!,
             mode: 'dynamic',
             position: { left: '50%', top: '50%' },
             color: 'blue',
             restOpacity: 0.75
         });
-        */
+
 
         // listener to be triggered when the joystick moves
         joystickManager.on('move',  (data : nipplejs.EventData, output : nipplejs.JoystickOutputData) => {
