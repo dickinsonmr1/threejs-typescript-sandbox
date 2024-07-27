@@ -4,6 +4,9 @@ import SceneController from './sceneController';
 import { HudDivElementManager } from './hudDivElementManager';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import HealthBar from '../gameobjects/healthBar';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import {Text} from 'troika-three-text'
 
 export default class MenuScene extends THREE.Scene {
 
@@ -62,6 +65,65 @@ export default class MenuScene extends THREE.Scene {
         this.statBar4 = new HealthBar(this, 100, new THREE.Color('orange'));
         this.statBar4.update(new THREE.Vector3(0, -5.5, 0));
         this.statBar4.updateValue(33);
+
+        const loader = new FontLoader();
+        var font = await loader.loadAsync('assets/fonts/helvetiker_regular.typeface.json');
+        const geometry = new TextGeometry( 'Vehicle Selection', {
+            font: font,
+            size: 12,
+            depth: 1,
+            curveSegments: 12,
+            bevelEnabled: false,
+            bevelThickness: 8,
+            bevelSize: 1.5,
+            bevelOffset: 0,
+            bevelSegments: 5,
+        } );
+
+        
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const textMesh = new THREE.Mesh(geometry, material);
+        textMesh.position.set(126, 0, -60);        
+        textMesh.rotation.y = 3 * Math.PI / 2;
+
+        this.add(textMesh);
+
+        /*
+        loader.load( 'fonts/helvetiker_regular.typeface.json', function ( font ) {
+
+            const geometry = new TextGeometry( 'Hello three.js!', {
+                font: font,
+                size: 80,
+                depth: 5,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 10,
+                bevelSize: 8,
+                bevelOffset: 0,
+                bevelSegments: 5,
+            } );
+
+            
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            const textMesh = new THREE.Mesh(geometry, material);
+
+            scene.add(textMesh);
+        });
+        */
+
+        // Create:
+        const myText = new Text()
+        this.add(myText)
+
+        // Set properties to configure:
+        myText.text = 'Vehicle Selection';
+        myText.fontSize = 1;
+        myText.position.set(0, -5, 0);
+        myText.color = 0x9966FF;
+        myText.rotation.y = -Math.PI / 2;
+
+        // Update the rendering:
+        myText.sync();
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color): THREE.Sprite {
@@ -82,13 +144,26 @@ export default class MenuScene extends THREE.Scene {
         
         var modelPosition = new THREE.Vector3(0,-2,0);
 
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/taxi.glb', modelPosition, 100, 25, 50, 33);        
         await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/ambulance.glb', modelPosition, 100, 50, 50, 66);        
         await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/firetruck.glb', modelPosition, 100, 25, 10, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery-flat.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery.glb', modelPosition, 100, 25, 50, 33);        
         await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/garbage-truck.glb', modelPosition, 40, 25, 50, 33);        
         await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/police.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/hatchback-sports.glb', modelPosition, 100, 25, 50, 33);        
         await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race-future.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race.glb', modelPosition, 100, 25, 50, 33);        
         await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan-sports.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv-luxury.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/taxi.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor-police.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor-shovel.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck-flat.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/van.glb', modelPosition, 100, 25, 50, 33);        
         
         this.add(this.group);
 
