@@ -1,23 +1,13 @@
 import * as THREE from 'three';
-import HudHealthBar, { HudBarType } from '../gameobjects/hudHealthBar';
 import SceneController from './sceneController';
-import { HudDivElementManager } from './hudDivElementManager';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import HealthBar from '../gameobjects/healthBar';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import {Text} from 'troika-three-text'
 
 export default class MenuScene extends THREE.Scene {
 
     camera: THREE.PerspectiveCamera;
-    private healthBar?: HudHealthBar;
-    private turboBar?: HudHealthBar;
-    private shieldBar?: HudHealthBar;
-
     sceneController: SceneController;
-
-    hudDivElementManager!: HudDivElementManager;
 
     private readonly gltfLoader = new GLTFLoader();
 
@@ -29,6 +19,12 @@ export default class MenuScene extends THREE.Scene {
     private statBar2!: HealthBar;
     private statBar3!: HealthBar;
     private statBar4!: HealthBar;
+
+    private vehicleNameText!: Text;
+    private statBar1Text!: Text;
+    private statBar2Text!: Text;
+    private statBar3Text!: Text;
+    private statBar4Text!: Text;
 
     constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController) {
         super();
@@ -42,13 +38,10 @@ export default class MenuScene extends THREE.Scene {
     async initialize() {
         let textureLoader = new THREE.TextureLoader();
         
-        let dummyTexture = textureLoader.load('assets/DPAD.png');
-        dummyTexture.colorSpace = THREE.SRGBColorSpace;
-
-        let sprite = this.generateIcon(dummyTexture, new THREE.Color('blue'));//, HudIconLocation.CenterBottom);
-        this.add(sprite);
-
-        this.generateVehicle();
+        //let dummyTexture = textureLoader.load('assets/DPAD.png');
+        //dummyTexture.colorSpace = THREE.SRGBColorSpace;
+        //let sprite = this.generateIcon(dummyTexture, new THREE.Color('blue'));//, HudIconLocation.CenterBottom);
+        //this.add(sprite);
 
         this.statBar1 = new HealthBar(this, 100, new THREE.Color('orange'));
         this.statBar1.update(new THREE.Vector3(0, -4, 0));
@@ -66,64 +59,22 @@ export default class MenuScene extends THREE.Scene {
         this.statBar4.update(new THREE.Vector3(0, -5.5, 0));
         this.statBar4.updateValue(33);
 
-        const loader = new FontLoader();
-        var font = await loader.loadAsync('assets/fonts/helvetiker_regular.typeface.json');
-        const geometry = new TextGeometry( 'Vehicle Selection', {
-            font: font,
-            size: 12,
-            depth: 1,
-            curveSegments: 12,
-            bevelEnabled: false,
-            bevelThickness: 8,
-            bevelSize: 1.5,
-            bevelOffset: 0,
-            bevelSegments: 5,
-        } );
+        this.vehicleNameText = this.generateTroikaThreeText(new THREE.Vector3(5, 1, 0), "", 1, 'center', 'center', 0x0000AA);
+        this.add(this.vehicleNameText);
 
-        
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const textMesh = new THREE.Mesh(geometry, material);
-        textMesh.position.set(126, 0, -60);        
-        textMesh.rotation.y = 3 * Math.PI / 2;
+        this.statBar1Text = this.generateTroikaThreeText(new THREE.Vector3(0, -3, -0.5), "Health", 0.4, 'right', 'middle', 0x0000AA);
+        this.add(this.statBar1Text);
 
-        this.add(textMesh);
+        this.statBar2Text = this.generateTroikaThreeText(new THREE.Vector3(0, -3.5, -0.5), "Special", 0.4, 'right', 'middle', 0x0000AA);
+        this.add(this.statBar2Text);
 
-        /*
-        loader.load( 'fonts/helvetiker_regular.typeface.json', function ( font ) {
+        this.statBar3Text = this.generateTroikaThreeText(new THREE.Vector3(0, -4, -0.5), "Speed", 0.4, 'right', 'middle', 0x0000AA);
+        this.add(this.statBar3Text);
 
-            const geometry = new TextGeometry( 'Hello three.js!', {
-                font: font,
-                size: 80,
-                depth: 5,
-                curveSegments: 12,
-                bevelEnabled: true,
-                bevelThickness: 10,
-                bevelSize: 8,
-                bevelOffset: 0,
-                bevelSegments: 5,
-            } );
+        this.statBar4Text = this.generateTroikaThreeText(new THREE.Vector3(0, -4.5, -0.5), "Defense", 0.4, 'right', 'middle', 0x0000AA);
+        this.add(this.statBar4Text);
 
-            
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            const textMesh = new THREE.Mesh(geometry, material);
-
-            scene.add(textMesh);
-        });
-        */
-
-        // Create:
-        const myText = new Text()
-        this.add(myText)
-
-        // Set properties to configure:
-        myText.text = 'Vehicle Selection';
-        myText.fontSize = 1;
-        myText.position.set(0, -5, 0);
-        myText.color = 0x9966FF;
-        myText.rotation.y = -Math.PI / 2;
-
-        // Update the rendering:
-        myText.sync();
+        this.generateVehicles();    
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color): THREE.Sprite {
@@ -140,30 +91,48 @@ export default class MenuScene extends THREE.Scene {
         return sprite;
     }
 
-    async generateVehicle() {
+    generateTroikaThreeText(position: THREE.Vector3, title: string, fontSize: number, anchorX: string, anchorY: string, colorNumber: number): Text {
+        const text = new Text();
+
+        text.text = title;
+        text.fontSize = fontSize;
+        text.position.set(position.x, position.y, position.z);
+        text.color = colorNumber;
+        text.anchorX = anchorX;
+        text.anchorY = anchorY;
+        //text.sync();
+
+        return text;
+    }
+
+    async generateVehicles() {
         
         var modelPosition = new THREE.Vector3(0,-2,0);
 
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/ambulance.glb', modelPosition, 100, 50, 50, 66);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/firetruck.glb', modelPosition, 100, 25, 10, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery-flat.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/garbage-truck.glb', modelPosition, 40, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/police.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/hatchback-sports.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race-future.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan-sports.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv-luxury.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/taxi.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor-police.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor-shovel.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck-flat.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck.glb', modelPosition, 100, 25, 50, 33);        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/van.glb', modelPosition, 100, 25, 50, 33);        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/ambulance.glb', modelPosition, 75, 50, 50, 25, 'EMS');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/firetruck.glb', modelPosition, 100, 25, 25, 50, 'Backdraft');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery-flat.glb', modelPosition, 75, 25, 50, 25, 'Flatbed');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery.glb', modelPosition, 100, 25, 50, 33, 'Overnight');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/garbage-truck.glb', modelPosition, 100, 100, 25, 25, 'Compactor');   
+
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/police.glb', modelPosition, 50, 25, 75, 100, 'The Law');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/hatchback-sports.glb', modelPosition, 50, 75, 25, 25, 'Hybrid Theory');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race-future.glb', modelPosition, 25, 75, 100, 50, 'Zoomer Blue');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race.glb', modelPosition, 25, 75, 100, 50, 'Zoomer Red');        
+
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan-sports.glb', modelPosition, 50, 25, 50, 25, 'Sedanimal');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan.glb', modelPosition, 50, 25, 50, 25, 'Compact');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv-luxury.glb', modelPosition, 75, 25, 50, 50, 'Midas');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv.glb', modelPosition, 75, 25, 50, 75, 'Offroader');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/taxi.glb', modelPosition, 50, 25, 75, 25, 'Sideswipe');        
+
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor-police.glb', modelPosition, 75, 25, 50, 75, 'Rural Patrol');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor-shovel.glb', modelPosition, 100, 75, 25, 25, 'Killdozer');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor.glb', modelPosition, 75, 50, 25, 75, 'Harvester');        
+
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck-flat.glb', modelPosition, 50, 25, 50, 25, 'Weekend Warrior');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck.glb', modelPosition, 50, 100, 50, 25, 'Guerilla');        
+        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/van.glb', modelPosition, 50, 25, 50, 25, 'Carpool');        
         
         this.add(this.group);
 
@@ -172,18 +141,20 @@ export default class MenuScene extends THREE.Scene {
 
     
     private async loadVehicleModelAndStats(asset: string, modelPosition: THREE.Vector3,
-        health: number, special: number, speed: number, defensiveSpecial: number) {      
+        health: number, special: number, speed: number, defensiveSpecial: number, vehicleName: string) {      
         
         var model = await this.gltfLoader.loadAsync(asset);
         var modelScene = model.scene;        
         modelScene.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
         modelScene.scale.set(1, 1, 1);    
         modelScene.visible = false;     
-
+        
         modelScene.userData['health'] = health;
         modelScene.userData['special'] = special;
         modelScene.userData['speed'] = speed;
         modelScene.userData['defensiveSpecial'] = defensiveSpecial;
+
+        modelScene.userData['vehicleName'] = vehicleName;
         //modelScene.rotateY(Math.PI / 2);
 
         this.camera.lookAt(modelPosition);
@@ -218,6 +189,7 @@ export default class MenuScene extends THREE.Scene {
         var selectedItem = this.group.children[this.selectedVehicleIndex];
 
         selectedItem.visible = true;
+        this.vehicleNameText.text = selectedItem.userData["vehicleName"];
         this.statBar1.updateValue(selectedItem.userData["health"]);
         this.statBar2.updateValue(selectedItem.userData["special"]);
         this.statBar3.updateValue(selectedItem.userData["speed"]);
@@ -225,6 +197,21 @@ export default class MenuScene extends THREE.Scene {
     }
 
     update() {
-        this.group.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 64);        
+        this.group.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 64);       
+        
+        if(this.vehicleNameText != null)
+            this.vehicleNameText.quaternion.copy(this.camera.quaternion);       
+
+        if(this.statBar1Text != null)
+            this.statBar1Text.quaternion.copy(this.camera.quaternion);
+        
+        if(this.statBar2Text != null)
+            this.statBar2Text.quaternion.copy(this.camera.quaternion);
+        
+        if(this.statBar3Text != null)
+            this.statBar3Text.quaternion.copy(this.camera.quaternion);
+        
+        if(this.statBar4Text != null)
+            this.statBar4Text.quaternion.copy(this.camera.quaternion);
     }
 }

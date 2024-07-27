@@ -99,7 +99,7 @@ export default class HudScene extends THREE.Scene {
         //let spriteLL = this.generateIcon(healthIconTexture, new THREE.Color('white'), HudIconLocation.LowerLeft);
         //let spriteLR = this.generateIcon(turboIconTexture, new THREE.Color('white'), HudIconLocation.LowerRight);    
 
-        this.hudDivElementManager = new HudDivElementManager(window.innerWidth * 0.9, window.innerHeight * 0.75, 0, 20);
+        this.hudDivElementManager = new HudDivElementManager(window.innerWidth * 0.9, window.innerHeight * 0.25, 0, 20);
 
         this.hudDivElementManager.addElement("Special", "");        
         this.hudDivElementManager.addElement("Rockets", "");        
