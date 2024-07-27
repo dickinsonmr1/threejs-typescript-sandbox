@@ -15,11 +15,13 @@
 			-ms-user-select: none;
 			-o-user-select: none;
 			user-select: none;	
+			z-index: 1;
 		}
 		#app {
 			width: 100%;
 			height: 100%;
 			display: block;
+			z-index: 1;
 		}
 		.control-button {
             position: absolute;
@@ -94,9 +96,9 @@
         }
 		#joystickContainerDynamic {
             position: absolute;            
-            left: 0px;
 			height: 100%;
-			width: 50%
+			width: 25%;
+			z-index: 2;
         }
 
         #primaryweapon { bottom: 60px; right: 20px; color:red; }
@@ -108,9 +110,11 @@
 		#reset { top: 20px; right: 75px; }
 		#startgame { bottom: 5%; left: 50%; }
 	</style>
-    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-C_zd_BdC.js"></script>
+    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-BhxRZA3q.js"></script>
   </head>
   <body>
+	<!--<div id="joystickContainerStatic"></div>-->		
+	<div id="joystickContainerDynamic"></div>
     <canvas id="app"></canvas>
 	<!--
 	<div id="left" class="control-button">&#8592;</div>
@@ -126,10 +130,7 @@
 		<div id="jump" class="control-button">A</div>
 
 		<div id="toggledebug" class="control-button">?</div>
-		<div id="reset" class="control-button-medium">Reset</div>
-		
-		<div id="joystickContainerStatic"></div>
-		<div id="joystickContainerDynamic"></div>
+		<div id="reset" class="control-button-medium">Reset</div>	
 	</div>
 	
 	<div id="menuSceneDiv">
