@@ -82,6 +82,33 @@
 			-ms-transform: translate(-50%, -50%);
 			transform: translate(-50%, -50%);
         }
+
+		.inventory {
+			position: absolute;
+            width: 120px;
+            height: 50px;
+            background-color: rgba(255, 187, 0, 0.771);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 20px;
+
+            text-align: center;
+            line-height: 50px;
+			text-align: center;
+			display: flex;
+            align-items: left;
+            justify-content: center;
+            gap: 0px; /* Space between the image and text */
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;
+			user-select: none;
+			font-size: x-large;
+        }
         #left { bottom: 60px; left: 20px; }
         #right { bottom: 60px; left: 100px; }
 		#up { bottom: 100px; left: 60px; }
@@ -105,6 +132,8 @@
         #secondaryweapon { bottom: 60px; right: 100px; color: blue;  }
 		#specialweapon { bottom: 100px; right: 60px; color: yellow; }
         #jump { bottom: 20px; right: 60px; color:green; }
+
+		#ammoText { top: 20px; right: 200px; color:green; }
 				
 		#toggledebug { top: 20px; right: 20px; }
 		#reset { top: 20px; right: 75px; }
@@ -131,6 +160,29 @@
 
 		<div id="toggledebug" class="control-button">?</div>
 		<div id="reset" class="control-button-medium">Reset</div>	
+		<div id="ammoText" class="inventory" style="background-color: rgba(255, 187, 0, 0.5)">
+			<img src="assets/fire.png" style="width: 50px; height: 50px;"/>
+			<div class="text" style="color: white">120</div>
+		</div>	
+		<div id="ammoText" class="inventory" style="background-color: rgba(0, 177, 253, 0.5); right: 350px;">
+			<img src="assets/freezeIcon.png" style="width: 50px; height: 50px;"/>
+			<div class="text" style="color: white">120</div>
+		</div>	
+		<div id="ammoText" class="inventory" style="background-color: rgba(247, 0, 255, 0.5); right: 500px;">
+			<img src="assets/rocketIcon-multiple.png" style="width: 50px; height: 50px;"/>
+			<div class="text" style="color: white">3</div>
+		</div>	
+				<!--
+		<div id="ammoText" class="inventory" style="background-color: rgba(247, 0, 255, 0.5); right: 500px;">
+			<img src="assets/rocketIcon-multiple.png" style="width: 50px; height: 50px;"/>
+			<div class="text" style="color: white">3</div>
+		</div>	
+
+		<div id="ammoText" class="inventory" style="background-color: rgba(0, 102, 255, 0.5); right: 650px;">
+			<img src="assets/specialIcon.png" style="width: 50px; height: 50px;"/>
+			<div class="text" style="color: white">1</div>
+		</div>	
+		-->
 	</div>
 	
 	<div id="menuSceneDiv">
