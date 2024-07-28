@@ -159,14 +159,21 @@ export default class SceneController {
                 //this.gameScene?.debugDivElementManager.toggleShowHideAllElements();
                 //this.hudScene?.hudDivElementManager.toggleShowHideAllElements();
             });
-            toggleDebugButton.addEventListener('touchend', () => {
+            toggleDebugButton.addEventListener('click', () => {
                 this.gameScene?.debugDivElementManager.toggleShowHideAllElements();
                 this.hudScene?.hudDivElementManager.toggleShowHideAllElements();
+            });
+            toggleDebugButton.addEventListener('touchend', () => {
+                //this.gameScene?.debugDivElementManager.toggleShowHideAllElements();
+                //this.hudScene?.hudDivElementManager.toggleShowHideAllElements();
             });
         }
 
         if(resetButton != null) {
             resetButton.addEventListener('touchstart', () => {
+                //this.gameScene?.player1.tryResetPosition();
+            });
+            resetButton.addEventListener('click', () => {
                 this.gameScene?.player1.tryResetPosition();
             });
             resetButton.addEventListener('touchend', () => {

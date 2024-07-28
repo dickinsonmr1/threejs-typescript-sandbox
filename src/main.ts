@@ -59,7 +59,7 @@ var cameraOrtho = new THREE.OrthographicCamera(
     hudheight/2, -hudheight/2,
     1, 10
 );
-cameraOrtho.position.z = 1;
+cameraOrtho.position.z = 10;
 //cameraOrtho.position.x = 1;
 //cameraOrtho.lookAt(new THREE.Vector3(0, 0, 0));
             

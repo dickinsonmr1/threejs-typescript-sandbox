@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import HudHealthBar, { HudBarType } from '../gameobjects/hudHealthBar';
 import SceneController from './sceneController';
 import { HudDivElementManager } from './hudDivElementManager';
+import {Text} from 'troika-three-text'
 
 export enum HudIconLocation {
     UpperLeft,
@@ -20,6 +21,8 @@ export default class HudScene extends THREE.Scene {
     private healthBar?: HudHealthBar;
     private turboBar?: HudHealthBar;
     private shieldBar?: HudHealthBar;
+
+    private ammoText!: Text;
 
     sceneController: SceneController;
 
@@ -62,29 +65,32 @@ export default class HudScene extends THREE.Scene {
         let turboIconTexture = textureLoader.load('assets/turboIcon.png');
         freezeIconTexture.colorSpace = THREE.SRGBColorSpace;
 
-        this.healthBar = new HudHealthBar(this, HudBarType.LowerLeftMain,
+        this.healthBar = new HudHealthBar(this, HudBarType.TopCenterMain,
             this.hudWidth, this.hudHeight,
             200,
             40,
             100,
             healthIconTexture);
 
-        this.turboBar = new HudHealthBar(this, HudBarType.LowerRightMain,
+        this.turboBar = new HudHealthBar(this, HudBarType.LowerLeftMain,
             this.hudWidth, this.hudHeight,
             200,
-            20,
+            40,
             100,
             turboIconTexture,
             new THREE.Color('yellow'),
             );
         
-        this.shieldBar = new HudHealthBar(this, HudBarType.LowerLeftSecondary,
+        this.shieldBar = new HudHealthBar(this, HudBarType.TopCenterSecondary,
             this.hudWidth, this.hudHeight,
             200,
             20,
             100,
             shieldIconTexture,
             new THREE.Color('blue'));
+
+        this.ammoText = this.generateTroikaThreeText(new THREE.Vector3(0,0,-5), "Ammo", 10, 'middle', 'middle', 0xFFFFFF);
+        //this.add(this.statBar1Text);
 
 
         let material = new THREE.SpriteMaterial( { map: healthIconTexture });//,transparent: true, opacity: 0.5 } );
@@ -160,6 +166,22 @@ export default class HudScene extends THREE.Scene {
         return sprite;
     }
 
+    generateTroikaThreeText(position: THREE.Vector3, title: string, fontSize: number, anchorX: string, anchorY: string, colorNumber: number): Text {
+        const text = new Text();
+        this.add(text);
+
+        text.text = title;
+        text.fontSize = fontSize;
+        text.position.set(position.x, position.y, position.z);
+        text.color = colorNumber;
+        text.anchorX = anchorX;
+        text.anchorY = anchorY;
+        text.scale.set(1000, 1000, 1);
+        text.sync();
+
+        return text;
+    }
+
     update() {
 
         if(this.hudDivElementManager != null) {
@@ -171,6 +193,11 @@ export default class HudScene extends THREE.Scene {
             this.hudDivElementManager.updateElementText("Freeze", `Freeze: 5`);
             this.hudDivElementManager.updateElementText("Lightning", `Lightning: 5`);
         }
+        
+        if(this.ammoText != null) {
+            //this.statBar1Text.quaternion.copy(this.camera.quaternion);
+            //this.statBar1Text.rotation.y += 0.01;
+        }       
     }
 
     updateHealthBar(currentValue: number) {

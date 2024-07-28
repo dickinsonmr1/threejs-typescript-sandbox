@@ -4,7 +4,15 @@ export enum HudBarType {
     LowerLeftMain,
     LowerLeftSecondary,    
     LowerRightMain,
-    LowerRightSecondary
+    LowerRightSecondary,
+
+    TopCenterMain,
+    TopCenterSecondary,
+
+    UpperLeftMain,
+    UpperLeftSecondary,    
+    UpperRightMain,
+    UpperRightSecondary,
 }
 
 export default class HudHealthBar {
@@ -68,7 +76,7 @@ export default class HudHealthBar {
                 xAlign = 0;
                 yAlign = 0.5;
                 iconSize = 48;
-                break;
+                break;            
             case HudBarType.LowerRightMain:            
                 x = this.hudWidth;
                 y = -this.hudHeight;
@@ -78,6 +86,48 @@ export default class HudHealthBar {
             case HudBarType.LowerRightSecondary:
                 x = this.hudWidth;
                 y = -this.hudHeight * 0.9;
+                xAlign = 1;
+                yAlign = 0.5;
+                iconSize = 48;
+                break;
+
+            case HudBarType.TopCenterMain:
+                x = -iconSize * 1.5;//-this.hudWidth / 4;
+                y = this.hudHeight;
+                xAlign = 0;
+                yAlign = 0.5;
+                break;
+
+            case HudBarType.TopCenterSecondary:
+                x = 0;//this.hudWidth;
+                y = this.hudHeight * 0.9;
+                xAlign = 0;
+                yAlign = 0.5;
+                iconSize = 48;
+                break;
+
+            case HudBarType.UpperLeftMain:
+                x = -this.hudWidth;
+                y = this.hudHeight;
+                xAlign = 0;
+                yAlign = 0.5;
+                break;
+            case HudBarType.UpperLeftSecondary:
+                x = -this.hudWidth;
+                y = this.hudHeight * 0.9;
+                xAlign = 0;
+                yAlign = 0.5;
+                iconSize = 48;
+                break;            
+            case HudBarType.UpperRightMain:            
+                x = this.hudWidth;
+                y = this.hudHeight;
+                xAlign = 1;
+                yAlign = 0.5;
+                break;
+            case HudBarType.UpperRightSecondary:
+                x = this.hudWidth;
+                y = this.hudHeight * 0.9;
                 xAlign = 1;
                 yAlign = 0.5;
                 iconSize = 48;
