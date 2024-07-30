@@ -70,6 +70,7 @@ export default class SceneController {
         const secondaryWeaponButton = this.getButton('secondaryweapon');
         const specialWeaponButton = this.getButton('specialweapon');
         const jumpButton = this.getButton('jump');
+        const turboButton = this.getButton('turbo');
 
         const toggleDebugButton = this.getButton('toggledebug');
         const resetButton = this.getButton('reset');
@@ -148,8 +149,11 @@ export default class SceneController {
             jumpButton.addEventListener('touchstart', () => {
                 this.gameScene?.player1.tryJump();
             });
-            jumpButton.addEventListener('touchend', () => {
-                //
+        }
+
+        if(turboButton != null) {
+            turboButton.addEventListener('touchstart ', () => {
+                this.gameScene?.player1.tryTurbo();
             });
         }
 

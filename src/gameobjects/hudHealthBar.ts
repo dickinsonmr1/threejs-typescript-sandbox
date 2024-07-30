@@ -99,7 +99,7 @@ export default class HudHealthBar {
                 break;
 
             case HudBarType.TopCenterSecondary:
-                x = 0;//this.hudWidth;
+                x = -iconSize * 1.5;//this.hudWidth;
                 y = this.hudHeight * 0.9;
                 xAlign = 0;
                 yAlign = 0.5;

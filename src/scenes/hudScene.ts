@@ -72,16 +72,16 @@ export default class HudScene extends THREE.Scene {
             100,
             healthIconTexture);
 
-        this.turboBar = new HudHealthBar(this, HudBarType.LowerLeftMain,
+        this.turboBar = new HudHealthBar(this, HudBarType.TopCenterSecondary,
             this.hudWidth, this.hudHeight,
             200,
-            40,
+            20,
             100,
             turboIconTexture,
             new THREE.Color('yellow'),
             );
         
-        this.shieldBar = new HudHealthBar(this, HudBarType.TopCenterSecondary,
+        this.shieldBar = new HudHealthBar(this, HudBarType.LowerLeftMain,
             this.hudWidth, this.hudHeight,
             200,
             20,
