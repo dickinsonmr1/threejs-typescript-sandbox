@@ -37,6 +37,8 @@ export class Projectile extends SphereObject {
     detonationBoundingMesh!: THREE.Mesh;
     detonationDamageRadius: number = 1.5;
 
+    bulletMesh!: THREE.Mesh;
+
     
 	private readonly velocity = new THREE.Vector3();    
 
@@ -58,6 +60,7 @@ export class Projectile extends SphereObject {
         radius: number,
         position: THREE.Vector3,
         launchVector: THREE.Vector3,
+        quaternion: THREE.Quaternion,
         projectileSpeed: number,
         lightColor: THREE.Color,
         
@@ -83,11 +86,19 @@ export class Projectile extends SphereObject {
         this.particleColor2 = particleColor2;
         this.particleColor3 = particleColor3;
         this.particleColor4 = particleColor4;
-        
+
         this.group.position.set(position.x, position.y, position.z);
 
         let gameScene = <GameScene>scene;
 
+        if(this.projectileType == ProjectileType.Bullet) {
+                        
+            const geometry = new THREE.BoxGeometry( 0.5, 0.1, 0.1 ); 
+            const material = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
+            this.bulletMesh = new THREE.Mesh( geometry, material ); 
+            this.bulletMesh.quaternion.copy(quaternion);
+            this.group.add(this.bulletMesh);            
+        }
         if(this.projectileType == ProjectileType.Airstrike) {
             this.airstrikeTarget = new Target(scene, gameScene.crosshairTexture, new THREE.Color('white'), this.group.position, 1, true);
         }
@@ -282,6 +293,11 @@ export class Projectile extends SphereObject {
 
         this.scene.remove(this.mesh);
         Utility.disposeMesh(this.mesh);
+
+        if(this.bulletMesh != null) {
+            this.scene.remove(this.bulletMesh);
+            Utility.disposeMesh(this.bulletMesh);
+        }
 
         if(this.airstrikeTarget != null) {
             this.scene.remove(this.airstrikeTarget.groundTargetMesh);

@@ -371,7 +371,8 @@ export class Player {
             this.playerId,
             projectileType,            
             tempPosition,           // launchPosition relative to chassis
-            projectileLaunchVector,            
+            projectileLaunchVector,  
+            this.vehicleObject.getModel().quaternion,          
             scene.getWorld());              
 
         if(projectileType == ProjectileType.Airstrike)

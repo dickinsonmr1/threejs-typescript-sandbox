@@ -16,6 +16,7 @@ export default class ProjectileFactory {
         type: ProjectileType,
         launchPosition: THREE.Vector3,
         launchVector: THREE.Vector3,
+        quaternion: THREE.Quaternion,
         world?: CANNON.World) : Projectile
     {
 
@@ -60,6 +61,7 @@ export default class ProjectileFactory {
                     0.05,                   // radius
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
+                    quaternion,
                     0.75,
                     new THREE.Color('white'),
                     new THREE.Color('white'),
@@ -78,6 +80,7 @@ export default class ProjectileFactory {
                     0.07,                   // radius
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
+                    quaternion,
                     0.4,
                     startColor,
                     particleColor1,
@@ -95,6 +98,7 @@ export default class ProjectileFactory {
                     0.05,                   // radius
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
+                    quaternion,
                     0.25,
                     startColor,
                     particleColor1,
