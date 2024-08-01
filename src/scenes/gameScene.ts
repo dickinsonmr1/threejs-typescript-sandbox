@@ -103,6 +103,9 @@ export default class GameScene extends THREE.Scene {
     cube2?: BoxObject;
     cylinder?: CylinderObject;
 
+    debrisDriveTrain!: GltfObject;
+    debrisWheel!: GltfObject;
+
     private allPlayers: Player[] = [];
     player1!: Player;
     player2!: Player;
@@ -202,6 +205,16 @@ export default class GameScene extends THREE.Scene {
             this.basicSemitransparentMaterial);
         cylinderMesh.position.set(20, 0, 20);            
         this.add(cylinderMesh);
+
+        var wheelModel = await this.generateWheelModel();
+
+        this.debrisWheel = new GltfObject(this,
+            wheelModel,
+            new THREE.Vector3(5, 5, 5),
+            new THREE.Vector3(2, 2, 2),
+            new THREE.Vector3(1, 1, 1),
+            new THREE.Vector3(0, 0, 0),
+            this.world, objectMaterial);
 
 
         
@@ -1347,6 +1360,7 @@ export default class GameScene extends THREE.Scene {
         this.cube2?.update();
         this.sphere?.update();
         this.cylinder?.update();
+        this.debrisWheel.update();
         
         this.cubes.forEach(x => x.update());
 
