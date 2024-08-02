@@ -3,10 +3,17 @@ import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
 
+
+export enum GltfObjectPhysicsObjectShape {
+    Box,
+    Cylinder
+}
+
 export class GltfObject {
     
     model: THREE.Group;
-    mesh: THREE.Mesh; // bounding box mesh
+    group: THREE.Group = new THREE.Group();
+    //mesh: THREE.Mesh; // bounding box mesh
     body?: CANNON.Body;
 
     physicsPositionOffset: THREE.Vector3;
@@ -18,7 +25,7 @@ export class GltfObject {
      */
     constructor(scene: THREE.Scene,
         //asset: string,        
-        modelData: GLTF,
+        modelData: THREE.Group,
         position: THREE.Vector3,
         scale: THREE.Vector3,
         //color: number = 0xffffff,
@@ -26,7 +33,8 @@ export class GltfObject {
         physicsPositionOffset: THREE.Vector3,
         //meshMaterial?: THREE.Material,
         world?: CANNON.World,
-        physicsMaterial?: CANNON.Material) {
+        physicsMaterial?: CANNON.Material,
+        shapeType?: GltfObjectPhysicsObjectShape) {
 
 
         this.physicsPositionOffset = physicsPositionOffset;
@@ -37,43 +45,61 @@ export class GltfObject {
             wireframe: true
         })
 
-        this.model = modelData.scene;//.children[0];
+        this.model = modelData.clone();
+
         this.model.position.set(position.x, position.y, position.z);
         this.model.scale.set(scale.x, scale.y, scale.z);            
-        this.model.castShadow = true;
-        //this.model.receiveShadow = true;
-
+        //this.model.rotateX(Math.PI);
+        
         scene.add(this.model);
 
+        //this.group = model;
+        //this.group.add(model);
+        //this.group.position.set(position.x, position.y, position.z);
+        //this.group.scale.set(scale.x, scale.y, scale.z);            
+        //this.group.castShadow = true;
+   
+        //scene.add(this.group);
+
+        /*
         this.mesh = new THREE.Mesh(
             
             new THREE.BoxGeometry( physicsObjectSize?.x, physicsObjectSize?.y, physicsObjectSize?.z),            
             //new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } 
             this.meshMaterial
         );
+        this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 4);
 
         //this.mesh.position.set(position.x, position.y, position.z);
         //this.mesh.castShadow = true;
         //this.mesh.receiveShadow = true;
         
-        scene.add(this.mesh);
-        
+        this.group.add(this.mesh);
+        */
+
         if(world != null && physicsObjectSize != null) {
 
             this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
 
+            let shape = new CANNON.Box(new CANNON.Vec3(physicsObjectSize.x / 2, physicsObjectSize.y / 2, physicsObjectSize.z / 2));
+            let cylinderShape = new CANNON.Cylinder(1, 1, 0.5, 16);
+            
             this.body = new CANNON.Body({
                 // https://stackoverflow.com/questions/26183492/cannonjs-and-three-js-one-unit-off
-                shape: new CANNON.Box(new CANNON.Vec3(physicsObjectSize.x / 2, physicsObjectSize.y / 2, physicsObjectSize.z / 2)),
+                shape: shapeType == GltfObjectPhysicsObjectShape.Cylinder
+                       ? cylinderShape
+                       : shape,
                 position: new CANNON.Vec3(position.x, position.y, position.z),
                 type: CANNON.Body.DYNAMIC,
                 material: this.physicsMaterial,
                 angularVelocity: new CANNON.Vec3(0, 10, 0),
                 angularDamping: 0.5,
                 linearDamping: 0.7,
-                mass: 1
+                mass: 0.5,
             });
-            //this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+            
+            // todo: refactor initial rotation of physics body into parameter
+            this.body.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 2);            
             world.addBody(this.body);
         }
     }
@@ -87,19 +113,23 @@ export class GltfObject {
     }
     
     getPosition() {
-        return this.mesh?.position;
+        //return this.mesh?.position;
+        return null;
     }
 
     update() {
         if(this.body != null) {
 
-            this.body.velocity.x = 0.1;
-            
+            //this.body.velocity.x = 0.1;
+
             this.model.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position).add(this.physicsPositionOffset));
             this.model.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
-
-            this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
-            this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
+            
+            // todo: refactor extra rotation of mesh into parameter
+            this.model.rotateZ(-Math.PI/2);            
+            
+            this.group.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position).add(this.physicsPositionOffset));
+            this.group.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
         }
     }
 }

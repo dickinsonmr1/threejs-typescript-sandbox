@@ -7,7 +7,7 @@ import Stats from 'three/addons/libs/stats.module.js';
 import SpotlightObject from '../gameobjects/shapes/spotlightObject';
 import { randFloat } from 'three/src/math/MathUtils.js';
 import { ParticleEmitter } from '../gameobjects/fx/particleEmitter';
-import { GltfObject } from '../gameobjects/shapes/gltfObject';
+import { GltfObject, GltfObjectPhysicsObjectShape } from '../gameobjects/shapes/gltfObject';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Projectile } from '../gameobjects/weapons/projectile';
 import { CylinderObject } from '../gameobjects/shapes/cylinderObject';
@@ -206,16 +206,22 @@ export default class GameScene extends THREE.Scene {
         cylinderMesh.position.set(20, 0, 20);            
         this.add(cylinderMesh);
 
-        var wheelModel = await this.generateWheelModel();
+        
+        const bouncyMaterial = new CANNON.Material();
+        const wheelGroundContactMaterial = new CANNON.ContactMaterial(bouncyMaterial, this.groundMaterial, {
+            friction: 0.3,
+            restitution: 0.9 // High restitution for bounciness
+        });
+        this.world.addContactMaterial(wheelGroundContactMaterial);
 
+        var wheelModel = await this.generateWheelModelAsGroup();
         this.debrisWheel = new GltfObject(this,
             wheelModel,
-            new THREE.Vector3(5, 5, 5),
+            new THREE.Vector3(-15, 5, -5),
             new THREE.Vector3(2, 2, 2),
             new THREE.Vector3(1, 1, 1),
             new THREE.Vector3(0, 0, 0),
-            this.world, objectMaterial);
-
+            this.world, bouncyMaterial, GltfObjectPhysicsObjectShape.Cylinder);
 
         
         let particleMaterial = new THREE.SpriteMaterial({
@@ -396,8 +402,29 @@ export default class GameScene extends THREE.Scene {
 
         var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
         
+        model.scene.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
         model.scene.scale.set(10, 10, 10);
         model.scene.position.set(10, 10, 10);
+
+        return model;
+    }
+
+    async generateWheelModelAsGroup(): Promise<THREE.Group>{
+
+        var model = (await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb')).scene;
+        
+        //model.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
+        //model.scale.set(10, 10, 10);
+        //model.position.set(10, 10, 10);
+
+        //model.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+        //model.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 4);
+
+        //const quaternion = new THREE.Quaternion();
+        ////quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2); // Rotate 90 degrees around the X axis
+        //quaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2); // Rotate 90 degrees around the Z axis
+        //model.quaternion.multiplyQuaternions(quaternion, model.quaternion);
+
         //this.add(wheelModel2.scene);
         return model;
     }
