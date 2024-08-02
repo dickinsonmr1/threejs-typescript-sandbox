@@ -61,6 +61,9 @@ export default class GameScene extends THREE.Scene {
     private directionVector = new THREE.Vector3();
 
     private cubes: BoxObject[] = [];
+    private debrisWheels: GltfObject[] = [];
+    private bouncyWheelMaterial!: CANNON.Material;
+
     private lightning!: THREE.Line;
 
     private pickups: PickupObject2[] = [];
@@ -104,7 +107,7 @@ export default class GameScene extends THREE.Scene {
     cylinder?: CylinderObject;
 
     debrisDriveTrain!: GltfObject;
-    debrisWheel!: GltfObject;
+    //debrisWheel!: GltfObject;
 
     private allPlayers: Player[] = [];
     player1!: Player;
@@ -207,23 +210,15 @@ export default class GameScene extends THREE.Scene {
         this.add(cylinderMesh);
 
         
-        const bouncyMaterial = new CANNON.Material();
-        const wheelGroundContactMaterial = new CANNON.ContactMaterial(bouncyMaterial, this.groundMaterial, {
+        this.bouncyWheelMaterial = new CANNON.Material();
+        const wheelGroundContactMaterial = new CANNON.ContactMaterial(this.bouncyWheelMaterial, this.groundMaterial, {
             friction: 0.3,
             restitution: 0.9 // High restitution for bounciness
         });
         this.world.addContactMaterial(wheelGroundContactMaterial);
 
-        var wheelModel = await this.generateWheelModelAsGroup();
-        this.debrisWheel = new GltfObject(this,
-            wheelModel,
-            new THREE.Vector3(-15, 5, -5),
-            new THREE.Vector3(2, 2, 2),
-            new THREE.Vector3(1, 1, 1),
-            new THREE.Vector3(0, 0, 0),
-            this.world, bouncyMaterial, GltfObjectPhysicsObjectShape.Cylinder);
-
-        
+   
+       
         let particleMaterial = new THREE.SpriteMaterial({
             map: this.explosionTexture,
             depthTest: true
@@ -402,9 +397,9 @@ export default class GameScene extends THREE.Scene {
 
         var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
         
-        model.scene.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
-        model.scene.scale.set(10, 10, 10);
-        model.scene.position.set(10, 10, 10);
+        //model.scene.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
+        //model.scene.scale.set(10, 10, 10);
+        model.scene.position.set(0,0,0);
 
         return model;
     }
@@ -445,6 +440,10 @@ export default class GameScene extends THREE.Scene {
 		{			
             this.generateRandomCube();
 		}
+        if (event.key === 'p')
+        {			
+            this.generateRandomDebrisWheel();
+        }
         if (event.key === 'x')
 		{            
             let newProjectile = this.player1.createProjectile(ProjectileType.Bullet);
@@ -594,6 +593,29 @@ export default class GameScene extends THREE.Scene {
             randCubeSize);
 
         this.cubes.push(cube);
+    }
+
+    public async generateRandomDebrisWheel(randPosition?: THREE.Vector3) {
+        
+        if(randPosition == null)
+            randPosition = new THREE.Vector3(randFloat(-10, 10), randFloat(5, 10), randFloat(-10, -10));
+        
+        var wheelModel = await this.generateWheelModel();
+
+        var debrisWheel = new GltfObject(
+            this,
+            wheelModel.scene,
+            randPosition,
+            new THREE.Vector3(2, 2, 2), // scale                
+            new THREE.Vector3(randFloat(-10, 10), randFloat(20, 30), randFloat(-10, -10)), // initial velocity
+            new THREE.Vector3(1, 1, 1), // physics object scale
+            new THREE.Vector3(0, 0, 0), // physics object offset
+            this.world,
+            this.bouncyWheelMaterial,
+            GltfObjectPhysicsObjectShape.Cylinder
+        );
+
+        this.debrisWheels.push(debrisWheel);
     }
     
     
@@ -1387,9 +1409,10 @@ export default class GameScene extends THREE.Scene {
         this.cube2?.update();
         this.sphere?.update();
         this.cylinder?.update();
-        this.debrisWheel.update();
         
         this.cubes.forEach(x => x.update());
+
+        this.debrisWheels.forEach(x => x.update());
 
         this.pickups.forEach(x => x.update());
 

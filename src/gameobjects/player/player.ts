@@ -21,6 +21,7 @@ import { SmokeObject } from "../fx/smokeObject";
 import { ParticleTrailPointsShaderObject } from "../fx/particleTrailPointsShaderObject";
 import { SmokeObject2 } from "../fx/smokeObject2";
 import Brakelights from "../vehicles/brakeLights";
+import { randFloat, randFloatSpread } from "three/src/math/MathUtils.js";
 
 export enum PlayerState {
     Alive,
@@ -84,6 +85,9 @@ export class Player {
 
     private maxBulletCooldownTimeInSeconds: number = 0.20;
     private bulletCooldownClock: THREE.Clock = new THREE.Clock(false);
+
+    private maxDeathExplosionTimeInSeconds: number = 0.25;
+    private deathExplosionCooldownClock: THREE.Clock = new THREE.Clock(false);
 
     private maxRocketCooldownTimeInSeconds: number = 0.5;
     private rocketCooldownClock: THREE.Clock = new THREE.Clock(false);
@@ -199,6 +203,14 @@ export class Player {
         this.fireObjects.forEach(x => x.update());
 
         if(this.playerState == PlayerState.Dead) {
+            
+            if(this.deathExplosionCooldownClock.getElapsedTime() > this.maxDeathExplosionTimeInSeconds) {
+                this.deathExplosionCooldownClock.stop();
+
+                this.generateRandomExplosion();
+                this.deathExplosionCooldownClock.start();
+            }        
+            
             return; 
         }
             
@@ -520,9 +532,14 @@ export class Player {
                 3000
             );
             this.fireObjects.push(deathFire);
-
+            
             let smokeEmitPosition = this.getPosition().add(new THREE.Vector3(0, 0.5, 0));
             let smokeObject = new SmokeObject2(this.scene, scene.explosionTexture, smokeEmitPosition, 3, 3000);
+
+            this.generateRandomExplosion();
+            scene.generateRandomDebrisWheel(this.getPosition().add(new THREE.Vector3(0, 3, 0)));
+            
+            this.deathExplosionCooldownClock.start();
             /*
             let smokeObject = new ParticleTrailPointsShaderObject(
                 scene,
@@ -686,5 +703,17 @@ export class Player {
         this.fireObjects.forEach(x => particleCount += x.getParticleCount());
         
         return particleCount;
+    }
+
+    private generateRandomExplosion(): void {
+        let scene = this.getScene();                
+        scene.generateRandomExplosion(ProjectileType.Rocket,
+            this.getPosition().add(new THREE.Vector3(randFloatSpread(3), randFloatSpread(2), randFloatSpread(3))),
+            new THREE.Color('white'),
+            new THREE.Color('white'),
+            new THREE.Color('yellow'),
+            new THREE.Color('orange'),
+            new THREE.Color('red')
+        );
     }
 }
