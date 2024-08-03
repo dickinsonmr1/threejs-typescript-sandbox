@@ -24,6 +24,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     private readonly maxSteerVal: number = 0.7;
     private readonly maxForce: number = 1500;
 
+    private isActive: boolean = true;
+
     //mesh: THREE.Mesh;
     //body?: CANNON.Body;
 
@@ -199,6 +201,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     respawnPosition(x: number, y: number, z: number): void {
+        if(!this.isActive) return;
         if(!this.raycastVehicle) return;
 
         this.raycastVehicle.chassisBody.position.x = x;
@@ -208,7 +211,9 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         this.raycastVehicle.chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 0);
     }
 
-    tryJump(): void {        
+    tryJump(): void {      
+        if(!this.isActive) return;  
+
         this.raycastVehicle?.chassisBody.applyImpulse(new CANNON.Vec3(0, 4000, 0));
     }
     
@@ -255,6 +260,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryAccelerate(): void {
+        if(!this.isActive) return;
+
         // rear wheels
         this.raycastVehicle?.applyEngineForce(-this.maxForce, 2);
         this.raycastVehicle?.applyEngineForce(-this.maxForce, 3);
@@ -265,6 +272,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryAccelerateWithJoystick(joystickY: number): void {
+        if(!this.isActive) return;
+
         // rear wheels
         this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 2);
         this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 3);
@@ -276,6 +285,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryStopAccelerate(): void {
+        if(!this.isActive) return;
+
         // rear wheels
         this.raycastVehicle?.applyEngineForce(0, 2);
         this.raycastVehicle?.applyEngineForce(0, 3);
@@ -286,6 +297,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryReverse(): void {
+        if(!this.isActive) return;
+
         // rear wheels
         this.raycastVehicle?.applyEngineForce(this.maxForce, 2);
         this.raycastVehicle?.applyEngineForce(this.maxForce, 3);
@@ -296,6 +309,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryReverseWithJoystick(joystickY: number): void {
+        if(!this.isActive) return;
+
         // rear wheels
         var amount = Math.abs(joystickY);
 
@@ -308,6 +323,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryStopReverse(): void {
+        if(!this.isActive) return;
+
         // rear wheels
         this.raycastVehicle?.applyEngineForce(0, 2);
         this.raycastVehicle?.applyEngineForce(0, 3);
@@ -318,6 +335,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryTurn(gamepadStickX: number): void {
+        if(!this.isActive) return;
+
         // front wheels
         this.raycastVehicle?.setSteeringValue(this.maxSteerVal * gamepadStickX, 0);
         this.raycastVehicle?.setSteeringValue(this.maxSteerVal * gamepadStickX, 1);
@@ -328,6 +347,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryTightTurn(gamepadStickX: number): void {
+        if(!this.isActive) return;
+
         // front wheels
         this.raycastVehicle?.setSteeringValue(1.0 * gamepadStickX, 0);
         this.raycastVehicle?.setSteeringValue(1.0 * gamepadStickX, 1);
@@ -338,20 +359,28 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryTurnLeft() {
+        if(!this.isActive) return;
+
         this.raycastVehicle?.setSteeringValue(this.maxSteerVal, 0);
         this.raycastVehicle?.setSteeringValue(this.maxSteerVal, 1);
     }
 
     tryStopTurnLeft() {
+        if(!this.isActive) return;
+
         this.raycastVehicle?.setSteeringValue(0, 0);
         this.raycastVehicle?.setSteeringValue(0, 1);
     }
 
     tryTurnRight(): void {
+        if(!this.isActive) return;
+
         this.raycastVehicle?.setSteeringValue(-this.maxSteerVal, 0);
         this.raycastVehicle?.setSteeringValue(-this.maxSteerVal, 1);
     }
     tryStopTurnRight(): void {
+        if(!this.isActive) return;
+
         this.raycastVehicle?.setSteeringValue(0, 0);
         this.raycastVehicle?.setSteeringValue(0, 1);
     }
@@ -368,21 +397,22 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
                 const transform  = this.raycastVehicle?.wheelInfos[i].worldTransform;
 
-                let wheel = this.wheels[i];
-                
-                wheel.wheelBody.position.copy(transform.position);
-                wheel.wheelBody.quaternion.copy(transform.quaternion);
+                if(this.isActive) {
+                    let wheel = this.wheels[i];
+                    
+                    wheel.wheelBody.position.copy(transform.position);
+                    wheel.wheelBody.quaternion.copy(transform.quaternion);
 
-                wheel.mesh.position.copy(Utility.CannonVec3ToThreeVec3(transform.position));
-                wheel.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(transform.quaternion));
+                    wheel.mesh.position.copy(Utility.CannonVec3ToThreeVec3(transform.position));
+                    wheel.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(transform.quaternion));
 
-                this.wheelModels[i].position.copy(wheel.mesh.position);
-                this.wheelModels[i].quaternion.copy(wheel.mesh.quaternion);                
-                if(i == 0 || i == 2)
-                    this.wheelModels[i].rotateY(Math.PI / 2);
-                else
-                    this.wheelModels[i].rotateY(3 * Math.PI / 2);
-
+                    this.wheelModels[i].position.copy(wheel.mesh.position);
+                    this.wheelModels[i].quaternion.copy(wheel.mesh.quaternion);                
+                    if(i == 0 || i == 2)
+                        this.wheelModels[i].rotateY(Math.PI / 2);
+                    else
+                        this.wheelModels[i].rotateY(3 * Math.PI / 2);
+                }
                 //if(i < 2)
                     //this.wheelModels[i].rotateX(Math.PI);
                 //else
@@ -426,5 +456,9 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         //this.wheels.forEach(x => x.update());
            
+    }
+
+    setAcceptInput(isActive: boolean) {
+        this.isActive = isActive;
     }
 }

@@ -210,7 +210,13 @@ export class Player {
                 this.generateRandomExplosion();
                 this.deathExplosionCooldownClock.start();
             }        
+
             
+            this.fireObjects.forEach(x => {
+                x.setPosition(this.vehicleObject.getChassis().getPosition());
+            });
+            this.vehicleObject.update();            
+
             return; 
         }
             
@@ -516,8 +522,9 @@ export class Player {
             if(this.shield != null)
                 this.shield.setVisible(false);
 
-            this.vehicleObject.getModel().visible = false;
-            this.vehicleObject.getWheelModels().forEach(x => x.visible = false);            
+            //this.vehicleObject.getModel().visible = false;
+            this.vehicleObject.getWheelModels().forEach(x => x.visible = false);      
+            this.vehicleObject.setAcceptInput(false);      
             this.turboParticleEmitter.pause();
 
             if(!scene.explosionTexture) return;
@@ -537,7 +544,13 @@ export class Player {
             let smokeObject = new SmokeObject2(this.scene, scene.explosionTexture, smokeEmitPosition, 3, 3000);
 
             this.generateRandomExplosion();
-            scene.generateRandomDebrisWheel(this.getPosition().add(new THREE.Vector3(0, 3, 0)));
+
+            let wheels = this.vehicleObject.getWheelModels();
+
+            scene.generateRandomDebrisWheel(wheels[0].position.add(new THREE.Vector3(0, 0.5, 0)));
+            scene.generateRandomDebrisWheel(wheels[1].position.add(new THREE.Vector3(0, 0.5, 0)));
+            scene.generateRandomDebrisWheel(wheels[2].position.add(new THREE.Vector3(0, 0.5, 0)));
+            scene.generateRandomDebrisWheel(wheels[3].position.add(new THREE.Vector3(0, 0.5, 0)));
             
             this.deathExplosionCooldownClock.start();
             /*
@@ -580,6 +593,7 @@ export class Player {
 
         let worldPosition = this.getScene().getWorldPositionOnTerrain(randX, randZ);
 
+        this.vehicleObject.setAcceptInput(true);
         this.vehicleObject.respawnPosition(worldPosition.x, worldPosition.y + 2, worldPosition.z);
 
         this.vehicleObject.getModel().visible = true;

@@ -444,11 +444,18 @@ export default class GameScene extends THREE.Scene {
         {			
             this.generateRandomDebrisWheel();
         }
+        if (event.key === 'o')
+        {			
+            this.player1.tryDamage(ProjectileType.Rocket, new THREE.Vector3(0,0,0));
+        }
+            /*
+        /*
         if (event.key === 'x')
 		{            
             let newProjectile = this.player1.createProjectile(ProjectileType.Bullet);
             this.addNewProjectile(newProjectile);		
 		}
+        */
         if (event.key === 'e')
 		{                        
             let newProjectile = this.player2.createProjectile(ProjectileType.Bullet);
@@ -530,7 +537,7 @@ export default class GameScene extends THREE.Scene {
             this.player1.tryAccelerateWithKeyboard();
         }
         else if(this.keyDown.has('arrowdown')) {
-            this.player1.tryStopReverseWithKeyboard();
+            this.player1.tryReverseWithKeyboard();
         }
 
         if(this.keyDown.has('arrowleft')) {
@@ -540,6 +547,9 @@ export default class GameScene extends THREE.Scene {
             this.player1.tryTurnRightWithKeyboard();
         }
         
+        if (this.keyDown.has('x')) {
+            let newProjectile = this.player1.tryFireBullets();
+        }        
         if (this.keyDown.has('z')) {
             this.player1.tryFireFlamethrower();
         }
@@ -606,8 +616,8 @@ export default class GameScene extends THREE.Scene {
             this,
             wheelModel.scene,
             randPosition,
-            new THREE.Vector3(2, 2, 2), // scale                
-            new THREE.Vector3(randFloat(-10, 10), randFloat(20, 30), randFloat(-10, -10)), // initial velocity
+            new THREE.Vector3(1, 1, 1), // scale                
+            new THREE.Vector3(randFloat(-10, 10), randFloat(2, 5), randFloat(-10, 10)), // initial velocity
             new THREE.Vector3(1, 1, 1), // physics object scale
             new THREE.Vector3(0, 0, 0), // physics object offset
             this.world,

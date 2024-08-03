@@ -3,6 +3,7 @@ import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
 import GameScene from "../../scenes/gameScene";
+import { randFloat } from "three/src/math/MathUtils.js";
 
 
 export enum GltfObjectPhysicsObjectShape {
@@ -61,7 +62,7 @@ export class GltfObject {
             this.physicsMaterial = physicsMaterial ?? new CANNON.Material();
 
             let shape = new CANNON.Box(new CANNON.Vec3(physicsObjectSize.x / 2, physicsObjectSize.y / 2, physicsObjectSize.z / 2));
-            let cylinderShape = new CANNON.Cylinder(0.5, 0.5, 0.5, 16);
+            let cylinderShape = new CANNON.Cylinder(0.25, 0.25, 0.5, 16);
             
             this.body = new CANNON.Body({
                 // https://stackoverflow.com/questions/26183492/cannonjs-and-three-js-one-unit-off
@@ -71,10 +72,10 @@ export class GltfObject {
                 position: new CANNON.Vec3(position.x, position.y, position.z),
                 type: CANNON.Body.DYNAMIC,
                 material: this.physicsMaterial,
-                angularVelocity: new CANNON.Vec3(0, 0, 1000),
+                angularVelocity: new CANNON.Vec3(0, 0, randFloat(-100, 100)),
                 velocity: Utility.ThreeVec3ToCannonVec3(velocity),
-                angularDamping: 0.5,
-                linearDamping: 0.7,
+                angularDamping: 0.01,
+                linearDamping: 0.01,
                 mass: 0.1,
             });
             

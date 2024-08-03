@@ -28,4 +28,6 @@ export interface IPlayerVehicle {
     respawnPosition(x: number, y: number, z: number): void;
 
     update(): void;
+
+    setAcceptInput(isActive: boolean): void;
 }
