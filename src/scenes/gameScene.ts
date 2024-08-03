@@ -447,6 +447,9 @@ export default class GameScene extends THREE.Scene {
         if (event.key === 'o')
         {			
             this.player1.tryDamage(ProjectileType.Rocket, new THREE.Vector3(0,0,0));
+            this.player2.tryKill();
+            this.player3.tryKill();
+            this.player4.tryKill();
         }
             /*
         /*
@@ -1339,13 +1342,16 @@ export default class GameScene extends THREE.Scene {
         this.updateInput();          
 
         var cpuPlayers = this.allPlayers.filter(x => x.isCpuPlayer);
-
         for(var i = 0; i < cpuPlayers.length; i++) {
             
             let cpuPlayer = cpuPlayers[i];
 
-            if(cpuPlayer.playerState != PlayerState.Alive)
+            if(cpuPlayer.playerState != PlayerState.Alive){
+                cpuPlayer.tryStopTurnLeftWithKeyboard();
+                cpuPlayer.tryStopAccelerateWithKeyboard();
+                cpuPlayer.tryStopReverseWithKeyboard();
                 continue;
+            }
 
             if(this.cpuPlayerBehavior == CpuPlayerPattern.Stop) {
                 cpuPlayer.tryStopAccelerateWithKeyboard();

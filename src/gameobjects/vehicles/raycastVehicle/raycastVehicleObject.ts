@@ -218,6 +218,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
     
     tryTurbo(): void {
+        if(!this.isActive) return;  
 
         let forwardVector = new THREE.Vector3(-100, 0, 0);
         forwardVector.applyQuaternion(this.getModel().quaternion);
