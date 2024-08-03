@@ -199,7 +199,10 @@ export class Player {
     }
 
     update(): void {
-
+            
+        this.fireObjects.forEach(x => {
+            x.setEmitPosition(this.vehicleObject.getChassis().getPosition());
+        });
         this.fireObjects.forEach(x => x.update());
 
         if(this.playerState == PlayerState.Dead) {
@@ -211,10 +214,6 @@ export class Player {
                 this.deathExplosionCooldownClock.start();
             }        
 
-            
-            this.fireObjects.forEach(x => {
-                x.setPosition(this.vehicleObject.getChassis().getPosition());
-            });
             this.vehicleObject.update();            
 
             return; 
@@ -303,6 +302,8 @@ export class Player {
         let turboEmitPosition = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), turboOffset);
 
         this.turboParticleEmitter.setEmitPosition(turboEmitPosition);
+
+        this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
 
 
         if(this.bulletCooldownClock.getElapsedTime() > this.maxBulletCooldownTimeInSeconds) {
@@ -535,13 +536,13 @@ export class Player {
                 new THREE.Color('yellow'),
                 new THREE.Color('orange'),
                 this.getPosition(),
-                10,
+                3,
                 3000
             );
             this.fireObjects.push(deathFire);
             
             let smokeEmitPosition = this.getPosition().add(new THREE.Vector3(0, 0.5, 0));
-            let smokeObject = new SmokeObject2(this.scene, scene.explosionTexture, smokeEmitPosition, 3, 3000);
+            let smokeObject = new SmokeObject2(this.scene, scene.explosionTexture, smokeEmitPosition, 1, 3000);
 
             this.generateRandomExplosion();
 
@@ -572,6 +573,8 @@ export class Player {
             */
 
             this.fireObjects.push(smokeObject);            
+
+            this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
 
             setTimeout(() => {
                 this.playerState = PlayerState.Respawning

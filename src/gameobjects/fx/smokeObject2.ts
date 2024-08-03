@@ -11,8 +11,9 @@ export class SmokeObject2 extends ParticleEmitter {
     resume(): void {
         throw new Error("Method not implemented.");
     }
+
     setEmitPosition(position: THREE.Vector3): void {
-        throw new Error("Method not implemented.");
+        this.emitPosition = position;
     }
 
     scene: THREE.Scene;
@@ -29,6 +30,8 @@ export class SmokeObject2 extends ParticleEmitter {
 
     isEmitting: boolean = true;
     isDead: boolean = false;
+
+    emitPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
@@ -51,9 +54,9 @@ export class SmokeObject2 extends ParticleEmitter {
 
         this.numberParticles = numberParticles;
 
-        this.addParticles();
+        //this.emitParticles();
 
-        this.particleGroup.position.set(position.x, position.y, position.z);
+        this.particleGroup.position.set(0,0,0);//position.x, position.y, position.z);
 
         //this.pointLightObject = new PointLightObject(scene,
             //lightColor, 0.1, 2, 0.5, position);
@@ -74,7 +77,7 @@ export class SmokeObject2 extends ParticleEmitter {
     }
 
 
-    private addParticles(): void {
+    private emitParticles(emitPosition: THREE.Vector3): void {
         for(let i = 0; i < this.numberParticles; i++) {
             let particleMaterial = new THREE.SpriteMaterial({
                 map: this.particleTexture,
@@ -97,6 +100,8 @@ export class SmokeObject2 extends ParticleEmitter {
 
             let size = Math.random() * 0.1 + 0.2;
             sprite.scale.set(size, size, size);
+
+            sprite.position.set(emitPosition.x, emitPosition.y, emitPosition.z);
             sprite.position.x += Math.random() * 0.5 - 0.25;
             sprite.position.z += Math.random() * 0.5 - 0.25;
 
@@ -142,7 +147,7 @@ export class SmokeObject2 extends ParticleEmitter {
         }
 
         if(this.isEmitting) {
-            this.addParticles();
+            this.emitParticles(this.emitPosition);
         }
         
         this.particleGroup.children.forEach((child) => {

@@ -11,9 +11,6 @@ export class FireObject extends ParticleEmitter {
     resume(): void {
         throw new Error("Method not implemented.");
     }
-    setEmitPosition(position: THREE.Vector3): void {
-        throw new Error("Method not implemented.");
-    }
 
     scene: THREE.Scene;
     particleGroup: THREE.Group;
@@ -31,6 +28,8 @@ export class FireObject extends ParticleEmitter {
 
     isEmitting: boolean = true;
     isDead: boolean = false;
+
+    emitPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
@@ -58,9 +57,9 @@ export class FireObject extends ParticleEmitter {
         this.numberParticles = numberParticles;
         this.particleColor = particleColor;
 
-        this.addParticles();
+        //this.emitParticles();
 
-        this.particleGroup.position.set(position.x, position.y, position.z);
+        this.particleGroup.position.set(0,0,0);//position.x, position.y, position.z);
 
         //this.pointLightObject = new PointLightObject(scene,
             //lightColor, 0.1, 2, 0.5, position);
@@ -81,7 +80,7 @@ export class FireObject extends ParticleEmitter {
     }
 
 
-    private addParticles(): void {
+    private emitParticles(emitPosition: THREE.Vector3): void {
         for(let i = 0; i < this.numberParticles; i++) {
             let particleMaterial = new THREE.SpriteMaterial({
                 map: this.particleTexture,
@@ -104,6 +103,8 @@ export class FireObject extends ParticleEmitter {
 
             let size = Math.random() * 0.1 + 0.5;
             sprite.scale.set(size, size, size);
+            
+            sprite.position.set(emitPosition.x, emitPosition.y, emitPosition.z);
             sprite.position.x += Math.random() * 1.0 - 0.5;
             sprite.position.z += Math.random() * 1.0 - 0.5;
             sprite.rotation.setFromVector3(new THREE.Vector3(
@@ -122,6 +123,10 @@ export class FireObject extends ParticleEmitter {
 
     setPosition(position: THREE.Vector3): void {
         this.particleGroup.position.set(position.x, position.y, position.z);
+    }
+
+    setEmitPosition(position: THREE.Vector3): void {
+        this.emitPosition = position;
     }
 
     setQuaternion(quaternion: THREE.Quaternion): void {
@@ -146,7 +151,7 @@ export class FireObject extends ParticleEmitter {
         }
 
         if(this.isEmitting) {
-            this.addParticles();
+            this.emitParticles(this.emitPosition);
         }
         
         this.particleGroup.children.forEach((child) => {

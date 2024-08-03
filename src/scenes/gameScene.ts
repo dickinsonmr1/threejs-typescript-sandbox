@@ -1341,7 +1341,7 @@ export default class GameScene extends THREE.Scene {
 
         this.updateInput();          
 
-        var cpuPlayers = this.allPlayers.filter(x => x.isCpuPlayer);
+        var cpuPlayers = this.allPlayers.filter(x => x.isCpuPlayer);// && x.playerState == PlayerState.Alive);
         for(var i = 0; i < cpuPlayers.length; i++) {
             
             let cpuPlayer = cpuPlayers[i];

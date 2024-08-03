@@ -5,9 +5,6 @@ import { Utility } from "../../utility";
 
 export class SmokeObject extends ParticleEmitter {
     
-    setEmitPosition(position: THREE.Vector3): void {
-        throw new Error("Method not implemented.");
-    }
     getParticleCount(): number {
         return this.particleGroup.children.length;
     }
@@ -28,6 +25,8 @@ export class SmokeObject extends ParticleEmitter {
     isDead: boolean = false;
 
     lifeTimeInMs: number = 1000;
+
+    emitPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
@@ -52,7 +51,7 @@ export class SmokeObject extends ParticleEmitter {
 
         this.numberParticles = numberParticles;
 
-        this.addParticles();
+        //this.emitParticles();
 
         this.particleGroup.position.set(position.x, position.y, position.z);
 
@@ -75,7 +74,7 @@ export class SmokeObject extends ParticleEmitter {
     }
 
 
-    private addParticles(): void {
+    private emitParticles(emitPosition: THREE.Vector3): void {
         for(let i = 0; i < this.numberParticles; i++) {
             let particleMaterial = new THREE.SpriteMaterial({
                 map: this.particleTexture,
@@ -98,6 +97,8 @@ export class SmokeObject extends ParticleEmitter {
 
             let size = Math.random() * 0.1 + 0.5;
             sprite.scale.set(size, size, size);
+
+            sprite.position.set(emitPosition.x, emitPosition.y, emitPosition.z);
             sprite.position.x += Math.random() * 0.5 - 0.25;
             sprite.position.y += Math.random() * 0.5 - 0.25;
             sprite.position.z += Math.random() * 0.5 - 0.25;
@@ -125,6 +126,10 @@ export class SmokeObject extends ParticleEmitter {
         this.scene.remove(this.particleGroup);
     }
 
+    setEmitPosition(position: THREE.Vector3): void {
+        this.emitPosition = position;
+    }
+
     update(): void {
 
         if(this.isDead) {
@@ -139,7 +144,7 @@ export class SmokeObject extends ParticleEmitter {
         }
 
         if(this.isEmitting) {
-            this.addParticles();
+            this.emitParticles(this.emitPosition);
         }
         
         this.particleGroup.children.forEach((child) => {
