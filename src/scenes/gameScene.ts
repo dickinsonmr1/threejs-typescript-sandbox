@@ -297,6 +297,8 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.addElement("player2status", "");
         this.debugDivElementManager.addElement("player3status", "");
         this.debugDivElementManager.addElement("player4status", "");
+
+        this.debugDivElementManager.hideAllElements();
        
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky

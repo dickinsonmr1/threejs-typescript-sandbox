@@ -114,6 +114,8 @@ export default class HudScene extends THREE.Scene {
         this.hudDivElementManager.addElement("Shockwave", "");        
         this.hudDivElementManager.addElement("Freeze", "");        
         this.hudDivElementManager.addElement("Lightning", "");        
+
+        this.hudDivElementManager.hideAllElements();
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color, location: HudIconLocation): THREE.Sprite {
