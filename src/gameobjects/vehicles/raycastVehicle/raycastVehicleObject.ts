@@ -163,7 +163,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 		});
 
         if(modelData != null) {
-            this.model = modelData.scene;//.children[0];
+            this.model = modelData.scene.clone();//.children[0];
             this.modelOffset = modelOffset;
 
             

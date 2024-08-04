@@ -35,12 +35,15 @@ export enum VehicleType {
     Taxi,
     Ambulance,
     RaceCar,
+    Killdozer,
+    Police,
+    TrashTruck,
+
+    Offroader,
+    
     PickupTruck,
     Hearse,
-    Killdozer,
-    MonsterTruck,
-    Police,
-    TrashTruck
+    MonsterTruck    
 }
 
 export enum PlayerTeam {

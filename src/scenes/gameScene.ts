@@ -43,6 +43,7 @@ export default class GameScene extends THREE.Scene {
     private readonly mtlLoader = new MTLLoader();
 
     private readonly gltfLoader = new GLTFLoader();
+
     public taxiModel!: GLTF;
     public policeModel!: GLTF;
     public ambulanceModel!: GLTF;
@@ -162,7 +163,7 @@ export default class GameScene extends THREE.Scene {
         //this.background = new THREE.Color(0xB1E1FF);
     }
 
-    async initialize(): Promise<void> {
+    async initialize(playerVehicleName: string): Promise<void> {
        
         await this.loadVehicleAssets();
 
@@ -217,14 +218,13 @@ export default class GameScene extends THREE.Scene {
         });
         this.world.addContactMaterial(wheelGroundContactMaterial);
 
-   
        
         let particleMaterial = new THREE.SpriteMaterial({
             map: this.explosionTexture,
             depthTest: true
         });
 
-        await this.generatePlayers(particleMaterial);
+        await this.generatePlayers(particleMaterial, playerVehicleName);
 
         let material = new THREE.SpriteMaterial( { map: this.crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
@@ -984,7 +984,7 @@ export default class GameScene extends THREE.Scene {
         return model;
     }
 
-    async generatePlayers(particleMaterial: THREE.SpriteMaterial): Promise<void> {
+    async generatePlayers(particleMaterial: THREE.SpriteMaterial, player1VehicleName: string): Promise<void> {
 
         await this.loadVehicleAssets();
 
@@ -1000,10 +1000,35 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, VehicleType.RaceCar, new THREE.Color('red'), wheelMaterial);
-        this.player2 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Ambulance, new THREE.Color('blue'), wheelMaterial);
+        var player1VehicleType = VehicleType.RaceCar;
+        switch(player1VehicleName){
+            case "EMS":
+                player1VehicleType = VehicleType.Ambulance;
+                break;
+            case "The Law":
+                player1VehicleType = VehicleType.Police;
+                break;
+            case "Killdozer":
+                player1VehicleType = VehicleType.Killdozer;
+                break;
+            case "Compactor":
+                player1VehicleType = VehicleType.TrashTruck;
+                break;
+            case "Sideswipe":
+                player1VehicleType = VehicleType.Taxi;
+                break;
+            case "Offroader":
+                player1VehicleType = VehicleType.Offroader;
+                break;
+            default:
+                player1VehicleType = VehicleType.RaceCar;
+                break;
+        }
+
+        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial);
+        this.player2 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Taxi, new THREE.Color('blue'), wheelMaterial);
         this.player3 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Killdozer, new THREE.Color('green'), wheelMaterial);
-        this.player4 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Taxi, new THREE.Color('yellow'), wheelMaterial);
+        this.player4 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.TrashTruck, new THREE.Color('yellow'), wheelMaterial);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);

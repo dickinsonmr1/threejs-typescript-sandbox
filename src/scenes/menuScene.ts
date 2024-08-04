@@ -214,4 +214,8 @@ export default class MenuScene extends THREE.Scene {
         if(this.statBar4Text != null)
             this.statBar4Text.quaternion.copy(this.camera.quaternion);
     }
+
+    getSelectedVehicleName(): string {
+        return this.vehicleNameText.text;
+    }
 }

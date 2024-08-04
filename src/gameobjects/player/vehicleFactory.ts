@@ -130,7 +130,7 @@ export class VehicleFactory {
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
                 )
-                break;
+                break;                
             case VehicleType.Killdozer:
                 vehicle = new RaycastVehicleObject(
                     scene,
@@ -182,6 +182,32 @@ export class VehicleFactory {
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(1, 1, 1) // rear wheel model scale
                 )                
+                break;
+            case VehicleType.Offroader:
+                vehicle = new RaycastVehicleObject(
+                    scene,
+                    new THREE.Vector3(-5, 4, -5),   // position
+                    world,            
+                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    500,                            // chassis mass
+                    wheelMaterial,
+                    
+                    0.25,                           // front wheel radius
+                    0.25,                       //rear wheel radius
+                    new CANNON.Vec3(0.5, 0, 0),   // front wheel offset
+                    new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset
+
+                    20,                              // wheel mass
+
+                    gameScene.suvModel,             // model        
+                    gameScene.wheelModel,       // wheel model
+                    new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+                    new THREE.Vector3(0, 0, 0), // model offset
+
+                    new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
+                    new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+                )
                 break;
             default:
                 vehicle = new RaycastVehicleObject(

@@ -43,13 +43,12 @@ window.addEventListener("gamepaddisconnected", (event) => {
 var sceneController = new SceneController(renderer);
 
 const gameScene = new GameScene(mainCamera, sceneController);
-gameScene.initialize();
+//gameScene.initialize();
 
 const cannonDebugger = CannonDebugger(gameScene, gameScene.world, {color: 0x0000ff });
 
 gameScene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
-
 
 let hudwidth = width;
 let hudheight = height;

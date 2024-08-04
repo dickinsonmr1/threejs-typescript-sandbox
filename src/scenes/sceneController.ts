@@ -217,7 +217,7 @@ export default class SceneController {
                 //startGameButton.style.visibility = "hidden";
             });
             startGameButton.addEventListener('click', () => {
-                this.switchToGameScene();
+                this.switchToGameScene(this.menuScene!.getSelectedVehicleName() ?? "random");
                 startGameButton.style.visibility = "hidden";
             });
             startGameButton.addEventListener('touchend', () => {
@@ -437,10 +437,12 @@ export default class SceneController {
         document.getElementById('gameSceneDiv')!.style.visibility = 'hidden';
     }
 
-    switchToGameScene() {
+    switchToGameScene(playerVehicleName: string) {
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';
+        this.gameScene?.initialize(playerVehicleName);
+        this.hudScene?.initialize();
     }
 
     updateHealthOnHud(currentValue: number) {
