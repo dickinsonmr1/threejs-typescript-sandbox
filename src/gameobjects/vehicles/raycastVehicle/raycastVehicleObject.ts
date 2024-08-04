@@ -439,7 +439,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             }
         }
 
-        if(this.model != null && this.modelOffset != null) {            
+        if(this.model != null) { // && this.modelOffset != null) {            
             
             this.model.position.copy(Utility.CannonVec3ToThreeVec3(this.chassis.body.position));//.add(this.modelOffset));
             this.model.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.chassis.body.quaternion));

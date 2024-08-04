@@ -523,8 +523,12 @@ export class Player {
             if(this.shield != null)
                 this.shield.setVisible(false);
 
+            this.vehicleObject.tryStopAccelerate();
+            this.vehicleObject.tryStopReverse();
+
             //this.vehicleObject.getModel().visible = false;
             this.vehicleObject.getWheelModels().forEach(x => x.visible = false);      
+        
             this.vehicleObject.setAcceptInput(false);      
             this.turboParticleEmitter.pause();
 
@@ -547,11 +551,10 @@ export class Player {
             this.generateRandomExplosion();
 
             let wheels = this.vehicleObject.getWheelModels();
-
-            scene.generateRandomDebrisWheel(wheels[0].position.add(new THREE.Vector3(0, 0.5, 0)));
-            scene.generateRandomDebrisWheel(wheels[1].position.add(new THREE.Vector3(0, 0.5, 0)));
-            scene.generateRandomDebrisWheel(wheels[2].position.add(new THREE.Vector3(0, 0.5, 0)));
-            scene.generateRandomDebrisWheel(wheels[3].position.add(new THREE.Vector3(0, 0.5, 0)));
+            scene.generateRandomDebrisWheel(wheels[0].position.add(new THREE.Vector3(0, 0.5, 0)), wheels[0].quaternion);
+            scene.generateRandomDebrisWheel(wheels[1].position.add(new THREE.Vector3(0, 0.5, 0)), wheels[1].quaternion);
+            scene.generateRandomDebrisWheel(wheels[2].position.add(new THREE.Vector3(0, 0.5, 0)), wheels[2].quaternion);
+            scene.generateRandomDebrisWheel(wheels[3].position.add(new THREE.Vector3(0, 0.5, 0)), wheels[3].quaternion);
             
             this.deathExplosionCooldownClock.start();
             /*

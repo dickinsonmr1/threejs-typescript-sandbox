@@ -14,6 +14,9 @@ export class Utility {
         return new THREE.Quaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     }
 
+    static ThreeQuaternionToCannonQuaternion(quaternion: THREE.Quaternion): CANNON.Quaternion {
+      return new CANNON.Quaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+    }
     
     static ThreeVec3ToCannonVec3(position: THREE.Vector3): CANNON.Vec3 {
         return new CANNON.Vec3(position.x, position.y, position.z);

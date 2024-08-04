@@ -294,6 +294,9 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.addElement("RendererTotalPrograms", "");
         this.debugDivElementManager.addElement("TraverseTotalTextures", "");
         this.debugDivElementManager.addElement("cpuOverrideBehavior", "");
+        this.debugDivElementManager.addElement("player2status", "");
+        this.debugDivElementManager.addElement("player3status", "");
+        this.debugDivElementManager.addElement("player4status", "");
        
         // skybox tutorial: https://threejs.org/manual/#en/backgrounds
         // asset source: https://polyhaven.com/a/industrial_sunset_puresky
@@ -608,10 +611,13 @@ export default class GameScene extends THREE.Scene {
         this.cubes.push(cube);
     }
 
-    public async generateRandomDebrisWheel(randPosition?: THREE.Vector3) {
+    public async generateRandomDebrisWheel(randPosition?: THREE.Vector3, quaternion?: THREE.Quaternion) {
         
         if(randPosition == null)
             randPosition = new THREE.Vector3(randFloat(-10, 10), randFloat(5, 10), randFloat(-10, -10));
+
+        if(quaternion == null)
+            quaternion = new THREE.Quaternion();
         
         var wheelModel = await this.generateWheelModel();
 
@@ -619,8 +625,9 @@ export default class GameScene extends THREE.Scene {
             this,
             wheelModel.scene,
             randPosition,
+            quaternion,
             new THREE.Vector3(1, 1, 1), // scale                
-            new THREE.Vector3(randFloat(-10, 10), randFloat(2, 5), randFloat(-10, 10)), // initial velocity
+            new THREE.Vector3(randFloat(-10, 10), randFloat(2, 5), randFloat(-10, 10)), // initial velocity            
             new THREE.Vector3(1, 1, 1), // physics object scale
             new THREE.Vector3(0, 0, 0), // physics object offset
             this.world,
@@ -1618,6 +1625,10 @@ export default class GameScene extends THREE.Scene {
         }
 
         this.debugDivElementManager.updateElementText("cpuOverrideBehavior", `CPU Override Behavior: ${this.cpuPlayerBehavior.toString()}`);
+
+        this.debugDivElementManager.updateElementText("player2status", `player2status: ${this.player2.playerState}`);
+        this.debugDivElementManager.updateElementText("player3status", `player3status: ${this.player3.playerState}`);
+        this.debugDivElementManager.updateElementText("player4status", `player4status: ${this.player4.playerState}`);
 
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);

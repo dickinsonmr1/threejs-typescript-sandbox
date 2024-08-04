@@ -30,6 +30,7 @@ export class GltfObject {
         //asset: string,        
         modelData: THREE.Group,
         position: THREE.Vector3,
+        quaternion: THREE.Quaternion,
         scale: THREE.Vector3,
         velocity: THREE.Vector3,
         //color: number = 0xffffff,
@@ -79,8 +80,12 @@ export class GltfObject {
                 mass: 0.1,
             });
             
-            // todo: refactor initial rotation of physics body into parameter
-            this.body.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 2);            
+            const quaternion2 = new THREE.Quaternion();
+            quaternion2.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2);
+            
+            // Combine the quaternions
+            const combinedQuaternion = quaternion.clone().multiply(quaternion2);
+            this.body.quaternion.copy(Utility.ThreeQuaternionToCannonQuaternion(combinedQuaternion));            
             world.addBody(this.body);
         }
 
