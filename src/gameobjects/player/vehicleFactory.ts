@@ -84,6 +84,58 @@ export class VehicleFactory {
                     scene,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
+                    new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
+                    new CANNON.Vec3(0.2, 0.1, 0),    // center of mass adjust
+                    500,                            // chassis mass
+                    wheelMaterial,
+
+                    0.20,                           // front wheel radius
+                    0.20,                       //rear wheel radius
+                    new CANNON.Vec3(0.3, 0, 0),   // front wheel offset
+                    new CANNON.Vec3(0.1, 0, 0),   // rear wheel offset
+
+                    20,                              // wheel mass
+
+                    gameScene.raceCarBlueModel,             // model        
+                    gameScene.wheelModel,       // wheel model
+                    new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+                    new THREE.Vector3(0, 0, 0), // model offset
+
+                    new THREE.Vector3(0.8, 0.8, 0.8), // front wheel model scale,
+                    new THREE.Vector3(0.8, 0.8, 0.8) // rear wheel model scale
+                );
+                break;
+            case VehicleType.RaceCarRed:
+                vehicle = new RaycastVehicleObject(
+                    scene,
+                    new THREE.Vector3(-10, 5, -10),   // position
+                    world,            
+                    new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
+                    new CANNON.Vec3(0.2, 0.1, 0),    // center of mass adjust
+                    500,                            // chassis mass
+                    wheelMaterial,
+
+                    0.20,                           // front wheel radius
+                    0.20,                       //rear wheel radius
+                    new CANNON.Vec3(0.3, 0, 0),   // front wheel offset
+                    new CANNON.Vec3(0.1, 0, 0),   // rear wheel offset
+
+                    20,                              // wheel mass
+
+                    gameScene.raceCarRedModel,             // model        
+                    gameScene.wheelModel,       // wheel model
+                    new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+                    new THREE.Vector3(0, 0, 0), // model offset
+
+                    new THREE.Vector3(0.8, 0.8, 0.8), // front wheel model scale,
+                    new THREE.Vector3(0.8, 0.8, 0.8) // rear wheel model scale
+                );
+                break;
+            case VehicleType.Sedan:
+                vehicle = new RaycastVehicleObject(
+                    scene,
+                    new THREE.Vector3(-10, 5, -10),   // position
+                    world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0, 0.5, 0),    // center of mass adjust
                     500,                            // chassis mass
@@ -130,7 +182,61 @@ export class VehicleFactory {
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
                 )
-                break;                
+                break; 
+            case VehicleType.Harvester:
+                vehicle = new RaycastVehicleObject(
+                    scene,
+                    new THREE.Vector3(-5, 4, -5),   // position
+                    world,            
+                    new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
+                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    500,                            // chassis mass
+
+                    wheelMaterial,
+
+                    0.20,                           // front wheel radius
+                    0.3,                       //rear wheel radius
+
+                    new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
+                    new CANNON.Vec3(0.25, 0.1, 0),   // rear wheel offset
+                    20,                              // wheel mass
+
+                    gameScene.tractorModel,             // model         
+                    gameScene.wheelModel,       // wheel model
+                    new THREE.Vector3(1, 1, 1), // model scale,
+                    new THREE.Vector3(0, 0, 0), // model offset
+
+                    new THREE.Vector3(1, 1, 1), // front wheel model scale,
+                    new THREE.Vector3(2, 2, 2) // rear wheel model scale
+                )
+                break;         
+            case VehicleType.PoliceTractor:
+                vehicle = new RaycastVehicleObject(
+                    scene,
+                    new THREE.Vector3(-5, 4, -5),   // position
+                    world,            
+                    new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
+                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    500,                            // chassis mass
+
+                    wheelMaterial,
+
+                    0.20,                           // front wheel radius
+                    0.3,                       //rear wheel radius
+
+                    new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
+                    new CANNON.Vec3(0.25, 0.1, 0),   // rear wheel offset
+                    20,                              // wheel mass
+
+                    gameScene.policeTractorModel,             // model         
+                    gameScene.wheelModel,       // wheel model
+                    new THREE.Vector3(1, 1, 1), // model scale,
+                    new THREE.Vector3(0, 0, 0), // model offset
+
+                    new THREE.Vector3(1, 1, 1), // front wheel model scale,
+                    new THREE.Vector3(2, 2, 2) // rear wheel model scale
+                )
+                break;               
             case VehicleType.Killdozer:
                 vehicle = new RaycastVehicleObject(
                     scene,
@@ -149,7 +255,7 @@ export class VehicleFactory {
                     new CANNON.Vec3(0, 0.1, 0),   // rear wheel offset
                     20,                              // wheel mass
 
-                    gameScene.tractorModel,             // model         
+                    gameScene.killdozerModel,             // model         
                     gameScene.wheelModel,       // wheel model
                     new THREE.Vector3(1, 1, 1), // model scale,
                     new THREE.Vector3(0, 0, 0), // model offset
@@ -201,6 +307,32 @@ export class VehicleFactory {
                     20,                              // wheel mass
 
                     gameScene.suvModel,             // model        
+                    gameScene.wheelModel,       // wheel model
+                    new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+                    new THREE.Vector3(0, 0, 0), // model offset
+
+                    new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
+                    new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+                )
+                break;
+            case VehicleType.PickupTruck:
+                vehicle = new RaycastVehicleObject(
+                    scene,
+                    new THREE.Vector3(-5, 4, -5),   // position
+                    world,            
+                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    500,                            // chassis mass
+                    wheelMaterial,
+                    
+                    0.25,                           // front wheel radius
+                    0.25,                       //rear wheel radius
+                    new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
+                    new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset
+
+                    20,                              // wheel mass
+
+                    gameScene.pickupTruckModel,             // model        
                     gameScene.wheelModel,       // wheel model
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
                     new THREE.Vector3(0, 0, 0), // model offset

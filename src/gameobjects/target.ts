@@ -14,7 +14,7 @@ export class Target {
 
         this.targetLocation = position
 
-        let material = new THREE.SpriteMaterial( { map: texture, color: color, depthTest: depthRender, depthWrite: depthRender, sizeAttenuation: false });//,transparent: true, opacity: 0.5 } );
+        let material = new THREE.SpriteMaterial({ map: texture, color: color, depthTest: depthRender, depthWrite: depthRender, sizeAttenuation: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
         this.crosshairSprite.scale.set(scale, scale, scale);
         scene.add(this.crosshairSprite);

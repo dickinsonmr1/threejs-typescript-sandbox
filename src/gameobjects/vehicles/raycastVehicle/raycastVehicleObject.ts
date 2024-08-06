@@ -148,7 +148,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             this.wheels.push(temp);
             
             if(wheelModelData != null) {
-
+ 
                 let temp = wheelModelData.scene.clone()
                 temp.position.set(i, i, i);
                 temp.rotateX(Math.PI);
