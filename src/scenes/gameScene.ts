@@ -51,6 +51,8 @@ export default class GameScene extends THREE.Scene {
     public sedanSportsModel!: GLTF;
     public suvModel!: GLTF;
     public tractorModel!: GLTF;
+    public fireTruckModel!: GLTF;
+
     public wheelModel!: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
@@ -163,7 +165,7 @@ export default class GameScene extends THREE.Scene {
         //this.background = new THREE.Color(0xB1E1FF);
     }
 
-    async initialize(playerVehicleName: string): Promise<void> {
+    async initialize(player1VehicleType: VehicleType): Promise<void> {
        
         await this.loadVehicleAssets();
 
@@ -224,7 +226,7 @@ export default class GameScene extends THREE.Scene {
             depthTest: true
         });
 
-        await this.generatePlayers(particleMaterial, playerVehicleName);
+        await this.generatePlayers(particleMaterial, player1VehicleType);
 
         let material = new THREE.SpriteMaterial( { map: this.crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
@@ -809,6 +811,7 @@ export default class GameScene extends THREE.Scene {
         this.sedanSportsModel = await this.loadSedanSportsModel();
         this.suvModel = await this.loadSuvModel();
         this.tractorModel = await this.loadTractorModel();
+        this.fireTruckModel = await this.loadFireTruckModel();
         
         this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
         //this.wheelModel.scene.scale.set(1, 1, 1);
@@ -984,7 +987,30 @@ export default class GameScene extends THREE.Scene {
         return model;
     }
 
-    async generatePlayers(particleMaterial: THREE.SpriteMaterial, player1VehicleName: string): Promise<void> {
+    private async loadFireTruckModel(): Promise<GLTF> {
+        
+        // vehicles v2 have wheels as separate children
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/firetruck.glb');
+        var modelScene = model.scene;
+        
+        var body = modelScene.children.find(x => x.name == 'body');
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+        
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+        
+        return model;
+    }
+
+    async generatePlayers(particleMaterial: THREE.SpriteMaterial, player1VehicleType: VehicleType): Promise<void> {
 
         await this.loadVehicleAssets();
 
@@ -999,31 +1025,6 @@ export default class GameScene extends THREE.Scene {
         this.world.addContactMaterial(wheelGroundContactMaterial);
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
-
-        var player1VehicleType = VehicleType.RaceCar;
-        switch(player1VehicleName){
-            case "EMS":
-                player1VehicleType = VehicleType.Ambulance;
-                break;
-            case "The Law":
-                player1VehicleType = VehicleType.Police;
-                break;
-            case "Killdozer":
-                player1VehicleType = VehicleType.Killdozer;
-                break;
-            case "Compactor":
-                player1VehicleType = VehicleType.TrashTruck;
-                break;
-            case "Sideswipe":
-                player1VehicleType = VehicleType.Taxi;
-                break;
-            case "Offroader":
-                player1VehicleType = VehicleType.Offroader;
-                break;
-            default:
-                player1VehicleType = VehicleType.RaceCar;
-                break;
-        }
 
         this.player1 = vehicleFactory.generatePlayer(this, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial);
         this.player2 = vehicleFactory.generatePlayer(this, this.world, true, VehicleType.Taxi, new THREE.Color('blue'), wheelMaterial);

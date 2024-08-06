@@ -3,6 +3,7 @@ import SceneController from './sceneController';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import HealthBar from '../gameobjects/healthBar';
 import {Text} from 'troika-three-text'
+import { VehicleType } from '../gameobjects/player/player';
 
 export default class MenuScene extends THREE.Scene {
 
@@ -109,30 +110,30 @@ export default class MenuScene extends THREE.Scene {
         
         var modelPosition = new THREE.Vector3(0,-2,0);
 
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/ambulance.glb', modelPosition, 75, 50, 50, 25, 'EMS');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/firetruck.glb', modelPosition, 100, 25, 25, 50, 'Backdraft');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery-flat.glb', modelPosition, 75, 25, 50, 25, 'Flatbed');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery.glb', modelPosition, 100, 25, 50, 33, 'Overnight');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/garbage-truck.glb', modelPosition, 100, 100, 25, 25, 'Compactor');   
+        await this.loadVehicleModelAndStats(VehicleType.Ambulance, 'assets/kenney-vehicles-2/ambulance.glb', modelPosition, 75, 50, 50, 25, 'EMS');        
+        await this.loadVehicleModelAndStats(VehicleType.FireTruck, 'assets/kenney-vehicles-2/firetruck.glb', modelPosition, 100, 25, 25, 50, 'Backdraft');        
+        //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery-flat.glb', modelPosition, 75, 25, 50, 25, 'Flatbed');        
+        //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery.glb', modelPosition, 100, 25, 50, 33, 'Overnight');        
+        await this.loadVehicleModelAndStats(VehicleType.TrashTruck, 'assets/kenney-vehicles-2/garbage-truck.glb', modelPosition, 100, 100, 25, 25, 'Compactor');   
 
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/police.glb', modelPosition, 50, 25, 75, 100, 'The Law');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/hatchback-sports.glb', modelPosition, 50, 75, 25, 25, 'Hybrid Theory');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race-future.glb', modelPosition, 25, 75, 100, 50, 'Zoomer Blue');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/race.glb', modelPosition, 25, 75, 100, 50, 'Zoomer Red');        
+        await this.loadVehicleModelAndStats(VehicleType.Police, 'assets/kenney-vehicles-2/police.glb', modelPosition, 50, 25, 75, 100, 'The Law');        
+        //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/hatchback-sports.glb', modelPosition, 50, 75, 25, 25, 'Hybrid Theory');        
+        await this.loadVehicleModelAndStats(VehicleType.RaceCar, 'assets/kenney-vehicles-2/race-future.glb', modelPosition, 25, 75, 100, 50, 'Zoomer Blue');        
+        await this.loadVehicleModelAndStats(VehicleType.RaceCar, 'assets/kenney-vehicles-2/race.glb', modelPosition, 25, 75, 100, 50, 'Zoomer Red');        
 
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan-sports.glb', modelPosition, 50, 25, 50, 25, 'Sedanimal');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan.glb', modelPosition, 50, 25, 50, 25, 'Compact');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv-luxury.glb', modelPosition, 75, 25, 50, 50, 'Midas');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv.glb', modelPosition, 75, 25, 50, 75, 'Offroader');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/taxi.glb', modelPosition, 50, 25, 75, 25, 'Sideswipe');        
+        //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan-sports.glb', modelPosition, 50, 25, 50, 25, 'Sedanimal');        
+        //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/sedan.glb', modelPosition, 50, 25, 50, 25, 'Compact');        
+        //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/suv-luxury.glb', modelPosition, 75, 25, 50, 50, 'Midas');        
+        await this.loadVehicleModelAndStats(VehicleType.Offroader, 'assets/kenney-vehicles-2/suv.glb', modelPosition, 75, 25, 50, 75, 'Offroader');        
+        await this.loadVehicleModelAndStats(VehicleType.Taxi, 'assets/kenney-vehicles-2/taxi.glb', modelPosition, 50, 25, 75, 25, 'Sideswipe');        
 
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor-police.glb', modelPosition, 75, 25, 50, 75, 'Rural Patrol');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor-shovel.glb', modelPosition, 100, 75, 25, 25, 'Killdozer');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/tractor.glb', modelPosition, 75, 50, 25, 75, 'Harvester');        
+        await this.loadVehicleModelAndStats(VehicleType.PoliceTractor, 'assets/kenney-vehicles-2/tractor-police.glb', modelPosition, 75, 25, 50, 75, 'Rural Patrol');        
+        await this.loadVehicleModelAndStats(VehicleType.Killdozer, 'assets/kenney-vehicles-2/tractor-shovel.glb', modelPosition, 100, 75, 25, 25, 'Killdozer');        
+        await this.loadVehicleModelAndStats(VehicleType.Harvester, 'assets/kenney-vehicles-2/tractor.glb', modelPosition, 75, 50, 25, 75, 'Harvester');        
 
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck-flat.glb', modelPosition, 50, 25, 50, 25, 'Weekend Warrior');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck.glb', modelPosition, 50, 100, 50, 25, 'Guerilla');        
-        await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/van.glb', modelPosition, 50, 25, 50, 25, 'Carpool');        
+        //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/truck-flat.glb', modelPosition, 50, 25, 50, 25, 'Weekend Warrior');        
+        await this.loadVehicleModelAndStats(VehicleType.PickupTruck, 'assets/kenney-vehicles-2/truck.glb', modelPosition, 50, 100, 50, 25, 'Guerilla');        
+        //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/van.glb', modelPosition, 50, 25, 50, 25, 'Carpool');        
         
         this.add(this.group);
 
@@ -140,7 +141,7 @@ export default class MenuScene extends THREE.Scene {
     }
 
     
-    private async loadVehicleModelAndStats(asset: string, modelPosition: THREE.Vector3,
+    private async loadVehicleModelAndStats(vehicleType: VehicleType, asset: string, modelPosition: THREE.Vector3,
         health: number, special: number, speed: number, defensiveSpecial: number, vehicleName: string) {      
         
         var model = await this.gltfLoader.loadAsync(asset);
@@ -149,6 +150,7 @@ export default class MenuScene extends THREE.Scene {
         modelScene.scale.set(1, 1, 1);    
         modelScene.visible = false;     
         
+        modelScene.userData['vehicleType'] = vehicleType;
         modelScene.userData['health'] = health;
         modelScene.userData['special'] = special;
         modelScene.userData['speed'] = speed;
@@ -217,5 +219,9 @@ export default class MenuScene extends THREE.Scene {
 
     getSelectedVehicleName(): string {
         return this.vehicleNameText.text;
+    }
+
+    getSelectedVehicleType(): VehicleType {
+        return this.group.children[this.selectedVehicleIndex].userData['vehicleType'];
     }
 }

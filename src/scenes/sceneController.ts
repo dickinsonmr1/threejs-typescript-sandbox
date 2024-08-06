@@ -6,6 +6,7 @@ import { GamepadControlScheme, GamepadEnums } from "./gamePadEnums";
 import { ProjectileType } from "../gameobjects/weapons/projectileType";
 import nipplejs from 'nipplejs';
 import { Scene } from "three";
+import { VehicleType } from "../gameobjects/player/player";
 
 export default class SceneController {
     menuScene?: MenuScene;
@@ -217,7 +218,7 @@ export default class SceneController {
                 //startGameButton.style.visibility = "hidden";
             });
             startGameButton.addEventListener('click', () => {
-                this.switchToGameScene(this.menuScene!.getSelectedVehicleName() ?? "random");
+                this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer);
                 startGameButton.style.visibility = "hidden";
             });
             startGameButton.addEventListener('touchend', () => {
@@ -437,11 +438,11 @@ export default class SceneController {
         document.getElementById('gameSceneDiv')!.style.visibility = 'hidden';
     }
 
-    switchToGameScene(playerVehicleName: string) {
+    switchToGameScene(player1VehicleType: VehicleType) {
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';
-        this.gameScene?.initialize(playerVehicleName);
+        this.gameScene?.initialize(player1VehicleType);
         this.hudScene?.initialize();
     }
 

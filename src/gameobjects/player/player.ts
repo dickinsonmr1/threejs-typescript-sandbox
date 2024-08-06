@@ -40,6 +40,11 @@ export enum VehicleType {
     TrashTruck,
 
     Offroader,
+
+    FireTruck,
+
+    PoliceTractor,
+    Harvester,
     
     PickupTruck,
     Hearse,
