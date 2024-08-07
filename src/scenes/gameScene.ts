@@ -914,11 +914,11 @@ export default class GameScene extends THREE.Scene {
 
         var body = modelScene.children.find(x => x.name == 'body');
         body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+        body?.position.add(new THREE.Vector3(0, 0, 0));
 
         var arm = modelScene.children.find(x => x.name == 'arm');
         arm?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        arm?.position.add(new THREE.Vector3(0, -0.5, 0));
+        arm?.position.add(new THREE.Vector3(-0.45, 0.1, -0.3));
         
         var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
         var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');

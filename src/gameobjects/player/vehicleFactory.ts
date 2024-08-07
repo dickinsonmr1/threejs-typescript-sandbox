@@ -60,7 +60,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    750,                            // chassis mass
                     wheelMaterial,
 
                     0.25,                           // front wheel radius
@@ -86,7 +86,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
                     new CANNON.Vec3(0.2, 0.1, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    250,                            // chassis mass
                     wheelMaterial,
 
                     0.20,                           // front wheel radius
@@ -112,7 +112,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
                     new CANNON.Vec3(0.2, 0.1, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    250,                            // chassis mass
                     wheelMaterial,
 
                     0.20,                           // front wheel radius
@@ -190,7 +190,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    1000,                            // chassis mass
 
                     wheelMaterial,
 
@@ -217,7 +217,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    1000,                            // chassis mass
 
                     wheelMaterial,
 
@@ -244,7 +244,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(0.75, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0.5, 0.4, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    1000,                            // chassis mass
 
                     wheelMaterial,
 
@@ -271,7 +271,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    1000,                            // chassis mass
                     wheelMaterial,
 
                     0.25,                           // front wheel radius
@@ -348,7 +348,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(1.5, 0.70, 0.70), // chassis dimensions
                     new CANNON.Vec3(0, 0.6, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    1250,                            // chassis mass
                     wheelMaterial,
                     
                     0.25,                           // front wheel radius
