@@ -29,7 +29,7 @@ export class Target {
         });
 
         this.groundTargetMesh = new THREE.Mesh(        
-            new THREE.PlaneGeometry(2, 2),
+            new THREE.PlaneGeometry(3, 3),
             meshMaterial 
         );
         this.groundTargetMesh.rotateX(Math.PI);

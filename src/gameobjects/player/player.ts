@@ -169,7 +169,7 @@ export class Player {
 
         this.playerColor = playerColor;
         this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), 0.075, true);
-        this.playerMarker = new PlayerMarker(scene, markerTexture, playerColor, new THREE.Vector3(0,0,0), 0.05, true);
+        this.playerMarker = new PlayerMarker(scene, markerTexture, playerColor, new THREE.Vector3(0,0,0), 0.05, false);
 
         //this.shield = new Shield(scene, this.getPosition());
 
@@ -268,7 +268,7 @@ export class Player {
         this.target.rotateTargetToFaceDown();
 
         
-        this.playerMarker.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 1, this.getPosition().z));
+        this.playerMarker.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 2, this.getPosition().z));
 
         let offset = new THREE.Vector3(-2, 0, 0);
         offset.applyQuaternion(this.vehicleObject.getModel().quaternion);

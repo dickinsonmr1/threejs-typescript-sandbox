@@ -349,6 +349,10 @@ export default class SceneController {
 
         // https://gabrielromualdo.com/articles/2020-12-15-how-to-use-the-html5-gamepad-api        
 
+
+        var leftShoulderJustPressed = false;
+        var rightShoulderJustPressed = false;
+
         gamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
 
             if(!this.gameScene) return;
@@ -388,11 +392,13 @@ export default class SceneController {
                 
                 if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {
                     console.log(`pressed: ${buttonIndex}`);
+                    rightShoulderJustPressed = true;                    
                     this.gameScene.player1.tryJump();
                 }
 
-                if(buttonIndex == GamepadEnums.LEFT_SHOULDER) {
-                    console.log(`pressed: ${buttonIndex}`);
+                if(buttonIndex == GamepadEnums.LEFT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
+                    console.log(`pressed: ${buttonIndex}`);                    
+                    leftShoulderJustPressed = true;
                     this.gameScene.player1.tryTurbo();
                 }
             }
@@ -414,6 +420,11 @@ export default class SceneController {
                 }
             }
         })
+
+        if(leftShoulderJustPressed && rightShoulderJustPressed) {
+            // TODO: experiment with LB+RB = jumping
+            // this.gameScene?.player1.tryJump();
+        }            
 
         this.gamepadPrevious = gamepad;
     }

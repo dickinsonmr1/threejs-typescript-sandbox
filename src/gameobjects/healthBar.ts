@@ -103,4 +103,8 @@ export default class HealthBar {
             position.z
         );            
     }
+    
+    setVisible(isVisible: boolean) {
+        this.group.visible = isVisible;
+    }
 }

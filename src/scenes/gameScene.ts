@@ -1666,12 +1666,22 @@ export default class GameScene extends THREE.Scene {
         //if(this.allPlayers[0].body != null)
         //this.headLights.update(this.allPlayers[0].getPosition(), this.allPlayers[0].mesh.quaternion);
 
-        this.allPlayers.forEach(x => x.update());
-
+        this.allPlayers.forEach(player => player.update());
+        
         let playerPosition = this.player1.getPosition();
 
-        
+        var otherPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
+        otherPlayers.forEach(enemy => {
+            if(this.player1.getPosition().distanceTo(enemy.getPosition()) > 15) {
+                enemy.healthBar.setVisible(false);                
+            }
+            else {
+                enemy.healthBar.setVisible(true);                
+            }
+        });
 
+
+    
         if(!this.player1.isModelNull() && this.crosshairSprite != null) {
             let forwardVector = new THREE.Vector3(-10, 0, 0);
             forwardVector.applyQuaternion(this.player1.getModelQuaternion());
