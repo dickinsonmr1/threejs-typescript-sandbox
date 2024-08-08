@@ -93,9 +93,21 @@ export class Projectile extends SphereObject {
 
         if(this.projectileType == ProjectileType.Bullet) {
                         
-            const geometry = new THREE.BoxGeometry( 0.5, 0.1, 0.1 ); 
-            const material = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
-            this.bulletMesh = new THREE.Mesh( geometry, material ); 
+            const geometry = new THREE.BoxGeometry( 1, 0.075, 0.075 ); 
+            //const material = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
+            
+            const meshMaterial = new THREE.ShaderMaterial({
+                vertexShader: this.vertexShader(),
+                fragmentShader: this.fragmentShader(),
+                //transparent: true, // Enable transparency,
+                //blending: THREE.AdditiveBlending,
+                //side: THREE.DoubleSide,
+                //uniforms: {
+                    //time: { value: 0.0 }
+                //}
+            });
+            
+            this.bulletMesh = new THREE.Mesh( geometry, meshMaterial ); 
             this.bulletMesh.quaternion.copy(quaternion);
             this.group.add(this.bulletMesh);            
         }
@@ -394,5 +406,39 @@ export class Projectile extends SphereObject {
                 //this.detonationClock.start();
             }      
         }
+    }
+
+     // Vertex shader
+     vertexShader() {    
+        return `
+            varying vec3 vPosition;
+            void main()
+            {
+                vPosition = position;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+            `
+    }
+
+
+    // Fragment shader
+    fragmentShader() {
+        return `
+            varying vec3 vPosition;
+    
+            void main() {
+                float normalizedX = (vPosition.x + 0.5) / 1.0;  // Normalize x-coordinate, assuming the box width is 1.0
+
+                vec3 color;
+                
+                if (normalizedX < 0.5) {
+                    color = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), normalizedX / 0.5);
+                } else {
+                    color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.5, 0.0), (normalizedX - 0.5) / 0.5);
+                }
+
+                gl_FragColor = vec4(color, 1.0);
+    }
+            `
     }
 }
