@@ -116,15 +116,18 @@ export class Player {
     private shield!: Shield;
 
     constructor(scene: THREE.Scene, isCpuPlayer: boolean,
-        playerName: string, playerColor: THREE.Color, crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial, vehicle: IPlayerVehicle) {
+        playerName: string, playerColor: THREE.Color,
+        crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial,
+        vehicle: IPlayerVehicle,
+        maxHealth: number) {
 
         this.scene = scene;
         this.isCpuPlayer = isCpuPlayer;
 
         this.playerId = uuidv4();
-        this.healthBar = new HealthBar(scene, this.maxHealth);
+        this.healthBar = new HealthBar(scene, maxHealth);
 
-        this.currentHealth = this.maxHealth;
+        this.currentHealth = maxHealth;
 
         this.projectileFactory = new ProjectileFactory(particleMaterial);
         this.headLights = new Headlights(scene);

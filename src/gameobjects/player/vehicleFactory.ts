@@ -25,6 +25,7 @@ export class VehicleFactory {
         let gameScene = <GameScene>scene;
 
         let vehicle = null;
+        let maxHealth = 100;
 
         switch(vehicleType) {
             case VehicleType.Taxi:
@@ -52,6 +53,7 @@ export class VehicleFactory {
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
                 );
+                maxHealth = 100;
                 break;
             case VehicleType.Ambulance:
                 vehicle = new RaycastVehicleObject(
@@ -78,6 +80,7 @@ export class VehicleFactory {
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(1, 1, 1) // rear wheel model scale
                 );
+                maxHealth = 150;
                 break;
             case VehicleType.RaceCar:
                 vehicle = new RaycastVehicleObject(
@@ -104,6 +107,7 @@ export class VehicleFactory {
                     new THREE.Vector3(0.8, 0.8, 0.8), // front wheel model scale,
                     new THREE.Vector3(0.8, 0.8, 0.8) // rear wheel model scale
                 );
+                maxHealth = 50;
                 break;
             case VehicleType.RaceCarRed:
                 vehicle = new RaycastVehicleObject(
@@ -130,6 +134,7 @@ export class VehicleFactory {
                     new THREE.Vector3(0.8, 0.8, 0.8), // front wheel model scale,
                     new THREE.Vector3(0.8, 0.8, 0.8) // rear wheel model scale
                 );
+                maxHealth = 50;
                 break;
             case VehicleType.Sedan:
                 vehicle = new RaycastVehicleObject(
@@ -156,6 +161,7 @@ export class VehicleFactory {
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
                 );
+                maxHealth = 75;
                 break;
             case VehicleType.Police:
                 vehicle = new RaycastVehicleObject(
@@ -181,7 +187,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
-                )
+                );
+                maxHealth = 125;
                 break; 
             case VehicleType.Harvester:
                 vehicle = new RaycastVehicleObject(
@@ -208,7 +215,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(2, 2, 2) // rear wheel model scale
-                )
+                );
+                maxHealth = 150;
                 break;         
             case VehicleType.PoliceTractor:
                 vehicle = new RaycastVehicleObject(
@@ -235,7 +243,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(2, 2, 2) // rear wheel model scale
-                )
+                );
+                maxHealth = 150;
                 break;               
             case VehicleType.Killdozer:
                 vehicle = new RaycastVehicleObject(
@@ -262,7 +271,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(1.5, 1.5, 1.5) // rear wheel model scale
-                )
+                );
+                maxHealth = 150;
                 break;
             case VehicleType.TrashTruck:
                 vehicle = new RaycastVehicleObject(
@@ -287,7 +297,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(1, 1, 1) // rear wheel model scale
-                )                
+                );
+                maxHealth = 150;           
                 break;
             case VehicleType.Offroader:
                 vehicle = new RaycastVehicleObject(
@@ -313,7 +324,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
-                )
+                );
+                maxHealth = 100;
                 break;
             case VehicleType.PickupTruck:
                 vehicle = new RaycastVehicleObject(
@@ -339,7 +351,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
-                )
+                );
+                maxHealth = 100;
                 break;
             case VehicleType.FireTruck:
                 vehicle = new RaycastVehicleObject(
@@ -365,7 +378,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(1, 1, 1) // rear wheel model scale
-                )
+                );
+                maxHealth = 150;
                 break;
             default:
                 vehicle = new RaycastVehicleObject(
@@ -391,10 +405,19 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
-                )                
+                );
+                maxHealth = 100            
                 break;
         }
         
-        return new Player(scene, isCpuPlayer, vehicleType.toString(), playerColor, this.crosshairTexture, this.markerTexture, this.particleMaterial, vehicle);
+        return new Player(scene,
+            isCpuPlayer,
+            vehicleType.toString(),
+            playerColor,
+            this.crosshairTexture,
+            this.markerTexture,
+            this.particleMaterial,
+            vehicle,
+            maxHealth);
     }
 }

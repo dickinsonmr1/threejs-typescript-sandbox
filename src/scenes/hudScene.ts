@@ -40,7 +40,7 @@ export default class HudScene extends THREE.Scene {
     private readonly hudWidth = window.innerWidth / 2.25;
     private readonly hudHeight = window.innerHeight / 2.25;
 
-    async initialize() {
+    async initialize(player1MaxHealth: number) {
 
         
         /////////////////////////////////////////////
@@ -69,7 +69,7 @@ export default class HudScene extends THREE.Scene {
             this.hudWidth, this.hudHeight,
             200,
             40,
-            100,
+            player1MaxHealth,
             healthIconTexture);
 
         this.turboBar = new HudHealthBar(this, HudBarType.TopCenterSecondary,

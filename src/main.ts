@@ -63,7 +63,7 @@ cameraOrtho.position.z = 10;
 //cameraOrtho.lookAt(new THREE.Vector3(0, 0, 0));
             
 let sceneOrtho = new HudScene(cameraOrtho, sceneController);
-sceneOrtho.initialize();
+//sceneOrtho.initialize();
 
 const menuCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 75);
 menuCamera.position.set(-5, 0, 0);

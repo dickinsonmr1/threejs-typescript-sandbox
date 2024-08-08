@@ -443,7 +443,10 @@ export default class SceneController {
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';
         this.gameScene?.initialize(player1VehicleType);
-        this.hudScene?.initialize();
+
+        // todo: fix behavior because of async
+        var player1MaxHealth = this.gameScene?.player1?.maxHealth ?? 100;
+        this.hudScene?.initialize(player1MaxHealth);
     }
 
     updateHealthOnHud(currentValue: number) {

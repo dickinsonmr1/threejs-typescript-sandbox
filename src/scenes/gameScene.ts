@@ -463,6 +463,8 @@ export default class GameScene extends THREE.Scene {
         if (event.key === 'o')
         {			
             this.player1.tryDamage(ProjectileType.Rocket, new THREE.Vector3(0,0,0));
+            this.sceneController.updateHealthOnHud(this.player1.currentHealth);
+            
             this.player2.tryKill();
             this.player3.tryKill();
             this.player4.tryKill();
