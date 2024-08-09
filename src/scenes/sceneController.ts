@@ -8,6 +8,9 @@ import nipplejs from 'nipplejs';
 import { Scene } from "three";
 import { VehicleType } from "../gameobjects/player/player";
 
+import arenaLevelData from '../levelData/arena.json';
+import fieldLevelData from '../levelData/field.json';
+
 export default class SceneController {
     menuScene?: MenuScene;
     gameScene?: GameScene;
@@ -77,7 +80,8 @@ export default class SceneController {
         const resetButton = this.getButton('reset');
 
         // menu scene buttons
-        const startGameButton = this.getButton('startgame');
+        const startGameLevel1Button = this.getButton('startgameLevel1');
+        const startGameLevel2Button = this.getButton('startgameLevel2');
         const menuLeftButton = this.getButton('menuLeft');
         const menuRightButton = this.getButton('menuRight');
 
@@ -212,19 +216,34 @@ export default class SceneController {
             });
         }
 
-        if(startGameButton != null) {
-            startGameButton.addEventListener('touchstart', () => {
+        if(startGameLevel1Button != null) {
+            startGameLevel1Button.addEventListener('touchstart', () => {
                 //this.switchToGameScene();
                 //startGameButton.style.visibility = "hidden";
             });
-            startGameButton.addEventListener('click', () => {
-                this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer);
-                startGameButton.style.visibility = "hidden";
+            startGameLevel1Button.addEventListener('click', () => {
+                this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, "arena");
+                startGameLevel1Button.style.visibility = "hidden";
             });
-            startGameButton.addEventListener('touchend', () => {
+            startGameLevel1Button.addEventListener('touchend', () => {
                 //
             });
         }
+
+        if(startGameLevel2Button != null) {
+            startGameLevel2Button.addEventListener('touchstart', () => {
+                //this.switchToGameScene();
+                //startGameButton.style.visibility = "hidden";
+            });
+            startGameLevel2Button.addEventListener('click', () => {
+                this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, "field");
+                startGameLevel2Button.style.visibility = "hidden";
+            });
+            startGameLevel2Button.addEventListener('touchend', () => {
+                //
+            });
+        }
+
 
         // static
         /*
@@ -449,7 +468,24 @@ export default class SceneController {
         document.getElementById('gameSceneDiv')!.style.visibility = 'hidden';
     }
 
-    switchToGameScene(player1VehicleType: VehicleType) {
+    switchToGameScene(player1VehicleType: VehicleType, levelName: string) {
+
+        let levelHeightmap = "";
+
+        switch(levelName) {
+            case "arena":
+                levelHeightmap = arenaLevelData.heightmap;
+                break;
+            case "field":
+                levelHeightmap = fieldLevelData.heightmap;
+                break;
+            default:
+                levelHeightmap = arenaLevelData.heightmap;
+                break;
+        }
+        
+        this.gameScene?.preloadMapData(levelHeightmap);
+        
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';

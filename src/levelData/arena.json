@@ -1,0 +1,9 @@
+{
+    "name" : "arena",
+    "heightmap": "assets/heightmaps/heightmap_arena_128x128.png",
+    "texture1": "assets/Sand 4.jpg",
+    "texture2": "assets/tileable_grass_00.png",
+    "texture3": "assets/tileable_grass_01.png",
+    "texture4": "assets/stone 3.png.jpg",
+    "texture5": "assets/snow.png"
+}

@@ -92,7 +92,7 @@ export default class GameScene extends THREE.Scene {
     public groundMaterial!: CANNON.Material;
     public wheelGroundContactMaterial!: CANNON.ContactMaterial;
 
-    private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
+    private heightMapTextureAsArray!: TextureToArray; //= new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
     //private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_128x128.png');
 
     public getMapDimensions(): THREE.Vector3 {
@@ -173,6 +173,10 @@ export default class GameScene extends THREE.Scene {
 
         //this.overrideMaterial = new THREE.MeshBasicMaterial({ color: "green" });
         //this.background = new THREE.Color(0xB1E1FF);
+    }
+
+    preloadMapData(levelHeightmap: string) {
+        this.heightMapTextureAsArray = new TextureToArray(this.textureLoader, levelHeightmap);
     }
 
     async initialize(player1VehicleType: VehicleType): Promise<void> {
