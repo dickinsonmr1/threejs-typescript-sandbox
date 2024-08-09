@@ -119,7 +119,11 @@ export class Player {
         playerName: string, playerColor: THREE.Color,
         crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial,
         vehicle: IPlayerVehicle,
-        maxHealth: number) {
+        maxHealth: number,
+        leftHeadlightOffset: THREE.Vector3,
+        rightHeadlightOffset: THREE.Vector3,
+        leftBrakeLightOffset: THREE.Vector3,
+        rightBrakeLightOffset: THREE.Vector3) {
 
         this.scene = scene;
         this.isCpuPlayer = isCpuPlayer;
@@ -130,8 +134,8 @@ export class Player {
         this.currentHealth = maxHealth;
 
         this.projectileFactory = new ProjectileFactory(particleMaterial);
-        this.headLights = new Headlights(scene);
-        this.brakeLights = new Brakelights(scene);
+        this.headLights = new Headlights(scene, leftHeadlightOffset, rightHeadlightOffset);
+        this.brakeLights = new Brakelights(scene, leftBrakeLightOffset, rightBrakeLightOffset);
         if(this.brakeLights != null)
             this.brakeLights.setVisible(false);
 
@@ -151,7 +155,7 @@ export class Player {
             new THREE.Color('orange'),
             new THREE.Color('red'),
             1,
-            0.01,
+            0.02,
             material);
 
         this.turboParticleEmitter.pause();

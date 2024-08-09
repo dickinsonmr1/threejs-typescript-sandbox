@@ -93,6 +93,7 @@ export default class GameScene extends THREE.Scene {
     public wheelGroundContactMaterial!: CANNON.ContactMaterial;
 
     private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
+    //private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_128x128.png');
 
     public getMapDimensions(): THREE.Vector3 {
         return new THREE.Vector3(this.heightMapTextureAsArray.getImageWidth(), 0, this.heightMapTextureAsArray.getImageHeight());

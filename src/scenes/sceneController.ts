@@ -396,7 +396,7 @@ export default class SceneController {
                     this.gameScene.player1.tryJump();
                 }
 
-                if(buttonIndex == GamepadEnums.LEFT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
+                if(buttonIndex == GamepadEnums.LEFT_SHOULDER) { // && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
                     console.log(`pressed: ${buttonIndex}`);                    
                     leftShoulderJustPressed = true;
                     this.gameScene.player1.tryTurbo();

@@ -27,6 +27,12 @@ export class VehicleFactory {
         let vehicle = null;
         let maxHealth = 100;
 
+        let leftHeadlightOffset = new THREE.Vector3(-2, 0, -0.3);
+        let rightHeadlightOffset = new THREE.Vector3(-2, 0, 0.3);
+
+        let leftBrakeLightOffset = new THREE.Vector3(1.15, 0.15, -0.3);
+        let rightBrakeLightOffset = new THREE.Vector3(1.15, 0.15, 0.3);
+
         switch(vehicleType) {
             case VehicleType.Taxi:
                 vehicle = new RaycastVehicleObject(
@@ -52,6 +58,7 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+
                 );
                 maxHealth = 100;
                 break;
@@ -108,6 +115,10 @@ export class VehicleFactory {
                     new THREE.Vector3(0.8, 0.8, 0.8) // rear wheel model scale
                 );
                 maxHealth = 50;
+                leftHeadlightOffset = new THREE.Vector3(-2, -0.1, -0.3);
+                rightHeadlightOffset = new THREE.Vector3(-2, -0.1, 0.3);
+                leftBrakeLightOffset = new THREE.Vector3(1.15, 0.0, -0.2);
+                rightBrakeLightOffset = new THREE.Vector3(1.15, 0.0, 0.2);
                 break;
             case VehicleType.RaceCarRed:
                 vehicle = new RaycastVehicleObject(
@@ -116,7 +127,7 @@ export class VehicleFactory {
                     world,            
                     new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
                     new CANNON.Vec3(0.2, 0.1, 0),    // center of mass adjust
-                    250,                            // chassis mass
+                    300,                            // chassis mass
                     wheelMaterial,
 
                     0.20,                           // front wheel radius
@@ -135,6 +146,10 @@ export class VehicleFactory {
                     new THREE.Vector3(0.8, 0.8, 0.8) // rear wheel model scale
                 );
                 maxHealth = 50;
+                leftHeadlightOffset = new THREE.Vector3(-2, -0.1, -0.3);
+                rightHeadlightOffset = new THREE.Vector3(-2, -0.1, 0.3);
+                leftBrakeLightOffset = new THREE.Vector3(1.15, 0.0, -0.2);
+                rightBrakeLightOffset = new THREE.Vector3(1.15, 0.0, 0.2);
                 break;
             case VehicleType.Sedan:
                 vehicle = new RaycastVehicleObject(
@@ -280,15 +295,15 @@ export class VehicleFactory {
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    new CANNON.Vec3(0, 0.8, 0),    // center of mass adjust
                     1000,                            // chassis mass
                     wheelMaterial,
 
                     0.25,                           // front wheel radius
                     0.25,                       //rear wheel radius
                     
-                    new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
-                    new CANNON.Vec3(0.6, 0, 0),   // rear wheel offset
+                    new CANNON.Vec3(0.25, 0.25, 0),   // front wheel offset
+                    new CANNON.Vec3(0.6, 0.25, 0),   // rear wheel offset
                     20,                              // wheel mass
                     gameScene.trashTruckModel,             // model         
                     gameScene.wheelModel,       // wheel model
@@ -299,6 +314,10 @@ export class VehicleFactory {
                     new THREE.Vector3(1, 1, 1) // rear wheel model scale
                 );
                 maxHealth = 150;           
+                leftHeadlightOffset = new THREE.Vector3(-2.5, 0.25, -0.3);
+                rightHeadlightOffset = new THREE.Vector3(-2.5, 0.25, 0.3);
+                leftBrakeLightOffset = new THREE.Vector3(1.15, 0.25, -0.3);
+                rightBrakeLightOffset = new THREE.Vector3(1.15, 0.25, 0.3);
                 break;
             case VehicleType.Offroader:
                 vehicle = new RaycastVehicleObject(
@@ -326,6 +345,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
                 );
                 maxHealth = 100;
+                leftHeadlightOffset = new THREE.Vector3(-2.25, 0.1, -0.3);
+                rightHeadlightOffset = new THREE.Vector3(-2.25, 0.1, 0.3);
                 break;
             case VehicleType.PickupTruck:
                 vehicle = new RaycastVehicleObject(
@@ -418,6 +439,11 @@ export class VehicleFactory {
             this.markerTexture,
             this.particleMaterial,
             vehicle,
-            maxHealth);
+            maxHealth,
+            leftHeadlightOffset,
+            rightHeadlightOffset,
+            leftBrakeLightOffset,
+            rightBrakeLightOffset
+        );
     }
 }

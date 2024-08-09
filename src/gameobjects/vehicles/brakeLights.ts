@@ -8,7 +8,7 @@ export default class Brakelights {
     /**
      *
      */
-    constructor(scene: THREE.Scene) {        
+    constructor(scene: THREE.Scene, leftLightOffset: THREE.Vector3, rightLightOffset: THREE.Vector3) {        
         /*let meshMaterial = new THREE.MeshBasicMaterial({
             color: 'white',
             //side: THREE.DoubleSide,
@@ -32,7 +32,7 @@ export default class Brakelights {
             new THREE.SphereGeometry(0.25),
             meshMaterial
         );
-        this.mesh1.position.set(1.15, 0.15, -0.3);        
+        this.mesh1.position.copy(leftLightOffset);// .set(1.15, 0.15, -0.3);        
         this.mesh1.rotateOnAxis(new THREE.Vector3(0, 1, 0), 3 * Math.PI / 2);
         this.mesh1.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
         this.mesh1.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);        
@@ -43,7 +43,7 @@ export default class Brakelights {
             new THREE.SphereGeometry(0.25),
             meshMaterial
         );
-        this.mesh2.position.set(1.15, 0.15, 0.3);        
+        this.mesh2.position.copy(rightLightOffset); // .set(1.15, 0.15, 0.3);        
         this.mesh2.rotateOnAxis(new THREE.Vector3(0, 1, 0), 3 * Math.PI / 2);
         this.mesh2.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
         this.mesh2.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);

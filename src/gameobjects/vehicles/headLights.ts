@@ -8,7 +8,7 @@ export default class Headlights {
     /**
      *
      */
-    constructor(scene: THREE.Scene) {        
+    constructor(scene: THREE.Scene, leftHeadlightOffset: THREE.Vector3, rightHeadlightOffset: THREE.Vector3) {        
         /*let meshMaterial = new THREE.MeshBasicMaterial({
             color: 'white',
             //side: THREE.DoubleSide,
@@ -38,7 +38,7 @@ export default class Headlights {
         //this.mesh1.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);        
 
         // rigid body vehicle
-        this.mesh1.position.set(-2, 0, -0.3);        
+        this.mesh1.position.copy(leftHeadlightOffset);
         this.mesh1.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.mesh1.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
         this.mesh1.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);        
@@ -55,7 +55,7 @@ export default class Headlights {
         //this.mesh2.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
 
         // rigid body vehicle
-        this.mesh2.position.set(-2, 0, 0.3);        
+        this.mesh2.position.copy(rightHeadlightOffset);
         this.mesh2.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
         this.mesh2.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
         this.mesh2.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);

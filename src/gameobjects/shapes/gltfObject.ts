@@ -91,7 +91,7 @@ export class GltfObject {
 
             setTimeout(() => {
                 this.kill();
-            }, 5000);
+            }, 3000);
     }
 
     getPhysicsMaterial(): CANNON.Material {
