@@ -11,17 +11,13 @@ import { GltfObject, GltfObjectPhysicsObjectShape } from '../gameobjects/shapes/
 import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Projectile } from '../gameobjects/weapons/projectile';
 import { CylinderObject } from '../gameobjects/shapes/cylinderObject';
-import { RaycastVehicleObject } from '../gameobjects/vehicles/raycastVehicle/raycastVehicleObject';
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
-import { PickupObject } from '../gameobjects/pickupObject';
 import SceneController from './sceneController';
 import { Player, PlayerState, VehicleType } from '../gameobjects/player/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
-import { IPlayerVehicle } from '../gameobjects/vehicles/IPlayerVehicle';
 import { TextureToArray } from '../gameobjects/shapes/textureToArray';
-import { TerrainObject } from '../gameobjects/shapes/terrainObject';
 import { Water } from 'three/addons/objects/Water.js';
 import { DebugDivElementManager } from './debugDivElementManager';
 import { TerrainObjectv2 } from '../gameobjects/shapes/terrainObjectv2';
@@ -30,6 +26,7 @@ import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { CpuPlayerPattern } from '../gameobjects/player/cpuPlayerPatternEnums';
 import { VehicleFactory } from '../gameobjects/player/vehicleFactory';
 import { RainShaderParticleEmitter } from '../gameobjects/fx/rainShaderParticleEmitter';
+import { WorldConfig } from '../gameobjects/world/worldConfig';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -92,6 +89,7 @@ export default class GameScene extends THREE.Scene {
     public groundMaterial!: CANNON.Material;
     public wheelGroundContactMaterial!: CANNON.ContactMaterial;
 
+    private worldConfig!: WorldConfig;
     private heightMapTextureAsArray!: TextureToArray; //= new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
     //private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_128x128.png');
 
@@ -175,8 +173,11 @@ export default class GameScene extends THREE.Scene {
         //this.background = new THREE.Color(0xB1E1FF);
     }
 
-    preloadMapData(levelHeightmap: string) {
-        this.heightMapTextureAsArray = new TextureToArray(this.textureLoader, levelHeightmap);
+    preloadMapData(worldConfig: WorldConfig) {
+        
+        this.worldConfig = worldConfig;
+        
+        this.heightMapTextureAsArray = new TextureToArray(this.textureLoader, worldConfig.heightMap);
     }
 
     async initialize(player1VehicleType: VehicleType): Promise<void> {
@@ -1235,7 +1236,8 @@ export default class GameScene extends THREE.Scene {
             this.world,
             this.groundMaterial,
             this.heightMapTextureAsArray,
-            5
+            5,
+            this.worldConfig
         );
 
         this.generateGroundPlane();

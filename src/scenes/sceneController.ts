@@ -7,11 +7,16 @@ import { ProjectileType } from "../gameobjects/weapons/projectileType";
 import nipplejs from 'nipplejs';
 import { Scene } from "three";
 import { VehicleType } from "../gameobjects/player/player";
+import { WorldConfig } from "../gameobjects/world/worldConfig";
 
-import arenaLevelData from '../levelData/arena.json';
-import fieldLevelData from '../levelData/field.json';
+import arenaLevelJson from '../levelData/arena.json';
+import fieldLevelJson from '../levelData/field.json';
 
 export default class SceneController {
+
+    arenaLevelConfig: WorldConfig = arenaLevelJson;
+    fieldLevelConfig: WorldConfig = fieldLevelJson;
+
     menuScene?: MenuScene;
     gameScene?: GameScene;
     hudScene?: HudScene;
@@ -470,22 +475,16 @@ export default class SceneController {
 
     switchToGameScene(player1VehicleType: VehicleType, levelName: string) {
 
-        let levelHeightmap = "";
-
         switch(levelName) {
-            case "arena":
-                levelHeightmap = arenaLevelData.heightmap;
-                break;
             case "field":
-                levelHeightmap = fieldLevelData.heightmap;
+                this.gameScene?.preloadMapData(this.fieldLevelConfig);
                 break;
+            case "arena":
             default:
-                levelHeightmap = arenaLevelData.heightmap;
+                this.gameScene?.preloadMapData(this.arenaLevelConfig);
                 break;
         }
-        
-        this.gameScene?.preloadMapData(levelHeightmap);
-        
+                
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';

@@ -2,6 +2,8 @@ import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
 import { TextureToArray } from "./textureToArray";
+import { WorldConfig } from "../world/worldConfig";
+
 
 export class TerrainObjectv2 {
     
@@ -19,7 +21,8 @@ export class TerrainObjectv2 {
         world: CANNON.World,
         physicsMaterial: CANNON.Material,
         heightMapTextureAsArray: TextureToArray,
-        heightFactor: number) {
+        heightFactor: number,
+        worldConfig: WorldConfig) {
             
         // important: width and height used in this class need to match dimensions of heightmap!
         var height = heightMapTextureAsArray.getImageHeight();
@@ -43,7 +46,11 @@ export class TerrainObjectv2 {
 
         const planeSize = width * 2;
         var geometry = this.generateMeshFromHeightData(height, width, dataArray2D);
-        var material = this.generateMaterialv2(planeSize, heightFactor);
+        var material = this.generateMaterialv2(
+            planeSize,
+            heightFactor,
+            worldConfig
+        );
 
         const mesh = new THREE.Mesh(geometry, material);
         mesh.rotation.x = -Math.PI / 2;
@@ -110,16 +117,17 @@ export class TerrainObjectv2 {
         });
     }    
 
-    generateMaterialv2(planeSize: number, heightFactor: number): THREE.Material {
+    generateMaterialv2(planeSize: number, heightFactor: number, worldConfig: WorldConfig
+    ): THREE.Material {
 
       const repeats = planeSize / 2;
       const loader = new THREE.TextureLoader();
 
-      const texture1 = this.loadAndConfigureTexture(loader, 'assets/Sand 4.jpg', repeats);                
-      const texture2 = this.loadAndConfigureTexture(loader, 'assets/tileable_grass_00.png', repeats);        
-      const texture3 = this.loadAndConfigureTexture(loader, 'assets/tileable_grass_01.png', repeats);        
-      const texture4 = this.loadAndConfigureTexture(loader, 'assets/stone 3.png', repeats);
-      const texture5 = this.loadAndConfigureTexture(loader, 'assets/snow.png', repeats);
+      const texture1 = this.loadAndConfigureTexture(loader, worldConfig.texture1, repeats);                
+      const texture2 = this.loadAndConfigureTexture(loader, worldConfig.texture2, repeats);        
+      const texture3 = this.loadAndConfigureTexture(loader, worldConfig.texture3, repeats);        
+      const texture4 = this.loadAndConfigureTexture(loader, worldConfig.texture4, repeats);
+      const texture5 = this.loadAndConfigureTexture(loader, worldConfig.texture5, repeats);
 
       return new THREE.ShaderMaterial({
           uniforms: {
