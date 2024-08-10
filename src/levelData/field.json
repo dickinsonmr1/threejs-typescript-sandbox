@@ -6,5 +6,10 @@
     "texture3": "assets/tileable_grass_01.png",
     "texture4": "assets/stone 3.png.jpg",
     "texture5": "assets/snow.png",
-    "waterY": "2"
+    
+    "waterY": 1.5,
+
+    "grassBillboard": "assets/billboard_grass_32x32.png",
+    "grassBillboardStartY": 2,
+    "grassBillboardEndY": 4
 }

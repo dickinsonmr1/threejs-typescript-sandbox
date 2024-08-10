@@ -330,27 +330,30 @@ export default class GameScene extends THREE.Scene {
         );
 
         // https://threejs.org/examples/?q=water#webgl_shaders_ocean
-        const waterGeometry = new THREE.PlaneGeometry( 10000, 10000 );
-        this.water = new Water(
-            waterGeometry,
-            {
-                textureWidth: 512,
-                textureHeight: 512,
-                waterNormals: new THREE.TextureLoader().load( 'assets/waternormals.jpg', function ( texture ) {
 
-                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        if(this.worldConfig.waterY != null) {
+            const waterGeometry = new THREE.PlaneGeometry( 10000, 10000 );
+            this.water = new Water(
+                waterGeometry,
+                {
+                    textureWidth: 512,
+                    textureHeight: 512,
+                    waterNormals: new THREE.TextureLoader().load( 'assets/waternormals.jpg', function ( texture ) {
 
-                } ),
-                sunDirection: new THREE.Vector3(),
-                sunColor: 0xffffff,
-                waterColor: 0x001e0f,
-                distortionScale: 3.7,
-                fog: this.fog !== undefined
-            }
-        );
-        this.water.rotation.x = - Math.PI / 2;
-        this.water.position.y += 0.75; // 1.5
-        this.add( this.water );
+                        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+                    } ),
+                    sunDirection: new THREE.Vector3(),
+                    sunColor: 0xffffff,
+                    waterColor: 0x001e0f,
+                    distortionScale: 3.7,
+                    fog: this.fog !== undefined
+                }
+            );
+            this.water.rotation.x = - Math.PI / 2;
+            this.water.position.y += this.worldConfig.waterY; // 1.5
+            this.add( this.water );
+        }
 
         //this.rainShaderParticleEmitter = new RainShaderParticleEmitter(this);
 
@@ -388,12 +391,12 @@ export default class GameScene extends THREE.Scene {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
     }
-    generateGrassBillboards(mapWidth: number, mapHeight: number, yMin: number, yMax: number) {
+    generateGrassBillboards(textureName: string, mapWidth: number, mapHeight: number, yMin: number, yMax: number) {
 
         const geometry = new THREE.BufferGeometry();
         const vertices = [];
 
-        const sprite = new THREE.TextureLoader().load( 'assets/billboard_grass_32x32.png' );
+        const sprite = new THREE.TextureLoader().load( textureName );
         sprite.colorSpace = THREE.SRGBColorSpace;
 
         for ( let i = 0; i < 100000; i ++ ) {
@@ -1243,8 +1246,15 @@ export default class GameScene extends THREE.Scene {
         this.generateGroundPlane();
         this.generateBoundingWalls();
 
-        this.generateGrassBillboards(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight(), 2, 4);
-            
+        if(this.worldConfig.grassBillboard != null && this.worldConfig.grassBillboardStartY != null && this.worldConfig.grassBillboardEndY != null ) {
+            this.generateGrassBillboards(
+                this.worldConfig.grassBillboard,
+                this.heightMapTextureAsArray.getImageWidth(),
+                this.heightMapTextureAsArray.getImageHeight(),
+                this.worldConfig.grassBillboardStartY,
+                this.worldConfig.grassBillboardEndY
+            );
+        }                
     }
 
     private generateGroundPlane(): void {

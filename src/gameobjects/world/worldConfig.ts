@@ -6,5 +6,10 @@ export interface WorldConfig {
     texture3: string;
     texture4: string;
     texture5: string;  
-    worldY?: number;
+    
+    waterY?: number;
+
+    grassBillboard: string;
+    grassBillboardStartY: number;
+    grassBillboardEndY: number;
 }  
