@@ -6,7 +6,10 @@ import CannonDebugger from 'cannon-es-debugger';
 import SceneController from './scenes/sceneController';
 import { GamepadControlScheme } from './scenes/gamePadEnums';
 import MenuScene from './scenes/menuScene';
-import { instance } from 'three/examples/jsm/nodes/Nodes.js';
+import { GameConfig } from './gameconfig';
+
+import gameconfigJson from '../gameconfig.json'
+const gameConfig: GameConfig = gameconfigJson;
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -32,7 +35,7 @@ const pmremGenerator = new THREE.PMREMGenerator( renderer );
 window.addEventListener("gamepadconnected", (event) => {
   console.log("A gamepad connected:");
   console.log(event.gamepad);
-  sceneController.setGamePad1(event.gamepad, GamepadControlScheme.CarCombat);
+  sceneController.setGamePad1(event.gamepad, gameConfig.controlType);
 });
 
 window.addEventListener("gamepaddisconnected", (event) => {
@@ -45,7 +48,11 @@ var sceneController = new SceneController(renderer);
 const gameScene = new GameScene(mainCamera, sceneController);
 //gameScene.initialize();
 
-const cannonDebugger = CannonDebugger(gameScene, gameScene.world, {color: 0x0000ff });
+let cannonDebugger: any = null;
+
+if(gameConfig.isDebug) {
+  cannonDebugger = CannonDebugger(gameScene, gameScene.world, {color: 0x0000ff });  
+}
 
 gameScene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
@@ -92,7 +99,10 @@ function tick() {
     scene.updateWater();
     scene.update();
     sceneOrtho.update();
-    cannonDebugger.update();
+  
+    if(gameConfig.isDebug && cannonDebugger != null) {
+      cannonDebugger.update();
+    }
 
     renderer.clear();
     renderer.render(scene, mainCamera);
