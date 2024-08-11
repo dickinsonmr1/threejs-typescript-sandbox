@@ -20,6 +20,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
     private readonly rigidMaxSteerVal: number = Math.PI / 12;
 
     constructor(scene: THREE.Scene,
+        isDebug: boolean,
         position: THREE.Vector3,
         world: CANNON.World,
         chassisDimensions: CANNON.Vec3,        
@@ -35,6 +36,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
 
         this.chassis = new ChassisObject(
             scene,
+            isDebug,
             chassisDimensions,
             position,
             world,
