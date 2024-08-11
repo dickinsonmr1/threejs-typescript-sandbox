@@ -12,6 +12,7 @@ export class RaycastWheelObject {
      *
      */
     constructor(scene: THREE.Scene,
+        isDebug: boolean,
         radius: number,
         //height: number,
         //position: THREE.Vector3,
@@ -63,8 +64,11 @@ export class RaycastWheelObject {
             
         //this.mesh.castShadow = true;
         //this.mesh.receiveShadow = true;  
+
+        if(!isDebug)
+            this.mesh.visible = false;
         
-        scene.add(this.mesh);        
+        scene.add(this.mesh);            
     }
 
     getPhysicsMaterial(): CANNON.Material {
@@ -88,7 +92,7 @@ export class RaycastWheelObject {
         //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(offset));
         //this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(orientation));
         
-        if(this.wheelBody.shapes[0].body != null) {
+        if(this.wheelBody.shapes[0].body != null && this.mesh != null) {
             this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.wheelBody.shapes[0].body.position));
             //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.wheelBody.shapeOffsets[0]));
 

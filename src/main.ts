@@ -45,7 +45,7 @@ window.addEventListener("gamepaddisconnected", (event) => {
 
 var sceneController = new SceneController(renderer);
 
-const gameScene = new GameScene(mainCamera, sceneController);
+const gameScene = new GameScene(mainCamera, sceneController, gameConfig);
 //gameScene.initialize();
 
 let cannonDebugger: any = null;

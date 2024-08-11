@@ -35,6 +35,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
      *
      */
     constructor(scene: THREE.Scene,
+        isDebug: boolean,
         position: THREE.Vector3,
         //color: number = 0xffffff,
         world: CANNON.World,
@@ -59,6 +60,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         this.chassis = new ChassisObject(
             scene,
+            isDebug,
             chassisDimensions,
             position,
             world,
@@ -144,7 +146,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                 modelScale = rearWheelModelScale;
             }            
             
-            const temp = new RaycastWheelObject(scene, wheel.radius, wheelColor, world, wheelMaterial);                    
+            const temp = new RaycastWheelObject(scene, isDebug, wheel.radius, wheelColor, world, wheelMaterial);                    
             this.wheels.push(temp);
             
             if(wheelModelData != null) {

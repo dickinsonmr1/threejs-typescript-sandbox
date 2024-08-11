@@ -27,6 +27,7 @@ import { CpuPlayerPattern } from '../gameobjects/player/cpuPlayerPatternEnums';
 import { VehicleFactory } from '../gameobjects/player/vehicleFactory';
 import { RainShaderParticleEmitter } from '../gameobjects/fx/rainShaderParticleEmitter';
 import { WorldConfig } from '../gameobjects/world/worldConfig';
+import { GameConfig } from '../gameconfig';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -91,6 +92,7 @@ export default class GameScene extends THREE.Scene {
 
     private worldConfig!: WorldConfig;
     private heightMapTextureAsArray!: TextureToArray; //= new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
+    gameConfig: GameConfig;
     //private heightMapTextureAsArray: TextureToArray = new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_128x128.png');
 
     public getMapDimensions(): THREE.Vector3 {
@@ -159,12 +161,13 @@ export default class GameScene extends THREE.Scene {
 
     crosshairSprite!: THREE.Sprite;
 
-    constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController) {
+    constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController, gameConfig: GameConfig) {
         super();
         
         this.camera = camera;
         this.sceneController = sceneController;
-
+        this.gameConfig = gameConfig;
+        
         //const color = 0xFFFFFF;
         //const density = 0.1;
         //this.fog = new THREE.FogExp2(color, density);
@@ -1167,10 +1170,10 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial);
-        this.player2 = vehicleFactory.generatePlayer(this, this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial);
-        this.player3 = vehicleFactory.generatePlayer(this, this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial);
-        this.player4 = vehicleFactory.generatePlayer(this, this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial);
+        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial);
+        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial);
+        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial);
+        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
@@ -1428,12 +1431,11 @@ export default class GameScene extends THREE.Scene {
         this.allPlayers.forEach(player => {
             
             var anyHits = false;
-            if(player.flamethrowerBoundingBox.visible) {
+            if(player.flamethrowerActive) {
 
                 var enemyPlayers = this.allPlayers.filter(x => x.playerId != player.playerId);
                 enemyPlayers.forEach(enemy => {
-                    
-                    
+                                        
                     const flamethrowerBoundingBox = new THREE.Box3().setFromObject(player.flamethrowerBoundingBox);
                     var enemyBoundingBox = new THREE.Box3().setFromObject(enemy.getVehicleObject().getChassis().mesh);
 

@@ -19,6 +19,7 @@ export enum ProjectileLaunchLocation {
 export class Projectile extends SphereObject {
 
     public playerId: string;
+    public isDebug: boolean;
     public projectileType: ProjectileType;
     private lightColor: THREE.Color;
 
@@ -55,6 +56,7 @@ export class Projectile extends SphereObject {
     private detonationLifetimeClock: THREE.Clock  = new THREE.Clock(false);
 
     constructor(scene: THREE.Scene,
+        isDebug: boolean,
         playerId: string,
         projectileType: ProjectileType,
         radius: number,
@@ -77,6 +79,7 @@ export class Projectile extends SphereObject {
         super(scene, radius, position, particleColor1.getHex(), meshMaterial, world);
 
         this.scene = scene;
+        this.isDebug = isDebug;
         
         this.playerId = playerId;
         this.projectileType = projectileType;
@@ -275,8 +278,11 @@ export class Projectile extends SphereObject {
                 this.airstrikeTarget.groundTargetMesh.position.y,
                 this.airstrikeTarget.groundTargetMesh.position.z);
 
+            if(!this.isDebug)
+                this.detonationBoundingMesh.visible = false;
+
             this.scene.add(this.detonationBoundingMesh);
-        
+                
             //gameScene.generateSmoke(this.airstrikeTarget.groundTargetMesh.position);
 
             this.isDetonated = true;

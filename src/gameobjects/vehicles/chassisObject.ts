@@ -3,7 +3,7 @@ import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
 
 export class ChassisObject {
-    mesh: THREE.Mesh;
+    mesh!: THREE.Mesh;
     body: CANNON.Body = new CANNON.Body();
 
     meshMaterial: THREE.Material;
@@ -11,6 +11,7 @@ export class ChassisObject {
     centerOfMassAdjust: CANNON.Vec3;
 
     constructor(scene: THREE.Scene,
+        isDebug: boolean,
         chassisDimensions: CANNON.Vec3,
         position: THREE.Vector3,
         world: CANNON.World,
@@ -46,6 +47,9 @@ export class ChassisObject {
         //this.mesh.position.set(centerOfMassAdjust.x, centerOfMassAdjust.y, centerOfMassAdjust.z);
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;
+
+        if(!isDebug)
+            this.mesh.visible = false;
         
         scene.add(this.mesh);      
     }
@@ -63,7 +67,7 @@ export class ChassisObject {
     }
 
     update() {
-        if(this.body != null) {
+        if(this.body != null && this.mesh != null) {
             //this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));            
             this.mesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
             this.mesh.position.copy(Utility.CannonVec3ToThreeVec3(Utility.CannonVec3Add(this.body.position, this.centerOfMassAdjust)));

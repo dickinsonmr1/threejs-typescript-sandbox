@@ -17,7 +17,9 @@ export class VehicleFactory {
         
     }
 
-    generatePlayer(scene: THREE.Scene, world: CANNON.World, isCpuPlayer: boolean,
+    generatePlayer(scene: THREE.Scene,
+        isDebug: boolean,
+        world: CANNON.World, isCpuPlayer: boolean,
         vehicleType: VehicleType, playerColor: THREE.Color,        
         wheelMaterial: CANNON.Material) : Player {
         //isCpuPlayer: boolean, playerTeam: PlayerTeam, scene: THREE.Scene) : Player {        
@@ -36,7 +38,7 @@ export class VehicleFactory {
         switch(vehicleType) {
             case VehicleType.Taxi:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(5, 4, 5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
@@ -64,7 +66,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.Ambulance:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(5, 4, 5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
@@ -91,7 +93,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.RaceCar:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
                     new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
@@ -122,7 +124,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.RaceCarRed:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
                     new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
@@ -153,7 +155,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.Sedan:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
@@ -180,7 +182,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.Police:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
@@ -207,7 +209,7 @@ export class VehicleFactory {
                 break; 
             case VehicleType.Harvester:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
@@ -235,7 +237,7 @@ export class VehicleFactory {
                 break;         
             case VehicleType.PoliceTractor:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
@@ -263,7 +265,7 @@ export class VehicleFactory {
                 break;               
             case VehicleType.Killdozer:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(0.75, 0.5, 0.5), // chassis dimensions
@@ -291,7 +293,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.TrashTruck:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
@@ -321,7 +323,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.Offroader:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
@@ -350,7 +352,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.PickupTruck:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
@@ -377,7 +379,7 @@ export class VehicleFactory {
                 break;
             case VehicleType.FireTruck:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
                     new CANNON.Vec3(1.5, 0.70, 0.70), // chassis dimensions
@@ -404,7 +406,7 @@ export class VehicleFactory {
                 break;
             default:
                 vehicle = new RaycastVehicleObject(
-                    scene,
+                    scene, isDebug,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
                     new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
@@ -432,6 +434,7 @@ export class VehicleFactory {
         }
         
         return new Player(scene,
+            isDebug,
             isCpuPlayer,
             vehicleType.toString(),
             playerColor,

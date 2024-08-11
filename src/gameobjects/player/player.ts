@@ -17,11 +17,9 @@ import { PlayerMarker } from "./playerMarker";
 import { FlamethrowerEmitter } from "../weapons/flamethrowerEmitter";
 import { Shield } from "../vehicles/shield";
 import { ParticleEmitter } from "../fx/particleEmitter";
-import { SmokeObject } from "../fx/smokeObject";
-import { ParticleTrailPointsShaderObject } from "../fx/particleTrailPointsShaderObject";
 import { SmokeObject2 } from "../fx/smokeObject2";
 import Brakelights from "../vehicles/brakeLights";
-import { randFloat, randFloatSpread } from "three/src/math/MathUtils.js";
+import { randFloatSpread } from "three/src/math/MathUtils.js";
 
 export enum PlayerState {
     Alive,
@@ -66,6 +64,7 @@ export enum PlayerTeam {
 export class Player {
 
     scene: THREE.Scene;
+    isDebug: boolean;
     public playerName: string;
 
     public isCpuPlayer: boolean;
@@ -109,13 +108,15 @@ export class Player {
 
     flamethrowerBoundingBox: THREE.Mesh;
     flamethrowerBoundingBoxMaterial: THREE.MeshBasicMaterial;
-    private flamethrowerActive: boolean = false;
+    flamethrowerActive: boolean = false;
     
     private activeAirstrike!: Projectile;
 
     private shield!: Shield;
 
-    constructor(scene: THREE.Scene, isCpuPlayer: boolean,
+    constructor(scene: THREE.Scene,
+        isDebug: boolean,
+        isCpuPlayer: boolean,
         playerName: string, playerColor: THREE.Color,
         crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial,
         vehicle: IPlayerVehicle,
@@ -126,6 +127,7 @@ export class Player {
         rightBrakeLightOffset: THREE.Vector3) {
 
         this.scene = scene;
+        this.isDebug = isDebug;
         this.isCpuPlayer = isCpuPlayer;
 
         this.playerId = uuidv4();
@@ -282,7 +284,9 @@ export class Player {
         this.flamethrowerBoundingBox.applyQuaternion(this.vehicleObject.getModel().quaternion);
 
         if(this.flamethrowerActive) {
-            this.flamethrowerBoundingBox.visible = true;
+            if(this.isDebug) { 
+                this.flamethrowerBoundingBox.visible = true;
+            }
 
             this.flamethrowerActive = false;
         }
@@ -405,7 +409,7 @@ export class Player {
         //tempPosition.add(this.directionVector.clone().multiplyScalar(size.z * 1.5));
 
         var projectile = this.projectileFactory.generateProjectile(
-            this.scene,
+            this.scene, this.isDebug,
             this.playerId,
             projectileType,            
             tempPosition,           // launchPosition relative to chassis

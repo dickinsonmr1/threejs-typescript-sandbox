@@ -12,6 +12,7 @@ export default class ProjectileFactory {
     }
 
     generateProjectile(scene: THREE.Scene,
+        isDebug: boolean,
         playerId: string,
         type: ProjectileType,
         launchPosition: THREE.Vector3,
@@ -55,7 +56,7 @@ export default class ProjectileFactory {
 
         switch(type) {
             case ProjectileType.Bullet:
-                return new Projectile(scene,
+                return new Projectile(scene, isDebug,
                     playerId,
                     ProjectileType.Bullet,
                     0.05,                   // radius
@@ -74,7 +75,7 @@ export default class ProjectileFactory {
         
                 break;
             case ProjectileType.Rocket:            
-                return new Projectile(scene,
+                return new Projectile(scene, isDebug,
                     playerId,
                     ProjectileType.Rocket,
                     0.07,                   // radius
@@ -92,7 +93,7 @@ export default class ProjectileFactory {
                     world);          
                 break;
             case ProjectileType.Airstrike:            
-                return new Projectile(scene,
+                return new Projectile(scene, isDebug,
                     playerId,
                     ProjectileType.Airstrike,
                     0.05,                   // radius
