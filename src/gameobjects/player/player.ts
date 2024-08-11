@@ -20,6 +20,7 @@ import { ParticleEmitter } from "../fx/particleEmitter";
 import { SmokeObject2 } from "../fx/smokeObject2";
 import Brakelights from "../vehicles/brakeLights";
 import { randFloatSpread } from "three/src/math/MathUtils.js";
+import EmergencyLights from "../vehicles/emergencyLights";
 
 export enum PlayerState {
     Alive,
@@ -79,6 +80,7 @@ export class Player {
     healthBar: HealthBar;
     headLights!: Headlights;
     brakeLights!: Brakelights;
+    emergencyLights!: EmergencyLights;
 
     private vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
@@ -140,6 +142,14 @@ export class Player {
         this.brakeLights = new Brakelights(scene, leftBrakeLightOffset, rightBrakeLightOffset);
         if(this.brakeLights != null)
             this.brakeLights.setVisible(false);
+
+        if(playerName == "6") {
+
+            let offsetLeft = new THREE.Vector3(0, 0.52, 0.2);
+            let offsetRight = new THREE.Vector3(0, 0.52, -0.2);
+            this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
+            this.emergencyLights.setVisible(true);
+        }
 
         this.playerName = playerName;      
         let gameScene = <GameScene>scene;
@@ -306,6 +316,11 @@ export class Player {
                 Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
             );              
 
+        if(this.emergencyLights != null)
+            this.emergencyLights.update(
+                Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
+                Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
+            );              
         
         /*
         switch(launchLocation) {
