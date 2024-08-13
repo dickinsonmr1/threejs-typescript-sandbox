@@ -145,8 +145,16 @@ export class Player {
 
         if(playerName == "6") {
 
-            let offsetLeft = new THREE.Vector3(0, 0.52, 0.2);
-            let offsetRight = new THREE.Vector3(0, 0.52, -0.2);
+            let offsetLeft = new THREE.Vector3(0, 0.55, 0.2);
+            let offsetRight = new THREE.Vector3(0, 0.55, -0.2);
+            this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
+            this.emergencyLights.setVisible(true);
+        }
+
+        if(playerName == "10") {
+
+            let offsetLeft = new THREE.Vector3(1, 1.25, 3);
+            let offsetRight = new THREE.Vector3(1, 1.25, -3);
             this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
             this.emergencyLights.setVisible(true);
         }
