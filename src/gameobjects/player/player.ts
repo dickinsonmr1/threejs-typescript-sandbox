@@ -143,6 +143,7 @@ export class Player {
         if(this.brakeLights != null)
             this.brakeLights.setVisible(false);
 
+        // police car
         if(playerName == "6") {
 
             let offsetLeft = new THREE.Vector3(0, 0.55, 0.2);
@@ -151,10 +152,11 @@ export class Player {
             this.emergencyLights.setVisible(true);
         }
 
+        // police tractor
         if(playerName == "10") {
 
-            let offsetLeft = new THREE.Vector3(1, 1.25, 3);
-            let offsetRight = new THREE.Vector3(1, 1.25, -3);
+            let offsetLeft = new THREE.Vector3(0.45, 1.25, 0.25);
+            let offsetRight = new THREE.Vector3(0.45, 1.25, -0.25);
             this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
             this.emergencyLights.setVisible(true);
         }

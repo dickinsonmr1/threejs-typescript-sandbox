@@ -216,7 +216,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     tryJump(): void {      
         if(!this.isActive) return;  
 
-        this.raycastVehicle?.chassisBody.applyImpulse(new CANNON.Vec3(0, 4000, 0));
+        this.raycastVehicle?.chassisBody.applyImpulse(new CANNON.Vec3(0, this.chassis.body.mass * 10, 0));
     }
     
     tryTurbo(): void {
@@ -443,8 +443,13 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         if(this.model != null) { // && this.modelOffset != null) {            
             
-            this.model.position.copy(Utility.CannonVec3ToThreeVec3(this.chassis.body.position));//.add(this.modelOffset));
             this.model.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.chassis.body.quaternion));
+
+            let offset = this.modelOffset!.clone();
+            offset.applyQuaternion(Utility.CannonQuaternionToThreeQuaternion(this.chassis.body.quaternion));
+
+            this.model.position.copy(Utility.CannonVec3ToThreeVec3(this.chassis.body.position));//.add(offset));
+            this.model.position.add(offset);
         
 
             /*

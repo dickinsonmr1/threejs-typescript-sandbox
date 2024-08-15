@@ -256,12 +256,16 @@ export class VehicleFactory {
                     gameScene.policeTractorModel,             // model         
                     gameScene.wheelModel,       // wheel model
                     new THREE.Vector3(1, 1, 1), // model scale,
-                    new THREE.Vector3(0, 0, 0), // model offset
+                    new THREE.Vector3(0, 0, -0.175), // model offset
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(2, 2, 2) // rear wheel model scale
                 );
                 maxHealth = 150;
+                leftHeadlightOffset = new THREE.Vector3(-2.25, 0.25, -0.2);
+                rightHeadlightOffset = new THREE.Vector3(-2.25, 0.25, 0.2);
+                leftBrakeLightOffset = new THREE.Vector3(1.5, 0.15, -0.3);
+                rightBrakeLightOffset = new THREE.Vector3(1.5, 0.15, 0.3);
                 break;               
             case VehicleType.Killdozer:
                 vehicle = new RaycastVehicleObject(
@@ -290,6 +294,11 @@ export class VehicleFactory {
                     new THREE.Vector3(1.5, 1.5, 1.5) // rear wheel model scale
                 );
                 maxHealth = 150;
+                        
+                leftHeadlightOffset = new THREE.Vector3(-2.25, 0.25, -0.2);
+                rightHeadlightOffset = new THREE.Vector3(-2.25, 0.25, 0.2);
+                leftBrakeLightOffset = new THREE.Vector3(1.5, 0.15, -0.3);
+                rightBrakeLightOffset = new THREE.Vector3(1.5, 0.15, 0.3);
                 break;
             case VehicleType.TrashTruck:
                 vehicle = new RaycastVehicleObject(
@@ -403,6 +412,10 @@ export class VehicleFactory {
                     new THREE.Vector3(1, 1, 1) // rear wheel model scale
                 );
                 maxHealth = 150;
+                leftHeadlightOffset = new THREE.Vector3(-3.2, 0.3, -0.4);
+                rightHeadlightOffset = new THREE.Vector3(-3.2, 0.3, 0.4);
+                leftBrakeLightOffset = new THREE.Vector3(2.0, 0.15, -0.6);
+                rightBrakeLightOffset = new THREE.Vector3(2.0, 0.15, 0.6);
                 break;
             default:
                 vehicle = new RaycastVehicleObject(

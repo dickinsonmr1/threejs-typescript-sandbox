@@ -90,7 +90,7 @@ export default class Headlights {
             {
                 // Map the y position to a 0-1 range for alpha
                 //float alpha =  vPosition.x / 5.0 + 0.05;
-                float alpha =  vPosition.y + 0.05;
+                float alpha =  vPosition.y  * 0.5;
                 gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
             }
             `
