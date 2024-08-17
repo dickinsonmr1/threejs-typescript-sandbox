@@ -63,7 +63,7 @@ export default class ProjectileFactory {
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
                     quaternion,
-                    1.0,
+                    1.25,
                     new THREE.Color('white'),
                     new THREE.Color('white'),
                     new THREE.Color('white'),
@@ -82,7 +82,7 @@ export default class ProjectileFactory {
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
                     quaternion,
-                    0.75,
+                    0.9,
                     startColor,
                     particleColor1,
                     particleColor2,

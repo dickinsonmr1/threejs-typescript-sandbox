@@ -678,6 +678,31 @@ export default class GameScene extends THREE.Scene {
             this.debugOrbitCamera.position.addScaledVector(upVector, -0.15); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(upVector, -0.15);
         }   
+
+        // down
+        if(this.keyDown.has('1')) {
+            var targetPosition = this.player1.getPosition();
+
+            this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugOrbitControls.target = this.player1.getPosition();
+            
+        }   
+        if(this.keyDown.has('2')) {
+            var targetPosition = this.player2.getPosition();
+
+            this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugOrbitControls.target = targetPosition;
+        }   
+        if(this.keyDown.has('3')) {
+            var targetPosition = this.player3.getPosition();
+            this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugOrbitControls.target = targetPosition;
+        }   
+        if(this.keyDown.has('4')) {
+            var targetPosition = this.player4.getPosition();
+            this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugOrbitControls.target = targetPosition;
+        }   
     }
 
     updateCamera() {
