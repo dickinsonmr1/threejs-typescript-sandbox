@@ -575,6 +575,15 @@ export class Player {
             this.vehicleObject.tryStopReverse();
 
             //this.vehicleObject.getModel().visible = false;
+            this.vehicleObject.getModel().traverse((child: THREE.Object3D) => {
+                if ((child as THREE.Mesh).isMesh) {
+                    const mesh = child as THREE.Mesh;
+                    const material = mesh.material as THREE.MeshStandardMaterial;
+                    // Set the material color for the mesh
+                    material.color.set(0x000000); // Example: Set color to green
+                }
+            });            
+
             this.vehicleObject.getWheelModels().forEach(x => x.visible = false);      
         
             this.vehicleObject.setAcceptInput(false);      
@@ -650,6 +659,13 @@ export class Player {
         this.vehicleObject.setAcceptInput(true);
         this.vehicleObject.respawnPosition(worldPosition.x, worldPosition.y + 2, worldPosition.z);
 
+        this.vehicleObject.getModel().traverse((child: THREE.Object3D) => {
+            if ((child as THREE.Mesh).isMesh) {
+                const mesh = child as THREE.Mesh;
+                const material = mesh.material as THREE.MeshStandardMaterial;
+                material.color.set(0xffffff);
+            }
+        });        
         this.vehicleObject.getModel().visible = true;
         this.vehicleObject.getWheelModels().forEach(x => x.visible = true);            
 
