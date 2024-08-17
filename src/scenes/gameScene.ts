@@ -28,7 +28,7 @@ import { VehicleFactory } from '../gameobjects/player/vehicleFactory';
 import { RainShaderParticleEmitter } from '../gameobjects/fx/rainShaderParticleEmitter';
 import { WorldConfig } from '../gameobjects/world/worldConfig';
 import { GameConfig } from '../gameconfig';
-import { PrecipitationSystem } from '../gameobjects/world/precipitationSystem';
+import { PrecipitationSystem, PrecipitationType } from '../gameobjects/world/precipitationSystem';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -376,8 +376,10 @@ export default class GameScene extends THREE.Scene {
             this.add( this.water );
         }
 
-        this.precipitationSystem = new PrecipitationSystem(this, 'assets/weather/rain_8x8.png');
-
+        if(this.worldConfig.precipitationType != PrecipitationType.None) {
+            this.precipitationSystem = new PrecipitationSystem(this, this.worldConfig.precipitationType);
+        }
+            
         //this.rainShaderParticleEmitter = new RainShaderParticleEmitter(this);
 
         // TODO: sun from https://threejs.org/examples/?q=water#webgl_shaders_ocean

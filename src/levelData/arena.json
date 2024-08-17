@@ -9,8 +9,10 @@
     
     "skyTexture": "assets/skybox/industrial_sunset_puresky.jpg",
 
+    "precipitationType": 1,
+    
     "waterY": 0.75,
-
+    
     "grassBillboard": "assets/billboard_grass_32x32.png",
     "grassBillboardStartY": 2,
     "grassBillboardEndY": 3

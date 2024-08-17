@@ -1,3 +1,5 @@
+import { PrecipitationType } from "./precipitationSystem";
+
 export interface WorldConfig {
     name: string;
     heightMap: string;
@@ -8,7 +10,9 @@ export interface WorldConfig {
     texture5: string;  
     
     skyTexture: string;
-    
+
+    precipitationType: PrecipitationType;
+
     waterY?: number;
 
     grassBillboard: string;

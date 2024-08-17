@@ -1,12 +1,20 @@
 import * as THREE from 'three';
 
+export enum PrecipitationType {
+    None = 0,
+    Rain = 1,
+    Snow = 2
+}
+
 export class PrecipitationSystem {
 
     private static rainCount: number = 20000;
     rainGeometry: THREE.BufferGeometry;
     private static maxY: number = 50;
 
-    constructor(scene: THREE.Scene, textureName: string) {
+    private velocityY: number;
+
+    constructor(scene: THREE.Scene, precipitationType: PrecipitationType) {
 
         // Create an empty geometry
         this.rainGeometry = new THREE.BufferGeometry();
@@ -25,7 +33,10 @@ export class PrecipitationSystem {
         // Set the positions as the attribute of the geometry
         this.rainGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-        const sprite = new THREE.TextureLoader().load( textureName );
+        this.velocityY = precipitationType == PrecipitationType.Rain ? 0.5 : 0.1;
+
+        var textureName = precipitationType == PrecipitationType.Rain ? 'assets/weather/rain_8x8.png' : 'assets/weather/snow.png';
+        var sprite = new THREE.TextureLoader().load( textureName );
         sprite.colorSpace = THREE.SRGBColorSpace;
 
         sprite.wrapS = THREE.ClampToEdgeWrapping;
@@ -49,9 +60,9 @@ export class PrecipitationSystem {
 
     animateRain(): void {
         const positions = this.rainGeometry.attributes.position.array as Float32Array;
-    
+            
         for (let i = 0; i < PrecipitationSystem.rainCount; i++) {
-            positions[i * 3 + 1] -= 0.5; // Move raindrop down
+            positions[i * 3 + 1] -= this.velocityY; // Move raindrop down
     
             // Reset position if it falls below a certain point
             if (positions[i * 3 + 1] < -0) {
