@@ -28,6 +28,7 @@ import { VehicleFactory } from '../gameobjects/player/vehicleFactory';
 import { RainShaderParticleEmitter } from '../gameobjects/fx/rainShaderParticleEmitter';
 import { WorldConfig } from '../gameobjects/world/worldConfig';
 import { GameConfig } from '../gameconfig';
+import { PrecipitationSystem } from '../gameobjects/world/precipitationSystem';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -115,6 +116,7 @@ export default class GameScene extends THREE.Scene {
     
     terrain!: TerrainObjectv2;
     water!: Water;
+    precipitationSystem!: PrecipitationSystem;
 
     grassBillboards?: THREE.Points;
     
@@ -373,6 +375,8 @@ export default class GameScene extends THREE.Scene {
             this.water.position.y += this.worldConfig.waterY; // 1.5
             this.add( this.water );
         }
+
+        this.precipitationSystem = new PrecipitationSystem(this, 'assets/weather/rain_8x8.png');
 
         //this.rainShaderParticleEmitter = new RainShaderParticleEmitter(this);
 
@@ -1581,6 +1585,12 @@ export default class GameScene extends THREE.Scene {
             return;
 
         this.water.material.uniforms[ 'time' ].value += 0.5 / 60.0;
+    }
+
+    updatePrecipitation() {
+        if(this.precipitationSystem != null) {
+            this.precipitationSystem.animateRain();
+        }
     }
 
     update() {

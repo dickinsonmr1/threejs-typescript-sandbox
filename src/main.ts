@@ -115,6 +115,7 @@ function tick() {
 
     if(!scene.isPaused) {
       scene.updateWater();
+      scene.updatePrecipitation();
       scene.update();
       sceneOrtho.update();
 
