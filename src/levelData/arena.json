@@ -7,10 +7,11 @@
     "texture4": "assets/stone 3.png.jpg",
     "texture5": "assets/snow.png",
     
+    "skyTexture": "assets/skybox/industrial_sunset_puresky.jpg",
+
     "waterY": 0.75,
 
     "grassBillboard": "assets/billboard_grass_32x32.png",
     "grassBillboardStartY": 2,
     "grassBillboardEndY": 3
-
 }

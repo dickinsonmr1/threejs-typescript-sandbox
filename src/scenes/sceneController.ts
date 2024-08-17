@@ -478,10 +478,12 @@ export default class SceneController {
         switch(levelName) {
             case "field":
                 this.gameScene?.preloadMapData(this.fieldLevelConfig);
+                this.gameScene?.preloadSkybox(this.fieldLevelConfig);
                 break;
             case "arena":
             default:
                 this.gameScene?.preloadMapData(this.arenaLevelConfig);
+                this.gameScene?.preloadSkybox(this.arenaLevelConfig);
                 break;
         }
                 

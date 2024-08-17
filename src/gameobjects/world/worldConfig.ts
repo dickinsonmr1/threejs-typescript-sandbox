@@ -7,6 +7,8 @@ export interface WorldConfig {
     texture4: string;
     texture5: string;  
     
+    skyTexture: string;
+    
     waterY?: number;
 
     grassBillboard: string;

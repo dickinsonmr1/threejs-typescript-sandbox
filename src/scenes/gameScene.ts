@@ -191,8 +191,23 @@ export default class GameScene extends THREE.Scene {
     preloadMapData(worldConfig: WorldConfig) {
         
         this.worldConfig = worldConfig;
-        
+                
         this.heightMapTextureAsArray = new TextureToArray(this.textureLoader, worldConfig.heightMap);
+    }
+
+    preloadSkybox(worldConfig: WorldConfig) {
+        // skybox tutorial: https://threejs.org/manual/#en/backgrounds
+        // asset source: https://polyhaven.com/a/industrial_sunset_puresky
+        let skyTexture = this.textureLoader.load(
+            worldConfig.skyTexture,
+            () => {
+
+                skyTexture.mapping = THREE.EquirectangularReflectionMapping;
+                skyTexture.colorSpace = THREE.SRGBColorSpace;
+                this.background = skyTexture;
+            } 
+        );
+
     }
 
     async initialize(player1VehicleType: VehicleType): Promise<void> {
@@ -332,18 +347,7 @@ export default class GameScene extends THREE.Scene {
 
         this.debugDivElementManager.hideAllElements();
        
-        // skybox tutorial: https://threejs.org/manual/#en/backgrounds
-        // asset source: https://polyhaven.com/a/industrial_sunset_puresky
-        let skyTexture = this.textureLoader.load(
-            'assets/industrial_sunset_puresky.jpg',
-            () => {
-
-                skyTexture.mapping = THREE.EquirectangularReflectionMapping;
-                skyTexture.colorSpace = THREE.SRGBColorSpace;
-                this.background = skyTexture;
-            } 
-        );
-
+    
         // https://threejs.org/examples/?q=water#webgl_shaders_ocean
 
         if(this.worldConfig.waterY != null) {
