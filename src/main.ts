@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
 import GameScene from './scenes/gameScene'
 import HudScene from './scenes/hudScene'
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
@@ -27,6 +29,21 @@ renderer.autoClear = false; // To allow render overlay
 
 const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 500);
 
+const debugOrbitCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 500);
+debugOrbitCamera.position.set(0, 10, 0);
+
+const debugOrbitControls = new OrbitControls(debugOrbitCamera, renderer.domElement);
+//debugOrbitControls.enablePan = true;
+/*
+debugOrbitControls.keys = {
+	LEFT: 'a',
+	UP: 'w',
+	RIGHT: 'd',
+	BOTTOM: 's' 
+};
+*/
+debugOrbitControls.enabled = false; // Disable controls initially
+
 // needed for GLTF models to light correctly
 // https://discourse.threejs.org/t/directional-light-and-gltf-model-not-working-together/49358
 const environment = new RoomEnvironment( renderer );
@@ -45,7 +62,7 @@ window.addEventListener("gamepaddisconnected", (event) => {
 
 var sceneController = new SceneController(renderer);
 
-const gameScene = new GameScene(mainCamera, sceneController, gameConfig);
+const gameScene = new GameScene(mainCamera, debugOrbitCamera, debugOrbitControls, sceneController, gameConfig);
 //gameScene.initialize();
 
 let cannonDebugger: any = null;
@@ -96,18 +113,26 @@ function tick() {
 
   if(scene instanceof GameScene) {
 
-    scene.updateWater();
-    scene.update();
-    sceneOrtho.update();
-  
-    if(gameConfig.isDebug && cannonDebugger != null) {
-      cannonDebugger.update();
-    }
+    if(!scene.isPaused) {
+      scene.updateWater();
+      scene.update();
+      sceneOrtho.update();
 
-    renderer.clear();
-    renderer.render(scene, mainCamera);
-    renderer.clearDepth();
-    renderer.render(sceneOrtho, cameraOrtho);
+      if(gameConfig.isDebug && cannonDebugger != null) {
+        cannonDebugger.update();
+      }
+
+      renderer.clear();
+      renderer.render(scene, mainCamera);
+      renderer.clearDepth();
+      renderer.render(sceneOrtho, cameraOrtho);
+    }
+    else {
+      debugOrbitControls.update();
+      scene.updateInputForDebug();
+      renderer.render(scene, debugOrbitCamera);
+    }
+    
   }
   else if(scene instanceof MenuScene) {
     scene.update();
@@ -116,7 +141,7 @@ function tick() {
   
   requestAnimationFrame(tick);
   
-  if(scene instanceof GameScene) {
+  if(scene instanceof GameScene && !scene.isPaused) {
     scene.world.fixedStep();
   }
 }

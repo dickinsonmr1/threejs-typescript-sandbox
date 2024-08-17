@@ -8,7 +8,7 @@ import SpotlightObject from '../gameobjects/shapes/spotlightObject';
 import { randFloat, randInt } from 'three/src/math/MathUtils.js';
 import { ParticleEmitter } from '../gameobjects/fx/particleEmitter';
 import { GltfObject, GltfObjectPhysicsObjectShape } from '../gameobjects/shapes/gltfObject';
-import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
+import { GLTF, GLTFLoader, OrbitControls } from 'three/examples/jsm/Addons.js';
 import { Projectile } from '../gameobjects/weapons/projectile';
 import { CylinderObject } from '../gameobjects/shapes/cylinderObject';
 import { ProjectileType } from '../gameobjects/weapons/projectileType';
@@ -65,6 +65,9 @@ export default class GameScene extends THREE.Scene {
     private readonly textureLoader = new THREE.TextureLoader();
 
     private readonly camera: THREE.PerspectiveCamera;
+    
+    private readonly debugOrbitCamera: THREE.PerspectiveCamera;
+    private readonly debugOrbitControls: OrbitControls;
 
     private readonly keyDown = new Set<string>();
 
@@ -161,10 +164,19 @@ export default class GameScene extends THREE.Scene {
 
     crosshairSprite!: THREE.Sprite;
 
-    constructor(camera: THREE.PerspectiveCamera, sceneController: SceneController, gameConfig: GameConfig) {
+    public isPaused: boolean = false;
+
+    constructor(camera: THREE.PerspectiveCamera,
+        debugOrbitCamera: THREE.PerspectiveCamera,
+        debugOrbitControls: OrbitControls,
+        sceneController: SceneController, gameConfig: GameConfig) {
         super();
         
         this.camera = camera;
+
+        this.debugOrbitCamera = debugOrbitCamera;
+        this.debugOrbitControls = debugOrbitControls;
+
         this.sceneController = sceneController;
         this.gameConfig = gameConfig;
         
@@ -453,10 +465,19 @@ export default class GameScene extends THREE.Scene {
     }
 
     private handleKeyDown = (event: KeyboardEvent) => {
+        
+        /*
+        if (['w', 'a', 's', 'd'].includes(event.key)) {
+            event.preventDefault();
+            return;
+        }            
+        */
+
         this.keyDown.add(event.key.toLowerCase());
     }
 
 	private handleKeyUp = (event: KeyboardEvent) => {
+
 		this.keyDown.delete(event.key.toLowerCase())
 
 		if (event.key === 'Control')
@@ -559,6 +580,13 @@ export default class GameScene extends THREE.Scene {
         if (event.key === 'Shift') {
             this.player1.tryStopTurbo();
         }
+
+        if (event.key === '`') {
+            this.isPaused = !this.isPaused;
+
+            this.debugOrbitCamera.position.copy(this.camera.position);            
+            this.debugOrbitControls.enabled = this.isPaused;
+        }
 	}
 
     private updateInput() {
@@ -594,6 +622,68 @@ export default class GameScene extends THREE.Scene {
             this.player1.tryTurbo();
         }
     }
+
+    public updateInputForDebug() {
+            
+        // forward
+        if(this.keyDown.has('w')) {
+            const moveDirection = new THREE.Vector3();
+            this.debugOrbitCamera.getWorldDirection(moveDirection); // Get the current forward direction
+            
+            this.debugOrbitCamera.position.addScaledVector(moveDirection, 0.15); // Move the camera forward by 1 unit
+            this.debugOrbitControls.target.addScaledVector(moveDirection, 0.15);
+        }       
+
+        // left
+        if(this.keyDown.has('a')) {
+
+            const forwardVector = new THREE.Vector3();
+            this.debugOrbitCamera.getWorldDirection(forwardVector); // Get the current forward direction
+
+            const leftVector = new THREE.Vector3();
+            leftVector.crossVectors(new THREE.Vector3(0, 1, 0), forwardVector).normalize();
+
+            this.debugOrbitCamera.position.addScaledVector(leftVector, 0.15); // Move the camera forward by 1 unit
+            this.debugOrbitControls.target.addScaledVector(leftVector, 0.15);
+        }   
+
+        // right
+        if(this.keyDown.has('d')) {
+            const forwardVector = new THREE.Vector3();
+            this.debugOrbitCamera.getWorldDirection(forwardVector); // Get the current forward direction
+
+            const leftVector = new THREE.Vector3();
+            leftVector.crossVectors(new THREE.Vector3(0, 1, 0), forwardVector).normalize();
+
+            this.debugOrbitCamera.position.addScaledVector(leftVector, -0.15); // Move the camera forward by 1 unit
+            this.debugOrbitControls.target.addScaledVector(leftVector, -0.15);
+        } 
+
+        // backwards
+        if(this.keyDown.has('s')) {
+            const moveDirection = new THREE.Vector3();
+            this.debugOrbitCamera.getWorldDirection(moveDirection); // Get the current forward direction
+            this.debugOrbitCamera.position.add(moveDirection.multiplyScalar(-0.15)); // Move the camera forward by 1 unit
+        }   
+
+        // up
+        if(this.keyDown.has('q')) {
+            const upVector = new THREE.Vector3(0, 1, 0);
+
+            this.debugOrbitCamera.position.addScaledVector(upVector, 0.15); // Move the camera forward by 1 unit
+            this.debugOrbitControls.target.addScaledVector(upVector, 0.15);
+        }   
+
+        // down
+        if(this.keyDown.has('z')) {
+
+            const upVector = new THREE.Vector3(0, 1, 0);
+
+            this.debugOrbitCamera.position.addScaledVector(upVector, -0.15); // Move the camera forward by 1 unit
+            this.debugOrbitControls.target.addScaledVector(upVector, -0.15);
+        }   
+    }
+
 
     updateCamera() {
 
