@@ -81,6 +81,7 @@ export class Player {
     headLights!: Headlights;
     brakeLights!: Brakelights;
     emergencyLights!: EmergencyLights;
+    emergencyLights2!: EmergencyLights;
 
     private vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
@@ -143,6 +144,21 @@ export class Player {
         if(this.brakeLights != null)
             this.brakeLights.setVisible(false);
 
+
+         // ambulance
+         if(playerName == "2") {
+
+            let offsetLeft = new THREE.Vector3(-0.55, 0.75, 0.25);
+            let offsetRight = new THREE.Vector3(-0.55, 0.75, -0.25);
+            this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
+            this.emergencyLights.setVisible(true);
+
+            offsetLeft = new THREE.Vector3(1.1, 0.85, 0.25);
+            offsetRight = new THREE.Vector3(1.1, 0.85, -0.25);
+            this.emergencyLights2 = new EmergencyLights(scene, offsetLeft, offsetRight);
+            this.emergencyLights2.setVisible(true);
+        }
+
         // police car
         if(playerName == "6") {
 
@@ -151,6 +167,21 @@ export class Player {
             this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
             this.emergencyLights.setVisible(true);
         }
+
+         // fire truck
+         if(playerName == "9") {
+
+            let offsetLeft = new THREE.Vector3(-1.1, 1.20, 0.4);
+            let offsetRight = new THREE.Vector3(-1.1, 1.20, -0.4);
+            this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
+            this.emergencyLights.setVisible(true);
+
+            offsetLeft = new THREE.Vector3(1.5, 1.20, 0.4);
+            offsetRight = new THREE.Vector3(1.5, 1.20, -0.4);
+            this.emergencyLights2 = new EmergencyLights(scene, offsetLeft, offsetRight);
+            this.emergencyLights2.setVisible(true);
+        }
+
 
         // police tractor
         if(playerName == "10") {
@@ -331,7 +362,13 @@ export class Player {
             this.emergencyLights.update(
                 Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
                 Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
-            );              
+            );            
+            
+        if(this.emergencyLights2 != null)
+            this.emergencyLights2.update(
+                Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position),
+                Utility.CannonQuaternionToThreeQuaternion(this.vehicleObject.getChassis().body.quaternion)            
+            );    
         
         /*
         switch(launchLocation) {
@@ -572,6 +609,12 @@ export class Player {
             if(this.shield != null)
                 this.shield.setVisible(false);
 
+            if(this.emergencyLights != null)
+                this.emergencyLights.setVisible(false);
+
+            if(this.emergencyLights2 != null)
+                this.emergencyLights2.setVisible(false);
+
             this.vehicleObject.tryStopAccelerate();
             this.vehicleObject.tryStopReverse();
 
@@ -672,6 +715,12 @@ export class Player {
 
         if(this.headLights != null)
             this.headLights.group.visible = true;
+
+        if(this.emergencyLights != null)
+            this.emergencyLights.setVisible(true);
+
+        if(this.emergencyLights2 != null)
+            this.emergencyLights2.setVisible(true);
         //this.turboParticleEmitter.isEmitting = true;
     }
 

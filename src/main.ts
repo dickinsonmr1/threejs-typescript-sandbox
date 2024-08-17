@@ -74,21 +74,21 @@ if(gameConfig.isDebug) {
 gameScene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
 
-let hudwidth = width;
-let hudheight = height;
-
+// hud scene and camera
+const aspect = window.innerWidth / window.innerHeight;
+const frustumSize = window.innerHeight;
 var cameraOrtho = new THREE.OrthographicCamera(
-    -hudwidth/2, hudwidth/2,
-    hudheight/2, -hudheight/2,
-    1, 10
+    -frustumSize * aspect/2,
+    frustumSize * aspect/2,
+    frustumSize/2,
+    -frustumSize/2,
+    0.01, 100
 );
 cameraOrtho.position.z = 10;
-//cameraOrtho.position.x = 1;
-//cameraOrtho.lookAt(new THREE.Vector3(0, 0, 0));
             
 let sceneOrtho = new HudScene(cameraOrtho, sceneController);
-//sceneOrtho.initialize();
 
+// menu scene and camera
 const menuCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 75);
 menuCamera.position.set(-5, 0, 0);
 const menuScene = new MenuScene(menuCamera, sceneController);
@@ -99,13 +99,41 @@ environment.dispose();
 
 sceneController.init(menuScene, gameScene, sceneOrtho);
 sceneController.switchToMenuScene();
-//sceneController.setCurrentScene(menuScene);
-//sceneController.setCurrentScene(gameScene);
-
 sceneController.setOnScreenControls();
 
 var gamepads = navigator.getGamepads();
 console.log(gamepads);
+
+function onWindowResize(): void {
+
+  const aspect = window.innerWidth / window.innerHeight;
+
+  // Update camera aspect ratio
+  mainCamera.aspect = aspect;
+  mainCamera.updateProjectionMatrix();
+
+  // Recalculate the camera's frustum
+  cameraOrtho.left = -frustumSize * aspect / 2;
+  cameraOrtho.right = frustumSize * aspect / 2;
+  cameraOrtho.top = frustumSize / 2;
+  cameraOrtho.bottom = -frustumSize / 2;
+
+  cameraOrtho.updateProjectionMatrix();
+  cameraOrtho.updateProjectionMatrix();
+
+  menuCamera.aspect = aspect;
+  menuCamera.updateProjectionMatrix();
+  
+  // Update renderer size
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  // Re-render the scene
+  //render();
+}
+
+// Attach the window resize event listener
+window.addEventListener('resize', onWindowResize, false);
+
 
 function tick() {
 

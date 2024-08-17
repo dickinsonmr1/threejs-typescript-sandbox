@@ -4,8 +4,8 @@
     "texture1": "assets/Sand 4.jpg",
     "texture2": "assets/tileable_grass_00.png",
     "texture3": "assets/tileable_grass_01.png",
-    "texture4": "assets/stone 3.png.jpg",
-    "texture5": "assets/snow.png",
+    "texture4": "assets/tileable_grass_01.png",
+    "texture5": "assets/stone 3.png",
     
     "skyTexture": "assets/skybox/industrial_sunset_puresky.jpg",
 
