@@ -51,6 +51,9 @@ export class VehicleFactory {
                     new CANNON.Vec3(0.5, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset
 
+                    0.25,    // front wheel height
+                    0.25,    // rear wheel height
+
                     20,                              // wheel mass
 
                     gameScene.taxiModel,             // model                            
@@ -58,8 +61,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
                     new THREE.Vector3(0, 0, 0), // wheel offset  new THREE.Vector3(0, -0.35, 0)
 
-                    new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
+                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
 
                 );
                 maxHealth = 100;
@@ -78,6 +81,9 @@ export class VehicleFactory {
                     0.25,                       //rear wheel radius
                     new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.25, 0, 0),   // rear wheel offset
+
+                    0.5,    // front wheel height
+                    0.5,    // rearv wheel height
 
                     20,                              // wheel mass
 
@@ -105,6 +111,9 @@ export class VehicleFactory {
                     0.20,                       //rear wheel radius
                     new CANNON.Vec3(0.3, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.1, 0, 0),   // rear wheel offset
+
+                    0.5,    // front wheel height
+                    0.5,    // c wheel height
 
                     20,                              // wheel mass
 
@@ -137,6 +146,10 @@ export class VehicleFactory {
                     new CANNON.Vec3(0.3, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.1, 0, 0),   // rear wheel offset
 
+                    0.5,    // front wheel height
+                    0.5,    // rear wheel height
+
+                
                     20,                              // wheel mass
 
                     gameScene.raceCarRedModel,             // model        
@@ -168,6 +181,9 @@ export class VehicleFactory {
                     new CANNON.Vec3(0.5, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset
 
+                    0.25,    // front wheel height
+                    0.25,    // rear wheel height
+                    
                     20,                              // wheel mass
 
                     gameScene.sedanSportsModel,             // model        
@@ -175,8 +191,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
                     new THREE.Vector3(0, 0, 0), // model offset
 
-                    new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
+                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
                 );
                 maxHealth = 75;
                 break;
@@ -195,6 +211,9 @@ export class VehicleFactory {
                     new CANNON.Vec3(0.4, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.4, 0, 0),   // rear wheel offset
 
+                    0.25,    // front wheel height
+                    0.25,    // rear wheel height
+
                     20,                              // wheel mass
 
                     gameScene.policeModel,             // model        
@@ -202,8 +221,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
                     new THREE.Vector3(0, 0, 0), // model offset
 
-                    new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
+                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
                 );
                 maxHealth = 125;
                 break; 
@@ -223,6 +242,10 @@ export class VehicleFactory {
 
                     new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.25, 0.1, 0),   // rear wheel offset
+
+                    0.5,    // front wheel height
+                    0.5,    // rear wheel height
+
                     20,                              // wheel mass
 
                     gameScene.tractorModel,             // model         
@@ -252,6 +275,9 @@ export class VehicleFactory {
                     new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.25, 0.1, 0),   // rear wheel offset
                     20,                              // wheel mass
+
+                    0.5,    // front wheel height
+                    0.5,    // rear wheel height
 
                     gameScene.policeTractorModel,             // model         
                     gameScene.wheelModel,       // wheel model
@@ -283,6 +309,10 @@ export class VehicleFactory {
 
                     new CANNON.Vec3(0.4, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0, 0.1, 0),   // rear wheel offset
+                    
+                    0.5,    // front wheel height
+                    0.5,    // rear wheel height
+
                     20,                              // wheel mass
 
                     gameScene.killdozerModel,             // model         
@@ -315,6 +345,11 @@ export class VehicleFactory {
                     
                     new CANNON.Vec3(0.25, 0.25, 0),   // front wheel offset
                     new CANNON.Vec3(0.6, 0.25, 0),   // rear wheel offset
+
+                    0.5,    // front wheel height
+                    0.5,    // rear wheel height
+
+
                     20,                              // wheel mass
                     gameScene.trashTruckModel,             // model         
                     gameScene.wheelModel,       // wheel model
@@ -342,8 +377,12 @@ export class VehicleFactory {
                     
                     0.25,                           // front wheel radius
                     0.25,                       //rear wheel radius
-                    new CANNON.Vec3(0.5, 0, 0),   // front wheel offset
-                    new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset
+
+                    new CANNON.Vec3(0.5, 0, 0),   // front wheel offset - ignores z for now
+                    new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset - ignores z for now
+                    
+                    0.25,    // front wheel height
+                    0.25,    // rear wheel height
 
                     20,                              // wheel mass
 
@@ -352,8 +391,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
                     new THREE.Vector3(0, 0, 0), // model offset
 
-                    new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
+                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
                 );
                 maxHealth = 100;
                 leftHeadlightOffset = new THREE.Vector3(-2.25, 0.1, -0.3);
@@ -374,6 +413,9 @@ export class VehicleFactory {
                     new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset
 
+                    0.25,    // front wheel height
+                    0.25,    // rear wheel height
+
                     20,                              // wheel mass
 
                     gameScene.pickupTruckModel,             // model        
@@ -381,8 +423,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
                     new THREE.Vector3(0, 0, 0), // model offset
 
-                    new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
+                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
                 );
                 maxHealth = 100;
                 break;
@@ -400,6 +442,9 @@ export class VehicleFactory {
                     0.25,                       //rear wheel radius
                     new CANNON.Vec3(0.5, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.75, 0, 0),   // rear wheel offset
+
+                    0.5,    // front wheel height
+                    0.5,    // rear wheel height
 
                     20,                              // wheel mass
 
@@ -431,6 +476,9 @@ export class VehicleFactory {
                     0.20,                       //rear wheel radius
                     new CANNON.Vec3(0.5, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset
+
+                    0.5,    // front wheel height
+                    0.5,    // rear wheel height
 
                     20,                              // wheel mass
 

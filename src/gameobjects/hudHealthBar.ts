@@ -32,11 +32,7 @@ export default class HudHealthBar {
 
     private readonly hudWidth: number;
     private readonly hudHeight: number;
-    /**
-     *
-     */
     
-    // TODO: override color based on value
     constructor(scene: THREE.Scene, hudBarType: HudBarType,
         hudWidth: number, hudHeight: number,
         spriteMaxWidth: number,

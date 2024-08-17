@@ -191,7 +191,7 @@ export default class GameScene extends THREE.Scene {
     preloadMapData(worldConfig: WorldConfig) {
         
         this.worldConfig = worldConfig;
-                
+
         this.heightMapTextureAsArray = new TextureToArray(this.textureLoader, worldConfig.heightMap);
     }
 
@@ -451,20 +451,6 @@ export default class GameScene extends THREE.Scene {
     async generateWheelModelAsGroup(): Promise<THREE.Group>{
 
         var model = (await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb')).scene;
-        
-        //model.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
-        //model.scale.set(10, 10, 10);
-        //model.position.set(10, 10, 10);
-
-        //model.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
-        //model.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 4);
-
-        //const quaternion = new THREE.Quaternion();
-        ////quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2); // Rotate 90 degrees around the X axis
-        //quaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2); // Rotate 90 degrees around the Z axis
-        //model.quaternion.multiplyQuaternions(quaternion, model.quaternion);
-
-        //this.add(wheelModel2.scene);
         return model;
     }
 
@@ -688,7 +674,6 @@ export default class GameScene extends THREE.Scene {
         }   
     }
 
-
     updateCamera() {
 
         if(this.followCam != null)
@@ -714,7 +699,6 @@ export default class GameScene extends THREE.Scene {
     }
 
     private async generateRandomCube() {
-
         let randPosition = new THREE.Vector3(randFloat(-10, 10), 5, randFloat(-10, -10));
         let randCubeSize = randFloat(0.5, 1);
 
@@ -760,9 +744,7 @@ export default class GameScene extends THREE.Scene {
     }
     
     
-    private async generateRandomPickup(mapWidth: number, mapHeight: number) {
-
-        
+    private async generateRandomPickup(mapWidth: number, mapHeight: number) {        
         let pickupTextureRocket = this.textureLoader.load('assets/pickup-rockets.png');
         let pickupTextureHealth = this.textureLoader.load('assets/pickup-health.png');
         let pickupTextureFlamethrower = this.textureLoader.load('assets/pickup-fire.png');
@@ -815,7 +797,6 @@ export default class GameScene extends THREE.Scene {
                 outlineColor = 0xff0000;
                 break;
         }
-
 
         let randX = randFloat(-mapWidth / 2, mapWidth / 2);        
         let randZ = randFloat(-mapHeight / 2, mapHeight / 2);
@@ -937,8 +918,6 @@ export default class GameScene extends THREE.Scene {
         this.fireTruckModel = await this.loadFireTruckModel();
         
         this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
-        //this.wheelModel.scene.scale.set(1, 1, 1);
-        //this.add(this.wheelModel.scene);
     }
 
     private async loadTaxiModel(): Promise<GLTF> {        

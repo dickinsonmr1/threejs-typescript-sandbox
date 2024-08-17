@@ -49,6 +49,9 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         frontWheelOffset: CANNON.Vec3,
         rearWheelOffset: CANNON.Vec3,
+
+        frontWheelHeight: number,
+        rearWheelHeight: number,
         
         wheelMass: number,
         modelData: GLTF,
@@ -140,13 +143,15 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 		this.raycastVehicle.wheelInfos.forEach(wheel => {
             
             var modelScale = frontWheelModelScale;
+            var wheelHeight = frontWheelHeight;
 
             if(i > 1) {
                 wheelColor = 0xff0000;
                 modelScale = rearWheelModelScale;
+                wheelHeight = rearWheelHeight;
             }            
             
-            const temp = new RaycastWheelObject(scene, isDebug, wheel.radius, wheelColor, world, wheelMaterial);                    
+            const temp = new RaycastWheelObject(scene, isDebug, wheel.radius, wheelHeight, wheelColor, world, wheelMaterial);                    
             this.wheels.push(temp);
             
             if(wheelModelData != null) {

@@ -14,7 +14,7 @@ export class RaycastWheelObject {
     constructor(scene: THREE.Scene,
         isDebug: boolean,
         radius: number,
-        //height: number,
+        wheelHeight: number,
         //position: THREE.Vector3,
         color: number = 0xffffff,
         //meshMaterial?: THREE.Material,
@@ -28,7 +28,7 @@ export class RaycastWheelObject {
         })
         this.physicsMaterial = wheelMaterial;
 
-        let wheelHeight = radius * 1.5;
+        //let wheelHeight = radius * 1.5;
         const cylinderShape = new CANNON.Cylinder(radius, radius, wheelHeight, 20);
         this.wheelBody = new CANNON.Body({
           mass: 0,
