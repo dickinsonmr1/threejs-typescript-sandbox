@@ -36,7 +36,7 @@ export class Projectile extends SphereObject {
 
     airstrikeTarget!: Target;
     detonationBoundingMesh!: THREE.Mesh;
-    detonationDamageRadius: number = 1.5;
+    detonationDamageRadius: number = 3;
 
     bulletMesh!: THREE.Mesh;
 

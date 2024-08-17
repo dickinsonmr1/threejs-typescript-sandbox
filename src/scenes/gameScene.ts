@@ -908,7 +908,7 @@ export default class GameScene extends THREE.Scene {
                 case ProjectileType.Airstrike:
                 default:
                     numberParticles = 20;
-                    particleInitialScale = 2;
+                    particleInitialScale = 5;
                     scaleMultiplier = 0.99;
                     opacityReduction = 0.0075;
                     break;                
