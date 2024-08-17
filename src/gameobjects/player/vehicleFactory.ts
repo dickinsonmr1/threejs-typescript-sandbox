@@ -335,35 +335,35 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-                    new CANNON.Vec3(0, 0.8, 0),    // center of mass adjust
+                    new CANNON.Vec3(1.5, 0.75, 0.6), // chassis dimensions
+                    new CANNON.Vec3(0, 1, 0),    // center of mass adjust
                     1000,                            // chassis mass
                     wheelMaterial,
 
                     0.25,                           // front wheel radius
                     0.25,                       //rear wheel radius
                     
-                    new CANNON.Vec3(0.25, 0.25, 0),   // front wheel offset
-                    new CANNON.Vec3(0.6, 0.25, 0),   // rear wheel offset
+                    new CANNON.Vec3(0.45, 0.5, 0),   // front wheel offset
+                    new CANNON.Vec3(0.95, 0.5, 0),   // rear wheel offset
 
-                    0.25,    // front wheel height
-                    0.25,    // rear wheel height
+                    0.3,    // front wheel height
+                    0.3,    // rear wheel height
 
 
                     20,                              // wheel mass
                     gameScene.trashTruckModel,             // model         
                     gameScene.wheelModel,       // wheel model
-                    new THREE.Vector3(0.7, 0.7, 0.7), // model scale,
+                    new THREE.Vector3(1, 1, 1), // model scale,
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.5, 1, 1), // front wheel model scale,
                     new THREE.Vector3(0.5, 1, 1) // rear wheel model scale
                 );
                 maxHealth = 150;           
-                leftHeadlightOffset = new THREE.Vector3(-2.5, 0.25, -0.3);
-                rightHeadlightOffset = new THREE.Vector3(-2.5, 0.25, 0.3);
-                leftBrakeLightOffset = new THREE.Vector3(1.15, 0.25, -0.3);
-                rightBrakeLightOffset = new THREE.Vector3(1.15, 0.25, 0.3);
+                leftHeadlightOffset = new THREE.Vector3(-3, 0.55, -0.45);
+                rightHeadlightOffset = new THREE.Vector3(-3, 0.55, 0.45);
+                leftBrakeLightOffset = new THREE.Vector3(1.8, 0.5, -0.35);
+                rightBrakeLightOffset = new THREE.Vector3(1.8, 0.5, 0.35);
                 break;
             case VehicleType.Offroader:
                 vehicle = new RaycastVehicleObject(
