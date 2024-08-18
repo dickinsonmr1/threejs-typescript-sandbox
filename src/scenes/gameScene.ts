@@ -436,7 +436,7 @@ export default class GameScene extends THREE.Scene {
 
         geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
-        var material = new THREE.PointsMaterial( { size: 1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true, depthTest: true, depthWrite: true } );
+        var material = new THREE.PointsMaterial( { size: 1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: false, depthTest: true, depthWrite: false } );
         //material.color.setHSL( 1.0, 0.3, 0.7, THREE.SRGBColorSpace );
 
         this.grassBillboards = new THREE.Points( geometry, material );
@@ -550,7 +550,7 @@ export default class GameScene extends THREE.Scene {
 		{
             this.player1.healthBar.updateValue(19);
 		}      
-        if (event.key === 'Escape')
+        if (event.key === 'Enter')
 		{
 			this.player1.tryResetPosition();
 		}
@@ -577,11 +577,8 @@ export default class GameScene extends THREE.Scene {
             this.player1.tryStopTurbo();
         }
 
-        if (event.key === '`') {
-            this.isPaused = !this.isPaused;
-
-            this.debugOrbitCamera.position.copy(this.camera.position);            
-            this.debugOrbitControls.enabled = this.isPaused;
+        if (event.key === 'Escape') {
+            this.sceneController.tryTogglePauseMenu();
         }
 	}
 
@@ -619,9 +616,19 @@ export default class GameScene extends THREE.Scene {
         }
     }
 
+    public togglePauseGame() {
+        this.isPaused = !this.isPaused;
+
+        this.debugOrbitCamera.position.copy(this.camera.position);            
+        this.debugOrbitCamera.lookAt(this.player1.getPosition());
+        this.debugOrbitControls.enabled = this.isPaused;        
+    }
+
     public updateInputForDebug() {
             
         let cameraMovement = 0.15;
+
+        this.sceneController.pollGamepads();
 
         if(this.keyDown.has('shift')) {
             cameraMovement = 0.9;

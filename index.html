@@ -83,6 +83,25 @@
 			-ms-transform: translate(-50%, -50%);
 			transform: translate(-50%, -50%);
         }
+		.label-info {
+            position: absolute;
+            width: 200px;
+            height: 50px;          
+			background-color: rgba(0, 0, 0, 0.5);  
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 36px;
+            text-align: center;
+            line-height: 50px;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;
+			user-select: none;
+        }
 
 		.inventory {
 			position: absolute;
@@ -148,6 +167,8 @@
 		#reset { top: 20px; right: 75px; }
 		#startgameLevel1 { bottom: 2%; left: 25%; }
 		#startgameLevel2 { bottom: 2%; left: 75%; }
+
+		#gamePaused {top: 100px; left: 50%}
 	</style>
   </head>
   <body>
@@ -200,14 +221,15 @@
 			<div class="text" style="color: white">1</div>
 		</div>	
 		-->
+		<div id="gamePaused" class="label-info" style="visibility: hidden;">Game Paused - Press ESC or Start</div>	
 	</div>
-	
 	<div id="menuSceneDiv">
 		<div id="menuLeft" class="control-button">&#8592;</div>
 		<div id="menuRight" class="control-button">&#8594;</div>
 		<div id="startgameLevel1" class="control-button-large" style="bottom: 2%; left: 40%;">Arena</div>
 		<div id="startgameLevel2" class="control-button-large" style="bottom: 2%; left: 60%;">Field</div>
 	</div>
+	
     <script type="module" src="/src/main.ts"></script>
 	<script>
 		// prevent space bar from scrolling down page

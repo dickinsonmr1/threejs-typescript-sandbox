@@ -39,6 +39,8 @@ export default class SceneController {
     fireSecondaryWeaponGamepadIndex!: number;
     fireFlameThrowerGamepadIndex!: number;
 
+    gamePausedElement!: HTMLElement;
+
     setGamePad1(gamepad: Gamepad, gamepadControlScheme: GamepadControlScheme) {
         this.gamepad = gamepad;
         this.gamepadPrevious = gamepad;
@@ -89,6 +91,8 @@ export default class SceneController {
         const startGameLevel2Button = this.getButton('startgameLevel2');
         const menuLeftButton = this.getButton('menuLeft');
         const menuRightButton = this.getButton('menuRight');
+
+        this.gamePausedElement = this.getButton('gamePaused');
 
         if(leftButton != null) {
 
@@ -381,66 +385,77 @@ export default class SceneController {
 
             if(!this.gameScene) return;
 
-            if(isPressed) {                
-                if(buttonIndex == this.accelerateGamepadIndex) {
-                    console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene?.player1.tryAccelerateWithKeyboard();
-                }
-                if(buttonIndex == this.brakeOrReverseGamepadIndex) {
-                    console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene?.player1.tryReverseWithKeyboard();
-                }
-                if(buttonIndex == this.firePrimaryWeaponGamepadIndex) { // && !this.gamepadPrevious.buttons[this.firePrimaryWeaponGamepadIndex].pressed) {
-                    console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene.player1.tryFireBullets();
-                }
-                if(buttonIndex == this.fireSecondaryWeaponGamepadIndex) { // && !this.gamepadPrevious.buttons[this.fireSecondaryWeaponGamepadIndex].pressed) {
-                    console.log(`pressed: ${buttonIndex}`);
-
-                    this.gameScene.player1.tryFireRocket();
-                }
-                if(buttonIndex == this.fireFlameThrowerGamepadIndex) {
-                    console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene?.player1.tryFireFlamethrower();
-                }
-                if(buttonIndex == GamepadEnums.FACE_4) {
-                    console.log(`pressed: ${buttonIndex}`);
-                    //this.gameScene?.player2.tryFireFlamethrower();
-                    this.gameScene?.player1.tryFireAirStrike();
-                }
-
-                if(buttonIndex == GamepadEnums.SELECT && !this.gamepadPrevious.buttons[GamepadEnums.SELECT].pressed) {
-                    console.log(`pressed: ${buttonIndex}`);
-                    this.gameScene.player1.tryResetPosition();
-                }
-                
-                if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {
-                    console.log(`pressed: ${buttonIndex}`);
-                    rightShoulderJustPressed = true;                    
-                    this.gameScene.player1.tryJump();
-                }
-
-                if(buttonIndex == GamepadEnums.LEFT_SHOULDER) { // && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
-                    console.log(`pressed: ${buttonIndex}`);                    
-                    leftShoulderJustPressed = true;
-                    this.gameScene.player1.tryTurbo();
-                }
+            if(isPressed && buttonIndex == GamepadEnums.START && !this.gamepadPrevious.buttons[GamepadEnums.START].pressed) {
+                this.tryTogglePauseMenu();
             }
-            else {
-                if(this.gamepadPrevious.buttons[this.accelerateGamepadIndex].pressed
-                    && buttonIndex == this.accelerateGamepadIndex) {
-                        console.log(`button no longer pressed: ${buttonIndex}`);
-                        this.gameScene?.player1.tryStopAccelerateWithKeyboard();
+
+            if(!this.gameScene.isPaused) {
+                if(isPressed) {                
+                    if(buttonIndex == this.accelerateGamepadIndex) {
+                        console.log(`pressed: ${buttonIndex}`);
+                        this.gameScene?.player1.tryAccelerateWithKeyboard();
+                    }
+                    if(buttonIndex == this.brakeOrReverseGamepadIndex) {
+                        console.log(`pressed: ${buttonIndex}`);
+                        this.gameScene?.player1.tryReverseWithKeyboard();
+                    }
+                    if(buttonIndex == this.firePrimaryWeaponGamepadIndex) { // && !this.gamepadPrevious.buttons[this.firePrimaryWeaponGamepadIndex].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);
+                        this.gameScene.player1.tryFireBullets();
+                    }
+                    if(buttonIndex == this.fireSecondaryWeaponGamepadIndex) { // && !this.gamepadPrevious.buttons[this.fireSecondaryWeaponGamepadIndex].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);
+
+                        this.gameScene.player1.tryFireRocket();
+                    }
+                    if(buttonIndex == this.fireFlameThrowerGamepadIndex) {
+                        console.log(`pressed: ${buttonIndex}`);
+                        this.gameScene?.player1.tryFireFlamethrower();
+                    }
+                    if(buttonIndex == GamepadEnums.FACE_4) {
+                        console.log(`pressed: ${buttonIndex}`);
+                        //this.gameScene?.player2.tryFireFlamethrower();
+                        this.gameScene?.player1.tryFireAirStrike();
+                    }
+
+                    if(buttonIndex == GamepadEnums.SELECT && !this.gamepadPrevious.buttons[GamepadEnums.SELECT].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);
+                        this.gameScene.player1.tryResetPosition();
+                    }
+                    
+                    if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);
+                        rightShoulderJustPressed = true;                    
+                        this.gameScene.player1.tryJump();
+                    }
+
+                    if(buttonIndex == GamepadEnums.LEFT_SHOULDER) { // && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);                    
+                        leftShoulderJustPressed = true;
+                        this.gameScene.player1.tryTurbo();
+                    }
+                    if(buttonIndex == GamepadEnums.LEFT_SHOULDER) { // && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);                    
+                        leftShoulderJustPressed = true;
+                        this.gameScene.player1.tryTurbo();
+                    }
                 }
-                if(this.gamepadPrevious.buttons[this.brakeOrReverseGamepadIndex].pressed
-                    && buttonIndex == this.brakeOrReverseGamepadIndex) {
-                        console.log(`button no longer pressed: ${buttonIndex}`);
-                        this.gameScene?.player1.tryStopReverseWithKeyboard();
-                }
-                if(this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed
-                    && buttonIndex == GamepadEnums.LEFT_SHOULDER) {
-                        console.log(`button no longer pressed: ${buttonIndex}`);
-                        this.gameScene?.player1.tryStopTurbo();
+                else {
+                    if(this.gamepadPrevious.buttons[this.accelerateGamepadIndex].pressed
+                        && buttonIndex == this.accelerateGamepadIndex) {
+                            console.log(`button no longer pressed: ${buttonIndex}`);
+                            this.gameScene?.player1.tryStopAccelerateWithKeyboard();
+                    }
+                    if(this.gamepadPrevious.buttons[this.brakeOrReverseGamepadIndex].pressed
+                        && buttonIndex == this.brakeOrReverseGamepadIndex) {
+                            console.log(`button no longer pressed: ${buttonIndex}`);
+                            this.gameScene?.player1.tryStopReverseWithKeyboard();
+                    }
+                    if(this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed
+                        && buttonIndex == GamepadEnums.LEFT_SHOULDER) {
+                            console.log(`button no longer pressed: ${buttonIndex}`);
+                            this.gameScene?.player1.tryStopTurbo();
+                    }
                 }
             }
         })
@@ -495,6 +510,17 @@ export default class SceneController {
         // todo: fix behavior because of async
         var player1MaxHealth = this.gameScene?.player1?.maxHealth ?? 100;
         this.hudScene?.initialize(player1MaxHealth);
+    }
+
+    tryTogglePauseMenu() {
+        if(this.currentScene instanceof GameScene ) {
+            this.gameScene?.togglePauseGame();
+            
+            if(this.gameScene?.isPaused)
+                this.gamePausedElement.style.visibility = "visible";
+            else
+                this.gamePausedElement.style.visibility = "hidden";
+        }
     }
 
     updateHealthOnHud(currentValue: number) {
