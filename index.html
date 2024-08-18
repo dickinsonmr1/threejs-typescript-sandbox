@@ -85,7 +85,7 @@
         }
 		.label-info {
             position: absolute;
-            width: 200px;
+            width: 50%;
             height: 50px;          
 			background-color: rgba(0, 0, 0, 0.5);  
             color: white;
@@ -190,26 +190,28 @@
 		<div id="jump" class="control-button">A</div>
 		-->
 
-		<div id="toggledebug" class="control-button">?</div>
-		<div id="reset" class="control-button-medium">Reset</div>	
-		<div id="specialweapon" class="inventory" style="background-color: rgba(255, 187, 0, 0.5)">
-			<img src="assets/fire.png" style="width: 50px; height: 50px;"/>
-			<div class="text" style="color: white">999</div>
-		</div>	
-		<div id="secondaryweapon" class="inventory" style="background-color: rgba(0, 177, 253, 0.5);">
-			<img src="assets/bullets.png" style="width: 50px; height: 50px;"/>
-			<div class="text" style="color: white">&#8734;</div>
-		</div>	
-		<div id="primaryweapon" class="inventory" style="background-color: rgba(247, 0, 255, 0.5);">
-			<img src="assets/rocketIcon-multiple.png" style="width: 50px; height: 50px;"/>
-			<div class="text" style="color: white">999</div>
-		</div>	
-		<div id="jump" class="inventory" style="background-color: rgba(55, 255, 0, 0.5);">			
-			<div class="text" style="color: white">Jump</div>
-		</div>	
-		<div id="turbo" class="inventory" style="background-color: rgba(255, 251, 0, 0.5);">			
-			<img src="assets/turboIcon.png" style="width: 50px; height: 50px; display: block;margin-left: auto; margin-right: auto;"/>
-		</div>	
+		<div id="inGameOnScreenControlsDiv">
+			<div id="toggledebug" class="control-button">?</div>
+			<div id="reset" class="control-button-medium">Reset</div>	
+			<div id="specialweapon" class="inventory" style="background-color: rgba(255, 187, 0, 0.5)">
+				<img src="assets/fire.png" style="width: 50px; height: 50px;"/>
+				<div class="text" style="color: white">999</div>
+			</div>	
+			<div id="secondaryweapon" class="inventory" style="background-color: rgba(0, 177, 253, 0.5);">
+				<img src="assets/bullets.png" style="width: 50px; height: 50px;"/>
+				<div class="text" style="color: white">&#8734;</div>
+			</div>	
+			<div id="primaryweapon" class="inventory" style="background-color: rgba(247, 0, 255, 0.5);">
+				<img src="assets/rocketIcon-multiple.png" style="width: 50px; height: 50px;"/>
+				<div class="text" style="color: white">999</div>
+			</div>	
+			<div id="jump" class="inventory" style="background-color: rgba(55, 255, 0, 0.5);">			
+				<div class="text" style="color: white">Jump</div>
+			</div>	
+			<div id="turbo" class="inventory" style="background-color: rgba(255, 251, 0, 0.5);">			
+				<img src="assets/turboIcon.png" style="width: 50px; height: 50px; display: block;margin-left: auto; margin-right: auto;"/>
+			</div>	
+		</div>
 				<!--
 		<div id="ammoText" class="inventory" style="background-color: rgba(247, 0, 255, 0.5); right: 500px;">
 			<img src="assets/rocketIcon-multiple.png" style="width: 50px; height: 50px;"/>
@@ -221,7 +223,10 @@
 			<div class="text" style="color: white">1</div>
 		</div>	
 		-->
-		<div id="gamePaused" class="label-info" style="visibility: hidden;">Game Paused - Press ESC or Start</div>	
+		<div id="gamePausedDiv" style="visibility: hidden;">
+			<div id="gamePaused" class="label-info" style="left: 25%;">Game Paused - Press ESC or Start</div>	
+			<div id="controls" class="label-info" style="bottom: 2%; left: 25%;">WASD / QZ to move camera, 1-4 to snap to players</div>	
+		</div>
 	</div>
 	<div id="menuSceneDiv">
 		<div id="menuLeft" class="control-button">&#8592;</div>

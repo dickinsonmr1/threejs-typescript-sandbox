@@ -39,7 +39,8 @@ export default class SceneController {
     fireSecondaryWeaponGamepadIndex!: number;
     fireFlameThrowerGamepadIndex!: number;
 
-    gamePausedElement!: HTMLElement;
+    gamePausedDivElement!: HTMLElement;
+    inGameOnScreenControlsDiv!: HTMLElement;
 
     setGamePad1(gamepad: Gamepad, gamepadControlScheme: GamepadControlScheme) {
         this.gamepad = gamepad;
@@ -92,7 +93,8 @@ export default class SceneController {
         const menuLeftButton = this.getButton('menuLeft');
         const menuRightButton = this.getButton('menuRight');
 
-        this.gamePausedElement = this.getButton('gamePaused');
+        this.gamePausedDivElement = document.getElementById('gamePausedDiv')!;
+        this.inGameOnScreenControlsDiv = document.getElementById('inGameOnScreenControlsDiv')!;
 
         if(leftButton != null) {
 
@@ -516,10 +518,14 @@ export default class SceneController {
         if(this.currentScene instanceof GameScene ) {
             this.gameScene?.togglePauseGame();
             
-            if(this.gameScene?.isPaused)
-                this.gamePausedElement.style.visibility = "visible";
-            else
-                this.gamePausedElement.style.visibility = "hidden";
+            if(this.gameScene?.isPaused) {
+                this.gamePausedDivElement.style.visibility = "visible";
+                this.inGameOnScreenControlsDiv.style.visibility = "hidden";
+            }
+            else {
+                this.gamePausedDivElement.style.visibility = "hidden";
+                this.inGameOnScreenControlsDiv.style.visibility = "visible";
+            }
         }
     }
 
