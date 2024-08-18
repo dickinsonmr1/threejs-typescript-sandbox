@@ -14,6 +14,7 @@ export default class MenuScene extends THREE.Scene {
 
     private group: THREE.Group;
 
+    private selectedMapIndex: number = 0;
     private selectedVehicleIndex: number = 0;
 
     private statBar1!: HealthBar;

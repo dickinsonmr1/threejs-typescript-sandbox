@@ -19,7 +19,7 @@ import { Shield } from "../vehicles/shield";
 import { ParticleEmitter } from "../fx/particleEmitter";
 import { SmokeObject2 } from "../fx/smokeObject2";
 import Brakelights from "../vehicles/brakeLights";
-import { randFloatSpread } from "three/src/math/MathUtils.js";
+import { randFloatSpread, randInt } from "three/src/math/MathUtils.js";
 import EmergencyLights from "../vehicles/emergencyLights";
 
 export enum PlayerState {
@@ -116,6 +116,11 @@ export class Player {
     private activeAirstrike!: Projectile;
 
     private shield!: Shield;
+
+    private deathCount: number = 0;
+    public getDeathCount() {
+        return this.deathCount;
+    }
 
     constructor(scene: THREE.Scene,
         isDebug: boolean,
@@ -423,7 +428,7 @@ export class Player {
         let sideOffset = 0;
         switch(projectileType) {
             case ProjectileType.Bullet:
-                sideOffset = 3;
+                sideOffset = 2;
                 this.fireLeft = !this.fireLeft;
                 launchLocation = this.fireLeft ? ProjectileLaunchLocation.Left : ProjectileLaunchLocation.Right;
                 break;
@@ -596,8 +601,13 @@ export class Player {
     tryKill() {
 
         if(this.playerState == PlayerState.Alive) {
-            this.playerState = PlayerState.Dead;
 
+            if(randInt(0, 2) == 0)
+                this.tryJump();
+
+            this.playerState = PlayerState.Dead;
+            this.deathCount++;
+        
             var scene = this.getScene();
             
             if(this.headLights != null)
