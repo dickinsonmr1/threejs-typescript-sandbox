@@ -839,8 +839,6 @@ export default class GameScene extends THREE.Scene {
         if(quaternion == null)
             quaternion = new THREE.Quaternion();
         
-        var wheelModel = await this.generateWheelModel();
-
         position.y += 2;
         var debrisWheel = new DumpsterFireObject(
             this,
@@ -1791,8 +1789,11 @@ export default class GameScene extends THREE.Scene {
                 break;
             case 110:
             case 111:
-                    cpuPlayer.tryFireAirStrike();
-                    break;
+                cpuPlayer.tryFireAirStrike();
+                break;
+            case 120:
+                cpuPlayer.tryFireDumpster();
+                break;
             default:
             }
         }

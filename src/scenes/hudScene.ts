@@ -26,7 +26,7 @@ export default class HudScene extends THREE.Scene {
     private spriteCenterBottom!: THREE.Sprite;
 
 
-    selectedWeaponTextures: THREE.Texture[] = [];
+    weaponInventory: THREE.Texture[] = [];
     selectedWeaponIndex: number = 0;
     
     sceneController: SceneController;
@@ -70,9 +70,13 @@ export default class HudScene extends THREE.Scene {
         let turboIconTexture = textureLoader.load('assets/turboIcon.png');
         freezeIconTexture.colorSpace = THREE.SRGBColorSpace;
 
-        this.selectedWeaponTextures.push(rocketTexture);
-        this.selectedWeaponTextures.push(fireIconTexture);
-        this.selectedWeaponTextures.push(freezeIconTexture);
+        let specialIconTexture = textureLoader.load('assets/specialIcon.png');
+        specialIconTexture.colorSpace = THREE.SRGBColorSpace;
+        
+        this.weaponInventory.push(specialIconTexture);
+        this.weaponInventory.push(rocketTexture);
+        this.weaponInventory.push(fireIconTexture);
+        this.weaponInventory.push(freezeIconTexture);
 
         this.healthBar = new HudHealthBar(this, HudBarType.TopCenterMain,
             this.hudWidth, this.hudHeight,
@@ -108,7 +112,7 @@ export default class HudScene extends THREE.Scene {
         //const spriteHeight = material.map?.image.height;
 
         //let spriteCenter = this.generateIcon(freezeIconTexture, new THREE.Color('white'), HudIconLocation.Center);
-        this.spriteCenterBottom = this.generateIcon(rocketTexture, new THREE.Color('white'), HudIconLocation.CenterBottom);
+        this.spriteCenterBottom = this.generateIcon(this.weaponInventory[this.selectedWeaponIndex], new THREE.Color('white'), HudIconLocation.CenterBottom);
         //let spriteTL = this.generateIcon(rocketTexture, new THREE.Color('white'), HudIconLocation.UpperLeft);    
         //let spriteTR = this.generateIcon(fireIconTexture, new THREE.Color('white'), HudIconLocation.UpperRight);
         //let spriteLL = this.generateIcon(healthIconTexture, new THREE.Color('white'), HudIconLocation.LowerLeft);
@@ -226,15 +230,15 @@ export default class HudScene extends THREE.Scene {
     selectPreviousWeapon() {
         this.selectedWeaponIndex--;
         if(this.selectedWeaponIndex < 0)
-            this.selectedWeaponIndex = this.selectedWeaponTextures.length - 1;
+            this.selectedWeaponIndex = this.weaponInventory.length - 1;
     }
 
     selectNextWeapon() {
         this.selectedWeaponIndex++;
-        if(this.selectedWeaponIndex >= this.selectedWeaponTextures.length)
+        if(this.selectedWeaponIndex >= this.weaponInventory.length)
             this.selectedWeaponIndex = 0;
 
-        this.spriteCenterBottom.material.map = this.selectedWeaponTextures[this.selectedWeaponIndex];
+        this.spriteCenterBottom.material.map = this.weaponInventory[this.selectedWeaponIndex];
     }
 
     updateWeaponAmmo() {

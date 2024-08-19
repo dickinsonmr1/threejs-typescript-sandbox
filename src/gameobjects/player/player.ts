@@ -799,6 +799,16 @@ export class Player {
             this.bulletCooldownClock.start();
         }
     }
+
+    tryFireDumpster(): void {
+        let gameScene = <GameScene>this.scene;
+
+        let forwardVector = new THREE.Vector3(-10, 4, 0);
+        forwardVector.applyQuaternion(this.getVehicleObject().getModel().quaternion);
+        let projectileLaunchVector = forwardVector; 
+
+        gameScene.generateRandomDumpster(this.getPosition(), projectileLaunchVector);
+    }
     
     // TODO: try fire additional weapons
 

@@ -22,7 +22,7 @@ export class DumpsterFireObject {
 
     private particleEmitter!: ParticleEmitter;
 
-    private static maxLifeTimeinMs: number = 5000;
+    private static maxLifeTimeinMs: number = 3000;
     /**
      *
      */
@@ -92,7 +92,7 @@ export class DumpsterFireObject {
                 new THREE.Color('yellow'),
                 new THREE.Color('orange'),
                 Utility.CannonVec3ToThreeVec3(this.body.position),
-                3,
+                1,
                 DumpsterFireObject.maxLifeTimeinMs
             );
         }
