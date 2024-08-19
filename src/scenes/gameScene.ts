@@ -29,6 +29,7 @@ import { RainShaderParticleEmitter } from '../gameobjects/fx/rainShaderParticleE
 import { WorldConfig } from '../gameobjects/world/worldConfig';
 import { GameConfig } from '../gameconfig';
 import { PrecipitationSystem, PrecipitationType } from '../gameobjects/world/precipitationSystem';
+import { FireObject } from '../gameobjects/fx/fireObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -85,6 +86,7 @@ export default class GameScene extends THREE.Scene {
     private projectiles: Projectile[] = [];
 
     private particleEmitters: ParticleEmitter[] = [];
+    private fireParticleEmitters: ParticleEmitter[] = [];
     //private rainShaderParticleEmitter: RainShaderParticleEmitter;
 
     public explosionTexture: THREE.Texture = new THREE.Texture();
@@ -279,6 +281,44 @@ export default class GameScene extends THREE.Scene {
         this.crosshairSprite = new THREE.Sprite( material );
         this.add(this.crosshairSprite);
 
+
+        var treeModelData = await this.generateTreeModel();
+
+        let treeModel = treeModelData.scene.clone();
+        treeModel.position.copy(this.getWorldPositionOnTerrainAndWater(0, 0));
+        treeModel.scale.set(3, 3, 3);
+        this.add(treeModel);
+
+
+        var barrelModelData = await this.generateBarrelModel();
+
+        let barrelModel = barrelModelData.scene.clone();
+        barrelModel.position.copy(this.getWorldPositionOnTerrainAndWater(2, 2));
+        barrelModel.position.y += 0.5;
+        barrelModel.scale.set(2, 2, 2);
+        this.add(barrelModel);
+
+
+        var dumpsterModelData = await this.generateDumpsterModel();
+
+        let dumpsterModel = dumpsterModelData.scene.clone();
+        dumpsterModel.position.copy(this.getWorldPositionOnTerrainAndWater(-3, -3));
+        dumpsterModel.position.y += 0.5;
+        dumpsterModel.scale.set(2, 2, 2);
+        this.add(dumpsterModel);
+
+        let dumpsterFire = new FireObject(
+            this,
+            this.explosionTexture,
+            new THREE.Color('yellow'),
+            new THREE.Color('orange'),
+            dumpsterModel.position,
+            3,
+            15000
+        );
+        //this.addToParticleEmitters(dumpsterFire);
+        this.fireParticleEmitters.push(dumpsterFire);
+
         /*
         // bounding box to show shadows
         const cubeSize = 30;
@@ -451,6 +491,25 @@ export default class GameScene extends THREE.Scene {
         //model.scene.scale.set(10, 10, 10);
         model.scene.position.set(0,0,0);
 
+        return model;
+    }
+
+    async generateTreeModel(): Promise<GLTF>{
+        var model = await this.gltfLoader.loadAsync('assets/models/tree2.glb');
+        model.scene.position.set(0,0,0);
+        return model;
+    }
+
+    
+    async generateBarrelModel(): Promise<GLTF>{
+        var model = await this.gltfLoader.loadAsync('assets/models/barrel.glb');
+        model.scene.position.set(0,0,0);
+        return model;
+    }
+
+    async generateDumpsterModel(): Promise<GLTF>{
+        var model = await this.gltfLoader.loadAsync('assets/models/dumpster.glb');
+        model.scene.position.set(0,0,0);
         return model;
     }
 
@@ -1743,6 +1802,9 @@ export default class GameScene extends THREE.Scene {
 
         this.projectiles.forEach(x => x.update());
         this.particleEmitters.forEach(x => x.update());
+
+        this.fireParticleEmitters.forEach(x => x.update());
+        this.fireParticleEmitters.forEach(x => x.setEmitPosition(new THREE.Vector3(-3, 2.5, -3)));
 
         //this.rainShaderParticleEmitter.update();
 
