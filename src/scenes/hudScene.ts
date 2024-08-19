@@ -23,7 +23,12 @@ export default class HudScene extends THREE.Scene {
     private shieldBar?: HudHealthBar;
 
     private ammoText!: Text;
+    private spriteCenterBottom!: THREE.Sprite;
 
+
+    selectedWeaponTextures: THREE.Texture[] = [];
+    selectedWeaponIndex: number = 0;
+    
     sceneController: SceneController;
 
     hudDivElementManager!: HudDivElementManager;
@@ -65,6 +70,10 @@ export default class HudScene extends THREE.Scene {
         let turboIconTexture = textureLoader.load('assets/turboIcon.png');
         freezeIconTexture.colorSpace = THREE.SRGBColorSpace;
 
+        this.selectedWeaponTextures.push(rocketTexture);
+        this.selectedWeaponTextures.push(fireIconTexture);
+        this.selectedWeaponTextures.push(freezeIconTexture);
+
         this.healthBar = new HudHealthBar(this, HudBarType.TopCenterMain,
             this.hudWidth, this.hudHeight,
             200,
@@ -99,7 +108,7 @@ export default class HudScene extends THREE.Scene {
         //const spriteHeight = material.map?.image.height;
 
         //let spriteCenter = this.generateIcon(freezeIconTexture, new THREE.Color('white'), HudIconLocation.Center);
-        let spriteCenterBottom = this.generateIcon(freezeIconTexture, new THREE.Color('white'), HudIconLocation.CenterBottom);
+        this.spriteCenterBottom = this.generateIcon(rocketTexture, new THREE.Color('white'), HudIconLocation.CenterBottom);
         //let spriteTL = this.generateIcon(rocketTexture, new THREE.Color('white'), HudIconLocation.UpperLeft);    
         //let spriteTR = this.generateIcon(fireIconTexture, new THREE.Color('white'), HudIconLocation.UpperRight);
         //let spriteLL = this.generateIcon(healthIconTexture, new THREE.Color('white'), HudIconLocation.LowerLeft);
@@ -212,5 +221,23 @@ export default class HudScene extends THREE.Scene {
 
     updateTurboBar(currentValue: number) {
         this.turboBar?.updateValue(currentValue);
+    }
+
+    selectPreviousWeapon() {
+        this.selectedWeaponIndex--;
+        if(this.selectedWeaponIndex < 0)
+            this.selectedWeaponIndex = this.selectedWeaponTextures.length - 1;
+    }
+
+    selectNextWeapon() {
+        this.selectedWeaponIndex++;
+        if(this.selectedWeaponIndex >= this.selectedWeaponTextures.length)
+            this.selectedWeaponIndex = 0;
+
+        this.spriteCenterBottom.material.map = this.selectedWeaponTextures[this.selectedWeaponIndex];
+    }
+
+    updateWeaponAmmo() {
+
     }
 }

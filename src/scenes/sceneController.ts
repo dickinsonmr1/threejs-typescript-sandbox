@@ -439,16 +439,11 @@ export default class SceneController {
                         this.gameScene.player1.tryJump();
                     }
 
-                    if(buttonIndex == GamepadEnums.LEFT_SHOULDER) { // && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
+                    if(buttonIndex == GamepadEnums.LEFT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
                         console.log(`pressed: ${buttonIndex}`);                    
                         leftShoulderJustPressed = true;
-                        this.gameScene.player1.tryTurbo();
-                    }
-                    if(buttonIndex == GamepadEnums.LEFT_SHOULDER) { // && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
-                        console.log(`pressed: ${buttonIndex}`);                    
-                        leftShoulderJustPressed = true;
-                        this.gameScene.player1.tryTurbo();
-                    }                    
+                        this.gameScene.player1.trySelectNextWeapon();
+                    }               
                 }
                 else {
                     if(this.gamepadPrevious.buttons[this.accelerateGamepadIndex].pressed
@@ -549,19 +544,19 @@ export default class SceneController {
         this.hudScene?.updateTurboBar(currentValue);
     }
 
+    selectPreviousWeaponOnHud() {
+        this.hudScene?.selectPreviousWeapon();
+    }
+
+    selectNextWeaponOnHud() {
+        this.hudScene?.selectNextWeapon();
+    }
+
     getWebGLRenderer(): THREE.WebGLRenderer {
         return this.renderer;
     }
 
     processTurboPresses(button: GamepadButton, previousButtonState: GamepadButton) {
-        /*
-        const gamepads = navigator.getGamepads();
-        if (!gamepads || !gamepads[gamepadIndex]) return;
-    
-        const gamepad = gamepads[gamepadIndex];
-        const button = gamepad.buttons[buttonIndex];
-        */
-
         const currentTime = performance.now();
         if (button.pressed) {
     

@@ -115,6 +115,8 @@ export class Player {
     
     private activeAirstrike!: Projectile;
 
+    private selectedWeaponIndex: number = 0;
+
     private shield!: Shield;
 
     private deathCount: number = 0;
@@ -735,7 +737,7 @@ export class Player {
     }
 
     tryFirePrimaryWeapon(): void {
-        
+
     }
 
     tryFireSecondaryWeapon(): void {
@@ -825,11 +827,13 @@ export class Player {
     }
 
     trySelectPreviousWeapon(): void {
-
+        this.selectedWeaponIndex--;
+        this.getScene().sceneController.selectPreviousWeaponOnHud();
     }
 
     trySelectNextWeapon(): void {
-
+        this.selectedWeaponIndex++;
+        this.getScene().sceneController.selectNextWeaponOnHud();
     }
     
     tryResetPosition(): void {
