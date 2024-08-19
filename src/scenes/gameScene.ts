@@ -29,7 +29,7 @@ import { RainShaderParticleEmitter } from '../gameobjects/fx/rainShaderParticleE
 import { WorldConfig } from '../gameobjects/world/worldConfig';
 import { GameConfig } from '../gameconfig';
 import { PrecipitationSystem, PrecipitationType } from '../gameobjects/world/precipitationSystem';
-import { FireObject } from '../gameobjects/fx/fireObject';
+import { DumpsterFireObject } from '../gameobjects/weapons/dumpsterFireObject';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -63,6 +63,8 @@ export default class GameScene extends THREE.Scene {
 
 
     public wheelModel!: GLTF;
+
+    public dumpsterModel!: GLTF;
 
     private readonly textureLoader = new THREE.TextureLoader();
 
@@ -298,27 +300,7 @@ export default class GameScene extends THREE.Scene {
         barrelModel.scale.set(2, 2, 2);
         this.add(barrelModel);
 
-
-        var dumpsterModelData = await this.generateDumpsterModel();
-
-        let dumpsterModel = dumpsterModelData.scene.clone();
-        dumpsterModel.position.copy(this.getWorldPositionOnTerrainAndWater(-3, -3));
-        dumpsterModel.position.y += 0.5;
-        dumpsterModel.scale.set(2, 2, 2);
-        this.add(dumpsterModel);
-
-        let dumpsterFire = new FireObject(
-            this,
-            this.explosionTexture,
-            new THREE.Color('yellow'),
-            new THREE.Color('orange'),
-            dumpsterModel.position,
-            3,
-            15000
-        );
-        //this.addToParticleEmitters(dumpsterFire);
-        this.fireParticleEmitters.push(dumpsterFire);
-
+        this.dumpsterModel = await this.generateDumpsterModel();
         /*
         // bounding box to show shadows
         const cubeSize = 30;
@@ -547,6 +529,12 @@ export default class GameScene extends THREE.Scene {
         if (event.key === 'p')
         {			
             this.generateRandomDebrisWheel();
+
+            let forwardVector = new THREE.Vector3(-10, 4, 0);
+            forwardVector.applyQuaternion(this.player1.getVehicleObject().getModel().quaternion);
+            let projectileLaunchVector = forwardVector; 
+
+            this.generateRandomDumpster(this.player1.getPosition(), projectileLaunchVector);
         }
         if (event.key === 'o')
         {			
@@ -841,6 +829,30 @@ export default class GameScene extends THREE.Scene {
             this.world,
             this.bouncyWheelMaterial,
             GltfObjectPhysicsObjectShape.Cylinder
+        );
+
+        this.debrisWheels.push(debrisWheel);
+    }
+
+    public async generateRandomDumpster(position: THREE.Vector3, launchVector: THREE.Vector3, quaternion?: THREE.Quaternion) {
+        
+        if(quaternion == null)
+            quaternion = new THREE.Quaternion();
+        
+        var wheelModel = await this.generateWheelModel();
+
+        position.y += 2;
+        var debrisWheel = new DumpsterFireObject(
+            this,
+            this.dumpsterModel.scene,
+            position,
+            quaternion,
+            new THREE.Vector3(2, 2, 2), // scale                
+            launchVector, //new THREE.Vector3(randFloat(-10, 10), randFloat(2, 5), randFloat(-10, 10)), // initial velocity            
+            new THREE.Vector3(1, 1, 1), // physics object scale
+            new THREE.Vector3(0, 0, 0), // physics object offset
+            this.world,
+            this.bouncyWheelMaterial
         );
 
         this.debrisWheels.push(debrisWheel);
