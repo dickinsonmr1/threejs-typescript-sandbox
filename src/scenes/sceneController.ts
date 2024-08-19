@@ -38,6 +38,7 @@ export default class SceneController {
     firePrimaryWeaponGamepadIndex!: number;
     fireSecondaryWeaponGamepadIndex!: number;
     fireFlameThrowerGamepadIndex!: number;
+    jumpGamepadIndex!: number;
 
     gamePausedDivElement!: HTMLElement;
     inGameOnScreenControlsDiv!: HTMLElement;
@@ -61,8 +62,9 @@ export default class SceneController {
             this.accelerateGamepadIndex = GamepadEnums.RIGHT_SHOULDER_BOTTOM;
             this.brakeOrReverseGamepadIndex = GamepadEnums.LEFT_SHOULDER_BOTTOM;
             this.firePrimaryWeaponGamepadIndex = GamepadEnums.FACE_2;
-            this.fireSecondaryWeaponGamepadIndex = GamepadEnums.FACE_1;
+            this.fireSecondaryWeaponGamepadIndex = GamepadEnums.FACE_4;
             this.fireFlameThrowerGamepadIndex = GamepadEnums.FACE_3;
+            this.jumpGamepadIndex = GamepadEnums.FACE_1
         }
         else {
             this.accelerateGamepadIndex = GamepadEnums.FACE_3;
@@ -70,6 +72,7 @@ export default class SceneController {
             this.firePrimaryWeaponGamepadIndex = GamepadEnums.RIGHT_SHOULDER_BOTTOM;
             this.fireSecondaryWeaponGamepadIndex = GamepadEnums.LEFT_SHOULDER_BOTTOM;
             this.fireFlameThrowerGamepadIndex = GamepadEnums.FACE_2;
+            this.jumpGamepadIndex = GamepadEnums.RIGHT_SHOULDER;
         }
     }
 
@@ -433,7 +436,7 @@ export default class SceneController {
                         this.gameScene.player1.tryResetPosition();
                     }
                     
-                    if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {
+                    if(buttonIndex == this.jumpGamepadIndex && !this.gamepadPrevious.buttons[this.jumpGamepadIndex].pressed) {
                         console.log(`pressed: ${buttonIndex}`);
                         rightShoulderJustPressed = true;                    
                         this.gameScene.player1.tryJump();
