@@ -113,7 +113,7 @@ export class TerrainObjectv2 {
 
         heightfieldBody.addEventListener('collide', (event: any) => {
           let body = <CANNON.Body>event.body;
-          console.log('body collided with terrain', event);
+          //console.log('body collided with terrain', event);
         });
     }    
 

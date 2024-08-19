@@ -42,6 +42,13 @@ export default class SceneController {
     gamePausedDivElement!: HTMLElement;
     inGameOnScreenControlsDiv!: HTMLElement;
 
+    turboLastPressTime: number = 0;
+    turboTapCount: number = 0;
+    //turboIsHolding: boolean = false;
+
+    static readonly DOUBLE_TAP_THRESHOLD: number = 250; // Max time between taps (ms)
+    static readonly HOLD_THRESHOLD: number = 100; // Time to consider a hold (ms)
+
     setGamePad1(gamepad: Gamepad, gamepadControlScheme: GamepadControlScheme) {
         this.gamepad = gamepad;
         this.gamepadPrevious = gamepad;
@@ -377,11 +384,12 @@ export default class SceneController {
 		//console.log(`Left stick at (${myGamepad.axes[0]}, ${myGamepad.axes[1]})` );
 		//console.log(`Right stick at (${myGamepad.axes[2]}, ${myGamepad.axes[3]})` );
 
-        // https://gabrielromualdo.com/articles/2020-12-15-how-to-use-the-html5-gamepad-api        
-
-
+        // https://gabrielromualdo.com/articles/2020-12-15-how-to-use-the-html5-gamepad-api       
+        
         var leftShoulderJustPressed = false;
         var rightShoulderJustPressed = false;
+
+        this.processTurboPresses(gamepad.buttons[this.accelerateGamepadIndex], this.gamepadPrevious.buttons[this.accelerateGamepadIndex]);
 
         gamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
 
@@ -394,7 +402,7 @@ export default class SceneController {
             if(!this.gameScene.isPaused) {
                 if(isPressed) {                
                     if(buttonIndex == this.accelerateGamepadIndex) {
-                        console.log(`pressed: ${buttonIndex}`);
+                        //console.log(`pressed: ${buttonIndex}`);
                         this.gameScene?.player1.tryAccelerateWithKeyboard();
                     }
                     if(buttonIndex == this.brakeOrReverseGamepadIndex) {
@@ -440,7 +448,7 @@ export default class SceneController {
                         console.log(`pressed: ${buttonIndex}`);                    
                         leftShoulderJustPressed = true;
                         this.gameScene.player1.tryTurbo();
-                    }
+                    }                    
                 }
                 else {
                     if(this.gamepadPrevious.buttons[this.accelerateGamepadIndex].pressed
@@ -543,5 +551,50 @@ export default class SceneController {
 
     getWebGLRenderer(): THREE.WebGLRenderer {
         return this.renderer;
+    }
+
+    processTurboPresses(button: GamepadButton, previousButtonState: GamepadButton) {
+        /*
+        const gamepads = navigator.getGamepads();
+        if (!gamepads || !gamepads[gamepadIndex]) return;
+    
+        const gamepad = gamepads[gamepadIndex];
+        const button = gamepad.buttons[buttonIndex];
+        */
+
+        const currentTime = performance.now();
+        if (button.pressed) {
+    
+            if(!previousButtonState.pressed) {
+                if (this.turboTapCount === 0 || currentTime - this.turboLastPressTime > SceneController.DOUBLE_TAP_THRESHOLD) {
+                    this.turboTapCount = 1;
+                    this.turboLastPressTime = currentTime;
+                    return;
+                }    
+                if (this.turboTapCount === 1 && currentTime - this.turboLastPressTime < SceneController.DOUBLE_TAP_THRESHOLD) {
+                    this.turboTapCount++;
+                    this.turboLastPressTime = currentTime;
+                    console.log('Double tap detected');
+                    setTimeout(() => {
+                        if (button.pressed) {
+                            console.log('Double tap and hold detected');
+                        }
+                    }, SceneController.HOLD_THRESHOLD);
+                    return;
+                }
+            }
+                
+            if (this.turboTapCount === 2) {
+                this.gameScene?.player1.tryTurbo();
+            }
+            
+        } else if (!button.pressed && previousButtonState.pressed) {
+            
+            if(currentTime - this.turboLastPressTime > SceneController.DOUBLE_TAP_THRESHOLD) {
+                console.log('Hold released');
+                this.gameScene?.player1.tryStopTurbo();
+                this.turboTapCount = 0;
+            }        
+        }
     }
 }
