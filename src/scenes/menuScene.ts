@@ -197,6 +197,9 @@ export default class MenuScene extends THREE.Scene {
     }
 
     update() {
+
+        this.sceneController.pollGamepadsForMenu();
+        
         this.group.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 64);       
         
         if(this.vehicleNameText != null)

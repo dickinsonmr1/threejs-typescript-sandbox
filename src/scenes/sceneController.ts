@@ -325,7 +325,36 @@ export default class SceneController {
         })
     }
 
+    public pollGamepadsForMenu() {
+        const gamepad = navigator.getGamepads()[0];
+        if(!gamepad) return;
+
+        var leftShoulderJustPressed = false;
+        var rightShoulderJustPressed = false;
+
+        if(!(this.currentScene instanceof MenuScene))
+            return;
+
+        gamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
+                if(isPressed) {                
+
+                    if(buttonIndex == GamepadEnums.LEFT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);                    
+                        this.menuScene?.selectPreviousVehicle();
+                    }               
+                    if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);                    
+                        this.menuScene?.selectNextVehicle();
+                    }               
+                }              
+        });
+        this.gamepadPrevious = gamepad;
+    }
+
     pollGamepads() {
+
+        if(!(this.currentScene instanceof GameScene))
+            return;
 
         /*
         gamepad.BUTTONS = {
