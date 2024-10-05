@@ -329,9 +329,6 @@ export default class SceneController {
         const gamepad = navigator.getGamepads()[0];
         if(!gamepad) return;
 
-        var leftShoulderJustPressed = false;
-        var rightShoulderJustPressed = false;
-
         if(!(this.currentScene instanceof MenuScene))
             return;
 
@@ -343,6 +340,14 @@ export default class SceneController {
                         this.menuScene?.selectPreviousVehicle();
                     }               
                     if(buttonIndex == GamepadEnums.RIGHT_SHOULDER && !this.gamepadPrevious.buttons[GamepadEnums.RIGHT_SHOULDER].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);                    
+                        this.menuScene?.selectNextVehicle();
+                    }         
+                    if(buttonIndex == GamepadEnums.PAD_LEFT && !this.gamepadPrevious.buttons[GamepadEnums.PAD_LEFT].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);                    
+                        this.menuScene?.selectPreviousVehicle();
+                    }               
+                    if(buttonIndex == GamepadEnums.PAD_RIGHT && !this.gamepadPrevious.buttons[GamepadEnums.PAD_RIGHT].pressed) {
                         console.log(`pressed: ${buttonIndex}`);                    
                         this.menuScene?.selectNextVehicle();
                     }               

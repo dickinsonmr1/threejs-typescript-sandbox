@@ -70,7 +70,7 @@ export class Player {
 
     public isCpuPlayer: boolean;
     public playerId: string;
-    maxHealth: number = 100;
+    maxHealth: number;
     currentHealth: number;
 
     static RespawnTimeinMs: number = 3000;
@@ -142,7 +142,8 @@ export class Player {
 
         this.playerId = uuidv4();
         this.healthBar = new HealthBar(scene, maxHealth);
-
+        
+        this.maxHealth= maxHealth;
         this.currentHealth = maxHealth;
 
         this.projectileFactory = new ProjectileFactory(particleMaterial);
@@ -691,6 +692,8 @@ export class Player {
             this.fireObjects.push(smokeObject);            
 
             this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
+
+            this.healthBar.updateValue(0);
 
             setTimeout(() => {
                 this.playerState = PlayerState.Respawning
