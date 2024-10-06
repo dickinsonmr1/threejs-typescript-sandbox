@@ -40,6 +40,11 @@ export class Utility {
       return `(${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)})`;
     }
 
+    
+    static CannonVec3ToString(position: CANNON.Vec3): string {
+      return `(${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)})`;
+    }
+
     static cylinderBodyToMesh(body: CANNON.Body, material: THREE.Material, radius: number, numSegments: number): THREE.Group {
       const group = new THREE.Group()
     
@@ -102,4 +107,8 @@ export class Utility {
           //<THREE.PointsMaterial>(points.material).dispose(); // Dispose of the material
       //}   
     }
+
+  static getEnumName(enumObj: any, enumValue: number | string): string | undefined {
+    return enumObj[enumValue];
+  }
 }

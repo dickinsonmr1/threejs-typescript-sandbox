@@ -2022,16 +2022,16 @@ export default class GameScene extends THREE.Scene {
             this.debugDivElementManager.updateElementText("RendererTotalPrograms", `WebGLRenderer total programs: ${renderer.info?.programs?.length ?? 0}`);
         }
 
-        this.debugDivElementManager.updateElementText("cpuOverrideBehavior", `CPU Override Behavior: ${this.cpuPlayerBehavior.toString()}`);
+        this.debugDivElementManager.updateElementText("cpuOverrideBehavior", `CPU Override Behavior: ${Utility.getEnumName(CpuPlayerPattern, this.cpuPlayerBehavior)}`);
 
-        this.debugDivElementManager.updateElementText("player2status", `player2status: ${this.player2.playerState}`);
-        this.debugDivElementManager.updateElementText("player2Target", `player2Target: ${Utility.ThreeVector3ToString(this.player2.target.groundTargetMesh.position)}`);
+        this.debugDivElementManager.updateElementText("player2status", `Player 2 | position: ${Utility.ThreeVector3ToString(this.player2.getPosition())} | ${Utility.getEnumName(PlayerState, this.player2.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player2.getChassisBody().velocity)}`);
+        this.debugDivElementManager.updateElementText("player2Target", `Player 2 Target: ${Utility.ThreeVector3ToString(this.player2.target.groundTargetMesh.position)} | Distance: ${this.player1.getPosition().distanceTo(this.player2.getPosition()).toFixed(2)}`);        
 
-        this.debugDivElementManager.updateElementText("player3status", `player3status: ${this.player3.playerState}`);
-        this.debugDivElementManager.updateElementText("player3Target", `player3Target: ${Utility.ThreeVector3ToString(this.player3.target.groundTargetMesh.position)}`);
+        this.debugDivElementManager.updateElementText("player3status", `Player 3 | position: ${Utility.ThreeVector3ToString(this.player3.getPosition())} | ${Utility.getEnumName(PlayerState, this.player3.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player3.getChassisBody().velocity)}`);
+        this.debugDivElementManager.updateElementText("player3Target", `Player 3 Target: ${Utility.ThreeVector3ToString(this.player3.target.groundTargetMesh.position)} | Distance: ${this.player1.getPosition().distanceTo(this.player3.getPosition()).toFixed(2)}`);
 
-        this.debugDivElementManager.updateElementText("player4status", `player4status: ${this.player4.playerState}`);        
-        this.debugDivElementManager.updateElementText("player4Target", `player4Target: ${Utility.ThreeVector3ToString(this.player4.target.groundTargetMesh.position)}`);
+        this.debugDivElementManager.updateElementText("player4status", `Player 4 | position: ${Utility.ThreeVector3ToString(this.player4.getPosition())} | ${Utility.getEnumName(PlayerState, this.player4.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player4.getChassisBody().velocity)}`);
+        this.debugDivElementManager.updateElementText("player4Target", `Player 4 Target: ${Utility.ThreeVector3ToString(this.player4.target.groundTargetMesh.position)} | Distance: ${this.player1.getPosition().distanceTo(this.player4.getPosition()).toFixed(2)}`);
 
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);
