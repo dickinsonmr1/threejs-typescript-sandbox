@@ -30,6 +30,7 @@ import { WorldConfig } from '../gameobjects/world/worldConfig';
 import { GameConfig } from '../gameconfig';
 import { PrecipitationSystem, PrecipitationType } from '../gameobjects/world/precipitationSystem';
 import { DumpsterFireObject } from '../gameobjects/weapons/dumpsterFireObject';
+import { VehicleUtil } from '../gameobjects/vehicles/vehicleUtil';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -1739,6 +1740,12 @@ export default class GameScene extends THREE.Scene {
                 continue;
             }
 
+            if(this.cpuPlayerBehavior == CpuPlayerPattern.Follow) {                
+                //VehicleUtil.updateFollowerBehavior(this.player1.getVehicleObject().getRaycastVehicle(), cpuPlayer.getVehicleObject().getRaycastVehicle())
+                VehicleUtil.updateFollowerBehaviorOnIPlayerVehicle(this.player1.getVehicleObject(), cpuPlayer.getVehicleObject());
+                continue;
+            }
+
             let temp = THREE.MathUtils.randInt(0, 200);
             switch(temp) {
             case 1:
@@ -1952,6 +1959,7 @@ export default class GameScene extends THREE.Scene {
         this.updateDebugDivElements();
         this.stats.update();
     }
+
 
     updateDebugDivElements() {
 

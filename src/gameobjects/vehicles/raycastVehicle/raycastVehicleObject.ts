@@ -26,6 +26,9 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
     private isActive: boolean = true;
 
+    getRaycastVehicle(): CANNON.RaycastVehicle{
+        return this.raycastVehicle!;
+    }
     //mesh: THREE.Mesh;
     //body?: CANNON.Body;
 

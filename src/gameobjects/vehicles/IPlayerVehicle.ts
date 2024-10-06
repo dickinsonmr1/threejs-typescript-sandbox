@@ -8,6 +8,8 @@ export interface IPlayerVehicle {
     
     getCannonVehicleChassisBody(): CANNON.Body | undefined; 
 
+    getRaycastVehicle(): CANNON.RaycastVehicle;
+
     tryTurn(x: number): void;
     tryTightTurn(x: number): void;
     tryAccelerate(): void;
