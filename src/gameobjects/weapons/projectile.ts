@@ -372,8 +372,8 @@ export class Projectile extends SphereObject {
                 
                 let positionOnTerrainAndWater = gameScene.getWorldPositionOnTerrainAndWater(groundTargetMeshLocation.x, groundTargetMeshLocation.z);
 
-                this.airstrikeTarget.setTargetMeshPosition(positionOnTerrainAndWater);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
-                this.airstrikeTarget.rotateTargetToFaceDown();
+                this.airstrikeTarget.setGroundTargetMeshPosition(positionOnTerrainAndWater);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
+                this.airstrikeTarget.rotateGroundTargetToFaceDown();
 
                 if(this.detonationBoundingMesh != null)
                     this.detonationBoundingMesh.position.set(

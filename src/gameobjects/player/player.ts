@@ -21,6 +21,7 @@ import { SmokeObject2 } from "../fx/smokeObject2";
 import Brakelights from "../vehicles/brakeLights";
 import { randFloatSpread, randInt } from "three/src/math/MathUtils.js";
 import EmergencyLights from "../vehicles/emergencyLights";
+import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
 
 export enum PlayerState {
     Alive,
@@ -278,7 +279,11 @@ export class Player {
         return this.vehicleObject.getModel().position;
     }
 
-    update(): void {
+    setTargetLocation(targetLocation:THREE.Vector3) {
+        this.target.setForwardTargetLocation(targetLocation);
+    }
+
+    update(cpuPlayerBehaviorOverride?: CpuPlayerPattern): void {
             
         this.fireObjects.forEach(x => {
             x.setEmitPosition(this.vehicleObject.getChassis().getPosition());
@@ -323,17 +328,25 @@ export class Player {
         if(this.target != null) {
             let targetOffset = new THREE.Vector3(-5, 0, 0);
             targetOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
-            this.target.setTargetLocation(Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), targetOffset));
+            this.target.setForwardTargetLocation(Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), targetOffset));
 
+            
             // TODO: move to projectile        
             let groundTargetOffset = new THREE.Vector3(-10, 0, 0);
             groundTargetOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
+
             let groundTargetMeshLocation = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), groundTargetOffset);
-            let positionOnTerrain = this.getScene().getWorldPositionOnTerrain(groundTargetMeshLocation.x, groundTargetMeshLocation.z);
-            this.target.setTargetMeshPosition(positionOnTerrain);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
-            this.target.rotateTargetToFaceDown();
+            if(this.isCpuPlayer
+                && cpuPlayerBehaviorOverride != null
+                && (cpuPlayerBehaviorOverride == CpuPlayerPattern.Follow || cpuPlayerBehaviorOverride == CpuPlayerPattern.FollowAndAttack)) {
+                    groundTargetMeshLocation = this.getScene().player1.getPosition();
+            }
+            let positionOnTerrain = this.getScene().getWorldPositionOnTerrain(groundTargetMeshLocation.x, groundTargetMeshLocation.z);                
+            
+            this.target.setGroundTargetMeshPosition(positionOnTerrain);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
+            this.target.rotateGroundTargetToFaceDown();            
         }
-        
+                
         this.playerMarker.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 2, this.getPosition().z));
 
         let offset = new THREE.Vector3(-2, 0, 0);

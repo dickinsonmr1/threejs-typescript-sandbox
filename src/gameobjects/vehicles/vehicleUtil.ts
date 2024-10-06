@@ -48,6 +48,26 @@ export class VehicleUtil {
     
         follower.applyEngineForce(acceleration * maxSpeed, 2);  // Rear wheels
     }
+    
+    static updateFollowerBehaviorOnIPlayerVehicle(leader: IPlayerVehicle, follower: IPlayerVehicle) {
+        // Calculate steering
+        const steering = VehicleUtil.calculateSteering(leader.getRaycastVehicle(), follower.getRaycastVehicle());
+    
+        // Apply steering to the follower vehicle
+        const maxSteering = 0.5;//Math.PI / 2;  // Limit steering angle
+        //follower.setSteeringValue(Math.max(-maxSteering, Math.min(maxSteering, steering)), 0);  // Front wheels
+        follower.tryTurn(Math.max(-maxSteering, Math.min(maxSteering, steering)));
+    
+        //// Match speed or follow based on distance
+        //const distance = leader.getCannonVehicleChassisBody()!.position.distanceTo(follower.getCannonVehicleChassisBody()!.position);
+        
+        //const maxSpeed = 30; //1000;
+        //const minDistance = 5;
+        //const acceleration = distance > minDistance ? 1 : 0;  // Stop when close to the leader
+    
+        //follower.applyEngineForce(acceleration * maxSpeed, 2);  // Rear wheels
+        follower.tryAccelerate();
+    }
 
     static calculateSteeringOnIPlayerVehicle(leader: IPlayerVehicle, follower: IPlayerVehicle): number {
         const leaderPosition = leader.getCannonVehicleChassisBody()!.position;
@@ -64,7 +84,7 @@ export class VehicleUtil {
         directionToTarget.normalize();
     
         // Follower forward vector
-        const followerForward = new CANNON.Vec3(0, 0, 1);
+        const followerForward = new CANNON.Vec3(-1, 0, 0);
         follower.getCannonVehicleChassisBody()!.quaternion.vmult(followerForward, followerForward);
     
         // Calculate angle between the directionToLeader and follower's forward vector
@@ -76,25 +96,6 @@ export class VehicleUtil {
         const steering = crossProduct.y < 0 ? -angle : angle;
     
         return steering;
-    }
-
-    static updateFollowerBehaviorOnIPlayerVehicle(leader: IPlayerVehicle, follower: IPlayerVehicle) {
-        // Calculate steering
-        const steering = VehicleUtil.calculateSteering(leader.getRaycastVehicle(), follower.getRaycastVehicle());
-    
-        // Apply steering to the follower vehicle
-        const maxSteering = Math.PI / 2;  // Limit steering angle
-        //follower.setSteeringValue(Math.max(-maxSteering, Math.min(maxSteering, steering)), 0);  // Front wheels
-        follower.tryTurn(Math.max(-maxSteering, Math.min(maxSteering, steering)));
-    
-        // Match speed or follow based on distance
-        const distance = leader.getCannonVehicleChassisBody()!.position.distanceTo(follower.getCannonVehicleChassisBody()!.position);
-        const maxSpeed = 1000;
-        const minDistance = 5;
-        const acceleration = distance > minDistance ? 1 : 0;  // Stop when close to the leader
-    
-        //follower.applyEngineForce(acceleration * maxSpeed, 2);  // Rear wheels
-        follower.tryAccelerate();
     }
     
 }

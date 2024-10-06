@@ -38,16 +38,16 @@ export class Target {
 
     }
 
-    setTargetLocation(position: THREE.Vector3) {
+    setForwardTargetLocation(position: THREE.Vector3) {
         this.targetLocation = position;
         this.crosshairSprite.position.set(position.x, position.y, position.z);    
     }
 
-    setTargetMeshPosition(position: THREE.Vector3){
+    setGroundTargetMeshPosition(position: THREE.Vector3){
         this.groundTargetMesh.position.set(position.x, position.y + 0.25, position.z);    
     }
 
-    rotateTargetToFaceDown() {
+    rotateGroundTargetToFaceDown() {
         //this.groundTargetMesh.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
         this.groundTargetMesh.rotation.x = -Math.PI / 2;
     }

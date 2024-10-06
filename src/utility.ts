@@ -36,6 +36,10 @@ export class Utility {
         position1.z + position2.z);
     }
 
+    static ThreeVector3ToString(position: THREE.Vector3): string {
+      return `(${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)})`;
+    }
+
     static cylinderBodyToMesh(body: CANNON.Body, material: THREE.Material, radius: number, numSegments: number): THREE.Group {
       const group = new THREE.Group()
     

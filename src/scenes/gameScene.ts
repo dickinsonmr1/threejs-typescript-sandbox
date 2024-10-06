@@ -366,9 +366,15 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.addElement("RendererTotalPrograms", "");
         this.debugDivElementManager.addElement("TraverseTotalTextures", "");
         this.debugDivElementManager.addElement("cpuOverrideBehavior", "");
+        
         this.debugDivElementManager.addElement("player2status", "");
+        this.debugDivElementManager.addElement("player2Target", "");
+
         this.debugDivElementManager.addElement("player3status", "");
+        this.debugDivElementManager.addElement("player3Target", "");
+
         this.debugDivElementManager.addElement("player4status", "");
+        this.debugDivElementManager.addElement("player4Target", "");
 
         this.debugDivElementManager.hideAllElements();
        
@@ -568,37 +574,31 @@ export default class GameScene extends THREE.Scene {
 		}
         if (event.key === '1')
 		{
-            this.sceneController.updateHealthOnHud(19);
             this.cpuPlayerBehavior = CpuPlayerPattern.Follow;
 		}
         if (event.key === '2')
 		{
-            this.sceneController.updateHealthOnHud(50);
             this.cpuPlayerBehavior = CpuPlayerPattern.FollowAndAttack;
 		}
         if (event.key === '3')
 		{
-            this.sceneController.updateHealthOnHud(80);
             this.cpuPlayerBehavior = CpuPlayerPattern.Stop;
 		}
         if (event.key === '4')
 		{
-            this.sceneController.updateShieldOnHud(25);
             this.cpuPlayerBehavior = CpuPlayerPattern.StopAndAttack;
 		}
         if (event.key === '5')
 		{
-            this.sceneController.updateTurboOnHud(50);
             this.cpuPlayerBehavior = CpuPlayerPattern.Flee;
 		}        
         if (event.key === '6')
 		{
-            this.player1.healthBar.updateValue(50);
             this.cpuPlayerBehavior = CpuPlayerPattern.Patrol;
 		}      
         if (event.key === '7')
 		{
-            this.player1.healthBar.updateValue(19);
+
 		}      
         if (event.key === 'Enter')
 		{
@@ -1743,6 +1743,7 @@ export default class GameScene extends THREE.Scene {
             if(this.cpuPlayerBehavior == CpuPlayerPattern.Follow) {                
                 //VehicleUtil.updateFollowerBehavior(this.player1.getVehicleObject().getRaycastVehicle(), cpuPlayer.getVehicleObject().getRaycastVehicle())
                 VehicleUtil.updateFollowerBehaviorOnIPlayerVehicle(this.player1.getVehicleObject(), cpuPlayer.getVehicleObject());
+                //cpuPlayer.setTargetLocation(this.player1.getPosition());
                 continue;
             }
 
@@ -1892,7 +1893,7 @@ export default class GameScene extends THREE.Scene {
         //if(this.allPlayers[0].body != null)
         //this.headLights.update(this.allPlayers[0].getPosition(), this.allPlayers[0].mesh.quaternion);
 
-        this.allPlayers.forEach(player => player.update());
+        this.allPlayers.forEach(player => player.update(this.cpuPlayerBehavior));
         
         let playerPosition = this.player1.getPosition();
 
@@ -2024,8 +2025,13 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.updateElementText("cpuOverrideBehavior", `CPU Override Behavior: ${this.cpuPlayerBehavior.toString()}`);
 
         this.debugDivElementManager.updateElementText("player2status", `player2status: ${this.player2.playerState}`);
+        this.debugDivElementManager.updateElementText("player2Target", `player2Target: ${Utility.ThreeVector3ToString(this.player2.target.groundTargetMesh.position)}`);
+
         this.debugDivElementManager.updateElementText("player3status", `player3status: ${this.player3.playerState}`);
-        this.debugDivElementManager.updateElementText("player4status", `player4status: ${this.player4.playerState}`);
+        this.debugDivElementManager.updateElementText("player3Target", `player3Target: ${Utility.ThreeVector3ToString(this.player3.target.groundTargetMesh.position)}`);
+
+        this.debugDivElementManager.updateElementText("player4status", `player4status: ${this.player4.playerState}`);        
+        this.debugDivElementManager.updateElementText("player4Target", `player4Target: ${Utility.ThreeVector3ToString(this.player4.target.groundTargetMesh.position)}`);
 
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);
