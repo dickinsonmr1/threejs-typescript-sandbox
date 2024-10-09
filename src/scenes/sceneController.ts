@@ -351,6 +351,10 @@ export default class SceneController {
                         console.log(`pressed: ${buttonIndex}`);                    
                         this.menuScene?.selectNextVehicle();
                     }               
+                    if(buttonIndex == GamepadEnums.FACE_1 && !this.gamepadPrevious.buttons[GamepadEnums.FACE_1].pressed) {
+                        console.log(`pressed: ${buttonIndex}`);                    
+                        this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, "arena");
+                    }     
                 }              
         });
         this.gamepadPrevious = gamepad;

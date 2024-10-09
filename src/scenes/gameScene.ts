@@ -742,6 +742,13 @@ export default class GameScene extends THREE.Scene {
             this.debugOrbitControls.target.addScaledVector(upVector, -cameraMovement);
         }   
 
+         // down
+        if(this.keyDown.has('0')) {
+            var targetPosition = this.debugOrbitCamera.position;
+            //this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugOrbitControls.target = this.player1.getPosition();
+            
+        }   
         // down
         if(this.keyDown.has('1')) {
             var targetPosition = this.player1.getPosition();
