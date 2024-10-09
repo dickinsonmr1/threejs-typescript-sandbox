@@ -138,7 +138,7 @@ export default class GameScene extends THREE.Scene {
     player3!: Player;
     player4!: Player;
 
-    cpuPlayerBehavior: CpuPlayerPattern = CpuPlayerPattern.Patrol;
+    cpuPlayerBehavior: CpuPlayerPattern = CpuPlayerPattern.FollowAndAttack;
 
     //private allRigidVehicleObjects: IPlayerVehicle[] = [];
 
@@ -1740,15 +1740,16 @@ export default class GameScene extends THREE.Scene {
                 continue;
             }
 
-            if(this.cpuPlayerBehavior == CpuPlayerPattern.Follow) {                
+            if(this.cpuPlayerBehavior == CpuPlayerPattern.Follow || this.cpuPlayerBehavior == CpuPlayerPattern.FollowAndAttack) {                
                 //VehicleUtil.updateFollowerBehavior(this.player1.getVehicleObject().getRaycastVehicle(), cpuPlayer.getVehicleObject().getRaycastVehicle())
                 VehicleUtil.updateFollowerBehaviorOnIPlayerVehicle(this.player1.getVehicleObject(), cpuPlayer.getVehicleObject());
                 //cpuPlayer.setTargetLocation(this.player1.getPosition());
-                continue;
             }
 
-            let temp = THREE.MathUtils.randInt(0, 200);
-            switch(temp) {
+            // movement
+            let randMovement = THREE.MathUtils.randInt(0, 200);
+            switch(randMovement) {
+            /*
             case 1:
             case 2:
                 cpuPlayer.tryAccelerateWithKeyboard();
@@ -1777,6 +1778,7 @@ export default class GameScene extends THREE.Scene {
                 cpuPlayer.tryReverseWithKeyboard();
                 //cpuPlayer.tryTurn(0.5);
                 break;
+            */
             case 60:
                 cpuPlayer.tryJump();                
                 //cpuPlayer.tryTurn(0.5);
@@ -1784,27 +1786,36 @@ export default class GameScene extends THREE.Scene {
             case 70:
                 cpuPlayer.tryTurbo();
                 break;
-            case 80:
-            case 81:
-                var projectile = cpuPlayer.createProjectile(ProjectileType.Bullet);
-                this.addNewProjectile(projectile);
-                break;
-            case 90:
-                var projectile = cpuPlayer.createProjectile(ProjectileType.Rocket);
-                this.addNewProjectile(projectile);
-                break;
-            case 100:
-            case 101:
-                cpuPlayer.tryFireFlamethrower();
-                break;
-            case 110:
-            case 111:
-                cpuPlayer.tryFireAirStrike();
-                break;
-            case 120:
-                cpuPlayer.tryFireDumpster();
-                break;
             default:
+                break;
+            }
+
+            // weapons
+            if(this.cpuPlayerBehavior == CpuPlayerPattern.FollowAndAttack || this.cpuPlayerBehavior == CpuPlayerPattern.StopAndAttack) {
+                let randomWeaponFiring = THREE.MathUtils.randInt(80, 200);
+                switch(randomWeaponFiring) {            
+                case 81:
+                    var projectile = cpuPlayer.createProjectile(ProjectileType.Bullet);
+                    this.addNewProjectile(projectile);
+                    break;
+                case 90:
+                    var projectile = cpuPlayer.createProjectile(ProjectileType.Rocket);
+                    this.addNewProjectile(projectile);
+                    break;
+                case 100:
+                case 101:
+                    cpuPlayer.tryFireFlamethrower();
+                    break;
+                case 110:
+                case 111:
+                    cpuPlayer.tryFireAirStrike();
+                    break;
+                case 120:
+                    cpuPlayer.tryFireDumpster();
+                    break;
+                default:
+                    break;
+                }
             }
         }
 
