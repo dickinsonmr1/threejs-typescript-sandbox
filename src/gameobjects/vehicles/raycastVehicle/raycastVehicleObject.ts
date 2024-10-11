@@ -78,16 +78,16 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const frontWheelOptions = {
             radius: frontWheelRadius,
             directionLocal: new CANNON.Vec3(0, -1, 0),
-            suspensionStiffness: 40,
+            suspensionStiffness: 50,
             suspensionRestLength: 0.25,
             frictionSlip: 5.0, // 1.4
-            dampingRelaxation: 4.5,
-            dampingCompression: 4.4,
+            dampingRelaxation: 6.0,
+            dampingCompression: 5.0,
             maxSuspensionForce: 100000,
             rollInfluence: 0.01,
             axleLocal: new CANNON.Vec3(0, 0, 1),
             chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
-            maxSuspensionTravel: 5, // 0.3
+            maxSuspensionTravel: 10, // 0.3
             customSlidingRotationalSpeed: -30,
             useCustomSlidingRotationalSpeed: true,
         };
@@ -95,16 +95,16 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const rearWheelOptions = {
             radius: rearWheelRadius,
             directionLocal: new CANNON.Vec3(0, -1, 0),
-            suspensionStiffness: 40,
+            suspensionStiffness: 50,
             suspensionRestLength: 0.25,
             frictionSlip: 5.0, // 1.4
-            dampingRelaxation: 4.5,
-            dampingCompression: 4.4,
+            dampingRelaxation: 6.0,
+            dampingCompression: 5.0,
             maxSuspensionForce: 100000,
             rollInfluence: 0.01,
             axleLocal: new CANNON.Vec3(0, 0, 1),
             chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
-            maxSuspensionTravel: 5, // 0.3
+            maxSuspensionTravel: 10, // 0.3
             customSlidingRotationalSpeed: -30,
             useCustomSlidingRotationalSpeed: true,
         };

@@ -201,8 +201,8 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    new CANNON.Vec3(1, 0.35, 0.5), // chassis dimensions
+                    new CANNON.Vec3(0, 0.25, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
                     
@@ -370,16 +370,16 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
-                    new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
+                    new CANNON.Vec3(0.9, 0.35, 0.45), // chassis dimensions
+                    new CANNON.Vec3(0, 0.35, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
                     
                     0.25,                           // front wheel radius
                     0.25,                       //rear wheel radius
 
-                    new CANNON.Vec3(0.5, 0, 0),   // front wheel offset - ignores z for now
-                    new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset - ignores z for now
+                    new CANNON.Vec3(0.4, 0, 0),   // front wheel offset - ignores z for now
+                    new CANNON.Vec3(0.4, 0, 0),   // rear wheel offset - ignores z for now
                     
                     0.25,    // front wheel height
                     0.25,    // rear wheel height
