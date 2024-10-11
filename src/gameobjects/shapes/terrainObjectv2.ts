@@ -16,6 +16,8 @@ export class TerrainObjectv2 {
 
     displacementMesh?: THREE.Mesh;
 
+    fog: THREE.Fog;
+
     constructor(scene: THREE.Scene,
         meshMaterial: THREE.Material,
         world: CANNON.World,
@@ -34,6 +36,8 @@ export class TerrainObjectv2 {
             new THREE.PlaneGeometry( height, width, 100, 100),
             meshMaterial
         );
+
+        this.fog = scene.fog as THREE.Fog;
 
         let grid = new THREE.GridHelper( height, 10, 0xffffff, 0xffffff );
         grid.material.opacity = 1;
@@ -136,8 +140,12 @@ export class TerrainObjectv2 {
             midTexture: { value: texture3 },
             highMidTexture: { value: texture4 },
             highTexture: { value: texture5 },
-            heightFactor: { value: heightFactor }
+            heightFactor: { value: heightFactor },
+            fogColor: { value: this.fog.color },
+            fogNear: { value: (this.fog as THREE.Fog).near },
+            fogFar: { value: (this.fog as THREE.Fog).far },
           },
+          fog: true,
           vertexShader: this.vertexShader4(),
           fragmentShader: this.fragmentShader4(),
       });
@@ -176,9 +184,18 @@ export class TerrainObjectv2 {
       return `
       varying vec3 vPosition;
       varying vec2 vUv;
+      varying float vFogDepth;
+
       void main() {
         vPosition = position;
         vUv = uv;
+        
+        // Calculate model-view position (required for fog)
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+
+        // Pass the fog depth (distance from the camera)
+        vFogDepth = -mvPosition.z;
+
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
       `
@@ -186,15 +203,22 @@ export class TerrainObjectv2 {
 
     fragmentShader4() {
       return `
+
       uniform sampler2D lowTexture;
       uniform sampler2D lowMidTexture;
       uniform sampler2D midTexture;
       uniform sampler2D highMidTexture;
-      uniform sampler2D highTexture;
+      uniform sampler2D highTexture;      
       
       uniform float heightFactor;
+
+      uniform vec3 fogColor;
+      uniform float fogNear;
+      uniform float fogFar;
+
       varying vec3 vPosition;      
       varying vec2 vUv;
+      varying float vFogDepth;
 
       void main() {
         float height = vPosition.z / heightFactor; // Normalize height to 0.0 - 1.0
@@ -212,7 +236,13 @@ export class TerrainObjectv2 {
         color = mix(color, highMidColor, smoothstep(0.5, 0.75, height));
         color = mix(color, highColor, smoothstep(0.75, 1.0, height));
 
-        gl_FragColor = color;
+        //gl_FragColor = color;
+
+        // Fog factor calculation (standard linear fog)
+        float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
+
+        // Mix base color with fog color based on fog factor
+        gl_FragColor = vec4(mix(color.rgb, fogColor, fogFactor), color.a);
       }
         `
     }

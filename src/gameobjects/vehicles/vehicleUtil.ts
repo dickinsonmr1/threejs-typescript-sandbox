@@ -62,12 +62,15 @@ export class VehicleUtil {
         const distance = leader.getCannonVehicleChassisBody()!.position.distanceTo(follower.getCannonVehicleChassisBody()!.position);
         
         //const maxSpeed = 30; //1000;
-        const minDistance = 5;
+        const distantThreshold = 20;
+        const closeThreshold = 10;
         //const acceleration = distance > minDistance ? 1 : 0;  // Stop when close to the leader
     
         //follower.applyEngineForce(acceleration * maxSpeed, 2);  // Rear wheels
         
-        if(distance > minDistance)
+        if(distance > distantThreshold)            
+            follower.tryAccelerateWithJoystick(1);
+        else if(distance > closeThreshold)
             follower.tryAccelerateWithJoystick(0.5);
     }
 

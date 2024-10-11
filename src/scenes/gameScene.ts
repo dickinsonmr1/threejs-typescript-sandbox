@@ -187,9 +187,11 @@ export default class GameScene extends THREE.Scene {
         this.sceneController = sceneController;
         this.gameConfig = gameConfig;
         
-        //const color = 0xFFFFFF;
-        //const density = 0.1;
+        const color = 0xFFFFFF;
+        const density = 0.1;
         //this.fog = new THREE.FogExp2(color, density);
+
+        this.fog = new THREE.Fog(0xaaaaaa, 10, 50);
 
         //this.overrideMaterial = new THREE.MeshBasicMaterial({ color: "green" });
         //this.background = new THREE.Color(0xB1E1FF);
@@ -1376,6 +1378,8 @@ export default class GameScene extends THREE.Scene {
         this.allPlayers.push(this.player3);
         this.allPlayers.push(this.player4);
 
+        this.allPlayers.forEach(x => x.tryRespawn());
+
         //this.rigidVehicleObject.model?.add(this.camera);        
         this.camera.position.x = 0;
         this.camera.position.y = 2;        
@@ -1410,11 +1414,11 @@ export default class GameScene extends THREE.Scene {
                     //vertexColors: true
                 }),
             */                 
-            new THREE.MeshBasicMaterial({
+            new THREE.MeshStandardMaterial({
                 color: 0x007700,
                 //wireframe: false,
                 //depthWrite: true,
-                //fog: true,
+                fog: true,
                 //map: texture
             }),
             /*

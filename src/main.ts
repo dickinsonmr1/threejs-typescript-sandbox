@@ -27,7 +27,7 @@ renderer.outputColorSpace = 'srgb';
 // https://threejs.org/examples/?q=sprites#webgl_sprites
 renderer.autoClear = false; // To allow render overlay
 
-const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 500);
+const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 50);
 
 const debugOrbitCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 500);
 debugOrbitCamera.position.set(0, 10, 0);
