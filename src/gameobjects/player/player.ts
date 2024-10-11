@@ -98,7 +98,7 @@ export class Player {
     private fireLeft: boolean = false;
     private projectileFactory: ProjectileFactory;// = new ProjectileFactory();
 
-    private maxBulletCooldownTimeInSeconds: number = 0.20;
+    private maxBulletCooldownTimeInSeconds: number = 0.15;
     private bulletCooldownClock: THREE.Clock = new THREE.Clock(false);
 
     private maxDeathExplosionTimeInSeconds: number = 0.25;

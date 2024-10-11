@@ -78,10 +78,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const frontWheelOptions = {
             radius: frontWheelRadius,
             directionLocal: new CANNON.Vec3(0, -1, 0),
-            suspensionStiffness: 30,
-            suspensionRestLength: 0.3,
-            frictionSlip: 3.0, // 1.4
-            dampingRelaxation: 2.3,
+            suspensionStiffness: 40,
+            suspensionRestLength: 0.25,
+            frictionSlip: 5.0, // 1.4
+            dampingRelaxation: 4.5,
             dampingCompression: 4.4,
             maxSuspensionForce: 100000,
             rollInfluence: 0.01,
@@ -95,10 +95,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const rearWheelOptions = {
             radius: rearWheelRadius,
             directionLocal: new CANNON.Vec3(0, -1, 0),
-            suspensionStiffness: 30,
-            suspensionRestLength: 0.3,
-            frictionSlip: 3.0, // 1.4
-            dampingRelaxation: 2.3,
+            suspensionStiffness: 40,
+            suspensionRestLength: 0.25,
+            frictionSlip: 5.0, // 1.4
+            dampingRelaxation: 4.5,
             dampingCompression: 4.4,
             maxSuspensionForce: 100000,
             rollInfluence: 0.01,
@@ -224,7 +224,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     tryJump(): void {      
         if(!this.isActive) return;  
 
-        this.raycastVehicle?.chassisBody.applyImpulse(new CANNON.Vec3(0, this.chassis.body.mass * 10, 0));
+        this.raycastVehicle?.chassisBody.applyImpulse(new CANNON.Vec3(0, this.chassis.body.mass * 7.5, 0));
     }
     
     tryTurbo(): void {
@@ -397,7 +397,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     update() {
-
+        
         //this.raycastVehicle?.updateVehicle(1);
         this.chassis.update();  
         //this.wheels.forEach(x => x.update());

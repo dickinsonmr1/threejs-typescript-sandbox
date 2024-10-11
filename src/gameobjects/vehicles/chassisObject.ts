@@ -33,7 +33,9 @@ export class ChassisObject {
         chassisBody.addShape(chassisShape, centerOfMassAdjust);
 
         chassisBody.position.set(position.x, position.y, position.z);
-        chassisBody.angularVelocity.set(0, 0.5, 0);
+        //chassisBody.angularVelocity.set(0, 0.5, 0);
+        chassisBody.linearDamping = 0.05;
+        chassisBody.angularDamping = 0.3;
 
         this.body = chassisBody;
         world.addBody(this.body);

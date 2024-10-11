@@ -135,6 +135,9 @@ export class RigidVehicleObject implements IPlayerVehicle {
             this.model.rotateY(Math.PI / 2);
         }
     }
+    getRaycastVehicle(): CANNON.RaycastVehicle {
+        throw new Error("Method not implemented.");
+    }
     setAcceptInput(isActive: boolean): void {
         throw new Error("Method not implemented.");
     }
