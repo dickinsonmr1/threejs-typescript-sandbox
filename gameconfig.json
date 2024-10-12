@@ -1,6 +1,9 @@
 {    
     "isDebug": true,
     "controlType": 0,
+
+    "farDrawDistance": 100,
+    
     "useFog": true,
     "fogNear": 10,
     "fogFar": 50
