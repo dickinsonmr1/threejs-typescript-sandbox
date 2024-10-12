@@ -1,5 +1,3 @@
-
-
 export class DebugDivElementManager {
 
     debugDivElements: HTMLDivElement[] = [];
@@ -9,6 +7,17 @@ export class DebugDivElementManager {
     constructor(startY: number, paddingY: number) {
         this.currentY = startY;  
         this.paddingY = paddingY;      
+    }
+
+    addNamedElementPlaceholders(items: string[]) {
+        
+        items.forEach(item =>
+        {
+            this.currentY += this.paddingY;
+
+            let divElement = this.generateDivElement(item, 25, this.currentY, "");
+            this.debugDivElements.push(divElement);
+        });        
     }
 
     addElement(name: string, text: string) {
