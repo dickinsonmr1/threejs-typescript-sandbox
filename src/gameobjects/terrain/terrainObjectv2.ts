@@ -175,7 +175,7 @@ export class TerrainObjectv2 {
     getWorldPositionOnTerrain(x: number, z: number): THREE.Vector3 {
       
       let worldPosition = new THREE.Vector3(0,0,0);
-      
+
       let startPosition = new THREE.Vector3(x, 100, z);
       let endPosition = new THREE.Vector3(x, -100, z);
 
@@ -189,6 +189,32 @@ export class TerrainObjectv2 {
       }
 
       return worldPosition;
+  }
+
+  generateGrassBillboards(textureName: string, mapWidth: number, mapHeight: number, yMin: number, yMax: number, maxCount: number): THREE.Points {
+
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [];
+
+    const sprite = new THREE.TextureLoader().load( textureName );
+    sprite.colorSpace = THREE.SRGBColorSpace;
+
+    for ( let i = 0; i < maxCount; i ++ ) {
+
+        const x = mapWidth * Math.random() - mapWidth / 2;
+        const z = mapHeight * Math.random() - mapHeight / 2;
+
+        let tempVector3 = this.getWorldPositionOnTerrain(x, z);
+        if(tempVector3.y > yMin && tempVector3.y < yMax)
+            vertices.push( tempVector3.x, tempVector3.y, tempVector3.z );
+    }
+
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+
+    var material = new THREE.PointsMaterial( { size: 1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: false, depthTest: true, depthWrite: false } );
+    //material.color.setHSL( 1.0, 0.3, 0.7, THREE.SRGBColorSpace );
+
+    return new THREE.Points( geometry, material );
   }
 
     vertexShader4() {

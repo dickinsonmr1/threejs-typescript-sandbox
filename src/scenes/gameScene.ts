@@ -385,33 +385,7 @@ export default class GameScene extends THREE.Scene {
                 
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
-    }
-    generateGrassBillboards(textureName: string, mapWidth: number, mapHeight: number, yMin: number, yMax: number, maxCount: number) {
-
-        const geometry = new THREE.BufferGeometry();
-        const vertices = [];
-
-        const sprite = new THREE.TextureLoader().load( textureName );
-        sprite.colorSpace = THREE.SRGBColorSpace;
-
-        for ( let i = 0; i < maxCount; i ++ ) {
-
-            const x = mapWidth * Math.random() - mapWidth / 2;
-            const z = mapHeight * Math.random() - mapHeight / 2;
-
-            let tempVector3 = this.terrain.getWorldPositionOnTerrain(x, z);
-            if(tempVector3.y > yMin && tempVector3.y < yMax)
-                vertices.push( tempVector3.x, tempVector3.y, tempVector3.z );
-        }
-
-        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-
-        var material = new THREE.PointsMaterial( { size: 1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: false, depthTest: true, depthWrite: false } );
-        //material.color.setHSL( 1.0, 0.3, 0.7, THREE.SRGBColorSpace );
-
-        this.grassBillboards = new THREE.Points( geometry, material );
-        this.add( this.grassBillboards );
-    }
+    }   
 
     private handleKeyDown = (event: KeyboardEvent) => {        
         /*
@@ -1042,7 +1016,7 @@ export default class GameScene extends THREE.Scene {
         this.generateBoundingWalls();
 
         if(this.worldConfig.grassBillboard != null && this.worldConfig.grassBillboardStartY != null && this.worldConfig.grassBillboardEndY != null ) {
-            this.generateGrassBillboards(
+            var billboards = this.terrain.generateGrassBillboards(
                 this.worldConfig.grassBillboard,
                 this.heightMapTextureAsArray.getImageWidth(),
                 this.heightMapTextureAsArray.getImageHeight(),
@@ -1050,6 +1024,7 @@ export default class GameScene extends THREE.Scene {
                 this.worldConfig.grassBillboardEndY,
                 100000
             );
+            this.add( billboards );
         }                
     }
 
