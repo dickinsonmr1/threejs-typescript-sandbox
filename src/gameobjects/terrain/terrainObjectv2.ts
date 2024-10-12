@@ -8,13 +8,10 @@ import { WorldConfig } from "../world/worldConfig";
 export class TerrainObjectv2 {
     
     body?: CANNON.Body;
-    heightfieldShape!: CANNON.Heightfield;
-    physicsMaterial?: CANNON.Material;
+    mesh: THREE.Mesh;
 
-    generatedMesh: THREE.Mesh;
-    grid?: THREE.GridHelper;
-
-    displacementMesh?: THREE.Mesh;
+    private heightfieldShape!: CANNON.Heightfield;
+    private physicsMaterial?: CANNON.Material;
 
     fog: THREE.Fog;
 
@@ -32,11 +29,6 @@ export class TerrainObjectv2 {
 
         this.physicsMaterial = physicsMaterial;
         
-        this.generatedMesh = new THREE.Mesh(
-            new THREE.PlaneGeometry( height, width, 100, 100),
-            meshMaterial
-        );
-
         this.fog = scene.fog as THREE.Fog;
 
         let grid = new THREE.GridHelper( height, 10, 0xffffff, 0xffffff );
@@ -50,16 +42,12 @@ export class TerrainObjectv2 {
 
         const planeSize = width * 2;
         var geometry = this.generateMeshFromHeightData(height, width, dataArray2D);
-        var material = this.generateMaterialv2(
-            planeSize,
-            heightFactor,
-            worldConfig
-        );
+        var material = this.generateMaterialv2(planeSize, heightFactor, worldConfig);
 
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.rotation.x = -Math.PI / 2;
-        mesh.rotation.z = Math.PI / 2;
-        scene.add(mesh);        
+        this.mesh = new THREE.Mesh(geometry, material);
+        this.mesh.rotation.x = -Math.PI / 2;
+        this.mesh.rotation.z = Math.PI / 2;
+        scene.add(this.mesh);    
     }
     
     getPhysicsMaterial(): CANNON.Material {
@@ -71,20 +59,20 @@ export class TerrainObjectv2 {
     }
 
     getPosition() {
-        return this.generatedMesh?.position;
+        return this.mesh.position;
     }
 
     update() {
         if(this.body != null) {
-            this.generatedMesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
-            this.generatedMesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
-            this.body.updateAABB();
+            //this.generatedMesh.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position));
+            //this.generatedMesh.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
+            //this.body.updateAABB();
         }        
     }
 
     generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = []): CANNON.Body {           
 
-      // generate physics object
+        // generate physics object
         var matrix: number[][] = [];
 
         // scale by heightFactor
@@ -122,8 +110,7 @@ export class TerrainObjectv2 {
         return heightfieldBody;
     }    
 
-    generateMaterialv2(planeSize: number, heightFactor: number, worldConfig: WorldConfig
-    ): THREE.Material {
+    generateMaterialv2(planeSize: number, heightFactor: number, worldConfig: WorldConfig): THREE.Material {
 
       const repeats = planeSize / 2;
       const loader = new THREE.TextureLoader();
@@ -179,6 +166,10 @@ export class TerrainObjectv2 {
         texture.needsUpdate = true;
 
         return texture;
+    }
+
+    getHeightFieldShape(): CANNON.Heightfield {
+      return this.heightfieldShape;
     }
 
     vertexShader4() {

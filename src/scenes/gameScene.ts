@@ -1670,7 +1670,7 @@ export default class GameScene extends THREE.Scene {
 
         let worldPosition = new THREE.Vector3(0,0,0);
 
-        if(!this.terrain || !this.terrain.heightfieldShape)
+        if(!this.terrain || !this.terrain.getHeightFieldShape())
             return new THREE.Vector3(0,0,0);
 
         let startPosition = new THREE.Vector3(x, 100, z);
