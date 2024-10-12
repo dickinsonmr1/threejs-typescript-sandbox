@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
-import { TextureToArray } from "./textureToArray";
+import { TextureToArray } from "../shapes/textureToArray";
 import { WorldConfig } from "../world/worldConfig";
 
 

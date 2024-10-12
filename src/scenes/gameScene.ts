@@ -20,7 +20,7 @@ import { Utility } from '../utility';
 import { TextureToArray } from '../gameobjects/shapes/textureToArray';
 import { Water } from 'three/addons/objects/Water.js';
 import { DebugDivElementManager } from './debugDivElementManager';
-import { TerrainObjectv2 } from '../gameobjects/shapes/terrainObjectv2';
+import { TerrainObjectv2 } from '../gameobjects/terrain/terrainObjectv2';
 import { PickupObject2 } from '../gameobjects/pickupObject2';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { CpuPlayerPattern } from '../gameobjects/player/cpuPlayerPatternEnums';
