@@ -447,7 +447,7 @@ export default class GameScene extends THREE.Scene {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
     }
-    generateGrassBillboards(textureName: string, mapWidth: number, mapHeight: number, yMin: number, yMax: number) {
+    generateGrassBillboards(textureName: string, mapWidth: number, mapHeight: number, yMin: number, yMax: number, maxCount: number) {
 
         const geometry = new THREE.BufferGeometry();
         const vertices = [];
@@ -455,12 +455,12 @@ export default class GameScene extends THREE.Scene {
         const sprite = new THREE.TextureLoader().load( textureName );
         sprite.colorSpace = THREE.SRGBColorSpace;
 
-        for ( let i = 0; i < 100000; i ++ ) {
+        for ( let i = 0; i < maxCount; i ++ ) {
 
             const x = mapWidth * Math.random() - mapWidth / 2;
             const z = mapHeight * Math.random() - mapHeight / 2;
 
-            let tempVector3 = this.getWorldPositionOnTerrain(x, z);
+            let tempVector3 = this.terrain.getWorldPositionOnTerrain(x, z);
             if(tempVector3.y > yMin && tempVector3.y < yMax)
                 vertices.push( tempVector3.x, tempVector3.y, tempVector3.z );
         }
@@ -925,7 +925,7 @@ export default class GameScene extends THREE.Scene {
 
         let randX = randFloat(-mapWidth / 2, mapWidth / 2);        
         let randZ = randFloat(-mapHeight / 2, mapHeight / 2);
-        let spawnPosition = this.getWorldPositionOnTerrain(randX, randZ);
+        let spawnPosition = this.terrain.getWorldPositionOnTerrain(randX, randZ);
         spawnPosition.y += 0.75;
 
         let randCubeSize = 0.75; //randFloat(0.5, 2);
@@ -1455,7 +1455,8 @@ export default class GameScene extends THREE.Scene {
                 this.heightMapTextureAsArray.getImageWidth(),
                 this.heightMapTextureAsArray.getImageHeight(),
                 this.worldConfig.grassBillboardStartY,
-                this.worldConfig.grassBillboardEndY
+                this.worldConfig.grassBillboardEndY,
+                100000
             );
         }                
     }
@@ -1589,7 +1590,7 @@ export default class GameScene extends THREE.Scene {
                 */
 
                 // alternate collision: based on calculating height of terrain
-                let worldPosition = this.getWorldPositionOnTerrain(projectile.group.position.x, projectile.group.position.z );        
+                let worldPosition = this.terrain.getWorldPositionOnTerrain(projectile.group.position.x, projectile.group.position.z );        
                 if(projectile.group.position.y <= worldPosition.y) {
                     
                     this.generateRandomExplosion(
@@ -1666,28 +1667,6 @@ export default class GameScene extends THREE.Scene {
         });
     }
 
-    public getWorldPositionOnTerrain(x: number, z: number): THREE.Vector3 {
-
-        let worldPosition = new THREE.Vector3(0,0,0);
-
-        if(!this.terrain || !this.terrain.getHeightFieldShape())
-            return new THREE.Vector3(0,0,0);
-
-        let startPosition = new THREE.Vector3(x, 100, z);
-        let endPosition = new THREE.Vector3(x, -100, z);
-
-        let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(startPosition), Utility.ThreeVec3ToCannonVec3(endPosition));                
-        var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
-        if(this.terrain.body != null) {
-            ray.intersectBody(this.terrain.body, raycastResult);
-        }
-        if(raycastResult != null && raycastResult.hasHit) {
-            worldPosition = Utility.CannonVec3ToThreeVec3(raycastResult.hitPointWorld);           
-        }
-
-        return worldPosition;
-    }
-
     public getWorldPositionOnTerrainAndWater(x: number, z: number): THREE.Vector3 {
 
         let waterPosition = new THREE.Vector3(0,0,0);
@@ -1695,7 +1674,7 @@ export default class GameScene extends THREE.Scene {
         if(this.water != null)
             waterPosition = this.water.position;
 
-        var position = this.getWorldPositionOnTerrain(x, z);
+        var position = this.terrain.getWorldPositionOnTerrain(x, z);
 
         if(this.water != null && waterPosition.y > position.y)
             position.y = waterPosition.y;

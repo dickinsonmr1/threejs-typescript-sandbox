@@ -341,7 +341,7 @@ export class Player {
                 && (cpuPlayerBehaviorOverride == CpuPlayerPattern.Follow || cpuPlayerBehaviorOverride == CpuPlayerPattern.FollowAndAttack)) {
                     groundTargetMeshLocation = this.getScene().player1.getPosition();
             }
-            let positionOnTerrain = this.getScene().getWorldPositionOnTerrain(groundTargetMeshLocation.x, groundTargetMeshLocation.z);                
+            let positionOnTerrain = this.getScene().terrain.getWorldPositionOnTerrain(groundTargetMeshLocation.x, groundTargetMeshLocation.z);                
             
             this.target.setGroundTargetMeshPosition(positionOnTerrain);//new THREE.Vector3(worldPosition.x, worldPosition.y + 1, worldPosition.z));        
             this.target.rotateGroundTargetToFaceDown();            
@@ -726,7 +726,7 @@ export class Player {
         let randX = THREE.MathUtils.randFloat(-mapDimensions.x / 2, mapDimensions.x / 2);        
         let randZ = THREE.MathUtils.randFloat(-mapDimensions.z / 2, mapDimensions.z / 2);
 
-        let worldPosition = this.getScene().getWorldPositionOnTerrain(randX, randZ);
+        let worldPosition = this.getScene().terrain.getWorldPositionOnTerrain(randX, randZ);
 
         this.vehicleObject.setAcceptInput(true);
         this.vehicleObject.respawnPosition(worldPosition.x, worldPosition.y + 2, worldPosition.z);
@@ -866,7 +866,7 @@ export class Player {
 
         let gameScene = <GameScene>this.scene;
 
-        var position = gameScene.getWorldPositionOnTerrain(this.getPosition().x, this.getPosition().z);
+        var position = gameScene.terrain.getWorldPositionOnTerrain(this.getPosition().x, this.getPosition().z);
         position.y += 2;
 
         this.vehicleObject.resetPosition(position);

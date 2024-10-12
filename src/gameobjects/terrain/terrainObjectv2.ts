@@ -172,6 +172,25 @@ export class TerrainObjectv2 {
       return this.heightfieldShape;
     }
 
+    getWorldPositionOnTerrain(x: number, z: number): THREE.Vector3 {
+      
+      let worldPosition = new THREE.Vector3(0,0,0);
+      
+      let startPosition = new THREE.Vector3(x, 100, z);
+      let endPosition = new THREE.Vector3(x, -100, z);
+
+      let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(startPosition), Utility.ThreeVec3ToCannonVec3(endPosition));                
+      var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
+      if(this.body != null) {
+          ray.intersectBody(this.body, raycastResult);
+      }
+      if(raycastResult != null && raycastResult.hasHit) {
+          worldPosition = Utility.CannonVec3ToThreeVec3(raycastResult.hitPointWorld);           
+      }
+
+      return worldPosition;
+  }
+
     vertexShader4() {
       return `
       varying vec3 vPosition;
