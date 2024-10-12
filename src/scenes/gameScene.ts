@@ -311,11 +311,13 @@ export default class GameScene extends THREE.Scene {
             "TraverseTotalTextures",
             "cpuOverrideBehavior",
             
-            "player2status",
+            "player2Status",
             "player2Target",
-            "player3status",
+
+            "player3Status",
             "player3Target",
-            "player4status",
+
+            "player4Status",
             "player4Target",
         ]);
         this.debugDivElementManager.hideAllElements();
@@ -814,7 +816,7 @@ export default class GameScene extends THREE.Scene {
         );
         */
 
-        const cube = new PickupObject2(this,
+        const item = new PickupObject2(this,
             randCubeSize, randCubeSize, randCubeSize,
             spawnPosition,
             0xffffff,
@@ -823,7 +825,7 @@ export default class GameScene extends THREE.Scene {
             1
         );
 
-        this.pickups.push(cube);
+        this.pickups.push(item);
     }
 
     async generateRandomExplosion(
@@ -958,58 +960,20 @@ export default class GameScene extends THREE.Scene {
         // attach follow camera to player 1
         this.player1.getVehicleObject().getModel()?.add(this.followCam);
         this.followCam.position.set(5, 3, 0); // camera target offset related to car
-
-        //this.allRigidVehicleObjects.push(this.player1.getVehicleObject());        
     }
 
     private generateMap(): void {
         this.groundMaterial = new CANNON.Material("groundMaterial");
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
-
         // width and height need to match dimensions of heightmap
         this.terrain = new TerrainObjectv2(this,
-            /*
-            new THREE.MeshPhongMaterial(
-                {
-                    color: 0x44dd44,
-                    depthWrite: true,
-                    //wireframe: true,
-                    side: THREE.DoubleSide,
-                    bumpMap: normalMap,                    
-                    //vertexColors: true
-                }),
-            */                 
-            new THREE.MeshStandardMaterial({
-                color: 0x007700,
-                //wireframe: false,
-                //depthWrite: true,
-                fog: true,
-                //map: texture
-            }),
-            /*
-            new THREE.MeshStandardMaterial({
-                color: 0x004400, 
-                emissive: 0x004400,
-                roughness: 0.9,
-                metalness: 0.3,
-                map: texture 
-            }),            
-            */
-            /*
-            new THREE.MeshLambertMaterial({
-                color: 0x004400,
-                emissive: 0x004400,
-                emissiveIntensity: 0.5,
-                map: texture,
-
-            }),
-            */
             this.world,
             this.groundMaterial,
             this.heightMapTextureAsArray,
             5,
-            this.worldConfig
+            this.worldConfig,
+            this.gameConfig
         );
 
         this.generateGroundPlane();
@@ -1456,11 +1420,6 @@ export default class GameScene extends THREE.Scene {
 
         this.flamethrowerEmitters.forEach(x => x.update());
 
-        //this.healthBar.update(this.allPlayers[0].getPosition());
-
-        //if(this.allPlayers[0].body != null)
-        //this.headLights.update(this.allPlayers[0].getPosition(), this.allPlayers[0].mesh.quaternion);
-
         this.allPlayers.forEach(player => player.update(this.cpuPlayerBehavior));
         
         let playerPosition = this.player1.getPosition();
@@ -1592,58 +1551,16 @@ export default class GameScene extends THREE.Scene {
 
         this.debugDivElementManager.updateElementText("cpuOverrideBehavior", `CPU Override Behavior: ${Utility.getEnumName(CpuPlayerPattern, this.cpuPlayerBehavior)}`);
 
-        this.debugDivElementManager.updateElementText("player2status", `Player 2 | position: ${Utility.ThreeVector3ToString(this.player2.getPosition())} | ${Utility.getEnumName(PlayerState, this.player2.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player2.getChassisBody().velocity)}`);
+        this.debugDivElementManager.updateElementText("player2Status", `Player 2 | position: ${Utility.ThreeVector3ToString(this.player2.getPosition())} | ${Utility.getEnumName(PlayerState, this.player2.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player2.getChassisBody().velocity)}`);
         this.debugDivElementManager.updateElementText("player2Target", `Player 2 Target: ${Utility.ThreeVector3ToString(this.player2.target.groundTargetMesh.position)} | Distance: ${this.player1.getPosition().distanceTo(this.player2.getPosition()).toFixed(2)}`);        
 
-        this.debugDivElementManager.updateElementText("player3status", `Player 3 | position: ${Utility.ThreeVector3ToString(this.player3.getPosition())} | ${Utility.getEnumName(PlayerState, this.player3.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player3.getChassisBody().velocity)}`);
+        this.debugDivElementManager.updateElementText("player3Status", `Player 3 | position: ${Utility.ThreeVector3ToString(this.player3.getPosition())} | ${Utility.getEnumName(PlayerState, this.player3.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player3.getChassisBody().velocity)}`);
         this.debugDivElementManager.updateElementText("player3Target", `Player 3 Target: ${Utility.ThreeVector3ToString(this.player3.target.groundTargetMesh.position)} | Distance: ${this.player1.getPosition().distanceTo(this.player3.getPosition()).toFixed(2)}`);
 
-        this.debugDivElementManager.updateElementText("player4status", `Player 4 | position: ${Utility.ThreeVector3ToString(this.player4.getPosition())} | ${Utility.getEnumName(PlayerState, this.player4.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player4.getChassisBody().velocity)}`);
+        this.debugDivElementManager.updateElementText("player4Status", `Player 4 | position: ${Utility.ThreeVector3ToString(this.player4.getPosition())} | ${Utility.getEnumName(PlayerState, this.player4.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player4.getChassisBody().velocity)}`);
         this.debugDivElementManager.updateElementText("player4Target", `Player 4 Target: ${Utility.ThreeVector3ToString(this.player4.target.groundTargetMesh.position)} | Distance: ${this.player1.getPosition().distanceTo(this.player4.getPosition()).toFixed(2)}`);
 
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);
     }
-   
-    // Function to get all loaded textures in the scene
-    getAllLoadedTextures(scene: THREE.Scene): THREE.Texture[] {
-        const textures = new Set<THREE.Texture>();
-    
-        scene.traverse((object) => {
-            if ((object as THREE.Mesh).isMesh) {
-                const mesh = object as THREE.Mesh;
-                const material = mesh.material;
-                if (Array.isArray(material)) {
-                    material.forEach((mat) => {
-                        this.collectTextures(mat, textures);
-                    });
-                } else if (material) {
-                    this.collectTextures(material, textures);
-                }
-            }
-        });
-    
-        return Array.from(textures);
-    }
-
-    collectTextures(material: THREE.Material, textures: Set<THREE.Texture>): void {
-        const textureProps: string[] = [
-            'map', 'lightMap', 'aoMap', 'emissiveMap', 'bumpMap', 'normalMap',
-            'displacementMap', 'roughnessMap', 'metalnessMap', 'alphaMap',
-            'envMap', 'clearcoatMap', 'clearcoatNormalMap', 'clearcoatRoughnessMap',
-            'sheenColorMap', 'sheenRoughnessMap', 'transmissionMap', 'thicknessMap'
-        ];
-    
-        textureProps.forEach((prop) => {
-            //var temp = prop as keyof THREE.Material;
-            const texture = material[prop as keyof THREE.Material] as THREE.Texture | undefined;
-            if (texture) {
-                textures.add(texture);
-            }
-        });
-    }
-
-    //generateArrayFromTexture() {
-        //var textureToArray = new TextureToArray(this.textureLoader);
-    //}    
 }

@@ -3,6 +3,7 @@ import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
 import { TextureToArray } from "../shapes/textureToArray";
 import { WorldConfig } from "../world/worldConfig";
+import { GameConfig } from "../../gameconfig";
 
 
 export class TerrainObjectv2 {
@@ -15,13 +16,15 @@ export class TerrainObjectv2 {
 
     fog: THREE.Fog;
 
+    gameConfig: GameConfig;
+
     constructor(scene: THREE.Scene,
-        meshMaterial: THREE.Material,
         world: CANNON.World,
         physicsMaterial: CANNON.Material,
         heightMapTextureAsArray: TextureToArray,
         heightFactor: number,
-        worldConfig: WorldConfig) {
+        worldConfig: WorldConfig,
+        gameConfig: GameConfig) {
             
         // important: width and height used in this class need to match dimensions of heightmap!
         var height = heightMapTextureAsArray.getImageHeight();
@@ -30,6 +33,8 @@ export class TerrainObjectv2 {
         this.physicsMaterial = physicsMaterial;
         
         this.fog = scene.fog as THREE.Fog;
+
+        this.gameConfig = gameConfig;
 
         let grid = new THREE.GridHelper( height, 10, 0xffffff, 0xffffff );
         grid.material.opacity = 1;
@@ -133,7 +138,7 @@ export class TerrainObjectv2 {
             fogNear: { value: (this.fog as THREE.Fog)?.near ?? 10000 },
             fogFar: { value: (this.fog as THREE.Fog)?.far ?? 10000 },
           },
-          fog: true,
+          fog: this.gameConfig.useFog,
           vertexShader: this.vertexShader4(),
           fragmentShader: this.fragmentShader4(),
       });
