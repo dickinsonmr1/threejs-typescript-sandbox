@@ -17,7 +17,7 @@ import { Player, PlayerState, VehicleType } from '../gameobjects/player/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
-import { TextureToArray } from '../gameobjects/shapes/textureToArray';
+import { TextureHeightMapArray } from '../gameobjects/shapes/textureToArray';
 import { Water } from 'three/addons/objects/Water.js';
 import { DebugDivElementManager } from './debugDivElementManager';
 import { TerrainObjectv2 } from '../gameobjects/terrain/terrainObjectv2';
@@ -90,12 +90,14 @@ export default class GameScene extends THREE.Scene {
     public wheelGroundContactMaterial!: CANNON.ContactMaterial;
 
     private worldConfig!: WorldConfig;
-    private heightMapTextureAsArray!: TextureToArray; //= new TextureToArray(this.textureLoader, 'assets/heightmaps/heightmap_arena_128x128.png');
+    private heightMapTextureAsArray!: TextureHeightMapArray;
+    private heightMapTextureAsArray2!: TextureHeightMapArray;
+
     gameConfig: GameConfig;
     gameAssetModelLoader: GameAssetModelLoader;
 
     public getMapDimensions(): THREE.Vector3 {
-        return new THREE.Vector3(this.heightMapTextureAsArray.getImageWidth(), 0, this.heightMapTextureAsArray.getImageHeight());
+        return this.heightMapTextureAsArray.getMapDimensions();
     }
 
     world: CANNON.World = new CANNON.World({
@@ -110,6 +112,7 @@ export default class GameScene extends THREE.Scene {
     basicSemitransparentMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial( { color: 0xFFFF00, transparent: true, opacity: 0.5 });
     
     terrain!: TerrainObjectv2;
+    terrain2!: TerrainObjectv2;
     water!: Water;
     precipitationSystem!: PrecipitationSystem;
 
@@ -164,7 +167,8 @@ export default class GameScene extends THREE.Scene {
 
     preloadMapData(worldConfig: WorldConfig) {        
         this.worldConfig = worldConfig;
-        this.heightMapTextureAsArray = new TextureToArray(this.textureLoader, worldConfig.heightMap);
+        this.heightMapTextureAsArray = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
+        this.heightMapTextureAsArray2 = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
     }
 
     preloadSkybox(worldConfig: WorldConfig) {
@@ -973,7 +977,18 @@ export default class GameScene extends THREE.Scene {
             this.heightMapTextureAsArray,
             5,
             this.worldConfig,
-            this.gameConfig
+            this.gameConfig,
+            new THREE.Vector3(0,0,0)
+        );
+
+        this.terrain2 = new TerrainObjectv2(this,
+            this.world,
+            this.groundMaterial,
+            this.heightMapTextureAsArray2,
+            5,
+            this.worldConfig,
+            this.gameConfig,
+            new THREE.Vector3(128,0,0)
         );
 
         this.generateGroundPlane();
@@ -1343,6 +1358,7 @@ export default class GameScene extends THREE.Scene {
         this.updateCamera(); 
         
         this.terrain?.update();
+        this.terrain2?.update();
 
         this.cube?.update();
         this.cube2?.update();

@@ -1,8 +1,7 @@
 import * as THREE from "three";
 
-export class TextureToArray {
-
-
+export class TextureHeightMapArray {
+    
     public numbers2DArray: number[][] = [];
     
     private width!: number;
@@ -72,5 +71,9 @@ export class TextureToArray {
 
     getAssetName(): string {
         return this.assetName;
+    }
+
+    getMapDimensions(): THREE.Vector3 {
+        return new THREE.Vector3(this.getImageWidth(), 0, this.getImageHeight());
     }
 }

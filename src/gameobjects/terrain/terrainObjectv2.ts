@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
-import { TextureToArray } from "../shapes/textureToArray";
+import { TextureHeightMapArray } from "../shapes/textureToArray";
 import { WorldConfig } from "../world/worldConfig";
 import { GameConfig } from "../../gameconfig";
 
@@ -21,10 +21,11 @@ export class TerrainObjectv2 {
     constructor(scene: THREE.Scene,
         world: CANNON.World,
         physicsMaterial: CANNON.Material,
-        heightMapTextureAsArray: TextureToArray,
+        heightMapTextureAsArray: TextureHeightMapArray,
         heightFactor: number,
         worldConfig: WorldConfig,
-        gameConfig: GameConfig) {
+        gameConfig: GameConfig,
+        offset: THREE.Vector3) {
             
         // important: width and height used in this class need to match dimensions of heightmap!
         var height = heightMapTextureAsArray.getImageHeight();
@@ -43,7 +44,8 @@ export class TerrainObjectv2 {
               
         // physics object and mesh generated directly from physics object
         var dataArray2D = heightMapTextureAsArray.getArray();
-        this.body = this.generateCannonHeightField(world, height, width, heightFactor, dataArray2D);        
+        this.body = this.generateCannonHeightField(world, height, width, heightFactor, dataArray2D, offset);            
+        //this.body.position.vadd(Utility.ThreeVec3ToCannonVec3(offset));
 
         const planeSize = width * 2;
         var geometry = this.generateMeshFromHeightData(height, width, dataArray2D);
@@ -52,6 +54,8 @@ export class TerrainObjectv2 {
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.rotation.x = -Math.PI / 2;
         this.mesh.rotation.z = Math.PI / 2;
+
+        this.mesh.position.add(offset);
         scene.add(this.mesh);    
     }
     
@@ -75,7 +79,7 @@ export class TerrainObjectv2 {
         }        
     }
 
-    generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = []): CANNON.Body {           
+    generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = [], offset: THREE.Vector3): CANNON.Body {           
 
         // generate physics object
         var matrix: number[][] = [];
@@ -104,7 +108,12 @@ export class TerrainObjectv2 {
           (sizeZ * this.heightfieldShape.elementSize) / 2
         );
         heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
-        
+        heightfieldBody.position.set(
+          heightfieldBody.position.x + offset.x,
+          heightfieldBody.position.y + offset.y,
+          heightfieldBody.position.z + offset.z
+        );
+
         world.addBody(heightfieldBody);
 
         heightfieldBody.addEventListener('collide', (event: any) => {
