@@ -46,7 +46,7 @@ export class TerrainObjectv2 {
               
         // physics object and mesh generated directly from physics object
         var dataArray2D = heightMapTextureAsArray.getArray();
-        this.generateCannonHeightField(world, height, width, heightFactor, dataArray2D);        
+        this.body = this.generateCannonHeightField(world, height, width, heightFactor, dataArray2D);        
 
         const planeSize = width * 2;
         var geometry = this.generateMeshFromHeightData(height, width, dataArray2D);
@@ -82,7 +82,7 @@ export class TerrainObjectv2 {
         }        
     }
 
-    generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = []) {           
+    generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = []): CANNON.Body {           
 
       // generate physics object
         var matrix: number[][] = [];
@@ -113,12 +113,13 @@ export class TerrainObjectv2 {
         heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
         
         world.addBody(heightfieldBody);
-        this.body = heightfieldBody;
 
         heightfieldBody.addEventListener('collide', (event: any) => {
           let body = <CANNON.Body>event.body;
           //console.log('body collided with terrain', event);
         });
+
+        return heightfieldBody;
     }    
 
     generateMaterialv2(planeSize: number, heightFactor: number, worldConfig: WorldConfig
