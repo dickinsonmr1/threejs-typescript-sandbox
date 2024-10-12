@@ -187,11 +187,9 @@ export default class GameScene extends THREE.Scene {
         this.sceneController = sceneController;
         this.gameConfig = gameConfig;
         
-        const color = 0xFFFFFF;
-        const density = 0.1;
+        //const color = 0xFFFFFF;
+        //const density = 0.1;
         //this.fog = new THREE.FogExp2(color, density);
-
-        this.fog = new THREE.Fog(0xaaaaaa, 10, 50);
 
         //this.overrideMaterial = new THREE.MeshBasicMaterial({ color: "green" });
         //this.background = new THREE.Color(0xB1E1FF);
@@ -214,13 +212,15 @@ export default class GameScene extends THREE.Scene {
                 skyTexture.mapping = THREE.EquirectangularReflectionMapping;
                 skyTexture.colorSpace = THREE.SRGBColorSpace;
                 this.background = skyTexture;
-            } 
+            }  
         );
-
     }
 
     async initialize(player1VehicleType: VehicleType): Promise<void> {
        
+        if(this.gameConfig.useFog)
+            this.fog = new THREE.Fog(this.worldConfig.fogColor, this.gameConfig.fogNear, this.gameConfig.fogFar);
+
         await this.loadVehicleAssets();
 
         this.explosionTexture = this.textureLoader.load('assets/particle-16x16.png');

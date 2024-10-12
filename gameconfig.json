@@ -1,4 +1,7 @@
 {    
     "isDebug": true,
-    "controlType": 0
+    "controlType": 0,
+    "useFog": true,
+    "fogNear": 10,
+    "fogFar": 50
 }

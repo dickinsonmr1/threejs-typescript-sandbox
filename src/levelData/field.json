@@ -15,5 +15,7 @@
 
     "grassBillboard": "assets/billboard_grass_32x32.png",
     "grassBillboardStartY": 9,
-    "grassBillboardEndY": 10
+    "grassBillboardEndY": 10,
+    
+    "fogColor": "#aaaaaa"
 }

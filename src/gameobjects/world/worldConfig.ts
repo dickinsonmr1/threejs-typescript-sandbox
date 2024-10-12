@@ -1,3 +1,4 @@
+import { NumberController } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { PrecipitationType } from "./precipitationSystem";
 
 export interface WorldConfig {
@@ -18,4 +19,6 @@ export interface WorldConfig {
     grassBillboard: string;
     grassBillboardStartY: number;
     grassBillboardEndY: number;
+
+    fogColor: string;
 }  
