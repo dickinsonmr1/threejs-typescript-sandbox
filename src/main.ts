@@ -141,10 +141,12 @@ function tick() {
 
   if(scene instanceof GameScene) {
 
+                
     if(!scene.isPaused) {
       scene.updateWater();
       scene.updatePrecipitation();
       scene.update();
+      scene.updateQuadtreeTerrain();
       sceneOrtho.update();
 
       if(gameConfig.isDebug && cannonDebugger != null) {
@@ -160,6 +162,7 @@ function tick() {
       debugOrbitControls.update();
       scene.updateInputForDebug();
       scene.updateDebugDivElements();
+      scene.updateQuadtreeTerrain();
       renderer.render(scene, debugOrbitCamera);
     }
     

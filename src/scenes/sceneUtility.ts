@@ -1,5 +1,7 @@
+import * as THREE from "three";
+
 export default class SceneUtility {
-    
+
     static getAllLoadedTextures(scene: THREE.Scene): THREE.Texture[] {
         const textures = new Set<THREE.Texture>();
 
@@ -35,5 +37,16 @@ export default class SceneUtility {
                 textures.add(texture);
             }
         });
+    }
+
+    static getFrustumFromCamera(camera: THREE.Camera): THREE.Frustum {
+        const frustum = new THREE.Frustum();
+        const cameraViewProjectionMatrix = new THREE.Matrix4();
+    
+        // Compute the camera's projection matrix
+        cameraViewProjectionMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+        frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
+    
+        return frustum;
     }
 }

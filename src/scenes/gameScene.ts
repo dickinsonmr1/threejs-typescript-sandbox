@@ -33,6 +33,7 @@ import { DumpsterFireObject } from '../gameobjects/weapons/dumpsterFireObject';
 import { VehicleUtil } from '../gameobjects/vehicles/vehicleUtil';
 import GameAssetModelLoader from '../gameobjects/shapes/gameAssetModelLoader';
 import QuadtreeTerrainSystem from '../gameobjects/terrain/quadtreeTerrainSystem';
+import SceneUtility from './sceneUtility';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -329,6 +330,7 @@ export default class GameScene extends THREE.Scene {
 
             "player4Status",
             "player4Target",
+            "QuadtreeTerrain"
         ]);
         this.debugDivElementManager.hideAllElements();
        
@@ -1368,13 +1370,8 @@ export default class GameScene extends THREE.Scene {
         this.terrainChunk?.update();
         this.terrainChunk2?.update();
 
-            // Update LOD
-        const lodDistanceThreshold = 5000;  // Adjust based on your needs
-        if(this.isPaused)
-            this.quadtreeTerrainSystem.update(this.debugOrbitCamera, lodDistanceThreshold);
-        else 
-            this.quadtreeTerrainSystem.update(this.camera, lodDistanceThreshold);
-            
+        // TODO: figure out where best to update quadtree LOD
+
         this.cube?.update();
         this.cube2?.update();
         this.sphere?.update();
@@ -1517,6 +1514,18 @@ export default class GameScene extends THREE.Scene {
         this.stats.update();
     }
 
+    updateQuadtreeTerrain() {
+
+        if(!this.quadtreeTerrainSystem)
+            return;
+
+        // Update LOD
+        const lodDistanceThreshold = 1000;  // Adjust based on your needs
+        if(this.isPaused)
+            this.quadtreeTerrainSystem.update(this.debugOrbitCamera, lodDistanceThreshold);
+        else 
+            this.quadtreeTerrainSystem.update(this.camera, lodDistanceThreshold);
+    }
 
     updateDebugDivElements() {
 
@@ -1591,6 +1600,16 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.updateElementText("player4Status", `Player 4 | position: ${Utility.ThreeVector3ToString(this.player4.getPosition())} | ${Utility.getEnumName(PlayerState, this.player4.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player4.getChassisBody().velocity)}`);
         this.debugDivElementManager.updateElementText("player4Target", `Player 4 Target: ${Utility.ThreeVector3ToString(this.player4.target.groundTargetMesh.position)} | Distance: ${this.player1.getPosition().distanceTo(this.player4.getPosition()).toFixed(2)}`);
 
+        if(this.quadtreeTerrainSystem != null) {
+            // Get the camera's frustum
+            const frustum = this.isPaused
+                ? SceneUtility.getFrustumFromCamera(this.debugOrbitCamera)
+                : SceneUtility.getFrustumFromCamera(this.camera);
+
+            // Count how many nodes are visible
+            this.debugDivElementManager.updateElementText("QuadtreeTerrain", `Quadtree visible nodes: ${this.quadtreeTerrainSystem.getCountOfAllVisibleNodes(frustum)}`);
+        }
+            
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);
     }

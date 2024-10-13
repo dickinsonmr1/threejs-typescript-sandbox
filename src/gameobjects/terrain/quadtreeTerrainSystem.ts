@@ -81,7 +81,9 @@ export default class QuadtreeTerrainSystem {
         if (node.children.length > 0) {
             // Calculate the distance from the camera to the center of this node
             const center = node.bounds.getCenter(new THREE.Vector2());
-            const distance = camera.position.distanceTo(new THREE.Vector3(center.x, 0, center.y));
+
+            var cameraPosition2D = new THREE.Vector3(camera.position.x, 0, camera.position.y);
+            const distance = cameraPosition2D.distanceTo(new THREE.Vector3(center.x, 0, center.y));
     
             if (distance < lodDistanceThreshold) {
                 // Activate child nodes and hide this node's mesh
@@ -93,6 +95,7 @@ export default class QuadtreeTerrainSystem {
                 // Show this node's mesh and hide children
                 if (node.mesh) {
                     node.mesh.visible = true;
+                    (node.mesh.material as THREE.MeshBasicMaterial).color.set(0x00ff00); 
                 }
                 node.children.forEach(child => this.hideQuadtree(child));
             }
@@ -101,8 +104,39 @@ export default class QuadtreeTerrainSystem {
     
     hideQuadtree(node: QuadtreeNode) {
         if (node.mesh) {
-            node.mesh.visible = false;
+            //node.mesh.visible = false;
+            (node.mesh.material as THREE.MeshBasicMaterial).color.set(0x000000); 
         }
         node.children.forEach(x => this.hideQuadtree(x));
+    }
+
+    isNodeVisible(node: QuadtreeNode, frustum: THREE.Frustum): boolean {
+        if (!node.mesh) return false;
+    
+        // Create a bounding box from the node's mesh
+        const boundingBox = new THREE.Box3().setFromObject(node.mesh);
+    
+        // Check if the bounding box intersects with the frustum
+        return frustum.intersectsBox(boundingBox);
+    }
+
+    getCountOfAllVisibleNodes(frustum: THREE.Frustum): number {
+        return this.countVisibleNodes(this.quadtree, frustum);
+    }
+
+    private countVisibleNodes(node: QuadtreeNode, frustum: THREE.Frustum): number {
+        let visibleCount = 0;
+    
+        // If the node is visible, increment the count
+        if (this.isNodeVisible(node, frustum)) {
+            visibleCount += 1;
+        }
+    
+        // Recursively check the children of the node
+        for (const child of node.children) {
+            visibleCount += this.countVisibleNodes(child, frustum);
+        }
+    
+        return visibleCount;
     }
 }
