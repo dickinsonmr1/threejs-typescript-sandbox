@@ -159,6 +159,7 @@ function tick() {
     else {
       debugOrbitControls.update();
       scene.updateInputForDebug();
+      scene.updateDebugDivElements();
       renderer.render(scene, debugOrbitCamera);
     }
     

@@ -20,7 +20,7 @@ import { Utility } from '../utility';
 import { TextureHeightMapArray } from '../gameobjects/shapes/textureToArray';
 import { Water } from 'three/addons/objects/Water.js';
 import { DebugDivElementManager } from './debugDivElementManager';
-import { TerrainObjectv2 } from '../gameobjects/terrain/terrainObjectv2';
+import { TerrainChunk } from '../gameobjects/terrain/terrainChunk';
 import { PickupObject2 } from '../gameobjects/pickupObject2';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { CpuPlayerPattern } from '../gameobjects/player/cpuPlayerPatternEnums';
@@ -32,6 +32,7 @@ import { PrecipitationSystem, PrecipitationType } from '../gameobjects/world/pre
 import { DumpsterFireObject } from '../gameobjects/weapons/dumpsterFireObject';
 import { VehicleUtil } from '../gameobjects/vehicles/vehicleUtil';
 import GameAssetModelLoader from '../gameobjects/shapes/gameAssetModelLoader';
+import QuadtreeTerrainSystem from '../gameobjects/terrain/quadtreeTerrainSystem';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -111,8 +112,11 @@ export default class GameScene extends THREE.Scene {
     basicMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial( { color: 0xFFFF00 });
     basicSemitransparentMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial( { color: 0xFFFF00, transparent: true, opacity: 0.5 });
     
-    terrain!: TerrainObjectv2;
-    terrain2!: TerrainObjectv2;
+    terrainChunk!: TerrainChunk;
+    terrainChunk2!: TerrainChunk;
+
+    quadtreeTerrainSystem!: QuadtreeTerrainSystem;
+
     water!: Water;
     precipitationSystem!: PrecipitationSystem;
 
@@ -267,7 +271,7 @@ export default class GameScene extends THREE.Scene {
         this.dumpsterModel = await this.gameAssetModelLoader.generateDumpsterModel();
         
         var groundCubeContactMaterial = new CANNON.ContactMaterial(
-            this.terrain.getPhysicsMaterial(),
+            this.terrainChunk.getPhysicsMaterial(),
             this.cube.getPhysicsMaterial(),
             {
                 friction: 0
@@ -300,6 +304,8 @@ export default class GameScene extends THREE.Scene {
 
         this.debugDivElementManager = new DebugDivElementManager(25, 25);
         this.debugDivElementManager.addNamedElementPlaceholders([
+            "GameCameraLocation",
+            "DebugCameraLocation",
             "PlayerLocation",
             "Objective",
             "ParticleCount",
@@ -804,7 +810,7 @@ export default class GameScene extends THREE.Scene {
 
         let randX = randFloat(-mapWidth / 2, mapWidth / 2);        
         let randZ = randFloat(-mapHeight / 2, mapHeight / 2);
-        let spawnPosition = this.terrain.getWorldPositionOnTerrain(randX, randZ);
+        let spawnPosition = this.terrainChunk.getWorldPositionOnTerrain(randX, randZ);
         spawnPosition.y += 0.75;
 
         let randCubeSize = 0.75; //randFloat(0.5, 2);
@@ -971,7 +977,7 @@ export default class GameScene extends THREE.Scene {
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
         // width and height need to match dimensions of heightmap
-        this.terrain = new TerrainObjectv2(this,
+        this.terrainChunk = new TerrainChunk(this,
             this.world,
             this.groundMaterial,
             this.heightMapTextureAsArray,
@@ -981,7 +987,7 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0,0,0)
         );
 
-        this.terrain2 = new TerrainObjectv2(this,
+        this.terrainChunk2 = new TerrainChunk(this,
             this.world,
             this.groundMaterial,
             this.heightMapTextureAsArray2,
@@ -991,11 +997,13 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(128,0,0)
         );
 
+        this.quadtreeTerrainSystem = new QuadtreeTerrainSystem(this, this.camera);
+
         this.generateGroundPlane();
         this.generateBoundingWalls();
 
         if(this.worldConfig.grassBillboard != null && this.worldConfig.grassBillboardStartY != null && this.worldConfig.grassBillboardEndY != null ) {
-            var billboards = this.terrain.generateGrassBillboards(
+            var billboards = this.terrainChunk.generateGrassBillboards(
                 this.worldConfig.grassBillboard,
                 this.heightMapTextureAsArray.getImageWidth(),
                 this.heightMapTextureAsArray.getImageHeight(),
@@ -1136,7 +1144,7 @@ export default class GameScene extends THREE.Scene {
                 */
 
                 // alternate collision: based on calculating height of terrain
-                let worldPosition = this.terrain.getWorldPositionOnTerrain(projectile.group.position.x, projectile.group.position.z );        
+                let worldPosition = this.terrainChunk.getWorldPositionOnTerrain(projectile.group.position.x, projectile.group.position.z );        
                 if(projectile.group.position.y <= worldPosition.y) {
                     
                     this.generateRandomExplosion(
@@ -1220,7 +1228,7 @@ export default class GameScene extends THREE.Scene {
         if(this.water != null)
             waterPosition = this.water.position;
 
-        var position = this.terrain.getWorldPositionOnTerrain(x, z);
+        var position = this.terrainChunk.getWorldPositionOnTerrain(x, z);
 
         if(this.water != null && waterPosition.y > position.y)
             position.y = waterPosition.y;
@@ -1357,9 +1365,16 @@ export default class GameScene extends THREE.Scene {
 
         this.updateCamera(); 
         
-        this.terrain?.update();
-        this.terrain2?.update();
+        this.terrainChunk?.update();
+        this.terrainChunk2?.update();
 
+            // Update LOD
+        const lodDistanceThreshold = 5000;  // Adjust based on your needs
+        if(this.isPaused)
+            this.quadtreeTerrainSystem.update(this.debugOrbitCamera, lodDistanceThreshold);
+        else 
+            this.quadtreeTerrainSystem.update(this.camera, lodDistanceThreshold);
+            
         this.cube?.update();
         this.cube2?.update();
         this.sphere?.update();
@@ -1449,8 +1464,6 @@ export default class GameScene extends THREE.Scene {
                 enemy.healthBar.setVisible(true);                
             }
         });
-
-
     
         if(!this.player1.isModelNull() && this.crosshairSprite != null) {
             let forwardVector = new THREE.Vector3(-10, 0, 0);
@@ -1510,6 +1523,8 @@ export default class GameScene extends THREE.Scene {
         if(this.debugDivElementManager == null) return;
 
         let playerPosition = this.player1.getPosition();
+        this.debugDivElementManager.updateElementText("GameCameraLocation", `Follow camera: ${Utility.ThreeVector3ToString(this.camera.position)}`);
+        this.debugDivElementManager.updateElementText("DebugCameraLocation", `Debug camera: ${Utility.ThreeVector3ToString(this.debugOrbitCamera.position)}`);
         this.debugDivElementManager.updateElementText("PlayerLocation", `Player 1 position: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`);
         
         this.debugDivElementManager.updateElementText("Objective", `Scene objects: ${this.children.length}`);

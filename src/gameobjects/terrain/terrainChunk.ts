@@ -6,7 +6,7 @@ import { WorldConfig } from "../world/worldConfig";
 import { GameConfig } from "../../gameconfig";
 
 
-export class TerrainObjectv2 {
+export class TerrainChunk {
     
     body?: CANNON.Body;
     mesh: THREE.Mesh;
