@@ -33,7 +33,9 @@ import { DumpsterFireObject } from '../gameobjects/weapons/dumpsterFireObject';
 import { VehicleUtil } from '../gameobjects/vehicles/vehicleUtil';
 import GameAssetModelLoader from '../gameobjects/shapes/gameAssetModelLoader';
 import QuadtreeTerrainSystem from '../gameobjects/terrain/quadtreeTerrainSystem';
+import QuadtreeTerrainSystem2 from '../gameobjects/terrain/quadtreeTerrainSystem2';
 import SceneUtility from './sceneUtility';
+import { QuadtreeTerrainSystem3 } from '../gameobjects/terrain/quadtree3/quadtreeTerrainSystem3';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -117,6 +119,8 @@ export default class GameScene extends THREE.Scene {
     terrainChunk2!: TerrainChunk;
 
     quadtreeTerrainSystem!: QuadtreeTerrainSystem;
+    quadtreeTerrainSystem2!: QuadtreeTerrainSystem2;
+    quadtreeTerrainSystem3!: QuadtreeTerrainSystem3;
 
     water!: Water;
     precipitationSystem!: PrecipitationSystem;
@@ -999,7 +1003,13 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(128,0,0)
         );
 
-        this.quadtreeTerrainSystem = new QuadtreeTerrainSystem(this, this.camera);
+        //this.quadtreeTerrainSystem = new QuadtreeTerrainSystem(this, this.camera);
+
+        //this.quadtreeTerrainSystem2 = new QuadtreeTerrainSystem2(this, this.camera);
+        
+        const terrainSize = 2000;
+        const maxLODLevel = 5;
+        this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, terrainSize, maxLODLevel);
 
         this.generateGroundPlane();
         this.generateBoundingWalls();
@@ -1525,6 +1535,28 @@ export default class GameScene extends THREE.Scene {
             this.quadtreeTerrainSystem.update(this.debugCamera, lodDistanceThreshold);
         else 
             this.quadtreeTerrainSystem.update(this.camera, lodDistanceThreshold);
+    }
+
+    updateQuadtreeTerrain2() {
+        if(!this.quadtreeTerrainSystem2)
+            return;
+
+        if(this.isPaused)
+            this.quadtreeTerrainSystem2.update(this.debugCamera);
+        else 
+        this.quadtreeTerrainSystem2.update(this.camera);
+        
+    }
+
+    updateQuadtreeTerrain3() {
+        if(!this.quadtreeTerrainSystem3)
+            return;
+
+        if(this.isPaused)
+            this.quadtreeTerrainSystem3.update(this.debugCamera);
+        else 
+        this.quadtreeTerrainSystem3.update(this.camera);
+        
     }
 
     updateDebugDivElements() {
