@@ -43,21 +43,23 @@ export default class QuadtreeTerrainSystem {
             node.children.push(this.createQuadtreeNode(new THREE.Box2(new THREE.Vector2(centerX, bounds.min.y), new THREE.Vector2(bounds.max.x, centerY)), level + 1, maxLevel));
             node.children.push(this.createQuadtreeNode(new THREE.Box2(new THREE.Vector2(bounds.min.x, centerY), new THREE.Vector2(centerX, bounds.max.y)), level + 1, maxLevel));
             node.children.push(this.createQuadtreeNode(new THREE.Box2(new THREE.Vector2(centerX, centerY), bounds.max), level + 1, maxLevel));
+
+            //node.mesh = this.createTerrainMesh(bounds, node.level);
         } else {
             // Create terrain mesh for this node
-            node.mesh = this.createTerrainMesh(bounds);
+            node.mesh = this.createTerrainMesh(bounds, node.level);
         }
     
         return node;
     }
 
-    createTerrainMesh(bounds: THREE.Box2): THREE.Mesh {
+    createTerrainMesh(bounds: THREE.Box2, nodeLevel: number): THREE.Mesh {
         const width = bounds.max.x - bounds.min.x;
         const height = bounds.max.y - bounds.min.y;
     
         // Create a PlaneGeometry for the terrain chunk
         const geometry = new THREE.PlaneGeometry(width, height, 10, 10);  // Adjust segments based on detail level
-        const material = new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true });
+        const material = new THREE.MeshBasicMaterial({ color: this.levelToColor(nodeLevel), wireframe: true });
     
         const mesh = new THREE.Mesh(geometry, material);
         mesh.rotation.x = -Math.PI / 2;
@@ -82,20 +84,21 @@ export default class QuadtreeTerrainSystem {
             // Calculate the distance from the camera to the center of this node
             const center = node.bounds.getCenter(new THREE.Vector2());
 
-            var cameraPosition2D = new THREE.Vector3(camera.position.x, 0, camera.position.y);
+            var cameraPosition2D = new THREE.Vector3(camera.position.x, 0, camera.position.z);
             const distance = cameraPosition2D.distanceTo(new THREE.Vector3(center.x, 0, center.y));
     
             if (distance < lodDistanceThreshold) {
                 // Activate child nodes and hide this node's mesh
                 if (node.mesh) {
-                    node.mesh.visible = false;
+                    //node.mesh.visible = false;
+                    (node.mesh.material as THREE.MeshBasicMaterial).color.set(0x000000); 
                 }
                 node.children.forEach(child => this.updateQuadtreeLOD(child, camera, lodDistanceThreshold / 2));
             } else {
                 // Show this node's mesh and hide children
                 if (node.mesh) {
                     node.mesh.visible = true;
-                    (node.mesh.material as THREE.MeshBasicMaterial).color.set(0x00ff00); 
+                    //(node.mesh.material as THREE.MeshBasicMaterial).color.set(this.levelToColor(node.level)); 
                 }
                 node.children.forEach(child => this.hideQuadtree(child));
             }
@@ -138,5 +141,19 @@ export default class QuadtreeTerrainSystem {
         }
     
         return visibleCount;
+    }
+
+    private levelToColor(level: number): THREE.ColorRepresentation {
+        switch(level) {
+            default:
+            case 1:
+                return 0x0000ff;
+            case 2:
+                return 0x00ff00;
+            case 3:
+                return 0xff00ff;
+            case 4:
+                return 0xff0000;
+        }
     }
 }

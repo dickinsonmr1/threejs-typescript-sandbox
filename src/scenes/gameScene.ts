@@ -67,8 +67,8 @@ export default class GameScene extends THREE.Scene {
 
     private readonly camera: THREE.PerspectiveCamera;
     
-    private readonly debugOrbitCamera: THREE.PerspectiveCamera;
-    private readonly debugOrbitControls: OrbitControls;
+    debugCamera: THREE.PerspectiveCamera;
+    debugOrbitControls: OrbitControls;
 
     private readonly keyDown = new Set<string>();
 
@@ -154,14 +154,14 @@ export default class GameScene extends THREE.Scene {
     public isPaused: boolean = false;
 
     constructor(camera: THREE.PerspectiveCamera,
-        debugOrbitCamera: THREE.PerspectiveCamera,
+        debugCamera: THREE.PerspectiveCamera,
         debugOrbitControls: OrbitControls,
         sceneController: SceneController, gameConfig: GameConfig) {
         super();
         
         this.camera = camera;
 
-        this.debugOrbitCamera = debugOrbitCamera;
+        this.debugCamera = debugCamera;
         this.debugOrbitControls = debugOrbitControls;
 
         this.sceneController = sceneController;
@@ -560,8 +560,8 @@ export default class GameScene extends THREE.Scene {
     public togglePauseGame() {
         this.isPaused = !this.isPaused;
 
-        this.debugOrbitCamera.position.copy(this.camera.position);            
-        this.debugOrbitCamera.lookAt(this.player1.getPosition());
+        this.debugCamera.position.copy(this.camera.position);            
+        this.debugCamera.lookAt(this.player1.getPosition());
         this.debugOrbitControls.enabled = this.isPaused;        
     }
 
@@ -578,9 +578,9 @@ export default class GameScene extends THREE.Scene {
         // forward
         if(this.keyDown.has('w')) {
             const moveDirection = new THREE.Vector3();
-            this.debugOrbitCamera.getWorldDirection(moveDirection); // Get the current forward direction
+            this.debugCamera.getWorldDirection(moveDirection); // Get the current forward direction
             
-            this.debugOrbitCamera.position.addScaledVector(moveDirection, cameraMovement); // Move the camera forward by 1 unit
+            this.debugCamera.position.addScaledVector(moveDirection, cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(moveDirection, cameraMovement);
         }       
 
@@ -588,39 +588,39 @@ export default class GameScene extends THREE.Scene {
         if(this.keyDown.has('a')) {
 
             const forwardVector = new THREE.Vector3();
-            this.debugOrbitCamera.getWorldDirection(forwardVector); // Get the current forward direction
+            this.debugCamera.getWorldDirection(forwardVector); // Get the current forward direction
 
             const leftVector = new THREE.Vector3();
             leftVector.crossVectors(new THREE.Vector3(0, 1, 0), forwardVector).normalize();
 
-            this.debugOrbitCamera.position.addScaledVector(leftVector, cameraMovement); // Move the camera forward by 1 unit
+            this.debugCamera.position.addScaledVector(leftVector, cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(leftVector, cameraMovement);
         }   
 
         // right
         if(this.keyDown.has('d')) {
             const forwardVector = new THREE.Vector3();
-            this.debugOrbitCamera.getWorldDirection(forwardVector); // Get the current forward direction
+            this.debugCamera.getWorldDirection(forwardVector); // Get the current forward direction
 
             const leftVector = new THREE.Vector3();
             leftVector.crossVectors(new THREE.Vector3(0, 1, 0), forwardVector).normalize();
 
-            this.debugOrbitCamera.position.addScaledVector(leftVector, -cameraMovement); // Move the camera forward by 1 unit
+            this.debugCamera.position.addScaledVector(leftVector, -cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(leftVector, -cameraMovement);
         } 
 
         // backwards
         if(this.keyDown.has('s')) {
             const moveDirection = new THREE.Vector3();
-            this.debugOrbitCamera.getWorldDirection(moveDirection); // Get the current forward direction
-            this.debugOrbitCamera.position.add(moveDirection.multiplyScalar(-cameraMovement)); // Move the camera forward by 1 unit
+            this.debugCamera.getWorldDirection(moveDirection); // Get the current forward direction
+            this.debugCamera.position.add(moveDirection.multiplyScalar(-cameraMovement)); // Move the camera forward by 1 unit
         }   
 
         // up
         if(this.keyDown.has('q')) {
             const upVector = new THREE.Vector3(0, 1, 0);
 
-            this.debugOrbitCamera.position.addScaledVector(upVector, cameraMovement); // Move the camera forward by 1 unit
+            this.debugCamera.position.addScaledVector(upVector, cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(upVector, cameraMovement);
         }   
 
@@ -629,13 +629,13 @@ export default class GameScene extends THREE.Scene {
 
             const upVector = new THREE.Vector3(0, 1, 0);
 
-            this.debugOrbitCamera.position.addScaledVector(upVector, -cameraMovement); // Move the camera forward by 1 unit
+            this.debugCamera.position.addScaledVector(upVector, -cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(upVector, -cameraMovement);
         }   
 
          // down
         if(this.keyDown.has('0')) {
-            var targetPosition = this.debugOrbitCamera.position;
+            var targetPosition = this.debugCamera.position;
             //this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = this.player1.getPosition();
             
@@ -644,24 +644,24 @@ export default class GameScene extends THREE.Scene {
         if(this.keyDown.has('1')) {
             var targetPosition = this.player1.getPosition();
 
-            this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = this.player1.getPosition();
             
         }   
         if(this.keyDown.has('2')) {
             var targetPosition = this.player2.getPosition();
 
-            this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
         }   
         if(this.keyDown.has('3')) {
             var targetPosition = this.player3.getPosition();
-            this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
         }   
         if(this.keyDown.has('4')) {
             var targetPosition = this.player4.getPosition();
-            this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
+            this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
         }   
     }
@@ -1520,9 +1520,9 @@ export default class GameScene extends THREE.Scene {
             return;
 
         // Update LOD
-        const lodDistanceThreshold = 1000;  // Adjust based on your needs
+        const lodDistanceThreshold = 100;  // Adjust based on your needs
         if(this.isPaused)
-            this.quadtreeTerrainSystem.update(this.debugOrbitCamera, lodDistanceThreshold);
+            this.quadtreeTerrainSystem.update(this.debugCamera, lodDistanceThreshold);
         else 
             this.quadtreeTerrainSystem.update(this.camera, lodDistanceThreshold);
     }
@@ -1533,7 +1533,7 @@ export default class GameScene extends THREE.Scene {
 
         let playerPosition = this.player1.getPosition();
         this.debugDivElementManager.updateElementText("GameCameraLocation", `Follow camera: ${Utility.ThreeVector3ToString(this.camera.position)}`);
-        this.debugDivElementManager.updateElementText("DebugCameraLocation", `Debug camera: ${Utility.ThreeVector3ToString(this.debugOrbitCamera.position)}`);
+        this.debugDivElementManager.updateElementText("DebugCameraLocation", `Debug camera: ${Utility.ThreeVector3ToString(this.debugCamera.position)}`);
         this.debugDivElementManager.updateElementText("PlayerLocation", `Player 1 position: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`);
         
         this.debugDivElementManager.updateElementText("Objective", `Scene objects: ${this.children.length}`);
@@ -1603,7 +1603,7 @@ export default class GameScene extends THREE.Scene {
         if(this.quadtreeTerrainSystem != null) {
             // Get the camera's frustum
             const frustum = this.isPaused
-                ? SceneUtility.getFrustumFromCamera(this.debugOrbitCamera)
+                ? SceneUtility.getFrustumFromCamera(this.debugCamera)
                 : SceneUtility.getFrustumFromCamera(this.camera);
 
             // Count how many nodes are visible

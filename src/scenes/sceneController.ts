@@ -8,6 +8,7 @@ import nipplejs from 'nipplejs';
 import { Scene } from "three";
 import { VehicleType } from "../gameobjects/player/player";
 import { WorldConfig } from "../gameobjects/world/worldConfig";
+import * as THREE from 'three'
 
 import arenaLevelJson from '../levelData/arena.json';
 import fieldLevelJson from '../levelData/field.json';
@@ -331,7 +332,7 @@ export default class SceneController {
 
         if(!(this.currentScene instanceof MenuScene))
             return;
-
+    
         gamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
                 if(isPressed) {                
 
@@ -403,6 +404,53 @@ export default class SceneController {
         if(!gamepad) return;
 
         
+        if(this.gameScene?.isPaused) {
+            // Deadzone to avoid drift
+            const deadZone = 0.1;
+
+            let camera = this.gameScene!.debugCamera!;
+
+            // Left stick for movement (axes 0 and 1)
+            const leftStickX = Math.abs(gamepad.axes[0]) > deadZone ? gamepad.axes[0] : 0;
+            const leftStickY = Math.abs(gamepad.axes[1]) > deadZone ? gamepad.axes[1] : 0;
+
+            // Right stick for look (axes 2 and 3)
+            const rightStickX = Math.abs(gamepad.axes[2]) > deadZone ? gamepad.axes[2] : 0;
+            const rightStickY = Math.abs(gamepad.axes[3]) > deadZone ? gamepad.axes[3] : 0;
+
+            // Move the OrbitControls (pan the target)
+            //const panSpeed = 1;
+            //camera.target.x -= rightStickX * panSpeed;
+            //camera.target.y += rightStickY * panSpeed;
+        
+            // Rotate the OrbitControls (adjust orbit around target)
+            //const rotateSpeed = 0.03;
+            //this.gameScene!.debugOrbitControls!.rotateLeft(rightStickX * rotateSpeed);
+            //this.gameScene!.debugOrbitControls!.rotateUp(rightStickY * rotateSpeed);
+
+            // only works with perspective camera:                
+            // Camera movement in look direction (forward/backward)
+            const moveSpeed = 5;
+            const forwardVector = new THREE.Vector3();
+            camera.getWorldDirection(forwardVector);
+
+            // Move forward/backward based on left stick Y-axis
+            camera.position.addScaledVector(forwardVector, -leftStickY * moveSpeed);
+
+            // Strafe based on left stick X-axis (optional: add this if strafing is needed)
+            const strafeVector = new THREE.Vector3();
+            camera.getWorldDirection(strafeVector);
+            strafeVector.crossVectors(camera.up, forwardVector); // Strafe perpendicular to look direction
+            camera.position.addScaledVector(strafeVector, leftStickX * moveSpeed);
+
+            // Camera tilt (right stick X/Y for pitch and yaw)
+            const tiltSpeed = 0.02;
+            camera.rotation.y -= rightStickX * tiltSpeed; // Yaw (left/right)
+            camera.rotation.x -= rightStickY * tiltSpeed; // Pitch (up/down)
+
+            // Limit the pitch to avoid flipping the camera
+            camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+        }
         /*
         if(gamepad.buttons[this.brakeOrReverseGamepadIndex].pressed) {
             this.gameScene?.player1.tryTightTurn(-gamepad.axes[0]);
@@ -410,21 +458,7 @@ export default class SceneController {
         else 
         */
         this.gameScene?.player1.tryTurn(-gamepad.axes[0]);
-
-        /*
-        if(gamepad.axes[0] < -0.25) {
-            this.gameScene?.player1.tryTurnLeftWithKeyboard();
-        }
-        else if(gamepad.axes[0] > 0.25) {
-            this.gameScene?.player1.tryTurnRightWithKeyboard();
-        }
-        else {
-            this.gameScene?.player1.tryStopTurnLeftWithKeyboard()
-        }
-        */
-		//console.log(`Left stick at (${myGamepad.axes[0]}, ${myGamepad.axes[1]})` );
-		//console.log(`Right stick at (${myGamepad.axes[2]}, ${myGamepad.axes[3]})` );
-
+        
         // https://gabrielromualdo.com/articles/2020-12-15-how-to-use-the-html5-gamepad-api       
         
         var leftShoulderJustPressed = false;
