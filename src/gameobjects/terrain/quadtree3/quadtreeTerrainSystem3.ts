@@ -4,17 +4,73 @@ import { QuadtreeNode3 } from "./quadtreeNode3";
 export class QuadtreeTerrainSystem3 {
     root: QuadtreeNode3;
     scene: THREE.Scene;
-    material: THREE.Material;
+    //material: THREE.Material;
     maxLevel: number;
+
+    materials: THREE.Material[] = [];
 
     constructor(scene: THREE.Scene, size: number, maxLevel: number) {
         this.scene = scene;
-        this.material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+        //this.material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true});
+
+        let displacementMap = new THREE.TextureLoader().load('assets/displacement-map.png');
+
+        // lowest level of detail
+        let material1 = new THREE.MeshStandardMaterial({
+            wireframe: true,
+            color: 0xff0000,
+            displacementMap: displacementMap,
+            displacementScale: 20
+        });
+
+        let material2= new THREE.MeshStandardMaterial({
+            wireframe: true,
+            color: 0x00ff00,
+            displacementMap: displacementMap,
+            displacementScale: 20
+        });
+
+        let material3 = new THREE.MeshStandardMaterial({
+            wireframe: true,
+            color: 0x0000ff,
+            displacementMap: displacementMap,
+            displacementScale: 20
+        });
+
+        let material4 = new THREE.MeshStandardMaterial({
+            wireframe: true,
+            color: 0xffff00,
+            displacementMap: displacementMap,
+            displacementScale: 20
+        });
+
+        let material5 = new THREE.MeshStandardMaterial({
+            wireframe: true,
+            color: 0xff00ff,
+            displacementMap: displacementMap,
+            displacementScale: 20
+        });
+
+        // highest level of detail
+        let material6 = new THREE.MeshStandardMaterial({
+            wireframe: true,
+            color: 0xffffff,
+            displacementMap: displacementMap,
+            displacementScale: 20
+        });
+
+        this.materials.push(material1);
+        this.materials.push(material2);
+        this.materials.push(material3);
+        this.materials.push(material4);
+        this.materials.push(material5);
+        this.materials.push(material6);
+
         this.maxLevel = maxLevel;
 
         // Create the root node of the quadtree
         this.root = new QuadtreeNode3(0, -size / 2, -size / 2, size);
-        this.root.createMesh(this.scene, this.material);
+        this.root.createMesh(this.scene, this.materials[0]);
     }
 
     // Update quadtree based on camera position
@@ -40,7 +96,7 @@ export class QuadtreeTerrainSystem3 {
             this.merge(node);
         } else {
             // Create mesh if not subdivided
-            node.createMesh(this.scene, this.material);
+            node.createMesh(this.scene, this.materials[node.level]);
         }
     }
 

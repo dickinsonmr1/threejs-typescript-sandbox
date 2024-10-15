@@ -42,6 +42,7 @@ export class QuadtreeNode3 {
         if (!this.mesh) {
             const geometry = new THREE.PlaneGeometry(this.size, this.size, 32, 32);
             const mesh = new THREE.Mesh(geometry, material);
+
             mesh.rotation.x = -Math.PI / 2; // Rotate to lie flat
             mesh.position.set(this.x + this.size / 2, 20, this.y + this.size / 2); // Center it
             this.mesh = mesh;

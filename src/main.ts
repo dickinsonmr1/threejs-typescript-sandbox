@@ -29,7 +29,7 @@ renderer.autoClear = false; // To allow render overlay
 
 const mainCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, gameConfig.farDrawDistance);
 
-const debugOrbitCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000);//gameConfig.farDrawDistance);
+const debugOrbitCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 5000);//gameConfig.farDrawDistance);
 debugOrbitCamera.position.set(0, 10, 0);
 
 const debugOrbitControls = new OrbitControls(debugOrbitCamera, renderer.domElement);
