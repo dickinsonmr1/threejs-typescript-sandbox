@@ -13,50 +13,70 @@ export class QuadtreeTerrainSystem3 {
         this.scene = scene;
         //this.material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true});
 
-        let displacementMap = new THREE.TextureLoader().load('assets/displacement-map.png');
+        const loader = new THREE.TextureLoader();
 
+        //let displacementMap = loader.load('assets/displacement-map.png');
+        let displacementMap = loader.load('assets/heightmaps/mountain_circle_512x512.png');
+
+        //let grassTexture = this.loadAndConfigureTexture(loader, "assets/tileable_grass_00.png", 4);
+        let textureLOD0 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 1);
+        let textureLOD1 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 2);
+        let textureLOD2 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 4);
+        let textureLOD3 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 8);
+        let textureLOD4 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 16);
+        let textureLOD5 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 32);
+
+        let isWireframe = false;
+
+        let displacementScale = 50;
         // lowest level of detail
         let material1 = new THREE.MeshStandardMaterial({
-            wireframe: true,
+            wireframe: isWireframe,
             color: 0xff0000,
             displacementMap: displacementMap,
-            displacementScale: 20
+            displacementScale: displacementScale,
+            map: textureLOD0
         });
 
-        let material2= new THREE.MeshStandardMaterial({
-            wireframe: true,
+        let material2 = new THREE.MeshStandardMaterial({
+            wireframe: isWireframe,
             color: 0x00ff00,
             displacementMap: displacementMap,
-            displacementScale: 20
+            displacementScale: displacementScale,
+            map: textureLOD1
         });
 
         let material3 = new THREE.MeshStandardMaterial({
-            wireframe: true,
+            wireframe: isWireframe,
             color: 0x0000ff,
             displacementMap: displacementMap,
-            displacementScale: 20
+            displacementScale: displacementScale,
+            map: textureLOD2
         });
 
         let material4 = new THREE.MeshStandardMaterial({
-            wireframe: true,
+            wireframe: isWireframe,
             color: 0xffff00,
             displacementMap: displacementMap,
-            displacementScale: 20
+            displacementScale: displacementScale,
+            map: textureLOD3
         });
 
         let material5 = new THREE.MeshStandardMaterial({
-            wireframe: true,
+            wireframe: isWireframe,
             color: 0xff00ff,
             displacementMap: displacementMap,
-            displacementScale: 20
+            displacementScale: displacementScale,
+            map: textureLOD4
         });
 
         // highest level of detail
         let material6 = new THREE.MeshStandardMaterial({
-            wireframe: true,
+            wireframe: isWireframe,
             color: 0xffffff,
             displacementMap: displacementMap,
-            displacementScale: 20
+            displacementScale: displacementScale,
+            map: textureLOD5
         });
 
         this.materials.push(material1);
@@ -117,5 +137,20 @@ export class QuadtreeTerrainSystem3 {
     getCameraDistanceToNode(camera: THREE.Camera, node: QuadtreeNode3): number {
         const nodeCenter = new THREE.Vector3(node.x + node.size / 2, 0, node.y + node.size / 2);
         return camera.position.distanceTo(nodeCenter);
+    }
+
+    loadAndConfigureTexture(loader: THREE.TextureLoader, asset: string, repeats: number): THREE.Texture
+    {
+        const texture = loader.load(asset);                
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.magFilter = THREE.LinearFilter;
+        //texture.minFilter = THREE.NearestMipMapLinearFilter;
+        //texture.anisotropy = 16;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.repeat.set(repeats, repeats);
+        texture.needsUpdate = true;
+
+        return texture;
     }
 }

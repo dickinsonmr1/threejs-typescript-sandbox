@@ -93,7 +93,7 @@ export default class GameScene extends THREE.Scene {
     public groundMaterial!: CANNON.Material;
     public wheelGroundContactMaterial!: CANNON.ContactMaterial;
 
-    private worldConfig!: WorldConfig;
+    worldConfig!: WorldConfig;
     private heightMapTextureAsArray!: TextureHeightMapArray;
     private heightMapTextureAsArray2!: TextureHeightMapArray;
 
