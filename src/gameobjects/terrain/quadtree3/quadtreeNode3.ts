@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from 'cannon-es'
 
 export class QuadtreeNode3 {
     children: QuadtreeNode3[] | null = null;
@@ -7,6 +8,8 @@ export class QuadtreeNode3 {
     x: number;
     y: number;
     size: number;
+
+    body?: CANNON.Body;
 
     constructor(level: number, x: number, y: number, size: number) {
         this.level = level;

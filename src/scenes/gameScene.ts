@@ -36,6 +36,8 @@ import QuadtreeTerrainSystem from '../gameobjects/terrain/quadtreeTerrainSystem'
 import QuadtreeTerrainSystem2 from '../gameobjects/terrain/quadtreeTerrainSystem2';
 import SceneUtility from './sceneUtility';
 import { QuadtreeTerrainSystem3 } from '../gameobjects/terrain/quadtree3/quadtreeTerrainSystem3';
+import { QuadtreeTerrainSystem4 } from '../gameobjects/terrain/quadtree4/quadtreeTerrainSystem4';
+import { TextureHeightMapArray2 } from '../gameobjects/fx/textureToArray2';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -1015,6 +1017,21 @@ export default class GameScene extends THREE.Scene {
         const terrainSize = 512;
         const maxLODLevel = 5;
         //this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, terrainSize, maxLODLevel, this.heightMapTextureAsArray512, this.world);
+
+        var temp = new TextureHeightMapArray2();
+        temp.generate('assets/heightmaps/mountain_circle_512x512.png').then((heightmap) => {
+            // Heightmap is fully loaded and ready to use
+            console.log('Heightmap loaded successfully:', heightmap);
+
+            let quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, terrainSize, 16, 10, 50);        
+            // You can now safely use the heightmap for further processing
+            // For example: generate terrain, visualize it, etc.
+          })
+          .catch((error) => {
+            console.error('Error loading heightmap:', error);
+          });
+
+        
 
         this.generateGroundPlane();
         this.generateBoundingWalls();
