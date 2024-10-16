@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import * as CANNON from 'cannon-es';
-import { TerrainQuadTreeNode4 } from './TerrainQuadTreeNode4'
+import { QuadTreeNode4 } from './quadTreeNode4'
 
 export class QuadtreeTerrainSystem4 {
 
+    root: QuadTreeNode4;
     materials: THREE.Material[] = [];
 
     heightScale: number;
@@ -12,9 +12,15 @@ export class QuadtreeTerrainSystem4 {
         this.heightScale = heightScale;
 
         let isWireframe = true;
+        this.createMaterials(isWireframe);
+      
+        // Build the quadtree
+        this.root = this.buildTerrainQuadtree(scene, dataArray2D, 0, 0, size, maxLOD, flatnessThreshold, 0);
 
-        let displacementScale = 50;
-        // lowest level of detail
+        this.addQuadtreeToScene(this.root, scene);
+    }
+
+    createMaterials(isWireframe: boolean) {
         let material1 = new THREE.MeshStandardMaterial({
             wireframe: isWireframe,
             color: 0xff0000,       
@@ -53,38 +59,39 @@ export class QuadtreeTerrainSystem4 {
         this.materials.push(material5);
         this.materials.push(material6);
 
-        // Build the quadtree
-        const quadtreeRoot = this.buildTerrainQuadtree(dataArray2D, 0, 0, size, maxLOD, flatnessThreshold, 0);
-
-        this.addQuadtreeToScene(quadtreeRoot, scene);
     }
 
-    buildTerrainQuadtree(heightmap: number[][], x: number, y: number,
+    buildTerrainQuadtree(scene: THREE.Scene, heightmap: number[][], x: number, y: number,
         size: number,
         maxLOD: number, // The maximum Level of Detail (how small each chunk should get)
         threshold: number, // A threshold to determine if a region is "flat" enough to be a leaf
         level: number
-    ): TerrainQuadTreeNode4 {
+    ): QuadTreeNode4 {
 
         if (size <= maxLOD || this.isFlat(heightmap, x, y, size, threshold)) {
+
             // Create a leaf node with a mesh
-            const bounds = { x, y, size };
-            const node = new TerrainQuadTreeNode4(true, bounds);
-            node.mesh = this.generateTerrainMesh(heightmap, x, y, size, level); // Generate mesh for this chunk
-            node.mesh.rotation.x = -Math.PI / 2; // Rotate to lie flat
-            node.mesh.position.y = 20;
+            //const bounds = { x, y, size };
+            const node = new QuadTreeNode4(true, level, x, y, size);
+
+            node.createMesh(scene, heightmap);
+            
+            //node.mesh = this.generateTerrainMesh(heightmap, x, y, size, level); // Generate mesh for this chunk
+            //node.mesh.rotation.x = -Math.PI / 2; // Rotate to lie flat
+            //node.mesh.position.y = 20;
+            
             return node;
         }
     
         // Otherwise, subdivide into 4 quadrants
         const halfSize = size / 2;
     
-        const topLeft = this.buildTerrainQuadtree(heightmap, x, y, halfSize, maxLOD, threshold, level+1);
-        const topRight = this.buildTerrainQuadtree(heightmap, x + halfSize, y, halfSize, maxLOD, threshold, level+1);
-        const bottomLeft = this.buildTerrainQuadtree(heightmap, x, y + halfSize, halfSize, maxLOD, threshold, level+1);
-        const bottomRight = this.buildTerrainQuadtree(heightmap, x + halfSize, y + halfSize, halfSize, maxLOD, threshold, level+1);
+        const topLeft = this.buildTerrainQuadtree(scene, heightmap, x, y, halfSize, maxLOD, threshold, level+1);
+        const topRight = this.buildTerrainQuadtree(scene, heightmap, x + halfSize, y, halfSize, maxLOD, threshold, level+1);
+        const bottomLeft = this.buildTerrainQuadtree(scene, heightmap, x, y + halfSize, halfSize, maxLOD, threshold, level+1);
+        const bottomRight = this.buildTerrainQuadtree(scene, heightmap, x + halfSize, y + halfSize, halfSize, maxLOD, threshold, level+1);
     
-        const node = new TerrainQuadTreeNode4(false, { x, y, size });
+        const node = new QuadTreeNode4(false, level, x, y, size );
         node.topLeft = topLeft;
         node.topRight = topRight;
         node.bottomLeft = bottomLeft;
@@ -93,6 +100,7 @@ export class QuadtreeTerrainSystem4 {
         return node;
     }
 
+    /*
     generateTerrainMesh(heightmap: number[][], x: number, y: number, size: number, level: number): THREE.Mesh {
         const geometry = new THREE.PlaneGeometry(size, size, size - 1, size - 1);
       
@@ -109,6 +117,7 @@ export class QuadtreeTerrainSystem4 {
         const material = new THREE.MeshStandardMaterial({ color: 0x88cc88, wireframe: true });
         return new THREE.Mesh(geometry, this.materials[level]);
       }
+    */
 
     isFlat(heightmap: number[][], x: number, y: number, size: number, threshold: number): boolean {
         const firstHeight = heightmap[y][x];
@@ -122,7 +131,7 @@ export class QuadtreeTerrainSystem4 {
         return true;
     }
 
-    addQuadtreeToScene(node: TerrainQuadTreeNode4, scene: THREE.Scene) {
+    addQuadtreeToScene(node: QuadTreeNode4, scene: THREE.Scene) {
         if (node.isLeaf && node.mesh) {
             scene.add(node.mesh);
         } else {
@@ -131,5 +140,42 @@ export class QuadtreeTerrainSystem4 {
             if (node.bottomLeft) this.addQuadtreeToScene(node.bottomLeft, scene);
             if (node.bottomRight) this.addQuadtreeToScene(node.bottomRight, scene);
         }
+    }
+
+    // Update quadtree based on camera position
+    update(camera: THREE.Camera) {
+        this.updateNode(this.root, camera);
+    }
+
+      // Recursive function to update nodes
+    updateNode(node: QuadTreeNode4, camera: THREE.Camera): void {
+        /*
+        const distance = this.getCameraDistanceToNode(camera, node);
+
+        // Subdivide or merge based on distance
+        if (distance < node.size * 2 && node.level < this.maxLevel) {
+            if (!node.isSubdivided()) {
+                node.subdivide(this.scene);
+            }
+
+            // Update child nodes recursively
+            if (node.children) {
+                node.children.forEach(child => this.updateNode(child, camera));
+            }
+        } else if (node.isSubdivided()) {
+            this.merge(node);
+        } else {
+            // Create mesh if not subdivided
+            node.createMesh(this.scene, this.materials[node.level]);
+        }
+        */
+    }
+
+    merge() {
+
+    }
+
+    getCameraDistanceToNode(){
+
     }
 }

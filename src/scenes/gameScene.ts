@@ -1023,7 +1023,7 @@ export default class GameScene extends THREE.Scene {
             // Heightmap is fully loaded and ready to use
             console.log('Heightmap loaded successfully:', heightmap);
 
-            let quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, terrainSize, 16, 10, 50);        
+            let quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, terrainSize, 16, 1, 50);        
             // You can now safely use the heightmap for further processing
             // For example: generate terrain, visualize it, etc.
           })
