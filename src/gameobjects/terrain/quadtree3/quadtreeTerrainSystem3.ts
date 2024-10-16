@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { QuadtreeNode3 } from "./quadtreeNode3";
+import { TextureHeightMapArray } from "../../textureToArray";
+import * as CANNON from 'cannon-es'
 
 export class QuadtreeTerrainSystem3 {
     root: QuadtreeNode3;
@@ -7,9 +9,12 @@ export class QuadtreeTerrainSystem3 {
     //material: THREE.Material;
     maxLevel: number;
 
+    body?: CANNON.Body;
+    private heightfieldShape!: CANNON.Heightfield;
+
     materials: THREE.Material[] = [];
 
-    constructor(scene: THREE.Scene, size: number, maxLevel: number) {
+    constructor(scene: THREE.Scene, size: number, maxLevel: number, heightmapTextureAsArray: TextureHeightMapArray, world: CANNON.World) {
         this.scene = scene;
         //this.material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true});
 
@@ -17,6 +22,9 @@ export class QuadtreeTerrainSystem3 {
 
         //let displacementMap = loader.load('assets/displacement-map.png');
         let displacementMap = loader.load('assets/heightmaps/mountain_circle_512x512.png');
+
+        var height = heightmapTextureAsArray.getImageHeight();
+        var width = heightmapTextureAsArray.getImageWidth();
 
         //let grassTexture = this.loadAndConfigureTexture(loader, "assets/tileable_grass_00.png", 4);
         let textureLOD0 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 1);
@@ -91,6 +99,10 @@ export class QuadtreeTerrainSystem3 {
         // Create the root node of the quadtree
         this.root = new QuadtreeNode3(0, -size / 2, -size / 2, size);
         this.root.createMesh(this.scene, this.materials[0]);
+
+        var dataArray2D = heightmapTextureAsArray.getArray();
+        this.body = this.generateCannonHeightField(world, height, width, 50, dataArray2D, new THREE.Vector3(0, 50, 0));            
+
     }
 
     // Update quadtree based on camera position
@@ -153,4 +165,50 @@ export class QuadtreeTerrainSystem3 {
 
         return texture;
     }
+
+    generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = [], offset: THREE.Vector3): CANNON.Body {           
+
+        // generate physics object
+        var matrix: number[][] = [];
+
+        // scale by heightFactor
+        if(dataArray2D.length > 0) {
+          matrix = dataArray2D;
+          for (let i = 0; i < sizeX; i++) {
+            for (let j = 0; j < sizeZ; j++) {
+              matrix[i][j] *= heightFactor;              
+            }
+          }
+        }
+        
+        const groundMaterial = new CANNON.Material('ground');
+        this.heightfieldShape = new CANNON.Heightfield(matrix, {
+          elementSize: 1
+        });
+
+        const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial, isTrigger: false });
+        heightfieldBody.addShape(this.heightfieldShape);
+
+        heightfieldBody.position.set(
+          -(sizeX * this.heightfieldShape.elementSize) / 2,
+          0,
+          (sizeZ * this.heightfieldShape.elementSize) / 2
+        );
+        heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+        heightfieldBody.position.set(
+          heightfieldBody.position.x + offset.x,
+          heightfieldBody.position.y + offset.y,
+          heightfieldBody.position.z + offset.z
+        );
+
+        world.addBody(heightfieldBody);
+
+        heightfieldBody.addEventListener('collide', (event: any) => {
+          let body = <CANNON.Body>event.body;
+          //console.log('body collided with terrain', event);
+        });
+
+        return heightfieldBody;
+    }    
+
 }

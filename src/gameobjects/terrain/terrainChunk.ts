@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
-import { TextureHeightMapArray } from "../shapes/textureToArray";
 import { WorldConfig } from "../world/worldConfig";
 import { GameConfig } from "../../gameconfig";
+import { TextureHeightMapArray } from "../textureToArray";
 
 
 export class TerrainChunk {

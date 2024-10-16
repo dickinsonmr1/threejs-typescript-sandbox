@@ -17,7 +17,7 @@ import { Player, PlayerState, VehicleType } from '../gameobjects/player/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
 import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
 import { Utility } from '../utility';
-import { TextureHeightMapArray } from '../gameobjects/shapes/textureToArray';
+import { TextureHeightMapArray } from '../gameobjects/textureToArray';
 import { Water } from 'three/addons/objects/Water.js';
 import { DebugDivElementManager } from './debugDivElementManager';
 import { TerrainChunk } from '../gameobjects/terrain/terrainChunk';
@@ -97,6 +97,8 @@ export default class GameScene extends THREE.Scene {
     private heightMapTextureAsArray!: TextureHeightMapArray;
     private heightMapTextureAsArray2!: TextureHeightMapArray;
 
+    private heightMapTextureAsArray512!: TextureHeightMapArray;
+
     gameConfig: GameConfig;
     gameAssetModelLoader: GameAssetModelLoader;
 
@@ -117,7 +119,6 @@ export default class GameScene extends THREE.Scene {
     
     terrainChunk!: TerrainChunk;
     terrainChunk2!: TerrainChunk;
-
     quadtreeTerrainSystem!: QuadtreeTerrainSystem;
     quadtreeTerrainSystem2!: QuadtreeTerrainSystem2;
     quadtreeTerrainSystem3!: QuadtreeTerrainSystem3;
@@ -177,7 +178,9 @@ export default class GameScene extends THREE.Scene {
     preloadMapData(worldConfig: WorldConfig) {        
         this.worldConfig = worldConfig;
         this.heightMapTextureAsArray = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
-        this.heightMapTextureAsArray2 = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
+        //this.heightMapTextureAsArray2 = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
+
+        this.heightMapTextureAsArray512 = new TextureHeightMapArray(this.textureLoader, 'assets/heightmaps/mountain_circle_512x512.png');
     }
 
     preloadSkybox(worldConfig: WorldConfig) {
@@ -993,6 +996,7 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0,0,0)
         );
 
+        /*
         this.terrainChunk2 = new TerrainChunk(this,
             this.world,
             this.groundMaterial,
@@ -1002,14 +1006,15 @@ export default class GameScene extends THREE.Scene {
             this.gameConfig,
             new THREE.Vector3(128,0,0)
         );
+        */
 
         //this.quadtreeTerrainSystem = new QuadtreeTerrainSystem(this, this.camera);
 
         //this.quadtreeTerrainSystem2 = new QuadtreeTerrainSystem2(this, this.camera);
         
-        const terrainSize = 2000;
+        const terrainSize = 512;
         const maxLODLevel = 5;
-        this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, terrainSize, maxLODLevel);
+        //this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, terrainSize, maxLODLevel, this.heightMapTextureAsArray512, this.world);
 
         this.generateGroundPlane();
         this.generateBoundingWalls();
