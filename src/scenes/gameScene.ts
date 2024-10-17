@@ -124,6 +124,7 @@ export default class GameScene extends THREE.Scene {
     quadtreeTerrainSystem!: QuadtreeTerrainSystem;
     quadtreeTerrainSystem2!: QuadtreeTerrainSystem2;
     quadtreeTerrainSystem3!: QuadtreeTerrainSystem3;
+    quadtreeTerrainSystem4!: QuadtreeTerrainSystem4;
 
     water!: Water;
     precipitationSystem!: PrecipitationSystem;
@@ -1016,16 +1017,21 @@ export default class GameScene extends THREE.Scene {
         
         const terrainSize = 512;
         const maxLODLevel = 5;
-        //this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, terrainSize, maxLODLevel, this.heightMapTextureAsArray512, this.world);
+        
 
         var temp = new TextureHeightMapArray2();
         temp.generate('assets/heightmaps/mountain_circle_512x512.png').then((heightmap) => {
             // Heightmap is fully loaded and ready to use
             console.log('Heightmap loaded successfully:', heightmap);
-
-            let quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, terrainSize, 16, 1, 50);        
+            
             // You can now safely use the heightmap for further processing
             // For example: generate terrain, visualize it, etc.
+
+            const maxLOD = 16; // Minimum chunk size (e.g., 16x16)
+            const flatnessThreshold = 0.01; // Tolerance for determining flatness
+                    
+            this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world);
+            //this.quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, heightmap.length, maxLOD, flatnessThreshold, 50);                                
           })
           .catch((error) => {
             console.error('Error loading heightmap:', error);
@@ -1578,6 +1584,21 @@ export default class GameScene extends THREE.Scene {
             this.quadtreeTerrainSystem3.update(this.debugCamera);
         else 
         this.quadtreeTerrainSystem3.update(this.camera);
+        
+    }
+
+    updateQuadtreeTerrain4() {
+        // Render the quadtree based on camera position
+        const cameraPosition = new THREE.Vector3(0, 50, 0); // Replace with your camera's position
+
+        if(!this.quadtreeTerrainSystem4)
+            return;
+
+        if(this.isPaused) {
+            this.quadtreeTerrainSystem4.renderQuadtree(this.quadtreeTerrainSystem4.root, this, this.debugCamera.position, 100); // Threshold for LOD
+        }
+        else 
+            this.quadtreeTerrainSystem4.renderQuadtree(this.quadtreeTerrainSystem4.root, this, this.camera.position, 100); // Threshold for LOD
         
     }
 

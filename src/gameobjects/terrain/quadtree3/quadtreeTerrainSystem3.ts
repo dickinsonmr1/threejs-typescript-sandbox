@@ -14,95 +14,28 @@ export class QuadtreeTerrainSystem3 {
 
     materials: THREE.Material[] = [];
 
-    constructor(scene: THREE.Scene, size: number, maxLevel: number, heightmapTextureAsArray: TextureHeightMapArray, world: CANNON.World) {
+    constructor(scene: THREE.Scene, size: number, maxLevel: number, dataArray2D: number[][], world: CANNON.World) {
         this.scene = scene;
         //this.material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true});
-
-        const loader = new THREE.TextureLoader();
-
-        //let displacementMap = loader.load('assets/displacement-map.png');
-        let displacementMap = loader.load('assets/heightmaps/mountain_circle_512x512.png');
-
-        var height = heightmapTextureAsArray.getImageHeight();
-        var width = heightmapTextureAsArray.getImageWidth();
+        
+        var height = dataArray2D.length;
+        var width = dataArray2D.length;
 
         //let grassTexture = this.loadAndConfigureTexture(loader, "assets/tileable_grass_00.png", 4);
-        let textureLOD0 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 1);
-        let textureLOD1 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 2);
-        let textureLOD2 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 4);
-        let textureLOD3 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 8);
-        let textureLOD4 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 16);
-        let textureLOD5 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 32);
-
+    
         let isWireframe = false;
 
-        let displacementScale = 50;
-        // lowest level of detail
-        let material1 = new THREE.MeshStandardMaterial({
-            wireframe: isWireframe,
-            color: 0xff0000,
-            displacementMap: displacementMap,
-            displacementScale: displacementScale,
-            map: textureLOD0
-        });
-
-        let material2 = new THREE.MeshStandardMaterial({
-            wireframe: isWireframe,
-            color: 0x00ff00,
-            displacementMap: displacementMap,
-            displacementScale: displacementScale,
-            map: textureLOD1
-        });
-
-        let material3 = new THREE.MeshStandardMaterial({
-            wireframe: isWireframe,
-            color: 0x0000ff,
-            displacementMap: displacementMap,
-            displacementScale: displacementScale,
-            map: textureLOD2
-        });
-
-        let material4 = new THREE.MeshStandardMaterial({
-            wireframe: isWireframe,
-            color: 0xffff00,
-            displacementMap: displacementMap,
-            displacementScale: displacementScale,
-            map: textureLOD3
-        });
-
-        let material5 = new THREE.MeshStandardMaterial({
-            wireframe: isWireframe,
-            color: 0xff00ff,
-            displacementMap: displacementMap,
-            displacementScale: displacementScale,
-            map: textureLOD4
-        });
-
-        // highest level of detail
-        let material6 = new THREE.MeshStandardMaterial({
-            wireframe: isWireframe,
-            color: 0xffffff,
-            displacementMap: displacementMap,
-            displacementScale: displacementScale,
-            map: textureLOD5
-        });
-
-        this.materials.push(material1);
-        this.materials.push(material2);
-        this.materials.push(material3);
-        this.materials.push(material4);
-        this.materials.push(material5);
-        this.materials.push(material6);
+        this.createMaterials(isWireframe);
 
         this.maxLevel = maxLevel;
 
         // Create the root node of the quadtree
         this.root = new QuadtreeNode3(0, -size / 2, -size / 2, size);
+        
+        // TODO: create meshes and subdivided meshes based on heightmap
         this.root.createMesh(this.scene, this.materials[0]);
 
-        var dataArray2D = heightmapTextureAsArray.getArray();
         this.body = this.generateCannonHeightField(world, height, width, 50, dataArray2D, new THREE.Vector3(0, 50, 0));            
-
     }
 
     // Update quadtree based on camera position
@@ -211,4 +144,74 @@ export class QuadtreeTerrainSystem3 {
         return heightfieldBody;
     }    
 
+    createMaterials(isWireframe: boolean) {
+
+        const loader = new THREE.TextureLoader();
+
+        let textureLOD0 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 1);
+        let textureLOD1 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 2);
+        let textureLOD2 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 4);
+        let textureLOD3 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 8);
+        let textureLOD4 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 16);
+        let textureLOD5 = this.loadAndConfigureTexture(loader, "assets/stone 3.png", 32);
+
+        let displacementScale = 50;
+        // lowest level of detail
+        let material1 = new THREE.MeshStandardMaterial({
+            wireframe: isWireframe,
+            color: 0xff0000,
+            //displacementMap: displacementMap,
+            //displacementScale: displacementScale,
+            map: textureLOD0
+        });
+
+        let material2 = new THREE.MeshStandardMaterial({
+            wireframe: isWireframe,
+            color: 0x00ff00,
+            //displacementMap: displacementMap,
+            //displacementScale: displacementScale,
+            map: textureLOD1
+        });
+
+        let material3 = new THREE.MeshStandardMaterial({
+            wireframe: isWireframe,
+            color: 0x0000ff,
+            //displacementMap: displacementMap,
+            //displacementScale: displacementScale,
+            map: textureLOD2
+        });
+
+        let material4 = new THREE.MeshStandardMaterial({
+            wireframe: isWireframe,
+            color: 0xffff00,
+            //displacementMap: displacementMap,
+            //displacementScale: displacementScale,
+            map: textureLOD3
+        });
+
+        let material5 = new THREE.MeshStandardMaterial({
+            wireframe: isWireframe,
+            color: 0xff00ff,
+            //displacementMap: displacementMap,
+            //displacementScale: displacementScale,
+            map: textureLOD4
+        });
+
+        // highest level of detail
+        let material6 = new THREE.MeshStandardMaterial({
+            wireframe: isWireframe,
+            color: 0xffffff,
+            //displacementMap: displacementMap,
+            //displacementScale: displacementScale,
+            map: textureLOD5
+        });
+
+        this.materials.push(material1);
+        this.materials.push(material2);
+        this.materials.push(material3);
+        this.materials.push(material4);
+        this.materials.push(material5);
+        this.materials.push(material6);
+
+    }
 }
