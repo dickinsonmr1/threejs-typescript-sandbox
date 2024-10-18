@@ -33,7 +33,7 @@ export class QuadtreeTerrainSystem3 {
         this.root = new QuadtreeNode3(0, -size / 2, -size / 2, size);
         
         // TODO: create meshes and subdivided meshes based on heightmap
-        this.root.createMesh(this.scene, this.materials[0], dataArray2D);
+        this.root.createMesh(this.scene, this.materials[0]);//, dataArray2D);
 
         this.body = this.generateCannonHeightField(world, height, width, 50, dataArray2D, new THREE.Vector3(0, 50, 0));            
     }
@@ -61,7 +61,7 @@ export class QuadtreeTerrainSystem3 {
             this.merge(node);
         } else {
             // Create mesh if not subdivided
-            //node.createMesh(this.scene, this.materials[node.level], new [][]);
+            node.createMesh(this.scene, this.materials[node.level]);
         }
     }
 

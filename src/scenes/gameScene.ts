@@ -1032,14 +1032,16 @@ export default class GameScene extends THREE.Scene {
             //const maxLOD = 16; // Minimum chunk size (e.g., 16x16)
             //const flatnessThreshold = 0.01; // Tolerance for determining flatness
                     
-            //this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world);
+            this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world);
             //this.quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, heightmap.length, maxLOD, flatnessThreshold, 50);        
             
             const maxLOD = 32; // Maximum level of detail (smallest chunk size)
             const threshold = 50; // Distance threshold for LOD updates
             const heightScale = 25;
 
-            this.quadtreeTerrainSystem5 = new QuadtreeTerrainSystem5(heightmap, this, maxLOD, threshold, heightScale);
+            //this.quadtreeTerrainSystem5 = new QuadtreeTerrainSystem5(heightmap, heightmap.length);
+            //this.quadtreeTerrainSystem5.buildFullQuadtree(this.quadtreeTerrainSystem5.root, 16); // Stop subdividing when chunks are 16x16
+            //this.quadtreeTerrainSystem5.addQuadtreeToScene(this);
           })
           .catch((error) => {
             console.error('Error loading heightmap:', error);
@@ -1616,10 +1618,10 @@ export default class GameScene extends THREE.Scene {
             return;
 
         if(this.isPaused) {
-            this.quadtreeTerrainSystem5.update(this.debugCamera);
+            this.quadtreeTerrainSystem5.updateLOD(this.debugCamera);
         }
         else {
-            this.quadtreeTerrainSystem5.update(this.camera);
+            this.quadtreeTerrainSystem5.updateLOD(this.camera);
         }
     }
 
