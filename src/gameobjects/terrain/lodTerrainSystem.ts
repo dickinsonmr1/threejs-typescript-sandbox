@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export default class QuadtreeTerrainSystem2 {
+export default class LODTerrainSystem {
 
     terrainLevels: number = 8;
 

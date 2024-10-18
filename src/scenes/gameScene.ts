@@ -32,13 +32,11 @@ import { PrecipitationSystem, PrecipitationType } from '../gameobjects/world/pre
 import { DumpsterFireObject } from '../gameobjects/weapons/dumpsterFireObject';
 import { VehicleUtil } from '../gameobjects/vehicles/vehicleUtil';
 import GameAssetModelLoader from '../gameobjects/shapes/gameAssetModelLoader';
-import QuadtreeTerrainSystem from '../gameobjects/terrain/quadtreeTerrainSystem';
-import QuadtreeTerrainSystem2 from '../gameobjects/terrain/quadtreeTerrainSystem2';
 import SceneUtility from './sceneUtility';
 import { QuadtreeTerrainSystem3 } from '../gameobjects/terrain/quadtree3/quadtreeTerrainSystem3';
-import { QuadtreeTerrainSystem4 } from '../gameobjects/terrain/quadtree4/quadtreeTerrainSystem4';
 import { TextureHeightMapArray2 } from '../gameobjects/fx/textureToArray2';
 import { QuadtreeTerrainSystem5 } from '../gameobjects/terrain/quadtree5/QuadtreeTerrainSystem5';
+import LODTerrainSystem from '../gameobjects/terrain/lodTerrainSystem';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -122,10 +120,8 @@ export default class GameScene extends THREE.Scene {
     
     terrainChunk!: TerrainChunk;
     terrainChunk2!: TerrainChunk;
-    quadtreeTerrainSystem!: QuadtreeTerrainSystem;
-    quadtreeTerrainSystem2!: QuadtreeTerrainSystem2;
+    LODTerrainSystem!: LODTerrainSystem;
     quadtreeTerrainSystem3!: QuadtreeTerrainSystem3;
-    quadtreeTerrainSystem4!: QuadtreeTerrainSystem4;
     quadtreeTerrainSystem5!: QuadtreeTerrainSystem5;
 
     water!: Water;
@@ -1562,27 +1558,15 @@ export default class GameScene extends THREE.Scene {
         this.stats.update();
     }
 
-    updateQuadtreeTerrain() {
-
-        if(!this.quadtreeTerrainSystem)
-            return;
-
-        // Update LOD
-        const lodDistanceThreshold = 100;  // Adjust based on your needs
-        if(this.isPaused)
-            this.quadtreeTerrainSystem.update(this.debugCamera, lodDistanceThreshold);
-        else 
-            this.quadtreeTerrainSystem.update(this.camera, lodDistanceThreshold);
-    }
-
-    updateQuadtreeTerrain2() {
-        if(!this.quadtreeTerrainSystem2)
+   
+    updateLODTerrain() {
+        if(!this.LODTerrainSystem)
             return;
 
         if(this.isPaused)
-            this.quadtreeTerrainSystem2.update(this.debugCamera);
+            this.LODTerrainSystem.update(this.debugCamera);
         else 
-        this.quadtreeTerrainSystem2.update(this.camera);
+        this.LODTerrainSystem.update(this.camera);
         
     }
 
@@ -1596,23 +1580,6 @@ export default class GameScene extends THREE.Scene {
         this.quadtreeTerrainSystem3.update(this.camera);
         
     }
-
-    updateQuadtreeTerrain4() {
-        /*
-        // Render the quadtree based on camera position
-        const cameraPosition = new THREE.Vector3(0, 50, 0); // Replace with your camera's position
-
-        if(!this.quadtreeTerrainSystem4)
-            return;
-
-        if(this.isPaused) {
-            this.quadtreeTerrainSystem4.renderQuadtree(this.quadtreeTerrainSystem4.root, this, this.debugCamera.position, 100); // Threshold for LOD
-        }
-        else 
-            this.quadtreeTerrainSystem4.renderQuadtree(this.quadtreeTerrainSystem4.root, this, this.camera.position, 100); // Threshold for LOD
-        */
-    }
-
     updateQuadtreeTerrain5() {
         if(!this.quadtreeTerrainSystem5)
             return;
@@ -1698,6 +1665,7 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.updateElementText("player4Status", `Player 4 | position: ${Utility.ThreeVector3ToString(this.player4.getPosition())} | ${Utility.getEnumName(PlayerState, this.player4.playerState)} | velocity: ${Utility.CannonVec3ToString(this.player4.getChassisBody().velocity)}`);
         this.debugDivElementManager.updateElementText("player4Target", `Player 4 Target: ${Utility.ThreeVector3ToString(this.player4.target.groundTargetMesh.position)} | Distance: ${this.player1.getPosition().distanceTo(this.player4.getPosition()).toFixed(2)}`);
 
+        /*
         if(this.quadtreeTerrainSystem != null) {
             // Get the camera's frustum
             const frustum = this.isPaused
@@ -1707,6 +1675,7 @@ export default class GameScene extends THREE.Scene {
             // Count how many nodes are visible
             this.debugDivElementManager.updateElementText("QuadtreeTerrain", `Quadtree visible nodes: ${this.quadtreeTerrainSystem.getCountOfAllVisibleNodes(frustum)}`);
         }
+        */
             
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);
