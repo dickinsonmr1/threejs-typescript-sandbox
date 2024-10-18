@@ -38,6 +38,7 @@ import SceneUtility from './sceneUtility';
 import { QuadtreeTerrainSystem3 } from '../gameobjects/terrain/quadtree3/quadtreeTerrainSystem3';
 import { QuadtreeTerrainSystem4 } from '../gameobjects/terrain/quadtree4/quadtreeTerrainSystem4';
 import { TextureHeightMapArray2 } from '../gameobjects/fx/textureToArray2';
+import { QuadtreeTerrainSystem5 } from '../gameobjects/terrain/quadtree5/QuadtreeTerrainSystem5';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -125,6 +126,7 @@ export default class GameScene extends THREE.Scene {
     quadtreeTerrainSystem2!: QuadtreeTerrainSystem2;
     quadtreeTerrainSystem3!: QuadtreeTerrainSystem3;
     quadtreeTerrainSystem4!: QuadtreeTerrainSystem4;
+    quadtreeTerrainSystem5!: QuadtreeTerrainSystem5;
 
     water!: Water;
     precipitationSystem!: PrecipitationSystem;
@@ -1027,11 +1029,17 @@ export default class GameScene extends THREE.Scene {
             // You can now safely use the heightmap for further processing
             // For example: generate terrain, visualize it, etc.
 
-            const maxLOD = 16; // Minimum chunk size (e.g., 16x16)
-            const flatnessThreshold = 0.01; // Tolerance for determining flatness
+            //const maxLOD = 16; // Minimum chunk size (e.g., 16x16)
+            //const flatnessThreshold = 0.01; // Tolerance for determining flatness
                     
-            this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world);
-            //this.quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, heightmap.length, maxLOD, flatnessThreshold, 50);                                
+            //this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world);
+            //this.quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, heightmap.length, maxLOD, flatnessThreshold, 50);        
+            
+            const maxLOD = 32; // Maximum level of detail (smallest chunk size)
+            const threshold = 50; // Distance threshold for LOD updates
+            const heightScale = 25;
+
+            this.quadtreeTerrainSystem5 = new QuadtreeTerrainSystem5(heightmap, this, maxLOD, threshold, heightScale);
           })
           .catch((error) => {
             console.error('Error loading heightmap:', error);
@@ -1588,6 +1596,7 @@ export default class GameScene extends THREE.Scene {
     }
 
     updateQuadtreeTerrain4() {
+        /*
         // Render the quadtree based on camera position
         const cameraPosition = new THREE.Vector3(0, 50, 0); // Replace with your camera's position
 
@@ -1599,7 +1608,19 @@ export default class GameScene extends THREE.Scene {
         }
         else 
             this.quadtreeTerrainSystem4.renderQuadtree(this.quadtreeTerrainSystem4.root, this, this.camera.position, 100); // Threshold for LOD
-        
+        */
+    }
+
+    updateQuadtreeTerrain5() {
+        if(!this.quadtreeTerrainSystem5)
+            return;
+
+        if(this.isPaused) {
+            this.quadtreeTerrainSystem5.update(this.debugCamera);
+        }
+        else {
+            this.quadtreeTerrainSystem5.update(this.camera);
+        }
     }
 
     updateDebugDivElements() {

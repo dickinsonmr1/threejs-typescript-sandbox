@@ -41,7 +41,7 @@ export class QuadtreeNode3 {
     }
 
     // Create mesh for this tile (if not subdivided)
-    createMesh(scene: THREE.Scene, material: THREE.Material) {
+    createMesh(scene: THREE.Scene, material: THREE.Material, dataArray2D: number[][]) {
         if (!this.mesh) {
             const geometry = new THREE.PlaneGeometry(this.size, this.size, 32, 32);
             const mesh = new THREE.Mesh(geometry, material);
@@ -52,4 +52,6 @@ export class QuadtreeNode3 {
             scene.add(mesh);
         }
     }
+
+    //generateMeshFromHeightData
 }

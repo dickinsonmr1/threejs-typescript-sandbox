@@ -151,6 +151,7 @@ function tick() {
       scene.updateQuadtreeTerrain2();
       scene.updateQuadtreeTerrain3();
       scene.updateQuadtreeTerrain4();
+      scene.updateQuadtreeTerrain5();
 
       sceneOrtho.update();
 
@@ -171,6 +172,7 @@ function tick() {
       scene.updateQuadtreeTerrain2();
       scene.updateQuadtreeTerrain3();
       scene.updateQuadtreeTerrain4();
+      scene.updateQuadtreeTerrain5();
       renderer.render(scene, debugOrbitCamera);
     }
     
