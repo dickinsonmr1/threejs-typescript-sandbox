@@ -147,10 +147,8 @@ function tick() {
       scene.updatePrecipitation();
       scene.update();
       
-      scene.updateQuadtreeTerrain();
-      scene.updateQuadtreeTerrain2();
+      scene.updateLODTerrain();
       scene.updateQuadtreeTerrain3();
-      scene.updateQuadtreeTerrain4();
       scene.updateQuadtreeTerrain5();
 
       sceneOrtho.update();
@@ -168,11 +166,11 @@ function tick() {
       debugOrbitControls.update();
       scene.updateInputForDebug();
       scene.updateDebugDivElements();
-      scene.updateQuadtreeTerrain();
-      scene.updateQuadtreeTerrain2();
+
+      scene.updateLODTerrain();
       scene.updateQuadtreeTerrain3();
-      scene.updateQuadtreeTerrain4();
       scene.updateQuadtreeTerrain5();
+      
       renderer.render(scene, debugOrbitCamera);
     }
     

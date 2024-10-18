@@ -1029,6 +1029,7 @@ export default class GameScene extends THREE.Scene {
             //const flatnessThreshold = 0.01; // Tolerance for determining flatness
                     
             this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world);
+            this.quadtreeTerrainSystem3.buildFullQuadtree(this.quadtreeTerrainSystem3.root, 5);
             //this.quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, heightmap.length, maxLOD, flatnessThreshold, 50);        
             
             const maxLOD = 32; // Maximum level of detail (smallest chunk size)

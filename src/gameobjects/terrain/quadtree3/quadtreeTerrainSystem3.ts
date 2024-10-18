@@ -1,12 +1,10 @@
 import * as THREE from "three";
 import { QuadtreeNode3 } from "./quadtreeNode3";
-import { TextureHeightMapArray } from "../../textureToArray";
 import * as CANNON from 'cannon-es'
 
 export class QuadtreeTerrainSystem3 {
     root: QuadtreeNode3;
     scene: THREE.Scene;
-    //material: THREE.Material;
     maxLevel: number;
 
     body?: CANNON.Body;
@@ -16,26 +14,34 @@ export class QuadtreeTerrainSystem3 {
 
     constructor(scene: THREE.Scene, size: number, maxLevel: number, dataArray2D: number[][], world: CANNON.World) {
         this.scene = scene;
-        //this.material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true});
 
-        var height = dataArray2D.length;
-        var width = dataArray2D.length;
-
-        //let grassTexture = this.loadAndConfigureTexture(loader, "assets/tileable_grass_00.png", 4);
-    
         let isWireframe = false;
-
         this.createMaterials(isWireframe);
 
         this.maxLevel = maxLevel;
 
         // Create the root node of the quadtree
-        this.root = new QuadtreeNode3(0, -size / 2, -size / 2, size);
+        //this.root = new QuadtreeNode3(dataArray2D, 0, -size / 2, -size / 2, size);
+        this.root = new QuadtreeNode3(dataArray2D, 0, 0, size, 0);
         
         // TODO: create meshes and subdivided meshes based on heightmap
         this.root.createMesh(this.scene, this.materials[0]);//, dataArray2D);
 
-        this.body = this.generateCannonHeightField(world, height, width, 50, dataArray2D, new THREE.Vector3(0, 50, 0));            
+        //this.body = this.generateCannonHeightField(world, height, width, 50, dataArray2D, new THREE.Vector3(0, 50, 0));            
+    }
+
+    // Recursively subdivide the entire quadtree initially (pass root tostart)
+    buildFullQuadtree(node: QuadtreeNode3, maxLOD: number): void {
+        //const { size } = node.size;
+        if (node.level > maxLOD) return; // Stop subdividing at the maximum level of detail
+
+        node.subdivide(this.scene);
+
+        // Recursively subdivide the children
+        if (node.children![0] != null) this.buildFullQuadtree(node.children![0], maxLOD);
+        if (node.children![1]) this.buildFullQuadtree(node.children![1], maxLOD);
+        if (node.children![2]) this.buildFullQuadtree(node.children![2], maxLOD);
+        if (node.children![3]) this.buildFullQuadtree(node.children![3], maxLOD);
     }
 
     // Update quadtree based on camera position
@@ -70,8 +76,9 @@ export class QuadtreeTerrainSystem3 {
         if (node.children) {
             node.children.forEach(child => {
                 if (child.mesh) {
-                    this.scene.remove(child.mesh);
-                    child.mesh = null;
+                    //this.scene.remove(child.mesh);
+                    //child.mesh = null;
+                    child.mesh.visible = false;
                 }
             });
             node.children = null;
