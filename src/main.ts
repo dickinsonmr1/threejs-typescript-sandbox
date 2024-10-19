@@ -170,7 +170,8 @@ function tick() {
       scene.updateLODTerrain();
       scene.updateQuadtreeTerrain3();
       scene.updateQuadtreeTerrain5();
-      
+
+      gameScene.stats.update();
       renderer.render(scene, debugOrbitCamera);
     }
     

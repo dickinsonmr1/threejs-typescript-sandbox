@@ -45,7 +45,7 @@ import LODTerrainSystem from '../gameobjects/terrain/lodTerrainSystem';
 
 export default class GameScene extends THREE.Scene {
 
-    private stats: Stats = new Stats();
+    stats: Stats = new Stats();
 
     private readonly gltfLoader = new GLTFLoader();
 
@@ -997,45 +997,20 @@ export default class GameScene extends THREE.Scene {
             new THREE.Vector3(0,0,0)
         );
 
-        /*
-        this.terrainChunk2 = new TerrainChunk(this,
-            this.world,
-            this.groundMaterial,
-            this.heightMapTextureAsArray2,
-            5,
-            this.worldConfig,
-            this.gameConfig,
-            new THREE.Vector3(128,0,0)
-        );
-        */
-
-        //this.quadtreeTerrainSystem = new QuadtreeTerrainSystem(this, this.camera);
-
-        //this.quadtreeTerrainSystem2 = new QuadtreeTerrainSystem2(this, this.camera);
-        
-        const terrainSize = 512;
-        const maxLODLevel = 5;
-        
+        const maxLODLevel = 5;        
 
         var temp = new TextureHeightMapArray2();
         temp.generate('assets/heightmaps/mountain_circle_512x512.png').then((heightmap) => {
+        //temp.generate('assets/heightmaps/kilimanjaro_2048x2048.png').then((heightmap) => {
             // Heightmap is fully loaded and ready to use
             console.log('Heightmap loaded successfully:', heightmap);
             
             // You can now safely use the heightmap for further processing
             // For example: generate terrain, visualize it, etc.
-
-            //const maxLOD = 16; // Minimum chunk size (e.g., 16x16)
-            //const flatnessThreshold = 0.01; // Tolerance for determining flatness
-                    
-            this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world);
-            this.quadtreeTerrainSystem3.buildFullQuadtree(this.quadtreeTerrainSystem3.root, 5);
-            //this.quadtreeTerrainSystem4 = new QuadtreeTerrainSystem4(this, heightmap, heightmap.length, maxLOD, flatnessThreshold, 50);        
+                   
+            this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world, 150);
+            this.quadtreeTerrainSystem3.buildFullQuadtree(this.quadtreeTerrainSystem3.root, maxLODLevel);
             
-            const maxLOD = 32; // Maximum level of detail (smallest chunk size)
-            const threshold = 50; // Distance threshold for LOD updates
-            const heightScale = 25;
-
             //this.quadtreeTerrainSystem5 = new QuadtreeTerrainSystem5(heightmap, heightmap.length);
             //this.quadtreeTerrainSystem5.buildFullQuadtree(this.quadtreeTerrainSystem5.root, 16); // Stop subdividing when chunks are 16x16
             //this.quadtreeTerrainSystem5.addQuadtreeToScene(this);

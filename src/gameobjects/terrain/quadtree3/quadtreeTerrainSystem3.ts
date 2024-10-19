@@ -12,7 +12,7 @@ export class QuadtreeTerrainSystem3 {
 
     materials: THREE.Material[] = [];
 
-    constructor(scene: THREE.Scene, size: number, maxLevel: number, dataArray2D: number[][], world: CANNON.World) {
+    constructor(scene: THREE.Scene, size: number, maxLevel: number, dataArray2D: number[][], world: CANNON.World, heightScale: number, offset: THREE.Vector3) {
         this.scene = scene;
 
         let isWireframe = false;
@@ -22,12 +22,12 @@ export class QuadtreeTerrainSystem3 {
 
         // Create the root node of the quadtree
         //this.root = new QuadtreeNode3(dataArray2D, 0, -size / 2, -size / 2, size);
-        this.root = new QuadtreeNode3(dataArray2D, 0, 0, size, 0);
+        this.root = new QuadtreeNode3(dataArray2D, 0, 0, size, 0, heightScale);
         
         // TODO: create meshes and subdivided meshes based on heightmap
         this.root.createMesh(this.scene, this.materials[0]);//, dataArray2D);
 
-        //this.body = this.generateCannonHeightField(world, height, width, 50, dataArray2D, new THREE.Vector3(0, 50, 0));            
+        this.body = this.generateCannonHeightField(world, dataArray2D.length, dataArray2D.length, heightScale, dataArray2D, new THREE.Vector3(0, 0, 0));            
     }
 
     // Recursively subdivide the entire quadtree initially (pass root tostart)
@@ -35,7 +35,7 @@ export class QuadtreeTerrainSystem3 {
         //const { size } = node.size;
         if (node.level > maxLOD) return; // Stop subdividing at the maximum level of detail
 
-        node.subdivide(this.scene);
+        node.subdivide();
 
         // Recursively subdivide the children
         if (node.children![0] != null) this.buildFullQuadtree(node.children![0], maxLOD);
@@ -56,7 +56,7 @@ export class QuadtreeTerrainSystem3 {
         // Subdivide or merge based on distance
         if (distance < node.size * 2 && node.level < this.maxLevel) {
             if (!node.isSubdivided()) {
-                node.subdivide(this.scene);
+                node.subdivide();
             }
 
             // Update child nodes recursively
@@ -113,7 +113,8 @@ export class QuadtreeTerrainSystem3 {
 
         // scale by heightFactor
         if(dataArray2D.length > 0) {
-          matrix = dataArray2D;
+          //matrix = dataArray2D;
+          matrix = dataArray2D.map(row => row.slice());
           for (let i = 0; i < sizeX; i++) {
             for (let j = 0; j < sizeZ; j++) {
               matrix[i][j] *= heightFactor;              

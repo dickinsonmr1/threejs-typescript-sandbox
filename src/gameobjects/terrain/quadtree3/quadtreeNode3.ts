@@ -7,14 +7,16 @@ export class QuadtreeNode3 {
     mesh: THREE.Mesh | null = null;
     heightmapChunk: number[][]; // The heightmap data for this chunk
 
-    level: number;
     x: number;
     y: number;
     size: number;
 
+    level: number;
+    heightScale: number;
+
     body?: CANNON.Body;
 
-    constructor(heightmapChunk: number[][], x: number, y: number, size: number, level: number) {
+    constructor(heightmapChunk: number[][], x: number, y: number, size: number, level: number, heightScale: number) {
         this.heightmapChunk = heightmapChunk;
         
         this.x = x;
@@ -22,6 +24,7 @@ export class QuadtreeNode3 {
         this.size = size;
 
         this.level = level;
+        this.heightScale = heightScale;
     }
 
     // Check if node is subdivided
@@ -30,7 +33,7 @@ export class QuadtreeNode3 {
     }
 
     // Subdivide the node into 4 children
-    subdivide(scene: THREE.Scene) {
+    subdivide() {
         const halfSize = this.size / 2;
 
         const topLeftChunk = this.getSubChunk(0, 0, halfSize);
@@ -39,10 +42,10 @@ export class QuadtreeNode3 {
         const bottomRightChunk = this.getSubChunk(halfSize, halfSize, halfSize);
         
         this.children = [
-            new QuadtreeNode3(topLeftChunk, this.x, this.y, halfSize, this.level + 1),
-            new QuadtreeNode3(topRightChunk, this.x + halfSize, this.y, halfSize, this.level + 1),
-            new QuadtreeNode3(bottomLeftChunk, this.x, this.y + halfSize, halfSize, this.level + 1),
-            new QuadtreeNode3(bottomRightChunk, this.x + halfSize, this.y + halfSize, halfSize, this.level + 1),
+            new QuadtreeNode3(topLeftChunk, this.x, this.y, halfSize, this.level + 1, this.heightScale),
+            new QuadtreeNode3(topRightChunk, this.x + halfSize, this.y, halfSize, this.level + 1, this.heightScale),
+            new QuadtreeNode3(bottomLeftChunk, this.x, this.y + halfSize, halfSize, this.level + 1, this.heightScale),
+            new QuadtreeNode3(bottomRightChunk, this.x + halfSize, this.y + halfSize, halfSize, this.level + 1, this.heightScale),
         ];
 
         // Remove current mesh if it's being subdivided
@@ -63,7 +66,7 @@ export class QuadtreeNode3 {
             for (let i = 0; i < this.size; i++) {
                 for (let j = 0; j < this.size; j++) {
                     const index = i * this.size + j;
-                    const heightValue = this.heightmapChunk[i][j] * 50;//this.heightScale;
+                    const heightValue = this.heightmapChunk[i][j] * this.heightScale;
                     geometry.attributes.position.setZ(index, heightValue);
                 }
             }
@@ -72,7 +75,23 @@ export class QuadtreeNode3 {
 
             const mesh = new THREE.Mesh(geometry, material);
             mesh.rotation.x = -Math.PI / 2; // Rotate to lie flat
-            mesh.position.set(this.x + this.size / 2, 20, this.y + this.size / 2); // Center it
+            mesh.position.set(this.x + this.size / 2, 0, this.y + this.size / 2); // Center it
+            
+            let offset = new THREE.Vector3(0,0,0);//this.size, 0, this.size);
+
+            //mesh.position.set(this.x + this.size / 2, 0, this.y + this.size / 2); // Center it
+
+            //mesh.position.x -= this.size / 2;
+            //mesh.position.z -= this.size / 2;
+
+            /*
+            mesh.position.set(
+                -(this.x * this.size) / 2 + offset.x,
+                0 + offset.y,
+                -(this.y * this.size) / 2 + offset.z
+            ); // Center it
+            */
+            //mesh.position.y = 20;
 
             this.mesh = mesh;
             scene.add(mesh);
