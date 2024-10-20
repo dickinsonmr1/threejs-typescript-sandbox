@@ -7,27 +7,33 @@ export class QuadtreeTerrainSystem3 {
     scene: THREE.Scene;
     maxLevel: number;
 
+    totalTerrainSize: number;
+
     body?: CANNON.Body;
     private heightfieldShape!: CANNON.Heightfield;
 
     materials: THREE.Material[] = [];
 
-    constructor(scene: THREE.Scene, size: number, maxLevel: number, dataArray2D: number[][], world: CANNON.World, heightScale: number, offset: THREE.Vector3) {
+    constructor(scene: THREE.Scene, size: number, maxLevel: number, dataArray2D: number[][], world: CANNON.World, heightScale: number) {
         this.scene = scene;
+
+        this.totalTerrainSize = size;
 
         let isWireframe = false;
         this.createMaterials(isWireframe);
 
         this.maxLevel = maxLevel;
 
+        let offset = new THREE.Vector3(0,0,0);
+        
         // Create the root node of the quadtree
         //this.root = new QuadtreeNode3(dataArray2D, 0, -size / 2, -size / 2, size);
-        this.root = new QuadtreeNode3(dataArray2D, 0, 0, size, 0, heightScale);
+        this.root = new QuadtreeNode3(dataArray2D, 0, 0, size, 0, heightScale, this.totalTerrainSize);
         
         // TODO: create meshes and subdivided meshes based on heightmap
         this.root.createMesh(this.scene, this.materials[0]);//, dataArray2D);
 
-        this.body = this.generateCannonHeightField(world, dataArray2D.length, dataArray2D.length, heightScale, dataArray2D, new THREE.Vector3(0, 0, 0));            
+        this.body = this.generateCannonHeightField(world, dataArray2D.length, dataArray2D.length, heightScale, dataArray2D, new THREE.Vector3(0, 0, -this.totalTerrainSize));            
     }
 
     // Recursively subdivide the entire quadtree initially (pass root tostart)
@@ -108,16 +114,14 @@ export class QuadtreeTerrainSystem3 {
 
     generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = [], offset: THREE.Vector3): CANNON.Body {           
 
-        // generate physics object
         var matrix: number[][] = [];
 
-        // scale by heightFactor
         if(dataArray2D.length > 0) {
           //matrix = dataArray2D;
           matrix = dataArray2D.map(row => row.slice());
           for (let i = 0; i < sizeX; i++) {
             for (let j = 0; j < sizeZ; j++) {
-              matrix[i][j] *= heightFactor;              
+              matrix[i][j] *= heightFactor; // scale by heightFactor
             }
           }
         }
@@ -135,7 +139,7 @@ export class QuadtreeTerrainSystem3 {
           0,
           (sizeZ * this.heightfieldShape.elementSize) / 2
         );
-        heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+        heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, -Math.PI / 2);
         heightfieldBody.position.set(
           heightfieldBody.position.x + offset.x,
           heightfieldBody.position.y + offset.y,
