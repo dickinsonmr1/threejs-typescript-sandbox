@@ -11,6 +11,8 @@ export class TerrainChunk {
     body?: CANNON.Body;
     mesh: THREE.Mesh;
 
+    heightMapLength: number;
+
     private heightfieldShape!: CANNON.Heightfield;
     private physicsMaterial?: CANNON.Material;
 
@@ -21,15 +23,17 @@ export class TerrainChunk {
     constructor(scene: THREE.Scene,
         world: CANNON.World,
         physicsMaterial: CANNON.Material,
-        heightMapTextureAsArray: TextureHeightMapArray,
+        heightmap: number[][],
         heightFactor: number,
         worldConfig: WorldConfig,
         gameConfig: GameConfig,
         offset: THREE.Vector3) {
             
         // important: width and height used in this class need to match dimensions of heightmap!
-        var height = heightMapTextureAsArray.getImageHeight();
-        var width = heightMapTextureAsArray.getImageWidth();
+        var height = heightmap.length;
+        var width = heightmap.length;
+
+        this.heightMapLength = heightmap.length;
 
         this.physicsMaterial = physicsMaterial;
         
@@ -43,12 +47,11 @@ export class TerrainChunk {
         scene.add( grid );
               
         // physics object and mesh generated directly from physics object
-        var dataArray2D = heightMapTextureAsArray.getArray();
-        this.body = this.generateCannonHeightField(world, height, width, heightFactor, dataArray2D, offset);            
+        this.body = this.generateCannonHeightField(world, height, width, heightFactor, heightmap, offset);            
         //this.body.position.vadd(Utility.ThreeVec3ToCannonVec3(offset));
 
         const planeSize = width * 2;
-        var geometry = this.generateMeshFromHeightData(height, width, dataArray2D);
+        var geometry = this.generateMeshFromHeightData(height, width, heightmap);
         var material = this.generateMaterialv2(planeSize, heightFactor, worldConfig);
 
         this.mesh = new THREE.Mesh(geometry, material);
@@ -203,6 +206,10 @@ export class TerrainChunk {
       }
 
       return worldPosition;
+  }
+
+  getMapDimensions(): THREE.Vector3 {
+    return new THREE.Vector3(this.heightMapLength, 0, this.heightMapLength);
   }
 
   generateGrassBillboards(textureName: string, mapWidth: number, mapHeight: number, yMin: number, yMax: number, maxCount: number): THREE.Points {

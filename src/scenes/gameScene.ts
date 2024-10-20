@@ -95,16 +95,12 @@ export default class GameScene extends THREE.Scene {
     public wheelGroundContactMaterial!: CANNON.ContactMaterial;
 
     worldConfig!: WorldConfig;
-    private heightMapTextureAsArray!: TextureHeightMapArray;
-    private heightMapTextureAsArray2!: TextureHeightMapArray;
-
-    private heightMapTextureAsArray512!: TextureHeightMapArray;
 
     gameConfig: GameConfig;
     gameAssetModelLoader: GameAssetModelLoader;
 
     public getMapDimensions(): THREE.Vector3 {
-        return this.heightMapTextureAsArray.getMapDimensions();
+        return this.terrainChunk.getMapDimensions();
     }
 
     world: CANNON.World = new CANNON.World({
@@ -178,10 +174,9 @@ export default class GameScene extends THREE.Scene {
 
     preloadMapData(worldConfig: WorldConfig) {        
         this.worldConfig = worldConfig;
-        this.heightMapTextureAsArray = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
+        //this.heightMapTextureAsArray = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
         //this.heightMapTextureAsArray2 = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
-
-        this.heightMapTextureAsArray512 = new TextureHeightMapArray(this.textureLoader, 'assets/heightmaps/mountain_circle_512x512.png');
+        //this.heightMapTextureAsArray512 = new TextureHeightMapArray(this.textureLoader, 'assets/heightmaps/mountain_circle_512x512.png');
     }
 
     preloadSkybox(worldConfig: WorldConfig) {
@@ -306,7 +301,7 @@ export default class GameScene extends THREE.Scene {
         this.add( light );
 
         for(let i = 0; i < 50; i++) {
-            this.generateRandomPickup(this.heightMapTextureAsArray.getImageWidth(), this.heightMapTextureAsArray.getImageHeight());
+            this.generateRandomPickup(this.terrainChunk.getMapDimensions().x, this.terrainChunk.getMapDimensions().z);
         }
 
         document.body.appendChild(this.stats.dom);
@@ -986,19 +981,50 @@ export default class GameScene extends THREE.Scene {
         this.groundMaterial = new CANNON.Material("groundMaterial");
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
+        var terrainChunk = new TextureHeightMapArray2();
+        terrainChunk.generate('assets/heightmaps/mountain_circle_512x512.png').then((heightmap) => {
+            //temp.generate('assets/heightmaps/kilimanjaro_2048x2048.png').then((heightmap) => {
+            // Heightmap is fully loaded and ready to use
+            console.log('Heightmap loaded successfully:', heightmap);
+            
+            // You can now safely use the heightmap for further processing
+            // For example: generate terrain, visualize it, etc.
+                    
+            this.terrainChunk = new TerrainChunk(this,
+                this.world,
+                this.groundMaterial,
+                heightmap,
+                5,
+                this.worldConfig,
+                this.gameConfig,
+                new THREE.Vector3(0,0,0)
+            );
+            
+            this.generateGroundPlane();
+            this.generateBoundingWalls(heightmap.length);
+
+            if(this.worldConfig.grassBillboard != null && this.worldConfig.grassBillboardStartY != null && this.worldConfig.grassBillboardEndY != null ) {
+                var billboards = this.terrainChunk.generateGrassBillboards(
+                    this.worldConfig.grassBillboard,
+                    heightmap.length,
+                    heightmap.length,
+                    this.worldConfig.grassBillboardStartY,
+                    this.worldConfig.grassBillboardEndY,
+                    100000
+                );
+                this.add( billboards );
+            }                
+        })
+        .catch((error) => {
+            console.error('Error loading heightmap:', error);
+        });
+
+
         // width and height need to match dimensions of heightmap
-        this.terrainChunk = new TerrainChunk(this,
-            this.world,
-            this.groundMaterial,
-            this.heightMapTextureAsArray,
-            5,
-            this.worldConfig,
-            this.gameConfig,
-            new THREE.Vector3(0,0,0)
-        );
+        
 
+        /*
         const maxLODLevel = 5;        
-
         var temp = new TextureHeightMapArray2();
         temp.generate('assets/heightmaps/mountain_circle_512x512.png').then((heightmap) => {
         //temp.generate('assets/heightmaps/kilimanjaro_2048x2048.png').then((heightmap) => {
@@ -1010,31 +1036,12 @@ export default class GameScene extends THREE.Scene {
                    
             this.quadtreeTerrainSystem3 = new QuadtreeTerrainSystem3(this, heightmap.length, maxLODLevel, heightmap, this.world, 150);
             this.quadtreeTerrainSystem3.buildFullQuadtree(this.quadtreeTerrainSystem3.root, maxLODLevel);
-            
-            //this.quadtreeTerrainSystem5 = new QuadtreeTerrainSystem5(heightmap, heightmap.length);
-            //this.quadtreeTerrainSystem5.buildFullQuadtree(this.quadtreeTerrainSystem5.root, 16); // Stop subdividing when chunks are 16x16
-            //this.quadtreeTerrainSystem5.addQuadtreeToScene(this);
-          })
-          .catch((error) => {
+        })
+        .catch((error) => {
             console.error('Error loading heightmap:', error);
-          });
-
-        
-
-        this.generateGroundPlane();
-        this.generateBoundingWalls();
-
-        if(this.worldConfig.grassBillboard != null && this.worldConfig.grassBillboardStartY != null && this.worldConfig.grassBillboardEndY != null ) {
-            var billboards = this.terrainChunk.generateGrassBillboards(
-                this.worldConfig.grassBillboard,
-                this.heightMapTextureAsArray.getImageWidth(),
-                this.heightMapTextureAsArray.getImageHeight(),
-                this.worldConfig.grassBillboardStartY,
-                this.worldConfig.grassBillboardEndY,
-                100000
-            );
-            this.add( billboards );
-        }                
+        });
+        */       
+      
     }
 
     private generateGroundPlane(): void {
@@ -1050,9 +1057,9 @@ export default class GameScene extends THREE.Scene {
         body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
         this.world.addBody(body);
     }
-    private generateBoundingWalls(): void {
+    private generateBoundingWalls(sizeX: number): void {
 
-        var height = this.heightMapTextureAsArray.getImageHeight();
+        var height = sizeX;//this.heightMapTextureAsArray.getImageHeight();
         const wallShape = new CANNON.Box(new CANNON.Vec3(height / 2, 20, 1));
 
         var wallBody1 = new CANNON.Body({
