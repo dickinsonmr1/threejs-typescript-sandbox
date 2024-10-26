@@ -8,6 +8,7 @@ import CannonDebugger from 'cannon-es-debugger';
 import SceneController from './scenes/sceneController';
 import { GamepadControlScheme } from './scenes/gamePadEnums';
 import MenuScene from './scenes/menuScene';
+import GUI from 'lil-gui'; 
 import { GameConfig } from './gameconfig';
 
 import gameconfigJson from '../gameconfig.json'
@@ -60,15 +61,26 @@ window.addEventListener("gamepaddisconnected", (event) => {
   console.log(event.gamepad);
 });
 
-var sceneController = new SceneController(renderer);
+const gui = new GUI();
+gui.title('Debug');
+
+var sceneController = new SceneController(renderer, gui);
 
 const gameScene = new GameScene(mainCamera, debugOrbitCamera, debugOrbitControls, sceneController, gameConfig);
 //gameScene.initialize();
 
+const gameConfigFolder = gui.addFolder( 'Game Config' );
+gameConfigFolder.add(gameConfig, 'isDebug').listen();
+gameConfigFolder.add(gameConfig, 'controlType', { 'Car Combat': 0, 'Racing': 1 } ).listen();
+gameConfigFolder.add(gameConfig, 'farDrawDistance', 10, 500, 10).listen();
+gameConfigFolder.add(gameConfig, 'useFog').listen();
+gameConfigFolder.add(gameConfig, 'fogNear', 0, 500, 10).listen();
+gameConfigFolder.add(gameConfig, 'fogFar', 0, 500, 10).listen();
+
 let cannonDebugger: any = null;
 
 if(gameConfig.isDebug) {
-  cannonDebugger = CannonDebugger(gameScene, gameScene.world, {color: 0x0000ff });  
+  cannonDebugger = CannonDebugger(gameScene, gameScene.world, {color: 0x0000ff });    
 }
 
 gameScene.environment = pmremGenerator.fromScene( environment ).texture;

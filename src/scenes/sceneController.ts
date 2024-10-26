@@ -12,6 +12,7 @@ import * as THREE from 'three'
 
 import arenaLevelJson from '../levelData/arena.json';
 import fieldLevelJson from '../levelData/field.json';
+import GUI from "lil-gui";
 
 export default class SceneController {
 
@@ -29,9 +30,11 @@ export default class SceneController {
     gamepadControlScheme!: GamepadControlScheme;
 
     renderer: THREE.WebGLRenderer;
+    gui: GUI;
 
-    constructor(renderer: THREE.WebGLRenderer) {
+    constructor(renderer: THREE.WebGLRenderer, gui: GUI) {
         this.renderer = renderer;
+        this.gui = gui;
     }
 
     accelerateGamepadIndex!: number;
@@ -570,17 +573,44 @@ export default class SceneController {
 
     switchToGameScene(player1VehicleType: VehicleType, levelName: string) {
 
+                
+        let worldConfig: any;
+
         switch(levelName) {
             case "field":
-                this.gameScene?.preloadMapData(this.fieldLevelConfig);
-                this.gameScene?.preloadSkybox(this.fieldLevelConfig);
+                worldConfig = this.fieldLevelConfig;
                 break;
             case "arena":
             default:
-                this.gameScene?.preloadMapData(this.arenaLevelConfig);
-                this.gameScene?.preloadSkybox(this.arenaLevelConfig);
+                worldConfig = this.arenaLevelConfig;
                 break;
         }
+
+        this.gameScene?.preloadMapData(<WorldConfig>worldConfig);
+        this.gameScene?.preloadSkybox(<WorldConfig>worldConfig);
+
+        const worldConfigFolder = this.gui.addFolder( 'Level Config' );
+        worldConfigFolder.add(worldConfig, 'name');
+        worldConfigFolder.add(worldConfig, 'heightMap');
+        worldConfigFolder.add(worldConfig, 'texture1');
+        worldConfigFolder.add(worldConfig, 'texture2');
+        worldConfigFolder.add(worldConfig, 'texture3');
+        worldConfigFolder.add(worldConfig, 'texture4');
+        worldConfigFolder.add(worldConfig, 'texture5');
+        
+        worldConfigFolder.add(worldConfig, 'skyTexture');
+        worldConfigFolder.add(worldConfig, 'precipitationType', { None: 0, Rain: 1, Snow: 2 });
+        
+        worldConfigFolder.add(worldConfig, 'waterY', 0, 20, 0.25);
+        
+        worldConfigFolder.add(worldConfig, 'grassBillboard');
+        worldConfigFolder.add(worldConfig, 'grassBillboardStartY');
+        worldConfigFolder.add(worldConfig, 'grassBillboardEndY');
+
+        worldConfigFolder.add(worldConfig, 'fogColor');
+
+        // TODO: get folder by name to add items like CpuPlayerBehavior later
+
                 
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
