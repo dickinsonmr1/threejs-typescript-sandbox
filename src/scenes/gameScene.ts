@@ -32,7 +32,6 @@ import { PrecipitationSystem, PrecipitationType } from '../gameobjects/world/pre
 import { DumpsterFireObject } from '../gameobjects/weapons/dumpsterFireObject';
 import { VehicleUtil } from '../gameobjects/vehicles/vehicleUtil';
 import GameAssetModelLoader from '../gameobjects/shapes/gameAssetModelLoader';
-import SceneUtility from './sceneUtility';
 import { QuadtreeTerrainSystem3 } from '../gameobjects/terrain/quadtree3/quadtreeTerrainSystem3';
 import { TextureHeightMapArray2 } from '../gameobjects/fx/textureToArray2';
 import { QuadtreeTerrainSystem5 } from '../gameobjects/terrain/quadtree5/QuadtreeTerrainSystem5';
@@ -115,7 +114,6 @@ export default class GameScene extends THREE.Scene {
     basicSemitransparentMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial( { color: 0xFFFF00, transparent: true, opacity: 0.5 });
     
     terrainChunk!: TerrainChunk;
-    terrainChunk2!: TerrainChunk;
     LODTerrainSystem!: LODTerrainSystem;
     quadtreeTerrainSystem3!: QuadtreeTerrainSystem3;
     quadtreeTerrainSystem5!: QuadtreeTerrainSystem5;
@@ -173,10 +171,7 @@ export default class GameScene extends THREE.Scene {
     }
 
     preloadMapData(worldConfig: WorldConfig) {        
-        this.worldConfig = worldConfig;
-        //this.heightMapTextureAsArray = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
-        //this.heightMapTextureAsArray2 = new TextureHeightMapArray(this.textureLoader, worldConfig.heightMap);
-        //this.heightMapTextureAsArray512 = new TextureHeightMapArray(this.textureLoader, 'assets/heightmaps/mountain_circle_512x512.png');
+        this.worldConfig = worldConfig;        
     }
 
     preloadSkybox(worldConfig: WorldConfig) {
@@ -982,8 +977,9 @@ export default class GameScene extends THREE.Scene {
         const normalMap = new THREE.TextureLoader().load('assets/normal-map.png');
         
         var terrainChunk = new TextureHeightMapArray2();
-        terrainChunk.generate('assets/heightmaps/mountain_circle_512x512.png').then((heightmap) => {
-            //temp.generate('assets/heightmaps/kilimanjaro_2048x2048.png').then((heightmap) => {
+        terrainChunk.generate(this.worldConfig.heightMap).then((heightmap) => {
+        //terrainChunk.generate('assets/heightmaps/mountain_circle_512x512.png').then((heightmap) => {
+        //terrainChunk.generate('assets/heightmaps/kilimanjaro_2048x2048.png').then((heightmap) => {
             // Heightmap is fully loaded and ready to use
             console.log('Heightmap loaded successfully:', heightmap);
             
@@ -1395,7 +1391,6 @@ export default class GameScene extends THREE.Scene {
         this.updateCamera(); 
         
         this.terrainChunk?.update();
-        this.terrainChunk2?.update();
 
         // TODO: figure out where best to update quadtree LOD
 
