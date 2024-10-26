@@ -604,8 +604,7 @@ export default class SceneController {
             worldConfigFolder.add(worldConfig, 'texture5');
             
             worldConfigFolder.add(worldConfig, 'skyTexture');
-            worldConfigFolder.add(worldConfig, 'precipitationType', { None: 0, Rain: 1, Snow: 2 });
-            
+
             worldConfigFolder.add(this.gameScene!.water.position, 'y', 0, 20, 0.25)
                 .name('Water Level (y)')
                 .listen();
@@ -615,6 +614,17 @@ export default class SceneController {
             worldConfigFolder.add(worldConfig, 'grassBillboardEndY');
     
             worldConfigFolder.addColor(worldConfig, 'fogColor');
+        
+            const weatherFolder = this.gui.addFolder( 'Weather Config' );
+            weatherFolder.add(worldConfig, 'precipitationType', { None: 0, Rain: 1, Snow: 2 })
+                .listen();
+                weatherFolder.add(this.gameScene?.precipitationSystem!, 'velocityY', 0, 2, 0.1 )
+                .name('Precipitation Velocity')    
+                .listen();
+            
+            const cpuFolder = this.gui.addFolder( 'CPU Config' );
+            cpuFolder.add(this.gameScene!, 'cpuPlayerBehavior', { Follow: 0, FollowAndAttack: 1, Stop: 2, StopAndAttack: 3, Flee: 4, Patrol: 5})
+                .listen();
         });
 
         // todo: fix behavior because of async
