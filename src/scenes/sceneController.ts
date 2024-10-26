@@ -571,7 +571,7 @@ export default class SceneController {
         document.getElementById('gameSceneDiv')!.style.visibility = 'hidden';
     }
 
-    switchToGameScene(player1VehicleType: VehicleType, levelName: string) {
+    async switchToGameScene(player1VehicleType: VehicleType, levelName: string) {
 
                 
         let worldConfig: any;
@@ -588,38 +588,40 @@ export default class SceneController {
 
         this.gameScene?.preloadMapData(<WorldConfig>worldConfig);
         this.gameScene?.preloadSkybox(<WorldConfig>worldConfig);
-
-        const worldConfigFolder = this.gui.addFolder( 'Level Config' );
-        worldConfigFolder.add(worldConfig, 'name');
-        worldConfigFolder.add(worldConfig, 'heightMap');
-        worldConfigFolder.add(worldConfig, 'texture1');
-        worldConfigFolder.add(worldConfig, 'texture2');
-        worldConfigFolder.add(worldConfig, 'texture3');
-        worldConfigFolder.add(worldConfig, 'texture4');
-        worldConfigFolder.add(worldConfig, 'texture5');
-        
-        worldConfigFolder.add(worldConfig, 'skyTexture');
-        worldConfigFolder.add(worldConfig, 'precipitationType', { None: 0, Rain: 1, Snow: 2 });
-        
-        worldConfigFolder.add(worldConfig, 'waterY', 0, 20, 0.25);
-        
-        worldConfigFolder.add(worldConfig, 'grassBillboard');
-        worldConfigFolder.add(worldConfig, 'grassBillboardStartY');
-        worldConfigFolder.add(worldConfig, 'grassBillboardEndY');
-
-        worldConfigFolder.add(worldConfig, 'fogColor');
-
-        // TODO: get folder by name to add items like CpuPlayerBehavior later
-
                 
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';
-        this.gameScene?.initialize(player1VehicleType);
+        await this.gameScene?.initialize(player1VehicleType).then(x => {
+
+            const worldConfigFolder = this.gui.addFolder( 'Level Config' );
+            worldConfigFolder.add(worldConfig, 'name');
+            worldConfigFolder.add(worldConfig, 'heightMap');
+            worldConfigFolder.add(worldConfig, 'texture1');
+            worldConfigFolder.add(worldConfig, 'texture2');
+            worldConfigFolder.add(worldConfig, 'texture3');
+            worldConfigFolder.add(worldConfig, 'texture4');
+            worldConfigFolder.add(worldConfig, 'texture5');
+            
+            worldConfigFolder.add(worldConfig, 'skyTexture');
+            worldConfigFolder.add(worldConfig, 'precipitationType', { None: 0, Rain: 1, Snow: 2 });
+            
+            worldConfigFolder.add(this.gameScene!.water.position, 'y', 0, 20, 0.25)
+                .name('Water Level (y)')
+                .listen();
+            
+            worldConfigFolder.add(worldConfig, 'grassBillboard');
+            worldConfigFolder.add(worldConfig, 'grassBillboardStartY');
+            worldConfigFolder.add(worldConfig, 'grassBillboardEndY');
+    
+            worldConfigFolder.addColor(worldConfig, 'fogColor');
+        });
 
         // todo: fix behavior because of async
         var player1MaxHealth = this.gameScene?.player1?.maxHealth ?? 100;
         this.hudScene?.initialize(player1MaxHealth);
+    
+        // TODO: get folder by name to add items like CpuPlayerBehavior later
     }
 
     tryTogglePauseMenu() {
