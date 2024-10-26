@@ -12,12 +12,14 @@ import * as THREE from 'three'
 
 import arenaLevelJson from '../levelData/arena.json';
 import fieldLevelJson from '../levelData/field.json';
+import mountainLevelJson from '../levelData/mountain.json';
 import GUI from "lil-gui";
 
 export default class SceneController {
 
     arenaLevelConfig: WorldConfig = arenaLevelJson;
     fieldLevelConfig: WorldConfig = fieldLevelJson;
+    mountainLevelConfig: WorldConfig = mountainLevelJson;
 
     menuScene?: MenuScene;
     gameScene?: GameScene;
@@ -104,6 +106,7 @@ export default class SceneController {
         // menu scene buttons
         const startGameLevel1Button = this.getButton('startgameLevel1');
         const startGameLevel2Button = this.getButton('startgameLevel2');
+        const startGameLevel3Button = this.getButton('startgameLevel3');
         const menuLeftButton = this.getButton('menuLeft');
         const menuRightButton = this.getButton('menuRight');
 
@@ -269,6 +272,16 @@ export default class SceneController {
             });
         }
 
+        if(startGameLevel3Button != null) {
+            startGameLevel3Button.addEventListener('touchstart', () => {
+            });
+            startGameLevel3Button.addEventListener('click', () => {
+                this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, "mountain");
+                startGameLevel3Button.style.visibility = "hidden";
+            });
+            startGameLevel3Button.addEventListener('touchend', () => {
+            });
+        }
 
         // static
         /*
@@ -581,8 +594,11 @@ export default class SceneController {
                 worldConfig = this.fieldLevelConfig;
                 break;
             case "arena":
-            default:
                 worldConfig = this.arenaLevelConfig;
+                break;
+            case "mountain":
+            default:
+                worldConfig = this.mountainLevelConfig;
                 break;
         }
 

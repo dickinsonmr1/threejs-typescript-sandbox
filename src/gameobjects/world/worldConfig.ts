@@ -4,6 +4,8 @@ import { PrecipitationType } from "./precipitationSystem";
 export interface WorldConfig {
     name: string;
     heightMap: string;
+    heightScale: number;
+    
     texture1: string;
     texture2: string;
     texture3: string;

@@ -24,7 +24,6 @@ export class TerrainChunk {
         world: CANNON.World,
         physicsMaterial: CANNON.Material,
         heightmap: number[][],
-        heightFactor: number,
         worldConfig: WorldConfig,
         gameConfig: GameConfig,
         offset: THREE.Vector3) {
@@ -47,12 +46,12 @@ export class TerrainChunk {
         scene.add( grid );
               
         // physics object and mesh generated directly from physics object
-        this.body = this.generateCannonHeightField(world, height, width, heightFactor, heightmap, offset);            
+        this.body = this.generateCannonHeightField(world, height, width, worldConfig.heightScale, heightmap, offset);            
         //this.body.position.vadd(Utility.ThreeVec3ToCannonVec3(offset));
 
         const planeSize = width * 2;
         var geometry = this.generateMeshFromHeightData(height, width, heightmap);
-        var material = this.generateMaterialv2(planeSize, heightFactor, worldConfig);
+        var material = this.generateMaterialv2(planeSize, worldConfig.heightScale, worldConfig);
 
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.rotation.x = -Math.PI / 2;

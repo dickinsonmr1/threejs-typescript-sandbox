@@ -359,7 +359,7 @@ export default class GameScene extends THREE.Scene {
         }
 
         if(this.worldConfig.precipitationType != PrecipitationType.None) {
-            this.precipitationSystem = new PrecipitationSystem(this, this.worldConfig.precipitationType);
+            this.precipitationSystem = new PrecipitationSystem(this, this.terrainChunk.heightMapLength, this.worldConfig.precipitationType);
         }
             
         //this.rainShaderParticleEmitter = new RainShaderParticleEmitter(this);
@@ -990,7 +990,6 @@ export default class GameScene extends THREE.Scene {
                 this.world,
                 this.groundMaterial,
                 heightmap,
-                5,
                 this.worldConfig,
                 this.gameConfig,
                 new THREE.Vector3(0,0,0)

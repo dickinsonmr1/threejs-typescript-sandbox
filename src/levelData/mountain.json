@@ -1,21 +1,22 @@
 {
-    "name" : "field",
+    "name" : "mountain",
     "heightMap": "assets/heightmaps/mountain_512x512.png",
+    "heightScale": 20,
     "texture1": "assets/Sand 4.jpg",
-    "texture2": "assets/snow.png",
-    "texture3": "assets/snow.png",
-    "texture4": "assets/snow.jpg",
+    "texture2": "assets/stone 3.png",
+    "texture3": "assets/stone 3.png",
+    "texture4": "assets/snow.png",
     "texture5": "assets/snow.png",
 
     "skyTexture": "assets/skybox/overcast_soil_puresky.jpg",
     
     "precipitationType": 2,
 
-    "waterY": 1.5,
+    "waterY": 3.5,
 
     "grassBillboard": "assets/billboard_grass_32x32.png",
-    "grassBillboardStartY": 9,
-    "grassBillboardEndY": 10,
+    "grassBillboardStartY": 10,
+    "grassBillboardEndY": 15,
     
     "fogColor": "#aaaaaa"
 }
