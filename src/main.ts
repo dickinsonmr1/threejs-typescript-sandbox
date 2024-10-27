@@ -74,8 +74,8 @@ gameConfigFolder.add(gameConfig, 'isDebug').listen();
 gameConfigFolder.add(gameConfig, 'controlType', { 'Car Combat': 0, 'Racing': 1 } ).listen();
 gameConfigFolder.add(gameConfig, 'farDrawDistance', 10, 500, 10).listen();
 gameConfigFolder.add(gameConfig, 'useFog').listen();
-gameConfigFolder.add(gameConfig, 'fogNear', 0, 500, 10).listen();
-gameConfigFolder.add(gameConfig, 'fogFar', 0, 500, 10).listen();
+//gameConfigFolder.add(gameConfig, 'fogNear', 0, 500, 10).listen();
+//gameConfigFolder.add(gameConfig, 'fogFar', 0, 500, 10).listen();
 
 let cannonDebugger: any = null;
 
@@ -169,6 +169,10 @@ function tick() {
         cannonDebugger.update();
       }
 
+      mainCamera.near = gameConfig.fogNear;
+      mainCamera.far = gameConfig.fogFar;
+      gameScene.fog!.color = new THREE.Color(gameScene.worldConfig.fogColor);
+
       renderer.clear();
       renderer.render(scene, mainCamera);
       renderer.clearDepth();
@@ -184,12 +188,17 @@ function tick() {
       scene.updateQuadtreeTerrain5();
 
       gameScene.stats.update();
+
+      gameScene.fog!.color = new THREE.Color(gameScene.worldConfig.fogColor);
+      mainCamera.near = gameConfig.fogNear;
+      mainCamera.far = gameConfig.fogFar;
+
       renderer.render(scene, debugOrbitCamera);
     }
     
   }
   else if(scene instanceof MenuScene) {
-    scene.update();
+    scene.update();    
     renderer.render(scene, menuCamera);
   }
   

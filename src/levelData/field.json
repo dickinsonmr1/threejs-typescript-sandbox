@@ -1,7 +1,7 @@
 {
     "name" : "field",
     "heightMap": "assets/heightmaps/heightmap_128x128.png",
-    "heightScale": 20,
+    "heightScale": 5,
     "texture1": "assets/Sand 4.jpg",
     "texture2": "assets/snow.png",
     "texture3": "assets/snow.png",

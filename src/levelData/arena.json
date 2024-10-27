@@ -1,7 +1,7 @@
 {
     "name" : "arena",
     "heightMap": "assets/heightmaps/heightmap_arena_128x128.png",
-    "heightScale": 10,
+    "heightScale": 5,
     "texture1": "assets/Sand 4.jpg",
     "texture2": "assets/tileable_grass_00.png",
     "texture3": "assets/tileable_grass_01.png",
@@ -18,5 +18,5 @@
     "grassBillboardStartY": 2,
     "grassBillboardEndY": 3,
 
-    "fogColor": "#aaaaff"
+    "fogColor": "#3299CC"
 }

@@ -629,8 +629,24 @@ export default class SceneController {
             worldConfigFolder.add(worldConfig, 'grassBillboardStartY');
             worldConfigFolder.add(worldConfig, 'grassBillboardEndY');
     
-            worldConfigFolder.addColor(worldConfig, 'fogColor');
-        
+            //worldConfigFolder.addColor(this.gameScene?.fog!, 'color')
+                //.name('Scene Fog Color')
+                //.listen();
+            
+            worldConfigFolder.addColor(worldConfig, 'fogColor')
+                .name('Scene Fog Color')
+                .listen();
+
+            let fog: any = this.gameScene?.fog;
+
+            worldConfigFolder.add(fog, 'near', 0, 500, 5)
+                .name('Scene Fog Near')
+                .listen();
+
+            worldConfigFolder.add(fog, 'far', 0, 500, 5)
+                .name('Scene Fog Far')
+                .listen();
+
             const weatherFolder = this.gui.addFolder( 'Weather Config' );
             weatherFolder.add(worldConfig, 'precipitationType', { None: 0, Rain: 1, Snow: 2 })
                 .listen();

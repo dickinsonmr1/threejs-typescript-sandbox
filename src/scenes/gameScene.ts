@@ -189,8 +189,10 @@ export default class GameScene extends THREE.Scene {
     }
 
     async initialize(player1VehicleType: VehicleType): Promise<void> {       
-        if(this.gameConfig.useFog)
-            this.fog = new THREE.Fog(this.worldConfig.fogColor, this.gameConfig.fogNear, this.gameConfig.fogFar);
+        if(this.gameConfig.useFog) {
+            let fogColor = new THREE.Color('#ffbf52');//this.worldConfig.fogColor);
+            this.fog = new THREE.Fog(fogColor, this.gameConfig.fogNear, this.gameConfig.fogFar);
+        }
 
         await this.loadVehicleAssets();
 
@@ -278,14 +280,14 @@ export default class GameScene extends THREE.Scene {
         );
         this.world.addContactMaterial(groundCubeContactMaterial);
 
-        const color = new THREE.Color('white');
-        const intensity = 1;
+        //const color = new THREE.Color('white');
+        const intensity = 0.5;
         const distance = 50;
         const angle = Math.PI / 8;
         const penumbra = 0.25;
         const decay = 0.1;
 
-        this.spotlight = new SpotlightObject(this, color, intensity, distance, angle, penumbra, decay,
+        this.spotlight = new SpotlightObject(this, new THREE.Color('white'), intensity, distance, angle, penumbra, decay,
             new THREE.Vector3(0,15,0),
             this.cube2.mesh);
 

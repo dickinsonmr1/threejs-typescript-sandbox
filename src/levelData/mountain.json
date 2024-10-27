@@ -1,22 +1,22 @@
 {
     "name" : "mountain",
     "heightMap": "assets/heightmaps/mountain_512x512.png",
-    "heightScale": 20,
+    "heightScale": 15,
     "texture1": "assets/Sand 4.jpg",
-    "texture2": "assets/stone 3.png",
-    "texture3": "assets/stone 3.png",
-    "texture4": "assets/snow.png",
-    "texture5": "assets/snow.png",
+    "texture2": "assets/Sand 4.jpg",
+    "texture3": "assets/Sand 4.jpg",
+    "texture4": "assets/Sand 4.jpg",
+    "texture5": "assets/Sand 4.jpg",
 
-    "skyTexture": "assets/skybox/overcast_soil_puresky.jpg",
+    "skyTexture": "assets/skybox/rosendal_park_sunset_puresky.jpg",
     
-    "precipitationType": 2,
+    "precipitationType": 0,
 
-    "waterY": 3.5,
+    "waterY": 2.5,
 
     "grassBillboard": "assets/billboard_grass_32x32.png",
-    "grassBillboardStartY": 10,
-    "grassBillboardEndY": 15,
+    "grassBillboardStartY": 7,
+    "grassBillboardEndY": 12,
     
-    "fogColor": "#aaaaaa"
+    "fogColor": "#ffbf52"
 }

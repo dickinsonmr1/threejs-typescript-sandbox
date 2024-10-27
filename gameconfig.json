@@ -5,6 +5,6 @@
     "farDrawDistance": 100,
     
     "useFog": true,
-    "fogNear": 10,
-    "fogFar": 50
+    "fogNear": 50,
+    "fogFar": 75
 }

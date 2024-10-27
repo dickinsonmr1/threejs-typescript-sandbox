@@ -145,7 +145,7 @@ export class TerrainChunk {
             highMidTexture: { value: texture4 },
             highTexture: { value: texture5 },
             heightFactor: { value: heightFactor },
-            fogColor: { value: this.fog?.color ?? new THREE.Color('white') },
+            fogColor: { value: this.fog?.color ?? new THREE.Color('black') },
             fogNear: { value: (this.fog as THREE.Fog)?.near ?? 10000 },
             fogFar: { value: (this.fog as THREE.Fog)?.far ?? 10000 },
           },
