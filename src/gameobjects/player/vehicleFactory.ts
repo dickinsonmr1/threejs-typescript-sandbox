@@ -274,10 +274,11 @@ export class VehicleFactory {
 
                     new CANNON.Vec3(0.25, 0, 0),   // front wheel offset
                     new CANNON.Vec3(0.25, 0.1, 0),   // rear wheel offset
-                    20,                              // wheel mass
 
                     0.25,    // front wheel height
                     0.5,    // rear wheel height
+
+                    20,                              // wheel mass
 
                     gameScene.policeTractorModel,             // model         
                     gameScene.wheelModel,       // wheel model

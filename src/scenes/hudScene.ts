@@ -238,7 +238,8 @@ export default class HudScene extends THREE.Scene {
         if(this.selectedWeaponIndex >= this.weaponInventory.length)
             this.selectedWeaponIndex = 0;
 
-        this.spriteCenterBottom.material.map = this.weaponInventory[this.selectedWeaponIndex];
+        if(this.spriteCenterBottom != null)
+            this.spriteCenterBottom.material.map = this.weaponInventory[this.selectedWeaponIndex];
     }
 
     updateWeaponAmmo() {
