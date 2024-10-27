@@ -96,7 +96,8 @@ export class Projectile extends SphereObject {
 
         if(this.projectileType == ProjectileType.Bullet) {
                         
-            const geometry = new THREE.BoxGeometry( 2.5, 0.050, 0.050 ); 
+            //const geometry = new THREE.BoxGeometry( 2.5, 0.075, 0.050 ); 
+            const geometry = new THREE.CylinderGeometry( 0.025, 0.075, 2.5 ); 
             //const material = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
             
             const meshMaterial = new THREE.ShaderMaterial({
@@ -111,7 +112,9 @@ export class Projectile extends SphereObject {
             });
             
             this.bulletMesh = new THREE.Mesh( geometry, meshMaterial ); 
-            this.bulletMesh.quaternion.copy(quaternion);
+            this.bulletMesh.quaternion.copy(quaternion);            
+            this.bulletMesh.rotateZ(3 * Math.PI / 2);
+
             this.group.add(this.bulletMesh);            
         }
         if(this.projectileType == ProjectileType.Airstrike) {
@@ -433,14 +436,14 @@ export class Projectile extends SphereObject {
             varying vec3 vPosition;
     
             void main() {
-                float normalizedX = (vPosition.x + 0.5) / 1.0;  // Normalize x-coordinate, assuming the box width is 1.0
+                float normalizedY = (vPosition.y + 0.5) / 1.0;  // Normalize x-coordinate, assuming the box width is 1.0
 
                 vec3 color;
                 
-                if (normalizedX < 0.5) {
-                    color = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), normalizedX / 0.5);
+                if (normalizedY < 0.5) {
+                    color = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), normalizedY / 0.5);
                 } else {
-                    color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.5, 0.0), (normalizedX - 0.5) / 0.5);
+                    color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.5, 0.0), (normalizedY - 0.5) / 0.5);
                 }
 
                 gl_FragColor = vec4(color, 1.0);
