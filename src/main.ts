@@ -72,7 +72,11 @@ const gameScene = new GameScene(mainCamera, debugOrbitCamera, debugOrbitControls
 const gameConfigFolder = gui.addFolder( 'Game Config' );
 gameConfigFolder.add(gameConfig, 'isDebug').listen();
 gameConfigFolder.add(gameConfig, 'controlType', { 'Car Combat': 0, 'Racing': 1 } ).listen();
-gameConfigFolder.add(gameConfig, 'farDrawDistance', 10, 500, 10).listen();
+gameConfigFolder.add(mainCamera, 'far', 1, 500, 10)
+  .onChange((value: number) => {
+    mainCamera.far = value;
+    mainCamera.updateProjectionMatrix(); // Important: update projection matrix after changing `far`
+  });
 gameConfigFolder.add(gameConfig, 'useFog').listen();
 //gameConfigFolder.add(gameConfig, 'fogNear', 0, 500, 10).listen();
 //gameConfigFolder.add(gameConfig, 'fogFar', 0, 500, 10).listen();
@@ -169,8 +173,8 @@ function tick() {
         cannonDebugger.update();
       }
 
-      mainCamera.near = gameConfig.fogNear;
-      mainCamera.far = gameConfig.fogFar;
+      //mainCamera.near = gameConfig.fogNear;
+      //mainCamera.far = gameConfig.fogFar;
       gameScene.fog!.color = new THREE.Color(gameScene.worldConfig.fogColor);
 
       renderer.clear();
@@ -190,8 +194,8 @@ function tick() {
       gameScene.stats.update();
 
       gameScene.fog!.color = new THREE.Color(gameScene.worldConfig.fogColor);
-      mainCamera.near = gameConfig.fogNear;
-      mainCamera.far = gameConfig.fogFar;
+      //mainCamera.near = gameConfig.fogNear;
+      //mainCamera.far = gameConfig.fogFar;
 
       renderer.render(scene, debugOrbitCamera);
     }

@@ -639,22 +639,24 @@ export default class SceneController {
 
             let fog: any = this.gameScene?.fog;
 
-            worldConfigFolder.add(fog, 'near', 0, 500, 5)
+            worldConfigFolder.add(fog, 'near', 0, 25, 5)
                 .name('Scene Fog Near')
                 .listen();
 
-            worldConfigFolder.add(fog, 'far', 0, 500, 5)
+            worldConfigFolder.add(fog, 'far', 25, 500, 25)
                 .name('Scene Fog Far')
                 .listen();
 
+            if(this.gameScene?.precipitationSystem != null) {
             const weatherFolder = this.gui.addFolder( 'Weather Config' );
             weatherFolder.add(worldConfig, 'precipitationType', { None: 0, Rain: 1, Snow: 2 })
                 .listen();
                 weatherFolder.add(this.gameScene?.precipitationSystem!, 'velocityY', 0, 2, 0.1 )
                 .name('Precipitation Velocity')    
                 .listen();
-            
-            const cpuFolder = this.gui.addFolder( 'CPU Config' );
+
+            }
+            const cpuFolder = this.gui.addFolder( 'CPU Player Config' );
             cpuFolder.add(this.gameScene!, 'cpuPlayerBehavior', { Follow: 0, FollowAndAttack: 1, Stop: 2, StopAndAttack: 3, Flee: 4, Patrol: 5})
                 .listen();
         });
