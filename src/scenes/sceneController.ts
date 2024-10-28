@@ -82,6 +82,12 @@ export default class SceneController {
         }
     }
 
+    updateControlType(gamepadControlScheme: GamepadControlScheme) {
+        if(this.gamepad != null) {
+            this.setGamePad1(this.gamepad, gamepadControlScheme);
+        }
+    }
+
     getButton(name: string): HTMLElement {
         return document.getElementById(name)!;
     }

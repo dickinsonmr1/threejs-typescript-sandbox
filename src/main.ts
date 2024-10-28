@@ -71,7 +71,10 @@ const gameScene = new GameScene(mainCamera, debugOrbitCamera, debugOrbitControls
 
 const gameConfigFolder = gui.addFolder( 'Game Config' );
 gameConfigFolder.add(gameConfig, 'isDebug').listen();
-gameConfigFolder.add(gameConfig, 'controlType', { 'Car Combat': 0, 'Racing': 1 } ).listen();
+gameConfigFolder.add(gameConfig, 'controlType', { 'Car Combat': 0, 'Racing': 1 } )
+  .onChange((value: number) =>{
+    sceneController.updateControlType(gameConfig.controlType);
+  });
 gameConfigFolder.add(mainCamera, 'far', 1, 500, 10)
   .onChange((value: number) => {
     mainCamera.far = value;
