@@ -51,7 +51,7 @@ export class TerrainChunk {
 
         const planeSize = width * 2;
         var geometry = this.generateMeshFromHeightData(height, width, heightmap);
-        var material = this.generateMaterialv2(planeSize, worldConfig.heightScale, worldConfig);
+        var material = this.generateMaterialv2(128, worldConfig.heightScale, worldConfig);
 
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.rotation.x = -Math.PI / 2;
@@ -126,9 +126,8 @@ export class TerrainChunk {
         return heightfieldBody;
     }    
 
-    generateMaterialv2(planeSize: number, heightFactor: number, worldConfig: WorldConfig): THREE.Material {
+    generateMaterialv2(repeats: number, heightFactor: number, worldConfig: WorldConfig): THREE.Material {
 
-      const repeats = planeSize / 2;
       const loader = new THREE.TextureLoader();
 
       const texture1 = this.loadAndConfigureTexture(loader, worldConfig.texture1, repeats);                
@@ -144,6 +143,7 @@ export class TerrainChunk {
             midTexture: { value: texture3 },
             highMidTexture: { value: texture4 },
             highTexture: { value: texture5 },
+            repeats: { value: repeats },
             heightFactor: { value: heightFactor },
             fogColor: { value: this.fog?.color ?? new THREE.Color('black') },
             fogNear: { value: (this.fog as THREE.Fog)?.near ?? 10000 },
@@ -267,6 +267,7 @@ export class TerrainChunk {
       uniform sampler2D highMidTexture;
       uniform sampler2D highTexture;      
       
+      uniform float repeats;
       uniform float heightFactor;
 
       uniform vec3 fogColor;
@@ -280,7 +281,7 @@ export class TerrainChunk {
       void main() {
         float height = vPosition.z / heightFactor; // Normalize height to 0.0 - 1.0
 
-        vec2 repeatedUv = vUv * 10.0; // Adjust the number of repetitions here
+        vec2 repeatedUv = vUv * repeats; // Adjust the number of repetitions here
 
         vec4 lowColor = texture2D(lowTexture, repeatedUv);
         vec4 lowMidColor = texture2D(lowMidTexture, repeatedUv);
