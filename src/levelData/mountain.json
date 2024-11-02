@@ -2,6 +2,8 @@
     "name" : "mountain",
     "heightMap": "assets/heightmaps/mountain_512x512.png",
     "heightScale": 15,
+    "horizontalScale": 1,
+    
     "texture1": "assets/Sand 4.jpg",
     "texture2": "assets/Sand 4.jpg",
     "texture3": "assets/Sand 4.jpg",

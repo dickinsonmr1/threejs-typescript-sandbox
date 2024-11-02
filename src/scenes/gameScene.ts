@@ -998,7 +998,7 @@ export default class GameScene extends THREE.Scene {
             );
             
             this.generateGroundPlane();
-            this.generateBoundingWalls(heightmap.length);
+            this.generateBoundingWalls(heightmap.length, this.worldConfig.horizontalScale);
 
             if(this.worldConfig.grassBillboard != null && this.worldConfig.grassBillboardStartY != null && this.worldConfig.grassBillboardEndY != null ) {
                 var billboards = this.terrainChunk.generateGrassBillboards(
@@ -1054,9 +1054,10 @@ export default class GameScene extends THREE.Scene {
         body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);        
         this.world.addBody(body);
     }
-    private generateBoundingWalls(sizeX: number): void {
+    private generateBoundingWalls(sizeX: number, horizontalScale: number): void {
 
-        var height = sizeX;//this.heightMapTextureAsArray.getImageHeight();
+        var height = sizeX * horizontalScale;//this.heightMapTextureAsArray.getImageHeight();
+
         const wallShape = new CANNON.Box(new CANNON.Vec3(height / 2, 20, 1));
 
         var wallBody1 = new CANNON.Body({

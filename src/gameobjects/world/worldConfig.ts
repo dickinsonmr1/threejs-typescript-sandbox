@@ -1,10 +1,10 @@
-import { NumberController } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { PrecipitationType } from "./precipitationSystem";
 
 export interface WorldConfig {
     name: string;
     heightMap: string;
     heightScale: number;
+    horizontalScale: number;
     
     texture1: string;
     texture2: string;

@@ -2,6 +2,8 @@
     "name" : "arena",
     "heightMap": "assets/heightmaps/heightmap_arena_128x128.png",
     "heightScale": 5,
+    "horizontalScale": 1,
+
     "texture1": "assets/Sand 4.jpg",
     "texture2": "assets/tileable_grass_00.png",
     "texture3": "assets/tileable_grass_01.png",

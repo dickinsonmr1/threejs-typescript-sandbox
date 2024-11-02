@@ -46,11 +46,11 @@ export class TerrainChunk {
         scene.add( grid );
               
         // physics object and mesh generated directly from physics object
-        this.body = this.generateCannonHeightField(world, height, width, worldConfig.heightScale, heightmap, offset);            
+        this.body = this.generateCannonHeightField(world, height, width, worldConfig.heightScale, worldConfig.horizontalScale, heightmap, offset);            
         //this.body.position.vadd(Utility.ThreeVec3ToCannonVec3(offset));
 
         const planeSize = width * 2;
-        var geometry = this.generateMeshFromHeightData(height, width, heightmap);
+        var geometry = this.generateMeshFromHeightData(height, width, heightmap, worldConfig.horizontalScale);
         var material = this.generateMaterialv2(128, worldConfig.heightScale, worldConfig);
 
         this.mesh = new THREE.Mesh(geometry, material);
@@ -81,7 +81,7 @@ export class TerrainChunk {
         }        
     }
 
-    generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, dataArray2D: number[][] = [], offset: THREE.Vector3): CANNON.Body {           
+    generateCannonHeightField(world: CANNON.World, sizeX: number, sizeZ: number, heightFactor: number, horizontalScale: number, dataArray2D: number[][] = [], offset: THREE.Vector3): CANNON.Body {           
 
         // generate physics object
         var matrix: number[][] = [];
@@ -98,7 +98,7 @@ export class TerrainChunk {
         
         const groundMaterial = new CANNON.Material('ground');
         this.heightfieldShape = new CANNON.Heightfield(matrix, {
-          elementSize: 1
+          elementSize: horizontalScale
         });
 
         const heightfieldBody = new CANNON.Body({ mass: 0, material: groundMaterial, isTrigger: false });
@@ -155,8 +155,8 @@ export class TerrainChunk {
       });
     }
 
-    generateMeshFromHeightData(height: number, width: number, matrix: number[][]): THREE.PlaneGeometry {
-      const geometry = new THREE.PlaneGeometry(width, height, width - 1, height - 1);
+    generateMeshFromHeightData(height: number, width: number, matrix: number[][], horizontalScale: number): THREE.PlaneGeometry {
+      const geometry = new THREE.PlaneGeometry(width * horizontalScale, height * horizontalScale, width - 1, height - 1);
 
       // Apply the height data to the plane geometry vertices
       for (let i = 0; i < geometry.attributes.position.array.length; i += 3) {
