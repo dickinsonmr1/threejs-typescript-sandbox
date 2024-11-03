@@ -294,7 +294,7 @@ export default class GameScene extends THREE.Scene {
         //const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         //this.add(ambientLight);
 
-        const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.5 );
+        const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
         this.add( light );
 
         for(let i = 0; i < 50; i++) {
@@ -358,10 +358,10 @@ export default class GameScene extends THREE.Scene {
             this.water.rotation.x = - Math.PI / 2;
             this.water.position.y += this.worldConfig.waterY; // 1.5
             this.add( this.water );
-        }
+        }``
 
         if(this.worldConfig.precipitationType != PrecipitationType.None) {
-            this.precipitationSystem = new PrecipitationSystem(this, this.terrainChunk.heightMapLength, this.worldConfig.precipitationType);
+            this.precipitationSystem = new PrecipitationSystem(this, this.terrainChunk.heightMapLength, this.worldConfig.precipitationType, this.worldConfig.horizontalScale);
         }
             
         //this.rainShaderParticleEmitter = new RainShaderParticleEmitter(this);
@@ -669,9 +669,9 @@ export default class GameScene extends THREE.Scene {
     updateCamera() {
 
         if(this.followCam != null)
-            this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.05);
+            this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.1);
 		if(this.player1 != null && !this.player1.isModelNull())
-            this.camera.lookAt(this.player1.getModelPosition());
+            this.camera.lookAt(this.player1.getModelPosition().add(new THREE.Vector3(0, 0.75, 0)));
     }
 
     public async addNewProjectile(projectile: Projectile) {
@@ -971,7 +971,7 @@ export default class GameScene extends THREE.Scene {
         
         // attach follow camera to player 1
         this.player1.getVehicleObject().getModel()?.add(this.followCam);
-        this.followCam.position.set(5, 3, 0); // camera target offset related to car
+        this.followCam.position.set(3, 2, 0); // camera target offset related to car
     }
 
     private generateMap(): void {

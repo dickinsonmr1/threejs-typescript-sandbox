@@ -14,7 +14,7 @@ export class PrecipitationSystem {
 
     private velocityY: number;
 
-    constructor(scene: THREE.Scene, mapSize: number, precipitationType: PrecipitationType) {
+    constructor(scene: THREE.Scene, mapSize: number, precipitationType: PrecipitationType, horizontalScale: number) {
 
         // Create an empty geometry
         this.rainGeometry = new THREE.BufferGeometry();
@@ -24,10 +24,12 @@ export class PrecipitationSystem {
         // Create an array to hold the positions of the raindrops
         const positions = new Float32Array(PrecipitationSystem.rainCount * 3);
 
+        let rand
+
         for (let i = 0; i < PrecipitationSystem.rainCount; i++) {
-            positions[i * 3] = Math.random() * mapSize - mapSize / 2; // x position
+            positions[i * 3] = Math.random() * (mapSize * horizontalScale) - (mapSize * horizontalScale / 2); // x position
             positions[i * 3 + 1] = Math.random() * PrecipitationSystem.maxY; // y position
-            positions[i * 3 + 2] = Math.random() * mapSize - mapSize / 2; // z position
+            positions[i * 3 + 2] = Math.random() * (mapSize * horizontalScale) - (mapSize * horizontalScale / 2); // z position
         }
 
         // Set the positions as the attribute of the geometry

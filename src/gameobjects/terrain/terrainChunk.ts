@@ -51,7 +51,7 @@ export class TerrainChunk {
 
         const planeSize = width * 2;
         var geometry = this.generateMeshFromHeightData(height, width, heightmap, worldConfig.horizontalScale);
-        var material = this.generateMaterialv2(128, worldConfig.heightScale, worldConfig);
+        var material = this.generateMaterialv2(256, worldConfig.heightScale, worldConfig, gameConfig.isDebug);
 
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.rotation.x = -Math.PI / 2;
@@ -126,7 +126,7 @@ export class TerrainChunk {
         return heightfieldBody;
     }    
 
-    generateMaterialv2(repeats: number, heightFactor: number, worldConfig: WorldConfig): THREE.Material {
+    generateMaterialv2(repeats: number, heightFactor: number, worldConfig: WorldConfig, isWireframe: boolean): THREE.Material {
 
       const loader = new THREE.TextureLoader();
 
@@ -152,6 +152,7 @@ export class TerrainChunk {
           fog: this.gameConfig.useFog,
           vertexShader: this.vertexShader4(),
           fragmentShader: this.fragmentShader4(),
+          wireframe: isWireframe
       });
     }
 
