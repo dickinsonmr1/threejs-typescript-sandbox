@@ -167,7 +167,6 @@ function tick() {
       scene.update();
       
       scene.updateLODTerrain();
-      scene.updateQuadtreeTerrain3();
       scene.updateQuadtreeTerrain5();
 
       sceneOrtho.update();
@@ -191,7 +190,6 @@ function tick() {
       scene.updateDebugDivElements();
 
       scene.updateLODTerrain();
-      scene.updateQuadtreeTerrain3();
       scene.updateQuadtreeTerrain5();
 
       gameScene.stats.update();

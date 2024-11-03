@@ -32,7 +32,6 @@ import { PrecipitationSystem, PrecipitationType } from '../gameobjects/world/pre
 import { DumpsterFireObject } from '../gameobjects/weapons/dumpsterFireObject';
 import { VehicleUtil } from '../gameobjects/vehicles/vehicleUtil';
 import GameAssetModelLoader from '../gameobjects/shapes/gameAssetModelLoader';
-import { QuadtreeTerrainSystem3 } from '../gameobjects/terrain/quadtree3/quadtreeTerrainSystem3';
 import { TextureHeightMapArray2 } from '../gameobjects/fx/textureToArray2';
 import { QuadtreeTerrainSystem5 } from '../gameobjects/terrain/quadtree5/QuadtreeTerrainSystem5';
 import LODTerrainSystem from '../gameobjects/terrain/lodTerrainSystem';
@@ -115,7 +114,6 @@ export default class GameScene extends THREE.Scene {
     
     terrainChunk!: TerrainChunk;
     LODTerrainSystem!: LODTerrainSystem;
-    quadtreeTerrainSystem3!: QuadtreeTerrainSystem3;
     quadtreeTerrainSystem5!: QuadtreeTerrainSystem5;
 
     water!: Water;
@@ -1505,23 +1503,8 @@ export default class GameScene extends THREE.Scene {
                 }
             }
 
-            /*
-            var otherPlayerBodies = <unknown>otherPlayers.forEach(x => {
-                return x.rigidVehicleObject?.chassis.body;
-            });
-            var temp = otherPlayerBodies as CANNON.Body[];
-            */
-
             let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(playerPosition), Utility.ThreeVec3ToCannonVec3(this.crosshairSprite.position));                
             var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
-
-            /*
-            var otherVehicleObject = this.player2.getChassisBody();
-            if(otherVehicleObject != null) {
-                // intersect single body
-                ray.intersectBody(otherVehicleObject, raycastResult);
-            }
-            */
 
             // intersect multiple bodies
             ray.intersectBodies(otherPlayerBodies, raycastResult);
@@ -1537,7 +1520,6 @@ export default class GameScene extends THREE.Scene {
         this.updateDebugDivElements();
         this.stats.update();
     }
-
    
     updateLODTerrain() {
         if(!this.LODTerrainSystem)
@@ -1547,17 +1529,6 @@ export default class GameScene extends THREE.Scene {
             this.LODTerrainSystem.update(this.debugCamera);
         else 
         this.LODTerrainSystem.update(this.camera);
-        
-    }
-
-    updateQuadtreeTerrain3() {
-        if(!this.quadtreeTerrainSystem3)
-            return;
-
-        if(this.isPaused)
-            this.quadtreeTerrainSystem3.update(this.debugCamera);
-        else 
-        this.quadtreeTerrainSystem3.update(this.camera);
         
     }
     updateQuadtreeTerrain5() {
