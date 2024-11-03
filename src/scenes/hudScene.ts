@@ -52,25 +52,25 @@ export default class HudScene extends THREE.Scene {
 
         let textureLoader = new THREE.TextureLoader();
         
-        let healthIconTexture = textureLoader.load('assets/DPAD.png');
+        let healthIconTexture = textureLoader.load('assets/hud/DPAD.png');
         healthIconTexture.colorSpace = THREE.SRGBColorSpace;
 
-        let shieldIconTexture = textureLoader.load('assets/shield.png');
+        let shieldIconTexture = textureLoader.load('assets/hud/shield.png');
         shieldIconTexture.colorSpace = THREE.SRGBColorSpace;
 
-        let rocketTexture = textureLoader.load('assets/rocketIcon-multiple.png');
+        let rocketTexture = textureLoader.load('assets/hud/rocketIcon-multiple.png');
         healthIconTexture.colorSpace = THREE.SRGBColorSpace;
 
-        let fireIconTexture = textureLoader.load('assets/fire.png');
+        let fireIconTexture = textureLoader.load('assets/hud/fire.png');
         healthIconTexture.colorSpace = THREE.SRGBColorSpace;
 
-        let freezeIconTexture = textureLoader.load('assets/freezeIcon.png');
+        let freezeIconTexture = textureLoader.load('assets/hud/freezeIcon.png');
         freezeIconTexture.colorSpace = THREE.SRGBColorSpace;
         
-        let turboIconTexture = textureLoader.load('assets/turboIcon.png');
+        let turboIconTexture = textureLoader.load('assets/hud/turboIcon.png');
         freezeIconTexture.colorSpace = THREE.SRGBColorSpace;
 
-        let specialIconTexture = textureLoader.load('assets/specialIcon.png');
+        let specialIconTexture = textureLoader.load('assets/hud/specialIcon.png');
         specialIconTexture.colorSpace = THREE.SRGBColorSpace;
         
         this.weaponInventory.push(specialIconTexture);

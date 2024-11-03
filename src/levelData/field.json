@@ -4,11 +4,11 @@
     "heightScale": 5,
     "horizontalScale": 1,
      
-    "texture1": "assets/Sand 4.jpg",
-    "texture2": "assets/snow.png",
-    "texture3": "assets/snow.png",
-    "texture4": "assets/snow.png",
-    "texture5": "assets/snow.png",
+    "texture1": "assets/terrain/Sand 4.jpg",
+    "texture2": "assets/terrain/snow.png",
+    "texture3": "assets/terrain/snow.png",
+    "texture4": "assets/terrain/snow.png",
+    "texture5": "assets/terrain/snow.png",
 
     "skyTexture": "assets/skybox/overcast_soil_puresky.jpg",
     
@@ -16,7 +16,7 @@
 
     "waterY": 1.5,
 
-    "grassBillboard": "assets/billboard_grass_32x32.png",
+    "grassBillboard": "assets/billboards/billboard_grass_32x32.png",
     "grassBillboardStartY": 9,
     "grassBillboardEndY": 10,
     

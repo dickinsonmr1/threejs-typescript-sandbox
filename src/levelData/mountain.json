@@ -4,11 +4,11 @@
     "heightScale": 15,
     "horizontalScale": 1,
     
-    "texture1": "assets/Sand 4.jpg",
-    "texture2": "assets/Sand 4.jpg",
-    "texture3": "assets/Sand 4.jpg",
-    "texture4": "assets/Sand 4.jpg",
-    "texture5": "assets/Sand 4.jpg",
+    "texture1": "assets/terrain/Sand 4.jpg",
+    "texture2": "assets/terrain/Sand 4.jpg",
+    "texture3": "assets/terrain/Sand 4.jpg",
+    "texture4": "assets/terrain/Sand 4.jpg",
+    "texture5": "assets/terrain/Sand 4.jpg",
 
     "skyTexture": "assets/skybox/rosendal_park_sunset_puresky.jpg",
     
@@ -16,7 +16,7 @@
 
     "waterY": 2.5,
 
-    "grassBillboard": "assets/billboard_grass_32x32.png",
+    "grassBillboard": "assets/billboards/billboard_grass_32x32.png",
     "grassBillboardStartY": 7,
     "grassBillboardEndY": 12,
     

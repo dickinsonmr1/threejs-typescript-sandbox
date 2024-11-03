@@ -194,7 +194,7 @@ export default class GameScene extends THREE.Scene {
 
         await this.loadVehicleAssets();
 
-        this.explosionTexture = this.textureLoader.load('assets/particle-16x16.png');
+        this.explosionTexture = this.textureLoader.load('assets/particles/particle-16x16.png');
         //this.explosionTexture = this.textureLoader.load('assets/tank_explosion3.png');
         this.crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
         this.playerMarkerTexture = this.textureLoader.load('assets/playerMarkerIcon.png');
@@ -755,14 +755,14 @@ export default class GameScene extends THREE.Scene {
     }    
     
     private async generateRandomPickup(mapWidth: number, mapHeight: number) {        
-        let pickupTextureRocket = this.textureLoader.load('assets/pickup-rockets.png');
-        let pickupTextureHealth = this.textureLoader.load('assets/pickup-health.png');
-        let pickupTextureFlamethrower = this.textureLoader.load('assets/pickup-fire.png');
-        let pickupTextureFreeze = this.textureLoader.load('assets/pickup-freeze.png');
-        let pickupTextureLightning = this.textureLoader.load('assets/pickup-lightning-2.png');
-        let pickupTextureShockwave = this.textureLoader.load('assets/pickup-shockwave.png');
-        let pickupTextureShield = this.textureLoader.load('assets/pickup-shield.png');
-        let pickupTextureAirstrike = this.textureLoader.load('assets/pickup-airstrike.png');
+        let pickupTextureRocket = this.textureLoader.load('assets/pickups/pickup-rockets.png');
+        let pickupTextureHealth = this.textureLoader.load('assets/pickups/pickup-health.png');
+        let pickupTextureFlamethrower = this.textureLoader.load('assets/pickups/pickup-fire.png');
+        let pickupTextureFreeze = this.textureLoader.load('assets/pickups/pickup-freeze.png');
+        let pickupTextureLightning = this.textureLoader.load('assets/pickups/pickup-lightning-2.png');
+        let pickupTextureShockwave = this.textureLoader.load('assets/pickups/pickup-shockwave.png');
+        let pickupTextureShield = this.textureLoader.load('assets/pickups/pickup-shield.png');
+        let pickupTextureAirstrike = this.textureLoader.load('assets/pickups/pickup-airstrike.png');
 
         //let boxTextureArmor = this.textureLoader.load('assets/pickup-fire.png');
         

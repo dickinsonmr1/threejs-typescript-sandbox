@@ -4,11 +4,11 @@
     "heightScale": 7.5,
     "horizontalScale": 2,
 
-    "texture1": "assets/Sand 4.jpg",
-    "texture2": "assets/tileable_grass_00.png",
-    "texture3": "assets/tileable_grass_00.png",
-    "texture4": "assets/tileable_grass_01.png",
-    "texture5": "assets/tileable_grass_01.png",
+    "texture1": "assets/terrain/Sand 4.jpg",
+    "texture2": "assets/terrain/tileable_grass_00.png",
+    "texture3": "assets/terrain/tileable_grass_00.png",
+    "texture4": "assets/terrain/tileable_grass_01.png",
+    "texture5": "assets/terrain/tileable_grass_01.png",
     
     "skyTexture": "assets/skybox/industrial_sunset_puresky.jpg",
 
@@ -16,7 +16,7 @@
     
     "waterY": 0.75,
     
-    "grassBillboard": "assets/billboard_grass_32x32.png",
+    "grassBillboard": "assets/billboards/billboard_grass_32x32.png",
     "grassBillboardStartY": 4,
     "grassBillboardEndY": 6,
 
