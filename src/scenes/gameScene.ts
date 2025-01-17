@@ -67,6 +67,10 @@ export default class GameScene extends THREE.Scene {
     private readonly textureLoader = new THREE.TextureLoader();
 
     private readonly camera: THREE.PerspectiveCamera;
+
+    private readonly audioLoader: THREE.AudioLoader;
+    private readonly audioListener: THREE.AudioListener;
+    private readonly audio: THREE.Audio;
     
     debugCamera: THREE.PerspectiveCamera;
     debugOrbitControls: OrbitControls;
@@ -158,6 +162,24 @@ export default class GameScene extends THREE.Scene {
         super();
         
         this.camera = camera;
+
+        this.audioListener = new THREE.AudioListener();
+        this.camera.add(this.audioListener);
+
+        this.audio = new THREE.Audio(this.audioListener);
+        this.audioLoader = new THREE.AudioLoader();
+
+        // asset from here: https://opengameart.org/content/light-machine-gun
+        this.audioLoader.load(
+            //'assets/audio/Img_fire01.mp3',
+            'assets/audio/gunshot.ogg',
+            (buffer) => {
+                this.audio.setBuffer(buffer);
+                this.audio.setLoop(false); // Set to true if you want looping
+                this.audio.setVolume(0.5); // Set volume
+                //this.audio.play(); // Start playback
+            }
+        );
 
         this.debugCamera = debugCamera;
         this.debugOrbitControls = debugOrbitControls;
@@ -421,6 +443,10 @@ export default class GameScene extends THREE.Scene {
         if (event.key === 'c')
 		{			
             this.generateRandomCube();
+            if(this.audio.isPlaying) {
+                this.audio.stop();
+            }
+            this.audio.play();
 		}
         if (event.key === 'p')
         {			
