@@ -70,7 +70,10 @@ export default class GameScene extends THREE.Scene {
 
     private readonly audioLoader: THREE.AudioLoader;
     private readonly audioListener: THREE.AudioListener;
-    private readonly audio: THREE.Audio;
+    
+    private readonly bulletSound: THREE.Audio;
+    private readonly rocketSound: THREE.Audio;
+
     
     debugCamera: THREE.PerspectiveCamera;
     debugOrbitControls: OrbitControls;
@@ -166,7 +169,8 @@ export default class GameScene extends THREE.Scene {
         this.audioListener = new THREE.AudioListener();
         this.camera.add(this.audioListener);
 
-        this.audio = new THREE.Audio(this.audioListener);
+        this.bulletSound = new THREE.Audio(this.audioListener);
+        this.rocketSound = new THREE.Audio(this.audioListener);
         this.audioLoader = new THREE.AudioLoader();
 
         // asset from here: https://opengameart.org/content/light-machine-gun
@@ -174,12 +178,26 @@ export default class GameScene extends THREE.Scene {
             //'assets/audio/Img_fire01.mp3',
             'assets/audio/gunshot.ogg',
             (buffer) => {
-                this.audio.setBuffer(buffer);
-                this.audio.setLoop(false); // Set to true if you want looping
-                this.audio.setVolume(0.5); // Set volume
+                this.bulletSound.setBuffer(buffer);
+                this.bulletSound.setLoop(false); // Set to true if you want looping
+                this.bulletSound.setVolume(0.5); // Set volume
                 //this.audio.play(); // Start playback
             }
         );
+
+        // asset from here: https://opengameart.org/content/q009s-weapon-sounds
+        this.audioLoader.load(
+            //'assets/audio/Img_fire01.mp3',
+            'assets/audio/rlauncher.ogg',
+            (buffer) => {
+                this.rocketSound.setBuffer(buffer);
+                this.rocketSound.setLoop(false); // Set to true if you want looping
+                this.rocketSound.setVolume(0.5); // Set volume
+                //this.audio.play(); // Start playback
+            }
+        );
+
+        // TODO: experiment with positional audio per https://threejs.org/docs/?q=PositionalAudio#api/en/audio/PositionalAudio
 
         this.debugCamera = debugCamera;
         this.debugOrbitControls = debugOrbitControls;
@@ -443,11 +461,17 @@ export default class GameScene extends THREE.Scene {
         if (event.key === 'c')
 		{			
             this.generateRandomCube();
-            if(this.audio.isPlaying) {
-                this.audio.stop();
+            if(this.bulletSound.isPlaying) {
+                this.bulletSound.stop();
             }
-            this.audio.play();
+            this.bulletSound.play();
 		}
+        if (event.key === 'r') {			
+            if(this.rocketSound.isPlaying) {
+                this.rocketSound.stop();
+            }
+            this.rocketSound.play();
+        }
         if (event.key === 'p')
         {			
             this.generateRandomDebrisWheel();
