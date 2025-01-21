@@ -73,6 +73,7 @@ export default class GameScene extends THREE.Scene {
     
     private readonly bulletSound: THREE.Audio;
     private readonly rocketSound: THREE.Audio;
+    private readonly positionalSound: THREE.PositionalAudio;
 
     
     debugCamera: THREE.PerspectiveCamera;
@@ -171,6 +172,8 @@ export default class GameScene extends THREE.Scene {
 
         this.bulletSound = new THREE.Audio(this.audioListener);
         this.rocketSound = new THREE.Audio(this.audioListener);
+        this.positionalSound = new THREE.PositionalAudio(this.audioListener);
+
         this.audioLoader = new THREE.AudioLoader();
 
         // asset from here: https://opengameart.org/content/light-machine-gun
@@ -187,13 +190,25 @@ export default class GameScene extends THREE.Scene {
 
         // asset from here: https://opengameart.org/content/q009s-weapon-sounds
         this.audioLoader.load(
-            //'assets/audio/Img_fire01.mp3',
             'assets/audio/rlauncher.ogg',
             (buffer) => {
                 this.rocketSound.setBuffer(buffer);
                 this.rocketSound.setLoop(false); // Set to true if you want looping
                 this.rocketSound.setVolume(0.5); // Set volume
                 //this.audio.play(); // Start playback
+            }
+        );
+
+        // asset from here: https://opengameart.org/content/q009s-weapon-sounds
+        this.audioLoader.load(
+            'assets/audio/rlauncher.ogg',
+            (buffer) => {
+                this.positionalSound.setBuffer(buffer);
+                this.positionalSound.setRefDistance(1);
+                this.positionalSound.setMaxDistance(100);
+                this.positionalSound.setLoop(false); // Set to true if you want looping
+                this.positionalSound.setVolume(0.5); // Set volume
+                //this.positionalSound.play(); // Start playback
             }
         );
 
@@ -299,6 +314,7 @@ export default class GameScene extends THREE.Scene {
         treeModel.position.copy(this.getWorldPositionOnTerrainAndWater(0, 0));
         treeModel.scale.set(3, 3, 3);
         this.add(treeModel);
+        treeModel.add(this.positionalSound);
 
         var barrelModelData = await this.gameAssetModelLoader.generateBarrelModel();
         let barrelModel = barrelModelData.scene.clone();
@@ -481,6 +497,7 @@ export default class GameScene extends THREE.Scene {
             let projectileLaunchVector = forwardVector; 
 
             this.generateRandomDumpster(this.player1.getPosition(), projectileLaunchVector);
+            this.positionalSound.play(); // Start playback
         }
         if (event.key === 'o')
         {			
@@ -996,10 +1013,10 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial);
-        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial);
-        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial);
-        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial);
+        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial, this.positionalSound);
+        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial, this.positionalSound);
+        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial, this.positionalSound);
+        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial, this.positionalSound);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);

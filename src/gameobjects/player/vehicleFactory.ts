@@ -21,7 +21,8 @@ export class VehicleFactory {
         isDebug: boolean,
         world: CANNON.World, isCpuPlayer: boolean,
         vehicleType: VehicleType, playerColor: THREE.Color,        
-        wheelMaterial: CANNON.Material) : Player {
+        wheelMaterial: CANNON.Material,
+        fireBulletSound: THREE.PositionalAudio) : Player {
         //isCpuPlayer: boolean, playerTeam: PlayerTeam, scene: THREE.Scene) : Player {        
         
         let gameScene = <GameScene>scene;
@@ -508,7 +509,8 @@ export class VehicleFactory {
             leftHeadlightOffset,
             rightHeadlightOffset,
             leftBrakeLightOffset,
-            rightBrakeLightOffset
+            rightBrakeLightOffset,
+            fireBulletSound
         );
     }
 }

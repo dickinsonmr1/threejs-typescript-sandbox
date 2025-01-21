@@ -125,6 +125,8 @@ export class Player {
         return this.deathCount;
     }
 
+    private readonly fireBulletSound: THREE.PositionalAudio;
+
     constructor(scene: THREE.Scene,
         isDebug: boolean,
         isCpuPlayer: boolean,
@@ -135,7 +137,8 @@ export class Player {
         leftHeadlightOffset: THREE.Vector3,
         rightHeadlightOffset: THREE.Vector3,
         leftBrakeLightOffset: THREE.Vector3,
-        rightBrakeLightOffset: THREE.Vector3) {
+        rightBrakeLightOffset: THREE.Vector3,
+        fireBulletSound: THREE.PositionalAudio) {
 
         this.scene = scene;
         this.isDebug = isDebug;
@@ -247,6 +250,9 @@ export class Player {
         this.flamethrowerBoundingBoxMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
         this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, this.flamethrowerBoundingBoxMaterial);
         scene.add(this.flamethrowerBoundingBox);
+
+        this.fireBulletSound = fireBulletSound;
+        this.vehicleObject.getModel().add(this.fireBulletSound);
     }
 
     private getScene(): GameScene {
@@ -813,6 +819,12 @@ export class Player {
 
             //this.bulletCooldownTime = this.maxBulletCooldownTime;
             this.bulletCooldownClock.start();
+
+            if(this.fireBulletSound.isPlaying)
+                this.fireBulletSound.stop();
+
+            //this.fireBulletSound.
+            this.fireBulletSound.play();
         }
     }
 
