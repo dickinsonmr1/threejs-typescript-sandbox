@@ -22,7 +22,8 @@ export class VehicleFactory {
         world: CANNON.World, isCpuPlayer: boolean,
         vehicleType: VehicleType, playerColor: THREE.Color,        
         wheelMaterial: CANNON.Material,
-        fireBulletSound: THREE.PositionalAudio) : Player {
+        fireBulletSound: THREE.PositionalAudio,
+        fireRocketSound: THREE.PositionalAudio) : Player {
         //isCpuPlayer: boolean, playerTeam: PlayerTeam, scene: THREE.Scene) : Player {        
         
         let gameScene = <GameScene>scene;
@@ -42,7 +43,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(5, 4, 5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    new CANNON.Vec3(1, 0.5, 0.4), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
@@ -380,8 +381,8 @@ export class VehicleFactory {
                     0.25,                           // front wheel radius
                     0.25,                       //rear wheel radius
 
-                    new CANNON.Vec3(0.4, 0, 0),   // front wheel offset - ignores z for now
-                    new CANNON.Vec3(0.4, 0, 0),   // rear wheel offset - ignores z for now
+                    new CANNON.Vec3(0.35, 0, 0),   // front wheel offset - ignores z for now
+                    new CANNON.Vec3(0.5, 0, 0),   // rear wheel offset - ignores z for now
                     
                     0.25,    // front wheel height
                     0.25,    // rear wheel height
@@ -510,7 +511,8 @@ export class VehicleFactory {
             rightHeadlightOffset,
             leftBrakeLightOffset,
             rightBrakeLightOffset,
-            fireBulletSound
+            fireBulletSound,
+            fireRocketSound
         );
     }
 }

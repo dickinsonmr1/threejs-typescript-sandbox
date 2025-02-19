@@ -126,6 +126,7 @@ export class Player {
     }
 
     private readonly fireBulletSound: THREE.PositionalAudio;
+    private readonly fireRocketSound: THREE.PositionalAudio;
 
     constructor(scene: THREE.Scene,
         isDebug: boolean,
@@ -138,7 +139,8 @@ export class Player {
         rightHeadlightOffset: THREE.Vector3,
         leftBrakeLightOffset: THREE.Vector3,
         rightBrakeLightOffset: THREE.Vector3,
-        fireBulletSound: THREE.PositionalAudio) {
+        fireBulletSound: THREE.PositionalAudio,
+        fireRocketSound: THREE.PositionalAudio) {
 
         this.scene = scene;
         this.isDebug = isDebug;
@@ -252,7 +254,9 @@ export class Player {
         scene.add(this.flamethrowerBoundingBox);
 
         this.fireBulletSound = fireBulletSound;
+        this.fireRocketSound = fireRocketSound;
         this.vehicleObject.getModel().add(this.fireBulletSound);
+        this.vehicleObject.getModel().add(this.fireRocketSound);
     }
 
     private getScene(): GameScene {
@@ -776,6 +780,10 @@ export class Player {
             gameScene.addNewProjectile(projectile);
 
             this.rocketCooldownClock.start();
+
+            if(this.fireRocketSound.isPlaying)
+                this.fireRocketSound.stop();
+            this.fireRocketSound.play();
         }       
     }
 
