@@ -125,8 +125,11 @@ export class Player {
         return this.deathCount;
     }
 
-    private readonly fireBulletSound: THREE.PositionalAudio;
-    private readonly fireRocketSound: THREE.PositionalAudio;
+    public fireBulletSound: THREE.PositionalAudio;
+    public fireRocketSound: THREE.PositionalAudio;
+
+    private readonly bulletSoundMarker: THREE.Mesh;    
+    private readonly rocketSoundMarker: THREE.Mesh;    
 
     constructor(scene: THREE.Scene,
         isDebug: boolean,
@@ -255,8 +258,19 @@ export class Player {
 
         this.fireBulletSound = fireBulletSound;
         this.fireRocketSound = fireRocketSound;
-        this.vehicleObject.getModel().add(this.fireBulletSound);
-        this.vehicleObject.getModel().add(this.fireRocketSound);
+        
+        this.fireBulletSound.position.set(this.getPosition().x, this.getPosition().y, this.getPosition().z);
+        this.fireRocketSound.position.set(this.getPosition().x, this.getPosition().y, this.getPosition().z);
+
+        scene.add(this.fireBulletSound);
+        scene.add(this.fireRocketSound);
+        //this.vehicleObject.getChassis().mesh.add(this.fireBulletSound);
+        //this.vehicleObject.getChassis().mesh.add(this.fireRocketSound);
+
+        this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
+        this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
+        scene.add(this.rocketSoundMarker);
+        scene.add(this.bulletSoundMarker);
     }
 
     private getScene(): GameScene {
@@ -330,6 +344,12 @@ export class Player {
         if(!this.vehicleObject?.getChassis()?.body?.position) return;
 
         this.vehicleObject.update();
+
+        this.fireBulletSound.position.copy(this.getPosition());        
+        this.fireRocketSound.position.copy(this.getPosition());
+
+        this.fireBulletSound.updateMatrixWorld();
+        this.fireRocketSound.updateMatrixWorld();
 
         let healthBarOffset = new THREE.Vector3(0, 0, 0.5);
         healthBarOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
@@ -439,6 +459,9 @@ export class Player {
 
         if(this.shield != null)
             this.shield.updatePosition(this.getPosition());
+
+        this.bulletSoundMarker.position.copy(this.fireBulletSound.position);
+        this.rocketSoundMarker.position.copy(this.fireRocketSound.position);
     }
 
     public createProjectile(projectileType: ProjectileType): Projectile {
@@ -783,7 +806,9 @@ export class Player {
 
             if(this.fireRocketSound.isPlaying)
                 this.fireRocketSound.stop();
+
             this.fireRocketSound.play();
+            this.fireRocketSound.detune = Math.floor(Math.random() * 1600 - 800);
         }       
     }
 
@@ -831,8 +856,8 @@ export class Player {
             if(this.fireBulletSound.isPlaying)
                 this.fireBulletSound.stop();
 
-            //this.fireBulletSound.
             this.fireBulletSound.play();
+            this.fireBulletSound.detune = Math.floor(Math.random() * 1600 - 800);
         }
     }
 
