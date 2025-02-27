@@ -70,7 +70,7 @@ export default class GameScene extends THREE.Scene {
 
     private readonly audioLoader: THREE.AudioLoader;
     private readonly audioListener: THREE.AudioListener;
-    private readonly audioListenerMarker: THREE.Mesh;    
+    private readonly audioListenerMarker?: THREE.Mesh;    
     
     private readonly bulletSound: THREE.Audio;
     private readonly rocketSound: THREE.Audio;
@@ -84,6 +84,11 @@ export default class GameScene extends THREE.Scene {
     private positionalRocketSound2!: THREE.PositionalAudio;
     private positionalRocketSound3!: THREE.PositionalAudio;
     private positionalRocketSound4!: THREE.PositionalAudio;
+
+    private positionalVehicleExplosionSound!: THREE.PositionalAudio;
+    private positionalVehicleExplosionSound2!: THREE.PositionalAudio;
+    private positionalVehicleExplosionSound3!: THREE.PositionalAudio;
+    private positionalVehicleExplosionSound4!: THREE.PositionalAudio;
     // might need one instance per player
 
     
@@ -182,8 +187,8 @@ export default class GameScene extends THREE.Scene {
         //this.add(this.audioListener);
         this.camera.add(this.audioListener);
 
-        this.audioListenerMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
-        this.add(this.audioListenerMarker);
+        //this.audioListenerMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
+        //this.add(this.audioListenerMarker);
 
         this.bulletSound = new THREE.Audio(this.audioListener);
         this.rocketSound = new THREE.Audio(this.audioListener);
@@ -236,6 +241,16 @@ export default class GameScene extends THREE.Scene {
             this.positionalRocketSound2 = this.createPositionalAudio(sharedAudioBuffer, this.audioListener, 0.1, 25, 100) as THREE.PositionalAudio;
             this.positionalRocketSound3 = this.createPositionalAudio(sharedAudioBuffer, this.audioListener, 0.1, 25, 100) as THREE.PositionalAudio;
             this.positionalRocketSound4 = this.createPositionalAudio(sharedAudioBuffer, this.audioListener, 0.1, 25, 100) as THREE.PositionalAudio;
+        });    
+
+        this.audioLoader.load('assets/audio/explosion-under-snow-sfx-230505.mp3', (buffer) => {
+            sharedAudioBuffer = buffer;
+            console.log('Audio loaded successfully');
+
+            this.positionalVehicleExplosionSound = this.createPositionalAudio(sharedAudioBuffer, this.audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
+            this.positionalVehicleExplosionSound2 = this.createPositionalAudio(sharedAudioBuffer, this.audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
+            this.positionalVehicleExplosionSound3 = this.createPositionalAudio(sharedAudioBuffer, this.audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
+            this.positionalVehicleExplosionSound4 = this.createPositionalAudio(sharedAudioBuffer, this.audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
         });    
 
         /*
@@ -1093,13 +1108,11 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial, this.positionalBulletSound, this.positionalRocketSound);
-        //this.player1.getVehicleObject().getModel().add(this.audioListener); 
-        //this.camera.add(this.audioListener);       
+        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial, this.positionalBulletSound, this.positionalRocketSound, this.positionalVehicleExplosionSound);
 
-        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial, this.positionalBulletSound2, this.positionalRocketSound2);
-        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial, this.positionalBulletSound3, this.positionalRocketSound3);
-        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial, this.positionalBulletSound4, this.positionalRocketSound4);
+        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial, this.positionalBulletSound2, this.positionalRocketSound2, this.positionalVehicleExplosionSound);
+        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial, this.positionalBulletSound3, this.positionalRocketSound3, this.positionalVehicleExplosionSound);
+        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial, this.positionalBulletSound4, this.positionalRocketSound4, this.positionalVehicleExplosionSound);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
@@ -1669,13 +1682,25 @@ export default class GameScene extends THREE.Scene {
         }                
 
         //this.audioListener.position.set(this.player1.getPosition().x, this.player1.getPosition().y, this.player1.getPosition().z);        
-        this.audioListener.position.copy(this.camera.position);
-        this.audioListener.updateMatrixWorld();
 
-        this.audioListenerMarker.position.copy(this.audioListener.position);
+        this.camera.updateMatrixWorld(true);
+
+        this.audioListener.position.copy(this.camera.position);
+        
+        const worldPos = new THREE.Vector3();
+        this.audioListener.updateMatrixWorld(true);
+        this.audioListener.getWorldPosition(worldPos);
+        console.log(worldPos);
+
+        //this.audioListenerMarker.position.copy(this.audioListener.position);
 
         this.updateDebugDivElements();
         this.stats.update();
+
+        const audioContext = THREE.AudioContext.getContext();
+        if (audioContext.state === 'suspended') {
+            audioContext.resume().then(() => console.log('AudioContext resumed'));
+        }
     }
    
     updateLODTerrain() {
@@ -1710,8 +1735,8 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.updateElementText("PlayerLocation", `Player 1 position: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`);
         this.debugDivElementManager.updateElementText("AudioListener", `Audio listener position: (${Utility.ThreeVector3ToString(this.audioListener.position)})`);
         
-        this.debugDivElementManager.updateElementText("Player1BulletSoundLocation", `Player 1 bullet sound: (${Utility.ThreeVector3ToString(this.player1.fireBulletSound.position)})`);
-        this.debugDivElementManager.updateElementText("Player1RocketSoundLocation", `Player 1 rocket sound: (${Utility.ThreeVector3ToString(this.player1.fireRocketSound.position)})`);
+        this.debugDivElementManager.updateElementText("Player1BulletSoundLocation", `Player 1 bullet sound: (${Utility.ThreeVector3ToString(this.player1.bulletSound.position)})`);
+        this.debugDivElementManager.updateElementText("Player1RocketSoundLocation", `Player 1 rocket sound: (${Utility.ThreeVector3ToString(this.player1.rocketSound.position)})`);
         
         this.debugDivElementManager.updateElementText("Objective", `Scene objects: ${this.children.length}`);
         
@@ -1804,7 +1829,9 @@ export default class GameScene extends THREE.Scene {
         positionalAudio.setRefDistance(refDistance);
         positionalAudio.setMaxDistance(maxDistance);
         positionalAudio.setLoop(false);
+        positionalAudio.setRolloffFactor(0.1);
         positionalAudio.setVolume(volume);        
+        //positionalAudio.position.set(100, 100, 100);
         //positionalAudio.play();
     
         return positionalAudio;

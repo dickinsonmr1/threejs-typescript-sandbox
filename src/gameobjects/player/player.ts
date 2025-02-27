@@ -125,11 +125,12 @@ export class Player {
         return this.deathCount;
     }
 
-    public fireBulletSound: THREE.PositionalAudio;
-    public fireRocketSound: THREE.PositionalAudio;
+    public bulletSound: THREE.PositionalAudio;
+    public rocketSound: THREE.PositionalAudio;
+    public explosionSound: THREE.PositionalAudio;
 
-    private readonly bulletSoundMarker: THREE.Mesh;    
-    private readonly rocketSoundMarker: THREE.Mesh;    
+    private readonly bulletSoundMarker?: THREE.Mesh;    
+    private readonly rocketSoundMarker?: THREE.Mesh;    
 
     constructor(scene: THREE.Scene,
         isDebug: boolean,
@@ -143,7 +144,8 @@ export class Player {
         leftBrakeLightOffset: THREE.Vector3,
         rightBrakeLightOffset: THREE.Vector3,
         fireBulletSound: THREE.PositionalAudio,
-        fireRocketSound: THREE.PositionalAudio) {
+        fireRocketSound: THREE.PositionalAudio,
+        explosionSound: THREE.PositionalAudio) {
 
         this.scene = scene;
         this.isDebug = isDebug;
@@ -256,21 +258,22 @@ export class Player {
         this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, this.flamethrowerBoundingBoxMaterial);
         scene.add(this.flamethrowerBoundingBox);
 
-        this.fireBulletSound = fireBulletSound;
-        this.fireRocketSound = fireRocketSound;
+        this.bulletSound = fireBulletSound;
+        this.rocketSound = fireRocketSound;
+        this.explosionSound = explosionSound;
         
-        this.fireBulletSound.position.set(this.getPosition().x, this.getPosition().y, this.getPosition().z);
-        this.fireRocketSound.position.set(this.getPosition().x, this.getPosition().y, this.getPosition().z);
+        //this.bulletSound.position.copy(this.getPosition());
+        //this.rocketSound.position.copy(this.getPosition());
+        //scene.add(this.bulletSound);
+        //scene.add(this.rocketSound);
+        this.vehicleObject.getChassis().mesh.add(this.bulletSound);
+        this.vehicleObject.getChassis().mesh.add(this.rocketSound);
+        this.vehicleObject.getChassis().mesh.add(this.explosionSound);
 
-        scene.add(this.fireBulletSound);
-        scene.add(this.fireRocketSound);
-        //this.vehicleObject.getChassis().mesh.add(this.fireBulletSound);
-        //this.vehicleObject.getChassis().mesh.add(this.fireRocketSound);
-
-        this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
-        this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
-        scene.add(this.rocketSoundMarker);
-        scene.add(this.bulletSoundMarker);
+        //this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
+        //this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
+        //scene.add(this.rocketSoundMarker);
+        //scene.add(this.bulletSoundMarker);
     }
 
     private getScene(): GameScene {
@@ -345,11 +348,11 @@ export class Player {
 
         this.vehicleObject.update();
 
-        this.fireBulletSound.position.copy(this.getPosition());        
-        this.fireRocketSound.position.copy(this.getPosition());
+        //this.bulletSound.position.copy(this.getPosition());        
+        //this.bulletSound.updateMatrixWorld(true);
 
-        this.fireBulletSound.updateMatrixWorld();
-        this.fireRocketSound.updateMatrixWorld();
+        //this.rocketSound.position.copy(this.getPosition());
+        //this.rocketSound.updateMatrixWorld(true);
 
         let healthBarOffset = new THREE.Vector3(0, 0, 0.5);
         healthBarOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
@@ -460,8 +463,8 @@ export class Player {
         if(this.shield != null)
             this.shield.updatePosition(this.getPosition());
 
-        this.bulletSoundMarker.position.copy(this.fireBulletSound.position);
-        this.rocketSoundMarker.position.copy(this.fireRocketSound.position);
+        //this.bulletSoundMarker.position.copy(this.bulletSound.position);
+        //this.rocketSoundMarker.position.copy(this.rocketSound.position);
     }
 
     public createProjectile(projectileType: ProjectileType): Projectile {
@@ -710,6 +713,11 @@ export class Player {
 
             this.generateRandomExplosion();
 
+            if(this.explosionSound.isPlaying)
+                this.explosionSound.stop();
+            this.explosionSound.play();
+            //this.explosionSound.detune = Math.floor(Math.random() * 1600 - 800);
+
             let wheels = this.vehicleObject.getWheelModels();
             scene.generateRandomDebrisWheel(wheels[0].position.add(new THREE.Vector3(0, 0.5, 0)), wheels[0].quaternion);
             scene.generateRandomDebrisWheel(wheels[1].position.add(new THREE.Vector3(0, 0.5, 0)), wheels[1].quaternion);
@@ -804,11 +812,11 @@ export class Player {
 
             this.rocketCooldownClock.start();
 
-            if(this.fireRocketSound.isPlaying)
-                this.fireRocketSound.stop();
+            if(this.rocketSound.isPlaying)
+                this.rocketSound.stop();
 
-            this.fireRocketSound.play();
-            this.fireRocketSound.detune = Math.floor(Math.random() * 1600 - 800);
+            this.rocketSound.play();
+            this.rocketSound.detune = Math.floor(Math.random() * 1600 - 800);
         }       
     }
 
@@ -853,11 +861,11 @@ export class Player {
             //this.bulletCooldownTime = this.maxBulletCooldownTime;
             this.bulletCooldownClock.start();
 
-            if(this.fireBulletSound.isPlaying)
-                this.fireBulletSound.stop();
+            if(this.bulletSound.isPlaying)
+                this.bulletSound.stop();
 
-            this.fireBulletSound.play();
-            this.fireBulletSound.detune = Math.floor(Math.random() * 1600 - 800);
+            this.bulletSound.play();
+            this.bulletSound.detune = Math.floor(Math.random() * 1600 - 800);
         }
     }
 
