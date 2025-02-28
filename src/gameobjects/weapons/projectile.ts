@@ -97,7 +97,7 @@ export class Projectile extends SphereObject {
         if(this.projectileType == ProjectileType.Bullet) {
                         
             //const geometry = new THREE.BoxGeometry( 2.5, 0.075, 0.050 ); 
-            const geometry = new THREE.CylinderGeometry( 0.025, 0.075, 2.5 ); 
+            const geometry = new THREE.CylinderGeometry( 0.025, 0.050, 3 ); 
             //const material = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
             
             const meshMaterial = new THREE.ShaderMaterial({

@@ -24,7 +24,8 @@ export class VehicleFactory {
         wheelMaterial: CANNON.Material,
         fireBulletSound: THREE.PositionalAudio,
         fireRocketSound: THREE.PositionalAudio,
-        explosionSound: THREE.PositionalAudio) : Player {
+        explosionSound: THREE.PositionalAudio,
+        deathFireSound: THREE.PositionalAudio) : Player {
         //isCpuPlayer: boolean, playerTeam: PlayerTeam, scene: THREE.Scene) : Player {        
         
         let gameScene = <GameScene>scene;
@@ -514,7 +515,8 @@ export class VehicleFactory {
             rightBrakeLightOffset,
             fireBulletSound,
             fireRocketSound,
-            explosionSound
+            explosionSound,
+            deathFireSound
         );
     }
 }

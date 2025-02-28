@@ -12,7 +12,7 @@ export class FireObject extends ParticleEmitter {
         throw new Error("Method not implemented.");
     }
 
-    scene: THREE.Scene;
+    scene: THREE.Scene;    
     particleGroup: THREE.Group;
     particleTexture: THREE.Texture;
     lightColor: THREE.Color;
@@ -31,6 +31,9 @@ export class FireObject extends ParticleEmitter {
 
     emitPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
 
+    soundGroup: THREE.Group = new THREE.Group();
+    deathFireSound: THREE.PositionalAudio;
+
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
     constructor(scene: THREE.Scene,
@@ -39,7 +42,8 @@ export class FireObject extends ParticleEmitter {
         particleColor: THREE.Color,
         position: THREE.Vector3,
         numberParticles: number,
-        maxEmitterLifetime: number) {
+        maxEmitterLifetime: number,
+        deathFireSound: THREE.PositionalAudio) {
                     
         super();
         
@@ -72,7 +76,15 @@ export class FireObject extends ParticleEmitter {
        //if(this.pointLightObject.pointLight)
             //this.particleGroup.add(this.pointLightObject.pointLight)
 
+        this.deathFireSound = deathFireSound;
+        
+        this.particleGroup.add(this.deathFireSound);
         scene.add(this.particleGroup);     
+
+        this.soundGroup.add(this.deathFireSound);
+        scene.add(this.soundGroup);
+
+        this.deathFireSound.play();
         
         setTimeout(() => {
             this.isEmitting = false
@@ -133,8 +145,11 @@ export class FireObject extends ParticleEmitter {
         
     }
 
-    kill() {
+    kill() {                
         this.scene.remove(this.particleGroup);
+
+        this.deathFireSound.stop();
+        this.scene.remove(this.soundGroup);
     }
 
     update(): void {

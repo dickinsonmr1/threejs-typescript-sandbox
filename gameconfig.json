@@ -1,6 +1,7 @@
 {    
     "isDebug": false,
     "controlType": 0,
+    "isSoundEnabled": true,
 
     "farDrawDistance": 100,
     

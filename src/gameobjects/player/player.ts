@@ -128,6 +128,7 @@ export class Player {
     public bulletSound: THREE.PositionalAudio;
     public rocketSound: THREE.PositionalAudio;
     public explosionSound: THREE.PositionalAudio;
+    public deathFireSound: THREE.PositionalAudio;
 
     private readonly bulletSoundMarker?: THREE.Mesh;    
     private readonly rocketSoundMarker?: THREE.Mesh;    
@@ -145,7 +146,8 @@ export class Player {
         rightBrakeLightOffset: THREE.Vector3,
         fireBulletSound: THREE.PositionalAudio,
         fireRocketSound: THREE.PositionalAudio,
-        explosionSound: THREE.PositionalAudio) {
+        explosionSound: THREE.PositionalAudio,
+        deathFireSound: THREE.PositionalAudio) {
 
         this.scene = scene;
         this.isDebug = isDebug;
@@ -261,6 +263,7 @@ export class Player {
         this.bulletSound = fireBulletSound;
         this.rocketSound = fireRocketSound;
         this.explosionSound = explosionSound;
+        this.deathFireSound = deathFireSound;
         
         //this.bulletSound.position.copy(this.getPosition());
         //this.rocketSound.position.copy(this.getPosition());
@@ -697,6 +700,8 @@ export class Player {
 
             if(!scene.explosionTexture) return;
 
+            let gameScene = <GameScene>this.scene;
+
             let deathFire = new FireObject(
                 this.scene,
                 scene.explosionTexture,
@@ -704,7 +709,8 @@ export class Player {
                 new THREE.Color('orange'),
                 this.getPosition(),
                 3,
-                3000
+                3000,
+                this.deathFireSound
             );
             this.fireObjects.push(deathFire);
             

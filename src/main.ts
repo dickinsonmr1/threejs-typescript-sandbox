@@ -81,6 +81,7 @@ gameConfigFolder.add(mainCamera, 'far', 1, 500, 10)
     mainCamera.updateProjectionMatrix(); // Important: update projection matrix after changing `far`
   });
 gameConfigFolder.add(gameConfig, 'useFog').listen();
+gameConfigFolder.add(gameConfig, 'isSoundEnabled').listen();
 //gameConfigFolder.add(gameConfig, 'fogNear', 0, 500, 10).listen();
 //gameConfigFolder.add(gameConfig, 'fogFar', 0, 500, 10).listen();
 
