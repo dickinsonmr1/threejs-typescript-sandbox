@@ -93,7 +93,8 @@ export class DumpsterFireObject {
                 new THREE.Color('orange'),
                 Utility.CannonVec3ToThreeVec3(this.body.position),
                 1,
-                DumpsterFireObject.maxLifeTimeinMs
+                DumpsterFireObject.maxLifeTimeinMs,
+                gameScene.deathFireSound
             );
         }
 
