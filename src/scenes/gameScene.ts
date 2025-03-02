@@ -71,13 +71,6 @@ export default class GameScene extends THREE.Scene {
 
     private readonly audioManager: AudioManager;
 
-    //private readonly audioLoader: THREE.AudioLoader;
-    //private readonly audioListener: THREE.AudioListener;
-    //private readonly audioListenerMarker?: THREE.Mesh;    
-    
-    private readonly bulletSound: THREE.Audio;
-    private readonly rocketSound: THREE.Audio;
-
     private positionalBulletSound!: THREE.PositionalAudio;
     private positionalBulletSound2!: THREE.PositionalAudio;
     private positionalBulletSound3!: THREE.PositionalAudio;
@@ -190,99 +183,9 @@ export default class GameScene extends THREE.Scene {
         
         this.camera = camera;
 
-        this.audioManager = new AudioManager();
-
-        //this.audioListener = new THREE.AudioListener();
-        //this.add(this.audioListener);
-        this.camera.add(this.audioManager.getAudioListener());
-
-        //this.audioListenerMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
-        //this.add(this.audioListenerMarker);
-
-        this.bulletSound = new THREE.Audio(this.audioManager.getAudioListener());
-        this.rocketSound = new THREE.Audio(this.audioManager.getAudioListener());
-        
-        /*
-        this.positionalBulletSound = new THREE.PositionalAudio(this.audioListener);
-        this.positionalBulletSound2 = new THREE.PositionalAudio(this.audioListener); 
-        this.positionalBulletSound3 = new THREE.PositionalAudio(this.audioListener);
-        this.positionalBulletSound4 = new THREE.PositionalAudio(this.audioListener); 
-        this.positionalRocketSound = new THREE.PositionalAudio(this.audioListener);
-        this.positionalRocketSound2 = new THREE.PositionalAudio(this.audioListener);
-        this.positionalRocketSound3 = new THREE.PositionalAudio(this.audioListener);
-        this.positionalRocketSound4 = new THREE.PositionalAudio(this.audioListener);
-        */
-
-        let audioLoader = this.audioManager.getAudioLoader();
-
-        // Variable to store the loaded audio buffer
-        let sharedAudioBuffer: AudioBuffer;// | null = null;
-
+        this.audioManager = new AudioManager(this.camera);
         // asset from here: https://opengameart.org/content/light-machine-gun
-        /*
-        this.audioLoader.load(
-            //'assets/audio/Img_fire01.mp3',
-            'assets/audio/gunshot.ogg',
-            (buffer) => {
-                this.bulletSound.setBuffer(buffer);
-                this.bulletSound.setLoop(false); // Set to true if you want looping
-                this.bulletSound.setVolume(0.5); // Set volume
-                //this.audio.play(); // Start playback
-            }
-        );
-        */
-
-        /*
         // asset from here: https://opengameart.org/content/q009s-weapon-sounds
-        this.audioLoader.load(
-            'assets/audio/rlauncher.ogg',
-            (buffer) => {
-                this.rocketSound.setBuffer(buffer);
-                this.rocketSound.setLoop(false); // Set to true if you want looping
-                this.rocketSound.setVolume(0.5); // Set volume
-                //this.audio.play(); // Start playback
-            }
-        );
-
-        // asset from here: https://opengameart.org/content/q009s-weapon-sounds
-        this.audioLoader.load(
-            'assets/audio/gunshot.ogg',
-            (buffer) => {
-                this.positionalBulletSound.setBuffer(buffer);
-                this.positionalBulletSound.setRefDistance(1);
-                this.positionalBulletSound.setMaxDistance(100);
-                this.positionalBulletSound.setLoop(false); // Set to true if you want looping
-                this.positionalBulletSound.setVolume(1); // Set volume
-                //this.positionalSound.play(); // Start playback
-            }
-        );
-
-        this.audioLoader.load(
-            'assets/audio/rlauncher.ogg',
-            (buffer) => {
-                this.positionalRocketSound.setBuffer(buffer);
-                this.positionalRocketSound.setRefDistance(1);
-                this.positionalRocketSound.setMaxDistance(100);
-                this.positionalRocketSound.setLoop(false); // Set to true if you want looping
-                this.positionalRocketSound.setVolume(0.3); // Set volume
-                //this.positionalSound.play(); // Start playback
-            }
-        );
-
-        this.audioLoader.load(
-            'assets/audio/rlauncher.ogg',
-            (buffer) => {
-                this.positionalRocketSound2.setBuffer(buffer);
-                this.positionalRocketSound2.setRefDistance(1);
-                this.positionalRocketSound2.setMaxDistance(100);
-                this.positionalRocketSound2.setLoop(false); // Set to true if you want looping
-                this.positionalRocketSound2.setVolume(0.3); // Set volume
-                //this.positionalSound.play(); // Start playback
-            }
-        );
-        */
-
-        // TODO: experiment with positional audio per https://threejs.org/docs/?q=PositionalAudio#api/en/audio/PositionalAudio
 
         this.debugCamera = debugCamera;
         this.debugOrbitControls = debugOrbitControls;
@@ -552,17 +455,10 @@ export default class GameScene extends THREE.Scene {
 		}
         if (event.key === 'c')
 		{			
-            this.generateRandomCube();
-            if(this.bulletSound.isPlaying) {
-                this.bulletSound.stop();
-            }
-            this.bulletSound.play();
+           
 		}
         if (event.key === 'r') {			
-            if(this.rocketSound.isPlaying) {
-                this.rocketSound.stop();
-            }
-            this.rocketSound.play();
+
         }
         if (event.key === 'p')
         {			
@@ -573,7 +469,6 @@ export default class GameScene extends THREE.Scene {
             let projectileLaunchVector = forwardVector; 
 
             this.generateRandomDumpster(this.player1.getPosition(), projectileLaunchVector);
-            this.positionalBulletSound.play(); // Start playback
         }
         if (event.key === 'o')
         {			
@@ -1075,8 +970,6 @@ export default class GameScene extends THREE.Scene {
 
     private async loadSoundEffects() {
 
-        let audioListener = this.audioManager.getAudioListener();
-
         this.positionalBulletSound = await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100);
         this.positionalBulletSound2 = await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100);
         this.positionalBulletSound3 = await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100);
@@ -1095,52 +988,7 @@ export default class GameScene extends THREE.Scene {
         this.deathFireSound = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);
         this.deathFireSound2 = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);
         this.deathFireSound3 = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);
-        this.deathFireSound4 = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);
-
-        /*
-        audioLoader.load('assets/audio/gunshot.ogg', (buffer) => {
-            sharedAudioBuffer = buffer;
-            console.log('Audio loaded successfully');
-
-            this.positionalBulletSound = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.25, 25, 100) as THREE.PositionalAudio;            
-            this.positionalBulletSound2 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.25, 25, 100) as THREE.PositionalAudio;           
-            this.positionalBulletSound3 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.25, 25, 100) as THREE.PositionalAudio;           
-            this.positionalBulletSound4 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.25, 25, 100) as THREE.PositionalAudio;           
-        });
-        
-        
-        audioLoader.load('assets/audio/rlauncher.ogg', (buffer) => {
-            sharedAudioBuffer = buffer;
-            console.log('Audio loaded successfully');
-
-            this.positionalRocketSound = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.1, 25, 100) as THREE.PositionalAudio;
-            this.positionalRocketSound2 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.1, 25, 100) as THREE.PositionalAudio;
-            this.positionalRocketSound3 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.1, 25, 100) as THREE.PositionalAudio;
-            this.positionalRocketSound4 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.1, 25, 100) as THREE.PositionalAudio;
-        });    
-
-        audioLoader.load('assets/audio/explosion-under-snow-sfx-230505.mp3', (buffer) => {
-            sharedAudioBuffer = buffer;
-            console.log('Audio loaded successfully');
-
-            this.positionalVehicleExplosionSound = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
-            this.positionalVehicleExplosionSound2 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
-            this.positionalVehicleExplosionSound3 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
-            this.positionalVehicleExplosionSound4 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
-        });    
-
-
-        audioLoader.load('assets/audio/fire-whoosh-85834.mp3', (buffer) => {
-            sharedAudioBuffer = buffer;
-            console.log('Audio loaded successfully');
-
-            this.deathFireSound = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
-            this.deathFireSound2 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
-            this.deathFireSound3 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
-            this.deathFireSound4 = this.createPositionalAudio(sharedAudioBuffer, audioListener, 0.8, 25, 100) as THREE.PositionalAudio;
-        });    
-        */
-
+        this.deathFireSound4 = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);        
     }
 
     async generatePlayers(particleMaterial: THREE.SpriteMaterial, player1VehicleType: VehicleType): Promise<void> {
@@ -1161,9 +1009,9 @@ export default class GameScene extends THREE.Scene {
 
         this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial, this.positionalBulletSound, this.positionalRocketSound, this.positionalVehicleExplosionSound, this.deathFireSound);
 
-        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial, this.positionalBulletSound2, this.positionalRocketSound2, this.positionalVehicleExplosionSound, this.deathFireSound2);
-        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial, this.positionalBulletSound3, this.positionalRocketSound3, this.positionalVehicleExplosionSound, this.deathFireSound3);
-        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial, this.positionalBulletSound4, this.positionalRocketSound4, this.positionalVehicleExplosionSound, this.deathFireSound4);
+        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial, this.positionalBulletSound2, this.positionalRocketSound2, this.positionalVehicleExplosionSound2, this.deathFireSound2);
+        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial, this.positionalBulletSound3, this.positionalRocketSound3, this.positionalVehicleExplosionSound3, this.deathFireSound3);
+        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial, this.positionalBulletSound4, this.positionalRocketSound4, this.positionalVehicleExplosionSound4, this.deathFireSound4);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
@@ -1732,13 +1580,7 @@ export default class GameScene extends THREE.Scene {
             }        
         }                
 
-        //this.audioListener.position.set(this.player1.getPosition().x, this.player1.getPosition().y, this.player1.getPosition().z);        
-
         this.camera.updateMatrixWorld(true);
-
-     
-
-        //this.audioListenerMarker.position.copy(this.audioListener.position);
 
         this.updateDebugDivElements();
         this.stats.update();
@@ -1860,24 +1702,4 @@ export default class GameScene extends THREE.Scene {
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);
     }
-        
-    // TODO: remove once AudioManager is working
-    private createPositionalAudio(sharedAudioBuffer: AudioBuffer, listener: THREE.AudioListener, volume: number, refDistance: number, maxDistance: number): THREE.PositionalAudio {//} | null {
-        if (!sharedAudioBuffer) {
-            console.warn('Audio buffer not loaded yet');
-            return new THREE.PositionalAudio(new THREE.AudioListener());
-        }
-    
-        const positionalAudio = new THREE.PositionalAudio(listener);
-        positionalAudio.setBuffer(sharedAudioBuffer);
-        positionalAudio.setRefDistance(refDistance);
-        positionalAudio.setMaxDistance(maxDistance);
-        positionalAudio.setLoop(false);
-        positionalAudio.setRolloffFactor(0.1);
-        positionalAudio.setVolume(volume);        
-        //positionalAudio.position.set(100, 100, 100);
-        //positionalAudio.play();
-    
-        return positionalAudio;
-    }    
 }

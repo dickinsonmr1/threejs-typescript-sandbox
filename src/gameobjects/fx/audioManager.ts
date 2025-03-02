@@ -1,20 +1,17 @@
 import * as THREE from 'three'
 
 export class AudioManager {
-    /**
-     *
-     */
+
     private audioListener: THREE.AudioListener
     private audioLoader: THREE.AudioLoader;
-    //private sharedAudioBuffer!: AudioBuffer;
-
     private audioBuffers: Map<string, AudioBuffer>;
 
-    constructor() {        
+    constructor(camera: THREE.Camera) {        
         this.audioLoader = new THREE.AudioLoader();
-        //this.sharedAudioBuffer = new AudioBuffer(new THREE.Audiob);
         this.audioListener = new THREE.AudioListener();
         this.audioBuffers = new Map();
+
+        camera.add(this.audioListener);
     }
 
     public getAudioLoader(): THREE.AudioLoader {
@@ -27,20 +24,10 @@ export class AudioManager {
 
     public async loadPositionalSound(asset: string, volume: number, refDistance: number, maxDistance: number): Promise<THREE.PositionalAudio> {
 
-        //let positionalSound!: THREE.PositionalAudio;
-        /*
-        this.sharedAudioBuffer = await this.audioLoader.loadAsync('assets/audio/gunshot.ogg', (buffer) => {
-            //this.sharedAudioBuffer = buffer;
-            console.log('Audio loaded successfully');            
-        });
-        */
-
-        let positionalSound = await this.createPositionalAudio(asset, this.audioListener, volume, refDistance, maxDistance)
-
-        return positionalSound;
+        return await this.createPositionalAudio(asset, this.audioListener, volume, refDistance, maxDistance)
     }
 
-    async loadAudio(url: string): Promise<AudioBuffer> {
+    private async loadAudio(url: string): Promise<AudioBuffer> {
         if (this.audioBuffers.has(url)) {
           return this.audioBuffers.get(url)!;
         }
@@ -59,11 +46,7 @@ export class AudioManager {
       }
 
     private async createPositionalAudio(asset: string, listener: THREE.AudioListener, volume: number, refDistance: number, maxDistance: number): Promise<THREE.PositionalAudio> {//} | null {
-        /*if (!this.sharedAudioBuffer) {
-            console.warn('Audio buffer not loaded yet');
-            return new THREE.PositionalAudio(new THREE.AudioListener());
-        }
-    */
+
         const buffer = await this.loadAudio(asset);
 
         const positionalAudio = new THREE.PositionalAudio(listener);
