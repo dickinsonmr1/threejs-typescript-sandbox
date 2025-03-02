@@ -867,11 +867,13 @@ export class Player {
             //this.bulletCooldownTime = this.maxBulletCooldownTime;
             this.bulletCooldownClock.start();
 
-            if(this.bulletSound.isPlaying)
-                this.bulletSound.stop();
+            if(this.bulletSound != null) {
+                if(this.bulletSound.isPlaying)
+                    this.bulletSound.stop();
 
-            this.bulletSound.play();
-            this.bulletSound.detune = Math.floor(Math.random() * 1600 - 800);
+                this.bulletSound.play();
+                this.bulletSound.detune = Math.floor(Math.random() * 1600 - 800);
+            }
         }
     }
 

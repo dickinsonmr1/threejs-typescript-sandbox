@@ -6,12 +6,15 @@ export class AudioManager {
      */
     private audioListener: THREE.AudioListener
     private audioLoader: THREE.AudioLoader;
-    private sharedAudioBuffer!: AudioBuffer;
+    //private sharedAudioBuffer!: AudioBuffer;
+
+    private audioBuffers: Map<string, AudioBuffer>;
 
     constructor() {        
         this.audioLoader = new THREE.AudioLoader();
         //this.sharedAudioBuffer = new AudioBuffer(new THREE.Audiob);
         this.audioListener = new THREE.AudioListener();
+        this.audioBuffers = new Map();
     }
 
     public getAudioLoader(): THREE.AudioLoader {
@@ -22,28 +25,49 @@ export class AudioManager {
         return this.audioListener;
     }
 
-    public loadPositionalSound(asset: string, volume: number, refDistance: number, maxDistance: number): THREE.PositionalAudio {
+    public async loadPositionalSound(asset: string, volume: number, refDistance: number, maxDistance: number): Promise<THREE.PositionalAudio> {
 
-        let positionalSound!: THREE.PositionalAudio;
-
-        this.audioLoader.load('assets/audio/gunshot.ogg', (buffer) => {
-            this.sharedAudioBuffer = buffer;
-            console.log('Audio loaded successfully');
-
-            positionalSound = this.createPositionalAudio(this.sharedAudioBuffer, this.audioListener, volume, refDistance, maxDistance)
+        //let positionalSound!: THREE.PositionalAudio;
+        /*
+        this.sharedAudioBuffer = await this.audioLoader.loadAsync('assets/audio/gunshot.ogg', (buffer) => {
+            //this.sharedAudioBuffer = buffer;
+            console.log('Audio loaded successfully');            
         });
+        */
+
+        let positionalSound = await this.createPositionalAudio(asset, this.audioListener, volume, refDistance, maxDistance)
 
         return positionalSound;
     }
 
-    public createPositionalAudio(sharedAudioBuffer: AudioBuffer, listener: THREE.AudioListener, volume: number, refDistance: number, maxDistance: number): THREE.PositionalAudio {//} | null {
-        if (!sharedAudioBuffer) {
+    async loadAudio(url: string): Promise<AudioBuffer> {
+        if (this.audioBuffers.has(url)) {
+          return this.audioBuffers.get(url)!;
+        }
+    
+        return new Promise((resolve, reject) => {
+          this.audioLoader.load(
+            url,
+            (buffer) => {
+              this.audioBuffers.set(url, buffer);
+              resolve(buffer);
+            },
+            undefined,
+            reject
+          );
+        });
+      }
+
+    private async createPositionalAudio(asset: string, listener: THREE.AudioListener, volume: number, refDistance: number, maxDistance: number): Promise<THREE.PositionalAudio> {//} | null {
+        /*if (!this.sharedAudioBuffer) {
             console.warn('Audio buffer not loaded yet');
             return new THREE.PositionalAudio(new THREE.AudioListener());
         }
-    
+    */
+        const buffer = await this.loadAudio(asset);
+
         const positionalAudio = new THREE.PositionalAudio(listener);
-        positionalAudio.setBuffer(sharedAudioBuffer);
+        positionalAudio.setBuffer(buffer);
         positionalAudio.setRefDistance(refDistance);
         positionalAudio.setMaxDistance(maxDistance);
         positionalAudio.setLoop(false);
