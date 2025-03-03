@@ -10,6 +10,8 @@ export interface IPlayerVehicle {
 
     getRaycastVehicle(): CANNON.RaycastVehicle;
 
+    getCurrentSpeed(): number;
+
     tryTurn(x: number): void;
     tryTightTurn(x: number): void;
     tryAccelerate(): void;

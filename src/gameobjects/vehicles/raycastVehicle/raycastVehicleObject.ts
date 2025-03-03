@@ -8,6 +8,13 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Utils } from "utils/Utils";
 import { NumberController } from "three/examples/jsm/libs/lil-gui.module.min.js";
 
+
+export enum DriveSystem {
+    AllWheelDrive,
+    FrontWheelDrive,
+    RearWheelDrive
+}
+
 export class RaycastVehicleObject implements IPlayerVehicle {
     
     wheels: RaycastWheelObject[] = [];
@@ -21,8 +28,15 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
     modelOffset?: THREE.Vector3;
     
-    private readonly maxSteerVal: number = 0.7;
+    private readonly maxSteerVal: number = Math.PI / 4;//0.7;
     private readonly maxForce: number = 1500;
+
+    private driveSystem: DriveSystem;
+    private currentSpeed: number = 0;
+
+    public getCurrentSpeed(): number {
+        return this.currentSpeed;
+    }
 
     private isActive: boolean = true;
 
@@ -55,14 +69,15 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         frontWheelHeight: number,
         rearWheelHeight: number,
-        
+                
         wheelMass: number,
         modelData: GLTF,
         wheelModelData: GLTF,
         modelScale: THREE.Vector3, // = new THREE.Vector3(1, 1, 1),
         modelOffset: THREE.Vector3, // = new THREE.Vector3(0, 0, 0),
         frontWheelModelScale: THREE.Vector3,
-        rearWheelModelScale: THREE.Vector3,) { //} = new THREE.Vector3(1, 1, 1)) {
+        rearWheelModelScale: THREE.Vector3,
+        driveSystem: DriveSystem) { //} = new THREE.Vector3(1, 1, 1)) {
 
         this.chassis = new ChassisObject(
             scene,
@@ -74,6 +89,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             chassisMass,
             centerOfMassAdjust
         );
+
+        this.driveSystem = driveSystem;
 
         const frontWheelOptions = {
             radius: frontWheelRadius,
@@ -87,9 +104,9 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             rollInfluence: 0.01,
             axleLocal: new CANNON.Vec3(0, 0, 1),
             chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
-            maxSuspensionTravel: 10, // 0.3
-            customSlidingRotationalSpeed: -30,
+            maxSuspensionTravel: 10, // 0.3            
             useCustomSlidingRotationalSpeed: true,
+            customSlidingRotationalSpeed: -30,
         };
 
         const rearWheelOptions = {
@@ -105,8 +122,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             axleLocal: new CANNON.Vec3(0, 0, 1),
             chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
             maxSuspensionTravel: 10, // 0.3
-            customSlidingRotationalSpeed: -30,
             useCustomSlidingRotationalSpeed: true,
+            customSlidingRotationalSpeed: -30,
         };
 
 
@@ -271,27 +288,48 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryAccelerate(): void {
+        
+        const maxEngineForce = 5000;  // Max torque at low speed
+        const minEngineForce = this.maxForce;  // Reduced torque at high speed
+        const topSpeed = 10;          // The speed at which torque reduction starts
+
+        // Scale engine force based on speed
+        let scaledEngineForce = maxEngineForce * (1 - Math.min(this.currentSpeed / topSpeed, 1)); 
+        scaledEngineForce = Math.max(scaledEngineForce, minEngineForce); // Clamp to min force
+        let currentEngineForce = scaledEngineForce;
+
+        //const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+        //currentEngineForce = lerp(currentEngineForce, scaledEngineForce, deltaTime * 5);
+
         if(!this.isActive) return;
 
         // rear wheels
-        this.raycastVehicle?.applyEngineForce(-this.maxForce, 2);
-        this.raycastVehicle?.applyEngineForce(-this.maxForce, 3);
+        if(this.driveSystem != DriveSystem.FrontWheelDrive) {
+            this.raycastVehicle?.applyEngineForce(-scaledEngineForce, 2);
+            this.raycastVehicle?.applyEngineForce(-scaledEngineForce, 3);
+        }
 
         // front wheels
-        this.raycastVehicle?.applyEngineForce(-this.maxForce, 0);
-        this.raycastVehicle?.applyEngineForce(-this.maxForce, 1);
+        if(this.driveSystem != DriveSystem.RearWheelDrive) {
+            this.raycastVehicle?.applyEngineForce(-scaledEngineForce, 0);
+            this.raycastVehicle?.applyEngineForce(-scaledEngineForce, 1);
+        }
     }
 
     tryAccelerateWithJoystick(joystickY: number): void {
         if(!this.isActive) return;
 
         // rear wheels
-        this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 2);
-        this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 3);
+        if(this.driveSystem != DriveSystem.FrontWheelDrive) {
+            this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 2);
+            this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 3);
+        }
 
         // front wheels
-        this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 0);
-        this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 1);
+        if(this.driveSystem != DriveSystem.RearWheelDrive) {
+            this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 0);
+            this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 1);
+        }
 
     }
 
@@ -311,26 +349,33 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         if(!this.isActive) return;
 
         // rear wheels
-        this.raycastVehicle?.applyEngineForce(this.maxForce, 2);
-        this.raycastVehicle?.applyEngineForce(this.maxForce, 3);
+        if(this.driveSystem != DriveSystem.FrontWheelDrive) {
+            this.raycastVehicle?.applyEngineForce(this.maxForce, 2);
+            this.raycastVehicle?.applyEngineForce(this.maxForce, 3);
+        }
 
         // front wheels
-        this.raycastVehicle?.applyEngineForce(this.maxForce, 0);
-        this.raycastVehicle?.applyEngineForce(this.maxForce, 1);
+        if(this.driveSystem != DriveSystem.RearWheelDrive) {
+            this.raycastVehicle?.applyEngineForce(this.maxForce, 0);
+            this.raycastVehicle?.applyEngineForce(this.maxForce, 1);
+        }
     }
 
     tryReverseWithJoystick(joystickY: number): void {
         if(!this.isActive) return;
 
-        // rear wheels
         var amount = Math.abs(joystickY);
-
-        this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 2);
-        this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 3);
+        // rear wheels        
+        if(this.driveSystem != DriveSystem.FrontWheelDrive) {
+            this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 2);
+            this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 3);
+        }
 
         // front wheels
-        this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 0);
-        this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 1);
+        if(this.driveSystem != DriveSystem.RearWheelDrive) {
+            this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 0);
+            this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 1);
+        }
     }
 
     tryStopReverse(): void {
@@ -400,6 +445,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         
         //this.raycastVehicle?.updateVehicle(1);
         this.chassis.update();  
+
+        const forwardVelocity = this.chassis.body.velocity.dot(this.chassis.body.quaternion.vmult(new CANNON.Vec3(1, 0, 0)));
+        this.currentSpeed = Math.abs(forwardVelocity); 
+
         //this.wheels.forEach(x => x.update());
 
         if(this.raycastVehicle != null) {

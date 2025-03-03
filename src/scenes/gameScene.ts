@@ -338,6 +338,7 @@ export default class GameScene extends THREE.Scene {
             "DebugCameraLocation",
             "PlayerLocation",            
             "AudioListener",
+            "Player1Speed",
             "Player1BulletSoundLocation",
             "Player1RocketSoundLocation",
             "Objective",
@@ -390,7 +391,7 @@ export default class GameScene extends THREE.Scene {
             this.water.rotation.x = - Math.PI / 2;
             this.water.position.y += this.worldConfig.waterY; // 1.5
             this.add( this.water );
-        }``
+        }
 
         if(this.worldConfig.precipitationType != PrecipitationType.None) {
             this.precipitationSystem = new PrecipitationSystem(this, this.terrainChunk.heightMapLength, this.worldConfig.precipitationType, this.worldConfig.horizontalScale);
@@ -1619,6 +1620,7 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.updateElementText("DebugCameraLocation", `Debug camera: ${Utility.ThreeVector3ToString(this.debugCamera.position)}`);
         this.debugDivElementManager.updateElementText("PlayerLocation", `Player 1 position: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`);
         this.debugDivElementManager.updateElementText("AudioListener", `Audio listener position: (${Utility.ThreeVector3ToString(this.audioManager.getAudioListener().position)})`);
+        this.debugDivElementManager.updateElementText("Player1Speed", `Player 1 speed: (${this.player1.getVehicleObject().getCurrentSpeed()})`);
         
         //this.debugDivElementManager.updateElementText("Player1BulletSoundLocation", `Player 1 bullet sound: (${Utility.ThreeVector3ToString(this.player1.bulletSound?.position)})`);
         //this.debugDivElementManager.updateElementText("Player1RocketSoundLocation", `Player 1 rocket sound: (${Utility.ThreeVector3ToString(this.player1.rocketSound.position)})`);

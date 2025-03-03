@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { RaycastVehicleObject } from "../vehicles/raycastVehicle/raycastVehicleObject";
+import { DriveSystem, RaycastVehicleObject } from "../vehicles/raycastVehicle/raycastVehicleObject";
 import { Player, PlayerTeam, VehicleType } from "./player";
 import * as CANNON from 'cannon-es'
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -66,8 +66,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // wheel offset  new THREE.Vector3(0, -0.35, 0)
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
-
+                    new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 100;
                 break;
@@ -97,7 +97,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset  new THREE.Vector3(0, -0.35, 0)
                     
                     new THREE.Vector3(0.5, 1, 1), // front wheel model scale,
-                    new THREE.Vector3(0.5, 1, 1) // rear wheel model scale
+                    new THREE.Vector3(0.5, 1, 1), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 150;
                 break;
@@ -127,7 +128,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.8, 0.8, 0.8), // front wheel model scale,
-                    new THREE.Vector3(0.8, 0.8, 0.8) // rear wheel model scale
+                    new THREE.Vector3(0.8, 0.8, 0.8), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 50;
                 leftHeadlightOffset = new THREE.Vector3(-2, -0.1, -0.3);
@@ -162,7 +164,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.8, 0.8, 0.8), // front wheel model scale,
-                    new THREE.Vector3(0.8, 0.8, 0.8) // rear wheel model scale
+                    new THREE.Vector3(0.8, 0.8, 0.8), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 50;
                 leftHeadlightOffset = new THREE.Vector3(-2, -0.1, -0.3);
@@ -196,7 +199,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 75;
                 break;
@@ -226,7 +230,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 125;
                 break; 
@@ -258,7 +263,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, -0.1), // model offset
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
-                    new THREE.Vector3(1.5, 2, 2) // rear wheel model scale
+                    new THREE.Vector3(1.5, 2, 2), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 150;
                 break;         
@@ -290,7 +296,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, -0.175), // model offset
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
-                    new THREE.Vector3(1, 2, 2) // rear wheel model scale
+                    new THREE.Vector3(1, 2, 2), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 150;
                 leftHeadlightOffset = new THREE.Vector3(-2.25, 0.25, -0.2);
@@ -326,7 +333,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
-                    new THREE.Vector3(1.5, 1.5, 1.5) // rear wheel model scale
+                    new THREE.Vector3(1.5, 1.5, 1.5), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 150;
                         
@@ -362,7 +370,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.5, 1, 1), // front wheel model scale,
-                    new THREE.Vector3(0.5, 1, 1) // rear wheel model scale
+                    new THREE.Vector3(0.5, 1, 1), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 150;           
                 leftHeadlightOffset = new THREE.Vector3(-3, 0.55, -0.45);
@@ -397,7 +406,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 100;
                 leftHeadlightOffset = new THREE.Vector3(-2.25, 0.1, -0.3);
@@ -429,7 +439,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.5, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 100;
                 break;
@@ -459,7 +470,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.5, 1, 1), // front wheel model scale,
-                    new THREE.Vector3(0.5, 1, 1) // rear wheel model scale
+                    new THREE.Vector3(0.5, 1, 1), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 150;
                 leftHeadlightOffset = new THREE.Vector3(-3.0, 0.4, -0.45);
@@ -493,7 +505,8 @@ export class VehicleFactory {
                     new THREE.Vector3(0, 0, 0), // model offset
 
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
-                    new THREE.Vector3(0.75, 0.75, 0.75) // rear wheel model scale
+                    new THREE.Vector3(0.75, 0.75, 0.75), // rear wheel model scale
+                    DriveSystem.AllWheelDrive
                 );
                 maxHealth = 100            
                 break;

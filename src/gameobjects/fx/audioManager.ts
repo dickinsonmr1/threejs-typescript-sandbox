@@ -72,7 +72,7 @@ export class AudioManager {
         const worldPos = new THREE.Vector3();
         this.audioListener.updateMatrixWorld(true);
         this.audioListener.getWorldPosition(worldPos);
-        console.log(worldPos);
+        //console.log(worldPos);
 
         const audioContext = THREE.AudioContext.getContext();
         if (audioContext.state === 'suspended') {
