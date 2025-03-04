@@ -1,3 +1,4 @@
+import { VehicleConfig } from "../player/vehicleConfig";
 import { ChassisObject } from "./chassisObject";
 import * as CANNON from 'cannon-es'
 
@@ -9,6 +10,8 @@ export interface IPlayerVehicle {
     getCannonVehicleChassisBody(): CANNON.Body | undefined; 
 
     getRaycastVehicle(): CANNON.RaycastVehicle;
+
+    vehicleConfig: VehicleConfig;
 
     getCurrentSpeed(): number;
 

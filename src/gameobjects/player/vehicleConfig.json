@@ -1,0 +1,12 @@
+{    
+    "frictionSlip": 5.0,
+    "rollInfluence": 0.01,
+    "customSlidingRotationalSpeed": -30,
+
+    "maxSteerVal": 0.8,
+    
+    "maxForce": 1500,
+    "maxEngineForce": 5000,
+    "topSpeedForHigherTorque": 10,
+    "driveSystem": 0
+}

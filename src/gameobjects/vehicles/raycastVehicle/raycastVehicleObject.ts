@@ -7,6 +7,7 @@ import { IPlayerVehicle } from "../IPlayerVehicle";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Utils } from "utils/Utils";
 import { NumberController } from "three/examples/jsm/libs/lil-gui.module.min.js";
+import { VehicleConfig } from "../../player/vehicleConfig";
 
 
 export enum DriveSystem {
@@ -51,6 +52,9 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     /**
      *
      */
+
+    vehicleConfig: VehicleConfig;
+    
     constructor(scene: THREE.Scene,
         isDebug: boolean,
         position: THREE.Vector3,
@@ -77,7 +81,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         modelOffset: THREE.Vector3, // = new THREE.Vector3(0, 0, 0),
         frontWheelModelScale: THREE.Vector3,
         rearWheelModelScale: THREE.Vector3,
-        driveSystem: DriveSystem) { //} = new THREE.Vector3(1, 1, 1)) {
+        driveSystem: DriveSystem,
+        vehicleConfig: VehicleConfig) { //} = new THREE.Vector3(1, 1, 1)) {
+
+        this.vehicleConfig = vehicleConfig;
 
         this.chassis = new ChassisObject(
             scene,

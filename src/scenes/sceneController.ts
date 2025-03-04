@@ -665,6 +665,16 @@ export default class SceneController {
             const cpuFolder = this.gui.addFolder( 'CPU Player Config' );
             cpuFolder.add(this.gameScene!, 'cpuPlayerBehavior', { Follow: 0, FollowAndAttack: 1, Stop: 2, StopAndAttack: 3, Flee: 4, Patrol: 5})
                 .listen();
+
+            const playerFolder = this.gui.addFolder('Player folder')
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'frictionSlip', 0, 10, 0.1);
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'rollInfluence', 0, 1, 0.01);
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'customSlidingRotationalSpeed', -90, 0, 5);
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'maxSteerValue', 0, Math.PI, Math.PI / 16);
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'maxForce', 0, 5000, 100);
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'maxEngineForce', 0, 5000, 100);
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'topSpeedForHigherTorque', 0, 60, 5);
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'driveSystem', {AllWheelDrive: 0, FrontWheelDrive: 1, RearWheelDrive: 2});
         });
 
         // todo: fix behavior because of async
