@@ -29,8 +29,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
     modelOffset?: THREE.Vector3;
     
-    private readonly maxSteerVal: number = Math.PI / 4;//0.7;
-    private readonly maxForce: number = 1500;
+    //private readonly maxSteerVal: number = Math.PI / 4;//0.7;
+    //private readonly maxForce: number = 1500;
 
     private driveSystem: DriveSystem;
     private currentSpeed: number = 0;
@@ -54,7 +54,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
      */
 
     vehicleConfig: VehicleConfig;
-    
+
     constructor(scene: THREE.Scene,
         isDebug: boolean,
         position: THREE.Vector3,
@@ -295,47 +295,57 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     tryAccelerate(): void {
-        
-        const maxEngineForce = 5000;  // Max torque at low speed
-        const minEngineForce = this.maxForce;  // Reduced torque at high speed
-        const topSpeed = 10;          // The speed at which torque reduction starts
-
-        // Scale engine force based on speed
-        let scaledEngineForce = maxEngineForce * (1 - Math.min(this.currentSpeed / topSpeed, 1)); 
-        scaledEngineForce = Math.max(scaledEngineForce, minEngineForce); // Clamp to min force
-        let currentEngineForce = scaledEngineForce;
-
-        //const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-        //currentEngineForce = lerp(currentEngineForce, scaledEngineForce, deltaTime * 5);
-
+           
         if(!this.isActive) return;
+
+        let engineForce = this.calculateEngineForce();
 
         // rear wheels
         if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(-scaledEngineForce, 2);
-            this.raycastVehicle?.applyEngineForce(-scaledEngineForce, 3);
+            this.raycastVehicle?.applyEngineForce(-engineForce, 2);
+            this.raycastVehicle?.applyEngineForce(-engineForce, 3);
         }
 
         // front wheels
         if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(-scaledEngineForce, 0);
-            this.raycastVehicle?.applyEngineForce(-scaledEngineForce, 1);
+            this.raycastVehicle?.applyEngineForce(-engineForce, 0);
+            this.raycastVehicle?.applyEngineForce(-engineForce, 1);
         }
+    }
+
+    private calculateEngineForce(): number {
+        //const maxEngineForce = 5000;  // Max torque at low speed for 
+        const minEngineForce = this.vehicleConfig.highSpeedForce;  // Reduced torque at high speed
+        const topSpeed = this.vehicleConfig.topSpeedForHigherTorque;          // The speed at which torque reduction starts
+
+        // Scale engine force based on speed
+        let currentEngineForce = 0;
+
+        let scaledEngineForce = this.vehicleConfig.lowSpeedForce * (1 - Math.min(this.currentSpeed / topSpeed, 1)); 
+        scaledEngineForce = Math.max(scaledEngineForce, minEngineForce); // Clamp to min force
+        currentEngineForce = scaledEngineForce;
+
+        //const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+        //currentEngineForce = lerp(currentEngineForce, scaledEngineForce, deltaTime * 5);
+
+        return currentEngineForce;
     }
 
     tryAccelerateWithJoystick(joystickY: number): void {
         if(!this.isActive) return;
 
+        let engineForce = this.calculateEngineForce();
+
         // rear wheels
         if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 2);
-            this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 3);
+            this.raycastVehicle?.applyEngineForce(-engineForce * joystickY, 2);
+            this.raycastVehicle?.applyEngineForce(-engineForce * joystickY, 3);
         }
 
         // front wheels
         if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 0);
-            this.raycastVehicle?.applyEngineForce(-this.maxForce * joystickY, 1);
+            this.raycastVehicle?.applyEngineForce(-engineForce * joystickY, 0);
+            this.raycastVehicle?.applyEngineForce(-engineForce * joystickY, 1);
         }
 
     }
@@ -355,33 +365,37 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     tryReverse(): void {
         if(!this.isActive) return;
 
+        let engineForce = this.calculateEngineForce();
+
         // rear wheels
         if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(this.maxForce, 2);
-            this.raycastVehicle?.applyEngineForce(this.maxForce, 3);
+            this.raycastVehicle?.applyEngineForce(engineForce, 2);
+            this.raycastVehicle?.applyEngineForce(engineForce, 3);
         }
 
         // front wheels
         if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(this.maxForce, 0);
-            this.raycastVehicle?.applyEngineForce(this.maxForce, 1);
+            this.raycastVehicle?.applyEngineForce(engineForce, 0);
+            this.raycastVehicle?.applyEngineForce(engineForce, 1);
         }
     }
 
     tryReverseWithJoystick(joystickY: number): void {
         if(!this.isActive) return;
 
+        let engineForce = this.calculateEngineForce();
         var amount = Math.abs(joystickY);
+
         // rear wheels        
         if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 2);
-            this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 3);
+            this.raycastVehicle?.applyEngineForce(engineForce * amount, 2);
+            this.raycastVehicle?.applyEngineForce(engineForce * amount, 3);
         }
 
         // front wheels
         if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 0);
-            this.raycastVehicle?.applyEngineForce(this.maxForce * amount, 1);
+            this.raycastVehicle?.applyEngineForce(engineForce * amount, 0);
+            this.raycastVehicle?.applyEngineForce(engineForce * amount, 1);
         }
     }
 
@@ -401,8 +415,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         if(!this.isActive) return;
 
         // front wheels
-        this.raycastVehicle?.setSteeringValue(this.maxSteerVal * gamepadStickX, 0);
-        this.raycastVehicle?.setSteeringValue(this.maxSteerVal * gamepadStickX, 1);
+        this.raycastVehicle?.setSteeringValue(this.vehicleConfig.maxSteerVal * gamepadStickX, 0);
+        this.raycastVehicle?.setSteeringValue(this.vehicleConfig.maxSteerVal * gamepadStickX, 1);
 
         // rear wheels
         //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 2);
@@ -424,8 +438,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     tryTurnLeft() {
         if(!this.isActive) return;
 
-        this.raycastVehicle?.setSteeringValue(this.maxSteerVal, 0);
-        this.raycastVehicle?.setSteeringValue(this.maxSteerVal, 1);
+        this.raycastVehicle?.setSteeringValue(this.vehicleConfig.maxSteerVal, 0);
+        this.raycastVehicle?.setSteeringValue(this.vehicleConfig.maxSteerVal, 1);
     }
 
     tryStopTurnLeft() {
@@ -438,8 +452,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     tryTurnRight(): void {
         if(!this.isActive) return;
 
-        this.raycastVehicle?.setSteeringValue(-this.maxSteerVal, 0);
-        this.raycastVehicle?.setSteeringValue(-this.maxSteerVal, 1);
+        this.raycastVehicle?.setSteeringValue(-this.vehicleConfig.maxSteerVal, 0);
+        this.raycastVehicle?.setSteeringValue(-this.vehicleConfig.maxSteerVal, 1);
     }
     tryStopTurnRight(): void {
         if(!this.isActive) return;
@@ -456,13 +470,26 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const forwardVelocity = this.chassis.body.velocity.dot(this.chassis.body.quaternion.vmult(new CANNON.Vec3(1, 0, 0)));
         this.currentSpeed = Math.abs(forwardVelocity); 
 
-        //this.wheels.forEach(x => x.update());
+        if(this.vehicleConfig.driveSystem != this.driveSystem)
+            this.driveSystem = this.vehicleConfig.driveSystem;
 
+        //this.wheels.forEach(x => x.update());
+        
         if(this.raycastVehicle != null) {
             for(let i = 0; i < this.raycastVehicle.wheelInfos.length; i++) {
+
+                if(this.vehicleConfig.frictionSlip != this.raycastVehicle.wheelInfos[i].frictionSlip)
+                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleConfig.frictionSlip;
+
+                if(this.vehicleConfig.rollInfluence != this.raycastVehicle.wheelInfos[i].rollInfluence)
+                    this.raycastVehicle.wheelInfos[i].rollInfluence = this.vehicleConfig.rollInfluence;
+
+                if(this.vehicleConfig.customSlidingRotationalSpeed != this.raycastVehicle.wheelInfos[i].customSlidingRotationalSpeed)
+                    this.raycastVehicle.wheelInfos[i].customSlidingRotationalSpeed = this.vehicleConfig.customSlidingRotationalSpeed;
+               
                 this.raycastVehicle?.updateWheelTransform(i);
 
-                const transform  = this.raycastVehicle?.wheelInfos[i].worldTransform;
+                const transform = this.raycastVehicle?.wheelInfos[i].worldTransform;
 
                 if(this.isActive) {
                     let wheel = this.wheels[i];

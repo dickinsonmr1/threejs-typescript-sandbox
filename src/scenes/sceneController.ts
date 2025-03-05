@@ -666,15 +666,20 @@ export default class SceneController {
             cpuFolder.add(this.gameScene!, 'cpuPlayerBehavior', { Follow: 0, FollowAndAttack: 1, Stop: 2, StopAndAttack: 3, Flee: 4, Patrol: 5})
                 .listen();
 
-            const playerFolder = this.gui.addFolder('Player folder')
-            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'frictionSlip', 0, 10, 0.1);
-            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'rollInfluence', 0, 1, 0.01);
-            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'customSlidingRotationalSpeed', -90, 0, 5);
-            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'maxSteerValue', 0, Math.PI, Math.PI / 16);
-            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'maxForce', 0, 5000, 100);
-            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'maxEngineForce', 0, 5000, 100);
-            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'topSpeedForHigherTorque', 0, 60, 5);
-            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'driveSystem', {AllWheelDrive: 0, FrontWheelDrive: 1, RearWheelDrive: 2});
+            const playerFolder = this.gui.addFolder('Player 1 Config')
+            // wheels
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'frictionSlip', 0, 10, 0.1).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'rollInfluence', 0, 1, 0.01).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'customSlidingRotationalSpeed', -90, 0, 5).listen();
+
+            // wheel turn amount
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'maxSteerVal', 0, Math.PI, Math.PI / 16).listen();
+
+            // engine / drive system
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'lowSpeedForce', 0, 10000, 100).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'highSpeedForce', 0, 10000, 100).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'topSpeedForHigherTorque', 0, 60, 5).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleConfig, 'driveSystem', {AllWheelDrive: 0, FrontWheelDrive: 1, RearWheelDrive: 2}).listen();
         });
 
         // todo: fix behavior because of async
