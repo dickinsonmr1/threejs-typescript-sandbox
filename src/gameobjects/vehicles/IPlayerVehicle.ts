@@ -1,4 +1,4 @@
-import { VehicleConfig } from "../player/vehicleConfig";
+import { VehicleConfig } from "./config/vehicleConfig";
 import { ChassisObject } from "./chassisObject";
 import * as CANNON from 'cannon-es'
 

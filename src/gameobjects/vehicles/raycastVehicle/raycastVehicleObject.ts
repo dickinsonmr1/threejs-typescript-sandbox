@@ -7,7 +7,7 @@ import { IPlayerVehicle } from "../IPlayerVehicle";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Utils } from "utils/Utils";
 import { NumberController } from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { VehicleConfig } from "../../player/vehicleConfig";
+import { VehicleConfig } from "../config/vehicleConfig";
 
 
 export enum DriveSystem {

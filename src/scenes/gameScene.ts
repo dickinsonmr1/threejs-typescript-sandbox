@@ -24,7 +24,7 @@ import { TerrainChunk } from '../gameobjects/terrain/terrainChunk';
 import { PickupObject2 } from '../gameobjects/pickupObject2';
 import { SmokeObject } from '../gameobjects/fx/smokeObject';
 import { CpuPlayerPattern } from '../gameobjects/player/cpuPlayerPatternEnums';
-import { VehicleFactory } from '../gameobjects/player/vehicleFactory';
+import { VehicleFactory } from '../gameobjects/vehicles/vehicleFactory';
 import { RainShaderParticleEmitter } from '../gameobjects/fx/rainShaderParticleEmitter';
 import { WorldConfig } from '../gameobjects/world/worldConfig';
 import { GameConfig } from '../gameconfig';

@@ -1,4 +1,4 @@
-import { DriveSystem } from "../vehicles/raycastVehicle/raycastVehicleObject";
+import { DriveSystem } from "../raycastVehicle/raycastVehicleObject";
 import * as CANNON from 'cannon-es'
 
 export interface VehicleConfig {

@@ -1,13 +1,13 @@
 import * as THREE from "three";
-import { DriveSystem, RaycastVehicleObject } from "../vehicles/raycastVehicle/raycastVehicleObject";
-import { Player, PlayerTeam, VehicleType } from "./player";
+import { DriveSystem, RaycastVehicleObject } from "./raycastVehicle/raycastVehicleObject";
+import { Player, PlayerTeam, VehicleType } from "../player/player";
 import * as CANNON from 'cannon-es'
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GameScene from "../../scenes/gameScene";
 
-import { VehicleConfig } from './vehicleConfig';
-import vehicleConfigDefaultJson from './vehicleConfig-default.json'
-import vehicleConfigOffroader from './vehicleconfig-offroader.json'
+import { VehicleConfig } from './config/vehicleConfig';
+import vehicleConfigDefaultJson from './config/vehicleConfig-default.json'
+import vehicleConfigOffroader from './config/vehicleconfig-offroader.json'
 
 export class VehicleFactory {
     
