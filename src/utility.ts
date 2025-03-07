@@ -21,6 +21,10 @@ export class Utility {
     static ThreeVec3ToCannonVec3(position: THREE.Vector3): CANNON.Vec3 {
         return new CANNON.Vec3(position.x, position.y, position.z);
     }
+
+    static ArrayToCannonVec3(array: number[]): CANNON.Vec3 {
+      return new CANNON.Vec3(array[0], array[1], array[2]);
+  }
         
     static CannonVec3Add(position1: CANNON.Vec3, position2: CANNON.Vec3): CANNON.Vec3 {
       return new CANNON.Vec3(

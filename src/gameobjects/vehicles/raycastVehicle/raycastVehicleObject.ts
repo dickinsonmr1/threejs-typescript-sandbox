@@ -53,14 +53,14 @@ export class RaycastVehicleObject implements IPlayerVehicle {
      *
      */
 
-    vehicleConfig: VehicleConfig;
+    vehicleOverrideConfig: VehicleConfig;
 
     constructor(scene: THREE.Scene,
         isDebug: boolean,
         position: THREE.Vector3,
         //color: number = 0xffffff,
         world: CANNON.World,
-        chassisDimensions: CANNON.Vec3,        
+        //chassisDimensions: CANNON.Vec3,        
         centerOfMassAdjust: CANNON.Vec3,
         chassisMass: number,
         wheelMaterial: CANNON.Material,
@@ -75,16 +75,20 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         rearWheelHeight: number,
                 
         wheelMass: number,
+
         modelData: GLTF,
         wheelModelData: GLTF,
+
         modelScale: THREE.Vector3, // = new THREE.Vector3(1, 1, 1),
         modelOffset: THREE.Vector3, // = new THREE.Vector3(0, 0, 0),
         frontWheelModelScale: THREE.Vector3,
         rearWheelModelScale: THREE.Vector3,
-        driveSystem: DriveSystem,
-        vehicleConfig: VehicleConfig) { //} = new THREE.Vector3(1, 1, 1)) {
+        //driveSystem: DriveSystem,
+        vehicleOverrideConfig: VehicleConfig) { //} = new THREE.Vector3(1, 1, 1)) {
 
-        this.vehicleConfig = vehicleConfig;
+        this.vehicleOverrideConfig = vehicleOverrideConfig;
+
+        const chassisDimensions = Utility.ArrayToCannonVec3(vehicleOverrideConfig.chassisDimensions);
 
         this.chassis = new ChassisObject(
             scene,
@@ -97,42 +101,41 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             centerOfMassAdjust
         );
 
-        this.driveSystem = driveSystem;
+        this.driveSystem = vehicleOverrideConfig.driveSystem;
 
         const frontWheelOptions = {
-            radius: frontWheelRadius,
+            radius: this.vehicleOverrideConfig.frontWheelRadius,
             directionLocal: new CANNON.Vec3(0, -1, 0),
-            suspensionStiffness: 50,
-            suspensionRestLength: 0.25,
-            frictionSlip: 5.0, // 1.4
+            suspensionStiffness: this.vehicleOverrideConfig.suspensionStiffness,
+            suspensionRestLength: this.vehicleOverrideConfig.suspensionRestLength,
+            frictionSlip: this.vehicleOverrideConfig.frictionSlip, //5.0, // 1.4
             dampingRelaxation: 6.0,
             dampingCompression: 5.0,
             maxSuspensionForce: 100000,
-            rollInfluence: 0.01,
+            rollInfluence: this.vehicleOverrideConfig.rollInfluence,
             axleLocal: new CANNON.Vec3(0, 0, 1),
             chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
             maxSuspensionTravel: 10, // 0.3            
             useCustomSlidingRotationalSpeed: true,
-            customSlidingRotationalSpeed: -30,
+            customSlidingRotationalSpeed: this.vehicleOverrideConfig.customSlidingRotationalSpeed,
         };
 
         const rearWheelOptions = {
-            radius: rearWheelRadius,
+            radius: this.vehicleOverrideConfig.rearWheelRadius,
             directionLocal: new CANNON.Vec3(0, -1, 0),
-            suspensionStiffness: 50,
-            suspensionRestLength: 0.25,
-            frictionSlip: 5.0, // 1.4
+            suspensionStiffness: this.vehicleOverrideConfig.suspensionStiffness,
+            suspensionRestLength: this.vehicleOverrideConfig.suspensionRestLength,
+            frictionSlip: this.vehicleOverrideConfig.frictionSlip, //5.0, // 1.4
             dampingRelaxation: 6.0,
             dampingCompression: 5.0,
             maxSuspensionForce: 100000,
-            rollInfluence: 0.01,
+            rollInfluence: this.vehicleOverrideConfig.rollInfluence,
             axleLocal: new CANNON.Vec3(0, 0, 1),
             chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
             maxSuspensionTravel: 10, // 0.3
             useCustomSlidingRotationalSpeed: true,
-            customSlidingRotationalSpeed: -30,
+            customSlidingRotationalSpeed: this.vehicleOverrideConfig.customSlidingRotationalSpeed,
         };
-
 
         this.raycastVehicle = new CANNON.RaycastVehicle({
             chassisBody: this.chassis.body,
@@ -170,12 +173,12 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 		this.raycastVehicle.wheelInfos.forEach(wheel => {
             
             var modelScale = frontWheelModelScale;
-            var wheelHeight = frontWheelHeight;
+            var wheelHeight = this.vehicleOverrideConfig.frontWheelHeight;
 
             if(i > 1) {
                 wheelColor = 0xff0000;
                 modelScale = rearWheelModelScale;
-                wheelHeight = rearWheelHeight;
+                wheelHeight = this.vehicleOverrideConfig.rearWheelHeight;
             }            
             
             const temp = new RaycastWheelObject(scene, isDebug, wheel.radius, wheelHeight, wheelColor, world, wheelMaterial);                    
@@ -315,15 +318,18 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
     private calculateEngineForce(): number {
         //const maxEngineForce = 5000;  // Max torque at low speed for 
-        const minEngineForce = this.vehicleConfig.highSpeedForce;  // Reduced torque at high speed
-        const topSpeed = this.vehicleConfig.topSpeedForHigherTorque;          // The speed at which torque reduction starts
+        const minEngineForce = this.vehicleOverrideConfig.highSpeedForce;  // Reduced torque at high speed
+        const topSpeed = this.vehicleOverrideConfig.topSpeedForHigherTorque;          // The speed at which torque reduction starts
 
         // Scale engine force based on speed
         let currentEngineForce = 0;
 
-        let scaledEngineForce = this.vehicleConfig.lowSpeedForce * (1 - Math.min(this.currentSpeed / topSpeed, 1)); 
+        let scaledEngineForce = this.vehicleOverrideConfig.lowSpeedForce * (1 - Math.min(this.currentSpeed / topSpeed, 1)); 
         scaledEngineForce = Math.max(scaledEngineForce, minEngineForce); // Clamp to min force
         currentEngineForce = scaledEngineForce;
+
+
+        // smoother throttle response
 
         //const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
         //currentEngineForce = lerp(currentEngineForce, scaledEngineForce, deltaTime * 5);
@@ -415,8 +421,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         if(!this.isActive) return;
 
         // front wheels
-        this.raycastVehicle?.setSteeringValue(this.vehicleConfig.maxSteerVal * gamepadStickX, 0);
-        this.raycastVehicle?.setSteeringValue(this.vehicleConfig.maxSteerVal * gamepadStickX, 1);
+        this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal * gamepadStickX, 0);
+        this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal * gamepadStickX, 1);
 
         // rear wheels
         //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 2);
@@ -438,8 +444,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     tryTurnLeft() {
         if(!this.isActive) return;
 
-        this.raycastVehicle?.setSteeringValue(this.vehicleConfig.maxSteerVal, 0);
-        this.raycastVehicle?.setSteeringValue(this.vehicleConfig.maxSteerVal, 1);
+        this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal, 0);
+        this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal, 1);
     }
 
     tryStopTurnLeft() {
@@ -452,8 +458,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     tryTurnRight(): void {
         if(!this.isActive) return;
 
-        this.raycastVehicle?.setSteeringValue(-this.vehicleConfig.maxSteerVal, 0);
-        this.raycastVehicle?.setSteeringValue(-this.vehicleConfig.maxSteerVal, 1);
+        this.raycastVehicle?.setSteeringValue(-this.vehicleOverrideConfig.maxSteerVal, 0);
+        this.raycastVehicle?.setSteeringValue(-this.vehicleOverrideConfig.maxSteerVal, 1);
     }
     tryStopTurnRight(): void {
         if(!this.isActive) return;
@@ -470,22 +476,28 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const forwardVelocity = this.chassis.body.velocity.dot(this.chassis.body.quaternion.vmult(new CANNON.Vec3(1, 0, 0)));
         this.currentSpeed = Math.abs(forwardVelocity); 
 
-        if(this.vehicleConfig.driveSystem != this.driveSystem)
-            this.driveSystem = this.vehicleConfig.driveSystem;
+        if(this.vehicleOverrideConfig.driveSystem != this.driveSystem)
+            this.driveSystem = this.vehicleOverrideConfig.driveSystem;
 
         //this.wheels.forEach(x => x.update());
         
         if(this.raycastVehicle != null) {
             for(let i = 0; i < this.raycastVehicle.wheelInfos.length; i++) {
 
-                if(this.vehicleConfig.frictionSlip != this.raycastVehicle.wheelInfos[i].frictionSlip)
-                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleConfig.frictionSlip;
+                if(this.vehicleOverrideConfig.frictionSlip != this.raycastVehicle.wheelInfos[i].frictionSlip)
+                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.frictionSlip;
 
-                if(this.vehicleConfig.rollInfluence != this.raycastVehicle.wheelInfos[i].rollInfluence)
-                    this.raycastVehicle.wheelInfos[i].rollInfluence = this.vehicleConfig.rollInfluence;
+                if(this.vehicleOverrideConfig.rollInfluence != this.raycastVehicle.wheelInfos[i].rollInfluence)
+                    this.raycastVehicle.wheelInfos[i].rollInfluence = this.vehicleOverrideConfig.rollInfluence;
 
-                if(this.vehicleConfig.customSlidingRotationalSpeed != this.raycastVehicle.wheelInfos[i].customSlidingRotationalSpeed)
-                    this.raycastVehicle.wheelInfos[i].customSlidingRotationalSpeed = this.vehicleConfig.customSlidingRotationalSpeed;
+                if(this.vehicleOverrideConfig.customSlidingRotationalSpeed != this.raycastVehicle.wheelInfos[i].customSlidingRotationalSpeed)
+                    this.raycastVehicle.wheelInfos[i].customSlidingRotationalSpeed = this.vehicleOverrideConfig.customSlidingRotationalSpeed;
+                
+                if(this.vehicleOverrideConfig.suspensionStiffness != this.raycastVehicle.wheelInfos[i].suspensionStiffness)
+                    this.raycastVehicle.wheelInfos[i].suspensionStiffness = this.vehicleOverrideConfig.suspensionStiffness;
+                
+                if(this.vehicleOverrideConfig.suspensionRestLength != this.raycastVehicle.wheelInfos[i].suspensionRestLength)
+                    this.raycastVehicle.wheelInfos[i].suspensionRestLength = this.vehicleOverrideConfig.suspensionRestLength;
                
                 this.raycastVehicle?.updateWheelTransform(i);
 

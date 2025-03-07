@@ -6,10 +6,8 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GameScene from "../../scenes/gameScene";
 
 import { VehicleConfig } from './vehicleConfig';
-
-import vehicleConfigJson from './vehicleConfig.json'
-
-
+import vehicleConfigDefaultJson from './vehicleConfig-default.json'
+import vehicleConfigOffroader from './vehicleconfig-offroader.json'
 
 export class VehicleFactory {
     
@@ -17,7 +15,10 @@ export class VehicleFactory {
     markerTexture: THREE.Texture;
     particleMaterial: THREE.SpriteMaterial;
 
-    public vehicleConfig: VehicleConfig = vehicleConfigJson;
+    public vehicleConfigDefault: VehicleConfig = vehicleConfigDefaultJson;
+    
+    // TODO: investigate adding one for each car
+    public vehicleConfigOffroader: VehicleConfig = vehicleConfigOffroader;
 
     constructor(crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial) {
         
@@ -55,7 +56,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(5, 4, 5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.4), // chassis dimensions
+                    //new CANNON.Vec3(1, 0.5, 0.4), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
@@ -77,8 +78,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 100;
                 break;
@@ -87,7 +88,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(5, 4, 5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    //new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
                     750,                            // chassis mass
                     wheelMaterial,
@@ -109,8 +110,8 @@ export class VehicleFactory {
                     
                     new THREE.Vector3(0.5, 1, 1), // front wheel model scale,
                     new THREE.Vector3(0.5, 1, 1), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 150;
                 break;
@@ -119,7 +120,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
-                    new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
+                    //new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
                     new CANNON.Vec3(0.2, 0.1, 0),    // center of mass adjust
                     250,                            // chassis mass
                     wheelMaterial,
@@ -141,8 +142,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.8, 0.8, 0.8), // front wheel model scale,
                     new THREE.Vector3(0.8, 0.8, 0.8), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 50;
                 leftHeadlightOffset = new THREE.Vector3(-2, -0.1, -0.3);
@@ -155,7 +156,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
-                    new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
+                    //new CANNON.Vec3(0.8, 0.25, 0.4), // chassis dimensions
                     new CANNON.Vec3(0.2, 0.1, 0),    // center of mass adjust
                     300,                            // chassis mass
                     wheelMaterial,
@@ -178,8 +179,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.8, 0.8, 0.8), // front wheel model scale,
                     new THREE.Vector3(0.8, 0.8, 0.8), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 50;
                 leftHeadlightOffset = new THREE.Vector3(-2, -0.1, -0.3);
@@ -192,7 +193,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    //new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0, 0.5, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
@@ -214,8 +215,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 75;
                 break;
@@ -224,7 +225,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.35, 0.5), // chassis dimensions
+                    //new CANNON.Vec3(1, 0.35, 0.5), // chassis dimensions
                     new CANNON.Vec3(0, 0.25, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
@@ -246,8 +247,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 125;
                 break; 
@@ -256,7 +257,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
+                    //new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
                     1000,                            // chassis mass
 
@@ -280,8 +281,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(1.5, 2, 2), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 150;
                 break;         
@@ -290,7 +291,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
+                    //new CANNON.Vec3(1, 0.5, 0.6), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
                     1000,                            // chassis mass
 
@@ -314,8 +315,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(1, 2, 2), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 150;
                 leftHeadlightOffset = new THREE.Vector3(-2.25, 0.25, -0.2);
@@ -328,7 +329,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(0.75, 0.5, 0.5), // chassis dimensions
+                    //new CANNON.Vec3(0.75, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0.5, 0.4, 0),    // center of mass adjust
                     1000,                            // chassis mass
 
@@ -352,8 +353,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(1, 1, 1), // front wheel model scale,
                     new THREE.Vector3(1.5, 1.5, 1.5), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 150;
                         
@@ -367,7 +368,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1.5, 0.75, 0.6), // chassis dimensions
+                    //new CANNON.Vec3(1.5, 0.75, 0.6), // chassis dimensions
                     new CANNON.Vec3(0, 1, 0),    // center of mass adjust
                     1000,                            // chassis mass
                     wheelMaterial,
@@ -390,8 +391,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.5, 1, 1), // front wheel model scale,
                     new THREE.Vector3(0.5, 1, 1), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 150;           
                 leftHeadlightOffset = new THREE.Vector3(-3, 0.55, -0.45);
@@ -404,9 +405,9 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(0.9, 0.35, 0.45), // chassis dimensions
+                    //new CANNON.Vec3(0.9, 0.35, 0.45), // chassis dimensions
                     new CANNON.Vec3(0, 0.35, 0),    // center of mass adjust
-                    500,                            // chassis mass
+                    this.vehicleConfigOffroader.chassisMass, // 750, // chassis mass
                     wheelMaterial,
                     
                     0.25,                           // front wheel radius
@@ -427,8 +428,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigOffroader
                 );
                 maxHealth = 100;
                 leftHeadlightOffset = new THREE.Vector3(-2.25, 0.1, -0.3);
@@ -439,7 +440,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    //new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0, 0.4, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
@@ -461,8 +462,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.5, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.5, 0.75, 0.75), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 100;
                 break;
@@ -471,7 +472,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-5, 4, -5),   // position
                     world,            
-                    new CANNON.Vec3(1.5, 0.70, 0.70), // chassis dimensions
+                    //new CANNON.Vec3(1.5, 0.70, 0.70), // chassis dimensions
                     new CANNON.Vec3(0, 0.6, 0),    // center of mass adjust
                     1250,                            // chassis mass
                     wheelMaterial,
@@ -493,8 +494,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.5, 1, 1), // front wheel model scale,
                     new THREE.Vector3(0.5, 1, 1), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 150;
                 leftHeadlightOffset = new THREE.Vector3(-3.0, 0.4, -0.45);
@@ -507,7 +508,7 @@ export class VehicleFactory {
                     scene, isDebug,
                     new THREE.Vector3(-10, 5, -10),   // position
                     world,            
-                    new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
+                    //new CANNON.Vec3(1, 0.5, 0.5), // chassis dimensions
                     new CANNON.Vec3(0, 0.5, 0),    // center of mass adjust
                     500,                            // chassis mass
                     wheelMaterial,
@@ -529,8 +530,8 @@ export class VehicleFactory {
 
                     new THREE.Vector3(0.75, 0.75, 0.75), // front wheel model scale,
                     new THREE.Vector3(0.75, 0.75, 0.75), // rear wheel model scale
-                    DriveSystem.AllWheelDrive,
-                    this.vehicleConfig
+                    //DriveSystem.AllWheelDrive,
+                    this.vehicleConfigDefault
                 );
                 maxHealth = 100            
                 break;

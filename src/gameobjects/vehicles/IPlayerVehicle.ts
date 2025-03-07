@@ -11,7 +11,7 @@ export interface IPlayerVehicle {
 
     getRaycastVehicle(): CANNON.RaycastVehicle;
 
-    vehicleConfig: VehicleConfig;
+    vehicleOverrideConfig: VehicleConfig;
 
     getCurrentSpeed(): number;
 
