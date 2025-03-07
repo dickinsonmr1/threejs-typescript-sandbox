@@ -23,14 +23,19 @@ export class Utility {
     }
 
     static ArrayToCannonVec3(array: number[]): CANNON.Vec3 {
-      return new CANNON.Vec3(array[0], array[1], array[2]);
-  }
+        return new CANNON.Vec3(array[0], array[1], array[2]);
+    }
+
+    static ArrayToThreeVector3(array: number[]): THREE.Vector3 {
+        return new THREE.Vector3(array[0], array[1], array[2]);
+    }
         
     static CannonVec3Add(position1: CANNON.Vec3, position2: CANNON.Vec3): CANNON.Vec3 {
-      return new CANNON.Vec3(
-        position1.x + position2.x,
-        position1.y + position2.y,
-        position1.z + position2.z);
+        return new CANNON.Vec3(
+          position1.x + position2.x,
+          position1.y + position2.y,
+          position1.z + position2.z
+        );
     }
 
     static ThreeVector3Add(position1: THREE.Vector3, position2: THREE.Vector3): THREE.Vector3 {

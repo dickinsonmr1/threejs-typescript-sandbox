@@ -10,7 +10,13 @@ export interface VehicleConfig {
 
     frontWheelRadius: number;
     rearWheelRadius: number;
-    
+
+    frontWheelOffset: number[];
+    rearWheelOffset: number[];
+
+    frontWheelModelScale: number[];
+    rearWheelModelScale: number[];
+
     wheelMass: number;
 
     frictionSlip: number;
@@ -24,6 +30,10 @@ export interface VehicleConfig {
 
     chassisMass: number;
     chassisDimensions: number[];
+    centerOfMassAdjust: number[];
+
+    modelScale: number[];
+    modelOffset: number[];
     
     lowSpeedForce: number; // max torque at low speed for faster acceleration
     highSpeedForce: number; // reduced torque at higher speed

@@ -57,38 +57,50 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
     constructor(scene: THREE.Scene,
         isDebug: boolean,
-        position: THREE.Vector3,
+        //position: THREE.Vector3,
         //color: number = 0xffffff,
         world: CANNON.World,
         //chassisDimensions: CANNON.Vec3,        
-        centerOfMassAdjust: CANNON.Vec3,
-        chassisMass: number,
+        //centerOfMassAdjust: CANNON.Vec3,
+        //chassisMass: number,
         wheelMaterial: CANNON.Material,
 
-        frontWheelRadius: number,
-        rearWheelRadius: number,
+        //frontWheelRadius: number,
+        //rearWheelRadius: number,
 
-        frontWheelOffset: CANNON.Vec3,
-        rearWheelOffset: CANNON.Vec3,
+        //frontWheelOffset: CANNON.Vec3,
+        //rearWheelOffset: CANNON.Vec3,
 
-        frontWheelHeight: number,
-        rearWheelHeight: number,
+        //frontWheelHeight: number,
+        //rearWheelHeight: number,
                 
-        wheelMass: number,
+        //wheelMass: number,
 
         modelData: GLTF,
         wheelModelData: GLTF,
 
-        modelScale: THREE.Vector3, // = new THREE.Vector3(1, 1, 1),
-        modelOffset: THREE.Vector3, // = new THREE.Vector3(0, 0, 0),
-        frontWheelModelScale: THREE.Vector3,
-        rearWheelModelScale: THREE.Vector3,
+        //modelScale: THREE.Vector3, // = new THREE.Vector3(1, 1, 1),
+        //modelOffset: THREE.Vector3, // = new THREE.Vector3(0, 0, 0),
+        //frontWheelModelScale: THREE.Vector3,
+        //rearWheelModelScale: THREE.Vector3,
         //driveSystem: DriveSystem,
         vehicleOverrideConfig: VehicleConfig) { //} = new THREE.Vector3(1, 1, 1)) {
 
         this.vehicleOverrideConfig = vehicleOverrideConfig;
 
+        const position = new THREE.Vector3(0,0,0);
+        const wheelMass = 20;
         const chassisDimensions = Utility.ArrayToCannonVec3(vehicleOverrideConfig.chassisDimensions);
+        const centerOfMassAdjust = Utility.ArrayToCannonVec3(vehicleOverrideConfig.centerOfMassAdjust);
+
+        const frontWheelModelScale = Utility.ArrayToCannonVec3(vehicleOverrideConfig.frontWheelModelScale);
+        const rearWheelModelScale = Utility.ArrayToCannonVec3(vehicleOverrideConfig.rearWheelModelScale);
+
+        const frontWheelOffset = Utility.ArrayToCannonVec3(vehicleOverrideConfig.frontWheelOffset);
+        const rearWheelOffset = Utility.ArrayToCannonVec3(vehicleOverrideConfig.rearWheelOffset);
+
+        const modelOffset = Utility.ArrayToThreeVector3(vehicleOverrideConfig.modelOffset);
+        const modelScale = Utility.ArrayToThreeVector3(vehicleOverrideConfig.modelScale);
 
         this.chassis = new ChassisObject(
             scene,
@@ -97,7 +109,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             position,
             world,
             new CANNON.Material(), 
-            chassisMass,
+            vehicleOverrideConfig.chassisMass,
             centerOfMassAdjust
         );
 
@@ -163,7 +175,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         // rear left
         rearWheelOptions.chassisConnectionPointLocal.set(chassisLength - rearWheelOffset.x, rearWheelOffset.y, axisWidth / 2);        
-        rearWheelOptions.radius = rearWheelRadius;
+        rearWheelOptions.radius = this.vehicleOverrideConfig.rearWheelRadius;
         this.raycastVehicle.addWheel(rearWheelOptions);
 
         this.raycastVehicle.addToWorld(world);
