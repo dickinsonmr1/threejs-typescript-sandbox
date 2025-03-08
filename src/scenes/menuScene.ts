@@ -5,6 +5,20 @@ import HealthBar from '../gameobjects/healthBar';
 import {Text} from 'troika-three-text'
 import { VehicleType } from '../gameobjects/player/player';
 
+import vehicleConfigOffroader from '../gameobjects/vehicles/config/vehicleconfig-offroader.json'
+import vehicleConfigTaxi from '../gameobjects/vehicles/config/vehicleConfig-taxi.json'
+import vehicleConfigAmbulance from '../gameobjects/vehicles/config//vehicleConfig-ambulance.json'
+import vehicleConfigRaceCarBlue from '../gameobjects/vehicles/config//vehicleConfig-racecar-blue.json'
+import vehicleConfigRaceCarRed from '../gameobjects/vehicles/config/vehicleConfig-racecar-red.json'
+import vehicleConfigPolice from '../gameobjects/vehicles/config/vehicleConfig-police.json'
+import vehicleConfigCompactor from '../gameobjects/vehicles/config/vehicleConfig-compactor.json'
+import vehicleConfigFireTruck from '../gameobjects/vehicles/config/vehicleConfig-fireTruck.json'
+import vehicleConfigPickupTruck from '../gameobjects/vehicles/config/vehicleConfig-pickupTruck.json'
+import vehicleConfigPoliceTractor from '../gameobjects/vehicles/config/vehicleConfig-policeTractor.json'
+import vehicleConfigKilldozer from '../gameobjects/vehicles/config/vehicleConfig-killdozer.json'
+import vehicleConfigHarvester from '../gameobjects/vehicles/config/vehicleConfig-harvester.json'
+import { VehicleConfig } from '../gameobjects/vehicles/config/vehicleConfig';
+
 export default class MenuScene extends THREE.Scene {
 
     camera: THREE.PerspectiveCamera;
@@ -111,18 +125,17 @@ export default class MenuScene extends THREE.Scene {
         
         var modelPosition = new THREE.Vector3(0, -2, 0);
 
-        await this.loadVehicleModelAndStats(VehicleType.Offroader, 'assets/kenney-vehicles-2/suv.glb', modelPosition, 75, 25, 50, 75, 'Offroader');        
-        await this.loadVehicleModelAndStats(VehicleType.Police, 'assets/kenney-vehicles-2/police.glb', modelPosition, 50, 25, 75, 100, 'The Law');                
-        await this.loadVehicleModelAndStats(VehicleType.RaceCar, 'assets/kenney-vehicles-2/race-future.glb', modelPosition, 25, 75, 100, 50, 'Zoomer Blue');        
-        await this.loadVehicleModelAndStats(VehicleType.RaceCarRed, 'assets/kenney-vehicles-2/race.glb', modelPosition, 25, 75, 100, 50, 'Zoomer Red');   
-        await this.loadVehicleModelAndStats(VehicleType.TrashTruck, 'assets/kenney-vehicles-2/garbage-truck.glb', modelPosition, 100, 100, 25, 25, 'Compactor');   
-        await this.loadVehicleModelAndStats(VehicleType.Ambulance, 'assets/kenney-vehicles-2/ambulance.glb', modelPosition, 75, 50, 50, 25, 'EMS');                
-        await this.loadVehicleModelAndStats(VehicleType.FireTruck, 'assets/kenney-vehicles-2/firetruck.glb', modelPosition, 100, 25, 25, 50, 'Backdraft');                
-        await this.loadVehicleModelAndStats(VehicleType.Taxi, 'assets/kenney-vehicles-2/taxi.glb', modelPosition, 50, 25, 75, 25, 'Sideswipe');        
-        await this.loadVehicleModelAndStats(VehicleType.PickupTruck, 'assets/kenney-vehicles-2/truck.glb', modelPosition, 50, 100, 50, 25, 'Safari');                
-        await this.loadVehicleModelAndStats(VehicleType.PoliceTractor, 'assets/kenney-vehicles-2/tractor-police.glb', modelPosition, 75, 25, 50, 75, 'Rural Patrol');        
-        await this.loadVehicleModelAndStats(VehicleType.Killdozer, 'assets/kenney-vehicles-2/tractor-shovel.glb', modelPosition, 100, 75, 25, 25, 'Killdozer');        
-        await this.loadVehicleModelAndStats(VehicleType.Harvester, 'assets/kenney-vehicles-2/tractor.glb', modelPosition, 75, 50, 25, 75, 'Harvester');        
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigOffroader, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigPolice, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigRaceCarRed, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigCompactor, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigAmbulance, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigFireTruck, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigTaxi, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigPickupTruck, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigPoliceTractor, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigKilldozer, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigHarvester, modelPosition);
 
         //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/hatchback-sports.glb', modelPosition, 50, 75, 25, 25, 'Hybrid Theory');        
         //await this.loadVehicleModelAndStats('assets/kenney-vehicles-2/delivery-flat.glb', modelPosition, 75, 25, 50, 25, 'Flatbed');        
@@ -136,6 +149,28 @@ export default class MenuScene extends THREE.Scene {
         this.add(this.group);
 
         this.selectVehicle();
+    }
+
+    private async loadVehicleModelAndStatsFromConfig(config: VehicleConfig, modelPosition: THREE.Vector3) {      
+        
+        var model = await this.gltfLoader.loadAsync(config.asset);
+        var modelScene = model.scene;        
+        modelScene.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
+        modelScene.scale.set(1, 1, 1);    
+        modelScene.visible = false;     
+        
+        modelScene.userData['vehicleType'] = config.vehicleTypeEnum as VehicleType;
+        modelScene.userData['health'] = config.health;
+        modelScene.userData['special'] = config.special;
+        modelScene.userData['speed'] = config.speed;
+        modelScene.userData['defensiveSpecial'] = config.defensiveSpecial;
+
+        modelScene.userData['vehicleName'] = config.vehicleName;
+        //modelScene.rotateY(Math.PI / 2);
+
+        this.camera.lookAt(modelPosition);
+
+        this.group.add(modelScene);
     }
 
     
