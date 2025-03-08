@@ -31,8 +31,6 @@ export enum PlayerState {
 
 export enum VehicleType {
     
-    //TrashMan,
-    Sedan,
     Taxi,
     Ambulance,
     
@@ -51,8 +49,6 @@ export enum VehicleType {
     Harvester,
     
     PickupTruck
-    //Hearse,
-    //MonsterTruck    
 }
 
 export enum PlayerTeam {
