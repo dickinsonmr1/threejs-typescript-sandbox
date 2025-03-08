@@ -1,0 +1,39 @@
+{   
+    "comment": "ambulance", 
+
+    "frontWheelHeight": 0.25,
+    "rearWheelHeight": 0.25,
+
+    "frontWheelRadius": 0.25,
+    "rearWheelRadius": 0.25,
+
+    "frontWheelModelScale": [0.5, 1, 1],
+    "rearWheelModelScale": [0.5, 1, 1],
+
+    "frontWheelOffset": [0.25, 0, 0],
+    "rearWheelOffset": [0.25, 0, 0],
+
+    "wheelMass": 20,
+
+    "frictionSlip": 5.0,
+    "rollInfluence": 0.01,
+    "customSlidingRotationalSpeed": -30,
+
+    "suspensionStiffness": 100,
+    "suspensionRestLength": 0.25,
+
+    "maxSteerVal": 0.8,
+
+    "chassisDimensions": [1, 0.5, 0.5],
+    "centerOfMassAdjust": [0, 0.4, 0],
+
+    "chassisMass": 750,
+
+    "modelScale": [0.7, 0.7, 0.7],
+    "modelOffset": [0, 0, 0],
+
+    "lowSpeedForce": 3000,
+    "highSpeedForce": 1500,
+    "topSpeedForHigherTorque": 10,
+    "driveSystem": 0
+}

@@ -1,0 +1,39 @@
+{   
+    "comment": "police", 
+
+    "frontWheelHeight": 0.25,
+    "rearWheelHeight": 0.25,
+
+    "frontWheelRadius": 5,
+    "rearWheelRadius": 5,
+
+    "frontWheelModelScale": [5, 5, 5],
+    "rearWheelModelScale": [5, 5, 5],
+
+    "frontWheelOffset": [5, 5, 5],
+    "rearWheelOffset": [5, 5, 5],
+
+    "wheelMass": 20,
+
+    "frictionSlip": 5.0,
+    "rollInfluence": 0.01,
+    "customSlidingRotationalSpeed": -30,
+
+    "suspensionStiffness": 100,
+    "suspensionRestLength": 0.25,
+
+    "maxSteerVal": 0.8,
+
+    "chassisDimensions": [5, 5, 5],
+    "centerOfMassAdjust": [0, 0, 0],
+
+    "chassisMass": 750,
+
+    "modelScale": [0.7, 0.7, 0.7],
+    "modelOffset": [0, 0, 0],
+
+    "lowSpeedForce": 3000,
+    "highSpeedForce": 1500,
+    "topSpeedForHigherTorque": 10,
+    "driveSystem": 0
+}
