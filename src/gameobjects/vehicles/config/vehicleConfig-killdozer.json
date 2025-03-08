@@ -1,17 +1,17 @@
 {   
-    "comment": "harvester", 
+    "comment": "killdozer", 
 
-    "frontWheelHeight": 0.25,
-    "rearWheelHeight": 0.25,
+    "frontWheelHeight": 0.5,
+    "rearWheelHeight": 0.5,
 
-    "frontWheelRadius": 5,
-    "rearWheelRadius": 5,
+    "frontWheelRadius": 0.20,
+    "rearWheelRadius": 0.3,
 
-    "frontWheelModelScale": [5, 5, 5],
-    "rearWheelModelScale": [5, 5, 5],
+    "frontWheelModelScale": [1, 1, 1],
+    "rearWheelModelScale": [1.5, 1.5, 1.5],
 
-    "frontWheelOffset": [5, 5, 5],
-    "rearWheelOffset": [5, 5, 5],
+    "frontWheelOffset": [0.4, 0, 0],
+    "rearWheelOffset": [0, 0.1, 0],
 
     "wheelMass": 20,
 
@@ -24,12 +24,12 @@
 
     "maxSteerVal": 0.8,
 
-    "chassisDimensions": [5, 5, 5],
-    "centerOfMassAdjust": [0, 0, 0],
+    "chassisDimensions": [0.75, 0.5, 0.5],
+    "centerOfMassAdjust": [0.5, 0.4, 0],
 
     "chassisMass": 750,
 
-    "modelScale": [0.7, 0.7, 0.7],
+    "modelScale": [1, 1, 1],
     "modelOffset": [0, 0, 0],
 
     "lowSpeedForce": 3000,

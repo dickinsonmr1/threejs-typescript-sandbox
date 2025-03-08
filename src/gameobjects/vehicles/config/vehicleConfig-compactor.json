@@ -1,17 +1,17 @@
 {   
     "comment": "compactor", 
 
-    "frontWheelHeight": 0.25,
-    "rearWheelHeight": 0.25,
+    "frontWheelHeight": 0.3,
+    "rearWheelHeight": 0.3,
 
-    "frontWheelRadius": 5,
-    "rearWheelRadius": 5,
+    "frontWheelRadius": 0.25,
+    "rearWheelRadius": 0.25,
 
-    "frontWheelModelScale": [5, 5, 5],
-    "rearWheelModelScale": [5, 5, 5],
+    "frontWheelModelScale": [0.5, 1, 1],
+    "rearWheelModelScale": [0.5, 1, 1],
 
-    "frontWheelOffset": [5, 5, 5],
-    "rearWheelOffset": [5, 5, 5],
+    "frontWheelOffset": [0.45, 0.5, 0],
+    "rearWheelOffset": [0.95, 0.5, 0],
 
     "wheelMass": 20,
 
@@ -24,12 +24,12 @@
 
     "maxSteerVal": 0.8,
 
-    "chassisDimensions": [5, 5, 5],
-    "centerOfMassAdjust": [0, 0, 0],
+    "chassisDimensions": [1.5, 0.75, 0.6],
+    "centerOfMassAdjust": [0, 1, 0],
 
-    "chassisMass": 750,
+    "chassisMass": 1000,
 
-    "modelScale": [0.7, 0.7, 0.7],
+    "modelScale": [1, 1, 1],
     "modelOffset": [0, 0, 0],
 
     "lowSpeedForce": 3000,

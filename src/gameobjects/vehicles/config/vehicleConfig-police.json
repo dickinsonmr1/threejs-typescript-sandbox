@@ -4,14 +4,14 @@
     "frontWheelHeight": 0.25,
     "rearWheelHeight": 0.25,
 
-    "frontWheelRadius": 5,
-    "rearWheelRadius": 5,
+    "frontWheelRadius": 0.25,
+    "rearWheelRadius": 0.25,
 
-    "frontWheelModelScale": [5, 5, 5],
-    "rearWheelModelScale": [5, 5, 5],
+    "frontWheelModelScale": [0.5, 0.75, 0.75],
+    "rearWheelModelScale": [0.5, 0.75, 0.75],
 
-    "frontWheelOffset": [5, 5, 5],
-    "rearWheelOffset": [5, 5, 5],
+    "frontWheelOffset": [0.5, 0, 0],
+    "rearWheelOffset": [0.5, 0, 0],
 
     "wheelMass": 20,
 
@@ -24,10 +24,10 @@
 
     "maxSteerVal": 0.8,
 
-    "chassisDimensions": [5, 5, 5],
-    "centerOfMassAdjust": [0, 0, 0],
+    "chassisDimensions": [1, 0.35, 0.5],
+    "centerOfMassAdjust": [0, 0.25, 0],
 
-    "chassisMass": 750,
+    "chassisMass": 500,
 
     "modelScale": [0.7, 0.7, 0.7],
     "modelOffset": [0, 0, 0],

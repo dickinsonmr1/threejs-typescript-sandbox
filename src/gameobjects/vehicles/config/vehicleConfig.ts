@@ -39,4 +39,6 @@ export interface VehicleConfig {
     highSpeedForce: number; // reduced torque at higher speed
     topSpeedForHigherTorque: number; // speed at which torque reduction starts
     driveSystem: DriveSystem;
+
+    // TODO: move other config items here such as brake light offsets
 }
