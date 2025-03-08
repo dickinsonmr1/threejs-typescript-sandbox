@@ -132,7 +132,7 @@ export class Player {
     constructor(scene: THREE.Scene,
         isDebug: boolean,
         isCpuPlayer: boolean,
-        playerName: string, playerColor: THREE.Color,
+        vehicleType: VehicleType, playerColor: THREE.Color,
         crosshairTexture: THREE.Texture, markerTexture: THREE.Texture, particleMaterial: THREE.SpriteMaterial,
         vehicle: IPlayerVehicle,
         maxHealth: number,
@@ -161,9 +161,8 @@ export class Player {
         if(this.brakeLights != null)
             this.brakeLights.setVisible(false);
 
-
          // ambulance
-         if(playerName == "2") {
+         if(vehicleType == VehicleType.Ambulance) {
 
             let offsetLeft = new THREE.Vector3(-0.55, 0.75, 0.25);
             let offsetRight = new THREE.Vector3(-0.55, 0.75, -0.25);
@@ -177,7 +176,7 @@ export class Player {
         }
 
         // police car
-        if(playerName == "6") {
+        if(vehicleType == VehicleType.Police) {
 
             let offsetLeft = new THREE.Vector3(0, 0.55, 0.2);
             let offsetRight = new THREE.Vector3(0, 0.55, -0.2);
@@ -186,7 +185,7 @@ export class Player {
         }
 
          // fire truck
-         if(playerName == "9") {
+         if(vehicleType == VehicleType.FireTruck) {
 
             let offsetLeft = new THREE.Vector3(-1.1, 1.20, 0.4);
             let offsetRight = new THREE.Vector3(-1.1, 1.20, -0.4);
@@ -199,9 +198,8 @@ export class Player {
             this.emergencyLights2.setVisible(true);
         }
 
-
         // police tractor
-        if(playerName == "10") {
+        if(vehicleType == VehicleType.PoliceTractor) {
 
             let offsetLeft = new THREE.Vector3(0.45, 1.25, 0.25);
             let offsetRight = new THREE.Vector3(0.45, 1.25, -0.25);
@@ -209,7 +207,7 @@ export class Player {
             this.emergencyLights.setVisible(true);
         }
 
-        this.playerName = playerName;      
+        this.playerName = vehicleType.toString();
         let gameScene = <GameScene>scene;
 
         let material = new THREE.SpriteMaterial({
