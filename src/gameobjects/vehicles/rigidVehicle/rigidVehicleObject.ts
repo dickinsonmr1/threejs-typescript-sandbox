@@ -5,6 +5,7 @@ import { SphereWheelObject } from "./sphereWheelObject";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Utility } from "../../../utility";
 import { IPlayerVehicle } from "../IPlayerVehicle";
+import { VehicleConfig } from "../config/vehicleConfig";
 
 export class RigidVehicleObject implements IPlayerVehicle {
     
@@ -30,9 +31,12 @@ export class RigidVehicleObject implements IPlayerVehicle {
         wheelRadius: number,
         wheelOffset: CANNON.Vec3,
         wheelMass: number,
+        vehicleOverrideConfig: VehicleConfig,
         modelData?: GLTF,
         modelScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1),
         modelOffset: THREE.Vector3 = new THREE.Vector3(0, 0, 0)) {
+
+        this.vehicleOverrideConfig = vehicleOverrideConfig;
 
         this.chassis = new ChassisObject(
             scene,
@@ -134,6 +138,10 @@ export class RigidVehicleObject implements IPlayerVehicle {
             this.model.scale.set(modelScale.x, modelScale.y, modelScale.z);         
             this.model.rotateY(Math.PI / 2);
         }
+    }
+    vehicleOverrideConfig: VehicleConfig;
+    getCurrentSpeed(): number {
+        throw new Error("Method not implemented.");
     }
     getRaycastVehicle(): CANNON.RaycastVehicle {
         throw new Error("Method not implemented.");

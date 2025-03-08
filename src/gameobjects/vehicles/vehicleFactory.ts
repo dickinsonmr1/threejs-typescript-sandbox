@@ -236,7 +236,7 @@ export class VehicleFactory {
         return new Player(scene,
             isDebug,
             isCpuPlayer,
-            vehicleType.toString(),
+            vehicleType,
             playerColor,
             this.crosshairTexture,
             this.markerTexture,
