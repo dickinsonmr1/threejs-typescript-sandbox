@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 4,
+    "vehicleName": "Killdozer",
+    "asset": "assets/kenney-vehicles-2/tractor-shovel.glb",
+    "health": 100,
+    "special": 75,
+    "speed": 25,
+    "defensiveSpecial": 25,    
+
     "comment": "killdozer", 
 
     "frontWheelHeight": 0.5,

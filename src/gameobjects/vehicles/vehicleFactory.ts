@@ -10,10 +10,11 @@ import vehicleConfigDefault from './config/vehicleConfig-default.json'
 import vehicleConfigOffroader from './config/vehicleconfig-offroader.json'
 import vehicleConfigTaxi from './config/vehicleConfig-taxi.json'
 import vehicleConfigAmbulance from './config/vehicleConfig-ambulance.json'
-import vehicleConfigRaceCar from './config/vehicleConfig-racecar.json'
+import vehicleConfigRaceCarBlue from './config/vehicleConfig-racecar-blue.json'
+import vehicleConfigRaceCarRed from './config/vehicleConfig-racecar-red.json'
 import vehicleConfigPolice from './config/vehicleConfig-police.json'
 import vehicleConfigCompactor from './config/vehicleConfig-compactor.json'
-import vehicleConfigFireTruck from './config/vehicleConfig-backdraft.json'
+import vehicleConfigFireTruck from './config/vehicleConfig-fireTruck.json'
 import vehicleConfigPickupTruck from './config/vehicleConfig-pickupTruck.json'
 import vehicleConfigPoliceTractor from './config/vehicleConfig-policeTractor.json'
 import vehicleConfigKilldozer from './config/vehicleConfig-killdozer.json'
@@ -90,7 +91,7 @@ export class VehicleFactory {
                     wheelMaterial,
                     gameScene.raceCarBlueModel,             // model        
                     gameScene.wheelModel,       // wheel model
-                    vehicleConfigRaceCar
+                    vehicleConfigRaceCarBlue
                 );
                 maxHealth = 50;
                 leftHeadlightOffset = new THREE.Vector3(-2, -0.1, -0.3);
@@ -105,7 +106,7 @@ export class VehicleFactory {
                     wheelMaterial,
                     gameScene.raceCarRedModel,             // model        
                     gameScene.wheelModel,       // wheel model
-                    vehicleConfigRaceCar
+                    vehicleConfigRaceCarRed
                 );
                 maxHealth = 50;
                 leftHeadlightOffset = new THREE.Vector3(-2, -0.1, -0.3);

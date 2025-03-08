@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 6,
+    "vehicleName": "Compactor",
+    "asset": "assets/kenney-vehicles-2/garbage-truck.glb",
+    "health": 100,
+    "special": 100,
+    "speed": 25,
+    "defensiveSpecial": 25,
+
     "comment": "compactor", 
 
     "frontWheelHeight": 0.3,

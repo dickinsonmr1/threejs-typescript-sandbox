@@ -31,24 +31,24 @@ export enum PlayerState {
 
 export enum VehicleType {
     
-    Taxi,
-    Ambulance,
+    Taxi = 0,
+    Ambulance = 1,
     
-    RaceCar,
-    RaceCarRed,
+    RaceCar = 2,
+    RaceCarRed = 3,
 
-    Killdozer,
-    Police,
-    TrashTruck,
+    Killdozer = 4,
+    Police = 5,
+    TrashTruck = 6,
 
-    Offroader,
+    Offroader = 7,
 
-    FireTruck,
+    FireTruck = 8,
 
-    PoliceTractor,
-    Harvester,
+    PoliceTractor = 9,
+    Harvester = 10,
     
-    PickupTruck
+    PickupTruck = 11
 }
 
 export enum PlayerTeam {

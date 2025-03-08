@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 2,
+    "vehicleName": "Zoomer Blue",
+    "asset": "assets/kenney-vehicles-2/race-future.glb",
+    "health": 25,
+    "special": 75,
+    "speed": 100,
+    "defensiveSpecial": 50,
+
     "comment": "racecar", 
 
     "frontWheelHeight": 0.25,

@@ -1,10 +1,18 @@
 import { DriveSystem } from "../raycastVehicle/raycastVehicleObject";
-import * as CANNON from 'cannon-es'
 
 export interface VehicleConfig {
-    comment: string;
-    // wheel
 
+    vehicleTypeEnum: number;
+    vehicleName: string;
+    asset: string;
+    health: number;
+    special: number;
+    speed: number;
+    defensiveSpecial: number;
+    
+    comment: string;
+    
+    // wheel properties
     frontWheelHeight: number;
     rearWheelHeight: number;
 
@@ -28,6 +36,7 @@ export interface VehicleConfig {
     
     maxSteerVal: number;
 
+    // chassis properties
     chassisMass: number;
     chassisDimensions: number[];
     centerOfMassAdjust: number[];
@@ -35,6 +44,7 @@ export interface VehicleConfig {
     modelScale: number[];
     modelOffset: number[];
     
+    //
     lowSpeedForce: number; // max torque at low speed for faster acceleration
     highSpeedForce: number; // reduced torque at higher speed
     topSpeedForHigherTorque: number; // speed at which torque reduction starts

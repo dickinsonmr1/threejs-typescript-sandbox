@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 1,
+    "vehicleName": "EMS",
+    "asset": "assets/kenney-vehicles-2/garbage-truck.glb",
+    "health": 75,
+    "special": 50,
+    "speed": 50,
+    "defensiveSpecial": 25,
+
     "comment": "ambulance", 
 
     "frontWheelHeight": 0.25,

@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 4,
+    "vehicleName": "Placeholder Dummy Vehicle",
+    "asset": "assets/kenney-vehicles-2/tractor-shovel.glb",
+    "health": 50,
+    "special": 50,
+    "speed": 50,
+    "defensiveSpecial": 50,        
+
     "comment": "default", 
 
     "frontWheelHeight": 0.25,

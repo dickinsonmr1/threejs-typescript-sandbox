@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 8,
+    "vehicleName": "Backdraft",
+    "asset": "assets/kenney-vehicles-2/firetruck.glb",
+    "health": 100,
+    "special": 25,
+    "speed": 25,
+    "defensiveSpecial": 50,
+
     "comment": "backdraft", 
 
     "frontWheelHeight": 0.25,

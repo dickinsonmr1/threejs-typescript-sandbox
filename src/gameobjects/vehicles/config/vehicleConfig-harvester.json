@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 10,
+    "vehicleName": "Harvester",
+    "asset": "assets/kenney-vehicles-2/tractor.glb",
+    "health": 75,
+    "special": 50,
+    "speed": 25,
+    "defensiveSpecial": 75,    
+
     "comment": "harvester", 
 
     "frontWheelHeight": 0.25,

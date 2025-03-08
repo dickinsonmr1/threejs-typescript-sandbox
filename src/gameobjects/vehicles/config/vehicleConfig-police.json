@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 5,
+    "vehicleName": "The Law",
+    "asset": "assets/kenney-vehicles-2/police.glb",
+    "health": 50,
+    "special": 25,
+    "speed": 75,
+    "defensiveSpecial": 100,
+
     "comment": "police", 
 
     "frontWheelHeight": 0.25,

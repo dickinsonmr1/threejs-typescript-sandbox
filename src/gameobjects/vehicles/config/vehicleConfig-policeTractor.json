@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 9,
+    "vehicleName": "Rural Patrol",
+    "asset": "assets/kenney-vehicles-2/tractor-police.glb",
+    "health": 75,
+    "special": 25,
+    "speed": 50,
+    "defensiveSpecial": 75,
+
     "comment": "policeTractor", 
 
     "frontWheelHeight": 0.25,

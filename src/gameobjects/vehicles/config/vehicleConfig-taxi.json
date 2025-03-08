@@ -1,4 +1,12 @@
 {   
+    "vehicleTypeEnum": 0,
+    "vehicleName": "Sideswipe",
+    "asset": "assets/kenney-vehicles-2/taxi.glb",
+    "health": 50,
+    "special": 25,
+    "speed": 75,
+    "defensiveSpecial": 25,
+
     "comment": "taxi", 
 
     "frontWheelHeight": 0.25,
