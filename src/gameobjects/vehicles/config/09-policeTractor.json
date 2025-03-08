@@ -43,5 +43,9 @@
     "lowSpeedForce": 3000,
     "highSpeedForce": 1500,
     "topSpeedForHigherTorque": 10,
-    "driveSystem": 0
+    "driveSystem": 0,
+    
+    "hasEmergencyLights1": true,
+    "offsetLeft1": [0.45, 1.25, 0.25],
+    "offsetRight1": [0.45, 1.25, -0.25]
 }

@@ -43,6 +43,13 @@ export interface VehicleConfig {
 
     modelScale: number[];
     modelOffset: number[];
+
+    hasEmergencyLights1?: boolean;
+    hasEmergencyLights2?: boolean;
+    offsetLeft1?: number[];
+    offsetRight1?: number[];
+    offsetLeft2?: number[];
+    offsetRight2?: number[];
     
     //
     lowSpeedForce: number; // max torque at low speed for faster acceleration

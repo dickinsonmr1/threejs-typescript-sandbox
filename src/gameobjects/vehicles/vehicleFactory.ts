@@ -250,7 +250,8 @@ export class VehicleFactory {
             fireBulletSound,
             fireRocketSound,
             explosionSound,
-            deathFireSound
+            deathFireSound,
+            vehicle.vehicleOverrideConfig
         );
     }
 }

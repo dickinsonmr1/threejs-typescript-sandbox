@@ -22,6 +22,7 @@ import Brakelights from "../vehicles/brakeLights";
 import { randFloatSpread, randInt } from "three/src/math/MathUtils.js";
 import EmergencyLights from "../vehicles/emergencyLights";
 import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
+import { VehicleConfig } from "../vehicles/config/vehicleConfig";
 
 export enum PlayerState {
     Alive,
@@ -143,7 +144,8 @@ export class Player {
         fireBulletSound: THREE.PositionalAudio,
         fireRocketSound: THREE.PositionalAudio,
         explosionSound: THREE.PositionalAudio,
-        deathFireSound: THREE.PositionalAudio) {
+        deathFireSound: THREE.PositionalAudio,
+        vehicleConfig: VehicleConfig) {
 
         this.scene = scene;
         this.isDebug = isDebug;
@@ -161,6 +163,23 @@ export class Player {
         if(this.brakeLights != null)
             this.brakeLights.setVisible(false);
 
+
+        if(vehicleConfig.hasEmergencyLights1 && vehicleConfig.offsetLeft1 && vehicleConfig.offsetRight1) {
+            const frontLeftOffset = Utility.ArrayToThreeVector3(vehicleConfig.offsetLeft1);
+            const frontRightOffset = Utility.ArrayToThreeVector3(vehicleConfig.offsetRight1);
+
+            this.emergencyLights = new EmergencyLights(scene, frontLeftOffset, frontRightOffset);
+            this.emergencyLights.setVisible(true);            
+        }
+
+        if(vehicleConfig.hasEmergencyLights2 && vehicleConfig.offsetLeft2 && vehicleConfig.offsetRight2) {
+            const rearLeftOffset = Utility.ArrayToThreeVector3(vehicleConfig.offsetLeft2);
+            const rearRightOffset = Utility.ArrayToThreeVector3(vehicleConfig.offsetRight2);
+            this.emergencyLights2 = new EmergencyLights(scene, rearLeftOffset, rearRightOffset);
+            this.emergencyLights2.setVisible(true);    
+        }
+
+        /*
          // ambulance
          if(vehicleType == VehicleType.Ambulance) {
 
@@ -206,7 +225,8 @@ export class Player {
             this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
             this.emergencyLights.setVisible(true);
         }
-
+        */
+       
         this.playerName = vehicleType.toString();
         let gameScene = <GameScene>scene;
 
