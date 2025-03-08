@@ -5,18 +5,18 @@ import HealthBar from '../gameobjects/healthBar';
 import {Text} from 'troika-three-text'
 import { VehicleType } from '../gameobjects/player/player';
 
-import vehicleConfigOffroader from '../gameobjects/vehicles/config/vehicleconfig-offroader.json'
-import vehicleConfigTaxi from '../gameobjects/vehicles/config/vehicleConfig-taxi.json'
-import vehicleConfigAmbulance from '../gameobjects/vehicles/config//vehicleConfig-ambulance.json'
-import vehicleConfigRaceCarBlue from '../gameobjects/vehicles/config//vehicleConfig-racecar-blue.json'
-import vehicleConfigRaceCarRed from '../gameobjects/vehicles/config/vehicleConfig-racecar-red.json'
-import vehicleConfigPolice from '../gameobjects/vehicles/config/vehicleConfig-police.json'
-import vehicleConfigCompactor from '../gameobjects/vehicles/config/vehicleConfig-compactor.json'
-import vehicleConfigFireTruck from '../gameobjects/vehicles/config/vehicleConfig-fireTruck.json'
-import vehicleConfigPickupTruck from '../gameobjects/vehicles/config/vehicleConfig-pickupTruck.json'
-import vehicleConfigPoliceTractor from '../gameobjects/vehicles/config/vehicleConfig-policeTractor.json'
-import vehicleConfigKilldozer from '../gameobjects/vehicles/config/vehicleConfig-killdozer.json'
-import vehicleConfigHarvester from '../gameobjects/vehicles/config/vehicleConfig-harvester.json'
+import vehicleConfigOffroader from '../gameobjects/vehicles/config/07-offroader.json'
+import vehicleConfigTaxi from '../gameobjects/vehicles/config/00-taxi.json'
+import vehicleConfigAmbulance from '../gameobjects/vehicles/config//01-ambulance.json'
+import vehicleConfigRaceCarBlue from '../gameobjects/vehicles/config//02-racecar-blue.json'
+import vehicleConfigRaceCarRed from '../gameobjects/vehicles/config/03-racecar-red.json'
+import vehicleConfigPolice from '../gameobjects/vehicles/config/05-police.json'
+import vehicleConfigCompactor from '../gameobjects/vehicles/config/06-trashTruck.json'
+import vehicleConfigFireTruck from '../gameobjects/vehicles/config/08-fireTruck.json'
+import vehicleConfigPickupTruck from '../gameobjects/vehicles/config/11-pickupTruck.json'
+import vehicleConfigPoliceTractor from '../gameobjects/vehicles/config/09-policeTractor.json'
+import vehicleConfigKilldozer from '../gameobjects/vehicles/config/04-killdozer.json'
+import vehicleConfigHarvester from '../gameobjects/vehicles/config/10-harvester.json'
 import { VehicleConfig } from '../gameobjects/vehicles/config/vehicleConfig';
 
 export default class MenuScene extends THREE.Scene {
@@ -127,6 +127,7 @@ export default class MenuScene extends THREE.Scene {
 
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigOffroader, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigPolice, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigRaceCarBlue, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigRaceCarRed, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigCompactor, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigAmbulance, modelPosition);

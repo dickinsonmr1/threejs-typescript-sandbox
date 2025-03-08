@@ -6,20 +6,19 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GameScene from "../../scenes/gameScene";
 
 import { VehicleConfig } from './config/vehicleConfig';
-import vehicleConfigDefault from './config/vehicleConfig-default.json'
-import vehicleConfigOffroader from './config/vehicleconfig-offroader.json'
-import vehicleConfigTaxi from './config/vehicleConfig-taxi.json'
-import vehicleConfigAmbulance from './config/vehicleConfig-ambulance.json'
-import vehicleConfigRaceCarBlue from './config/vehicleConfig-racecar-blue.json'
-import vehicleConfigRaceCarRed from './config/vehicleConfig-racecar-red.json'
-import vehicleConfigPolice from './config/vehicleConfig-police.json'
-import vehicleConfigCompactor from './config/vehicleConfig-compactor.json'
-import vehicleConfigFireTruck from './config/vehicleConfig-fireTruck.json'
-import vehicleConfigPickupTruck from './config/vehicleConfig-pickupTruck.json'
-import vehicleConfigPoliceTractor from './config/vehicleConfig-policeTractor.json'
-import vehicleConfigKilldozer from './config/vehicleConfig-killdozer.json'
-import vehicleConfigHarvester from './config/vehicleConfig-harvester.json'
-
+import vehicleConfigDefault from './config/99-default.json'
+import vehicleConfigOffroader from './config/07-offroader.json'
+import vehicleConfigTaxi from './config/00-taxi.json'
+import vehicleConfigAmbulance from './config//01-ambulance.json'
+import vehicleConfigRaceCarBlue from './config//02-racecar-blue.json'
+import vehicleConfigRaceCarRed from './config/03-racecar-red.json'
+import vehicleConfigPolice from './config/05-police.json'
+import vehicleConfigCompactor from './config/06-trashTruck.json'
+import vehicleConfigFireTruck from './config/08-fireTruck.json'
+import vehicleConfigPickupTruck from './config/11-pickupTruck.json'
+import vehicleConfigPoliceTractor from './config/09-policeTractor.json'
+import vehicleConfigKilldozer from './config/04-killdozer.json'
+import vehicleConfigHarvester from './config/10-harvester.json'
 export class VehicleFactory {
     
     crosshairTexture: THREE.Texture;
