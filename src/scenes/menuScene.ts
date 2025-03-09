@@ -94,7 +94,6 @@ export default class MenuScene extends THREE.Scene {
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color): THREE.Sprite {
-
         let spriteWidth: number = 1;
         
         let material = new THREE.SpriteMaterial( { map: texture, color: color });//,transparent: true, opacity: 0.5 } );
@@ -174,30 +173,6 @@ export default class MenuScene extends THREE.Scene {
         this.group.add(modelScene);
     }
 
-    
-    private async loadVehicleModelAndStats(vehicleType: VehicleType, asset: string, modelPosition: THREE.Vector3,
-        health: number, special: number, speed: number, defensiveSpecial: number, vehicleName: string) {      
-        
-        var model = await this.gltfLoader.loadAsync(asset);
-        var modelScene = model.scene;        
-        modelScene.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
-        modelScene.scale.set(1, 1, 1);    
-        modelScene.visible = false;     
-        
-        modelScene.userData['vehicleType'] = vehicleType;
-        modelScene.userData['health'] = health;
-        modelScene.userData['special'] = special;
-        modelScene.userData['speed'] = speed;
-        modelScene.userData['defensiveSpecial'] = defensiveSpecial;
-
-        modelScene.userData['vehicleName'] = vehicleName;
-        //modelScene.rotateY(Math.PI / 2);
-
-        this.camera.lookAt(modelPosition);
-
-        this.group.add(modelScene);
-    }
-
     selectPreviousVehicle() {
         this.group.children[this.selectedVehicleIndex].visible = false;
 
@@ -218,7 +193,7 @@ export default class MenuScene extends THREE.Scene {
         this.selectVehicle();
     }
 
-    selectVehicle() {
+    private selectVehicle() {
         var selectedItem = this.group.children[this.selectedVehicleIndex];
 
         selectedItem.visible = true;
@@ -256,5 +231,18 @@ export default class MenuScene extends THREE.Scene {
 
     getSelectedVehicleType(): VehicleType {
         return this.group.children[this.selectedVehicleIndex].userData['vehicleType'];
+    }
+
+    public handleKeyUp = (event: KeyboardEvent) => {
+            
+        if (event.key === 'Enter') {
+            this.sceneController.switchToGameScene(this.getSelectedVehicleType() ?? VehicleType.Killdozer, "arena");
+        }
+        if(event.key === 'ArrowLeft') {
+            this.selectPreviousVehicle();
+        }
+        else if(event.key === 'ArrowRight') {
+            this.selectNextVehicle();
+        }
     }
 }

@@ -63,7 +63,11 @@ export default class SceneController {
 		    this.keyDown.delete(event.key.toLowerCase())
 
             this.gameScene?.handleKeyUp(event);
+        }
+        if(this.currentScene instanceof MenuScene) {
+            this.keyDown.delete(event.key.toLowerCase())
 
+            this.menuScene?.handleKeyUp(event);
         }
     }
 
