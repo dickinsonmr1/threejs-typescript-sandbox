@@ -14,6 +14,8 @@ import arenaLevelJson from '../levelData/arena.json';
 import fieldLevelJson from '../levelData/field.json';
 import mountainLevelJson from '../levelData/mountain.json';
 import GUI from "lil-gui";
+import { GameConfig } from "../gameconfig";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 export default class SceneController {
 
@@ -789,5 +791,68 @@ export default class SceneController {
                 this.turboTapCount = 0;
             }        
         }
+    }
+
+    public update(gameConfig: GameConfig,
+        renderer: THREE.WebGLRenderer,
+        cannonDebugger: any,
+        menuCamera: THREE.PerspectiveCamera,
+        mainCamera: THREE.PerspectiveCamera,
+        cameraOrtho: THREE.OrthographicCamera,
+        debugOrbitCamera: THREE.PerspectiveCamera,
+        debugOrbitControls: OrbitControls) {
+        
+        var scene = this.currentScene;
+        if(scene instanceof GameScene && !scene.isPaused) {     
+            this.updateGameScene(false);
+            this.updateHudScene();
+      
+            if(gameConfig.isDebug && cannonDebugger != null)
+              cannonDebugger.update();
+      
+            renderer.clear();
+            renderer.render(scene, mainCamera);
+            renderer.clearDepth();
+            
+            if(this.hudScene)
+                renderer.render(this.hudScene, cameraOrtho);
+        }
+        else if(scene instanceof GameScene && scene.isPaused){
+            debugOrbitControls.update();
+            this.updateGameScene(true);
+      
+            renderer.render(scene, debugOrbitCamera);
+        }
+        else if(scene instanceof MenuScene) {
+          scene.update();    
+          renderer.render(scene, menuCamera);
+        }
+    }
+
+    private updateGameScene(isPaused: boolean) {
+        if(!isPaused) {
+            this.gameScene?.updateWater();
+            this.gameScene?.updatePrecipitation();
+            this.gameScene?.update();
+            
+            this.gameScene?.updateLODTerrain();
+            this.gameScene?.updateQuadtreeTerrain5();
+            
+        }
+        else {
+            this.gameScene?.updateInputForDebug(this.keyDown);
+            this.gameScene?.updateDebugDivElements();
+            
+            this.gameScene?.updateLODTerrain();
+            this.gameScene?.updateQuadtreeTerrain5();
+        }
+        this.gameScene?.stats.update();
+
+        if(this.gameScene && this.gameScene.fog)
+            this.gameScene.fog.color = new THREE.Color(this.gameScene?.worldConfig.fogColor);
+    }
+
+    private updateHudScene() {
+        this.hudScene?.update();
     }
 }

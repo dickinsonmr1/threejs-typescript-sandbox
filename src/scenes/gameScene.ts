@@ -1584,7 +1584,7 @@ export default class GameScene extends THREE.Scene {
         this.camera.updateMatrixWorld(true);
 
         this.updateDebugDivElements();
-        this.stats.update();
+        //this.stats.update();
 
         this.audioManager.update(this.camera.position);
     }

@@ -34,15 +34,6 @@ const debugOrbitCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 5000
 debugOrbitCamera.position.set(0, 10, 0);
 
 const debugOrbitControls = new OrbitControls(debugOrbitCamera, renderer.domElement);
-//debugOrbitControls.enablePan = true;
-/*
-debugOrbitControls.keys = {
-	LEFT: 'a',
-	UP: 'w',
-	RIGHT: 'd',
-	BOTTOM: 's' 
-};
-*/
 debugOrbitControls.enabled = false; // Disable controls initially
 
 // needed for GLTF models to light correctly
@@ -65,10 +56,9 @@ const gui = new GUI();
 gui.title('Debug');
 
 var sceneController = new SceneController(renderer, gui);
-
 const gameScene = new GameScene(mainCamera, debugOrbitCamera, debugOrbitControls, sceneController, gameConfig);
-//gameScene.initialize();
 
+// set up lil-gui debug panel
 const gameConfigFolder = gui.addFolder( 'Game Config' );
 gameConfigFolder.add(gameConfig, 'isDebug').listen();
 gameConfigFolder.add(gameConfig, 'controlType', { 'Car Combat': 0, 'Racing': 1 } )
@@ -86,7 +76,6 @@ gameConfigFolder.add(gameConfig, 'isSoundEnabled').listen();
 //gameConfigFolder.add(gameConfig, 'fogFar', 0, 500, 10).listen();
 
 let cannonDebugger: any = null;
-
 if(gameConfig.isDebug) {
   cannonDebugger = CannonDebugger(gameScene, gameScene.world, {color: 0x0000ff });    
 }
@@ -111,12 +100,13 @@ let sceneOrtho = new HudScene(cameraOrtho, sceneController);
 // menu scene and camera
 const menuCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 75);
 menuCamera.position.set(-5, 0, 0);
+
 const menuScene = new MenuScene(menuCamera, sceneController);
 menuScene.initialize();
-
 menuScene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
 
+// scene controller 
 sceneController.init(menuScene, gameScene, sceneOrtho);
 sceneController.switchToMenuScene();
 sceneController.setOnScreenControls();
@@ -125,7 +115,6 @@ var gamepads = navigator.getGamepads();
 console.log(gamepads);
 
 function onWindowResize(): void {
-
   const aspect = window.innerWidth / window.innerHeight;
 
   // Update camera aspect ratio
@@ -154,62 +143,22 @@ function onWindowResize(): void {
 // Attach the window resize event listener
 window.addEventListener('resize', onWindowResize, false);
 
-
 function tick() {
+  //mainCamera.near = gameConfig.fogNear;
+  //mainCamera.far = gameConfig.fogFar;  
+  sceneController.update(gameConfig,
+    renderer,
+    cannonDebugger,
+    menuCamera,
+    mainCamera,
+    cameraOrtho,
+    debugOrbitCamera,
+    debugOrbitControls
+  );
 
-  var scene = sceneController.currentScene;
-
-  if(scene instanceof GameScene) {
-
-                
-    if(!scene.isPaused) {
-      scene.updateWater();
-      scene.updatePrecipitation();
-      scene.update();
-      
-      scene.updateLODTerrain();
-      scene.updateQuadtreeTerrain5();
-
-      sceneOrtho.update();
-
-      if(gameConfig.isDebug && cannonDebugger != null) {
-        cannonDebugger.update();
-      }
-
-      //mainCamera.near = gameConfig.fogNear;
-      //mainCamera.far = gameConfig.fogFar;
-      gameScene.fog!.color = new THREE.Color(gameScene.worldConfig.fogColor);
-
-      renderer.clear();
-      renderer.render(scene, mainCamera);
-      renderer.clearDepth();
-      renderer.render(sceneOrtho, cameraOrtho);
-    }
-    else {
-      debugOrbitControls.update();
-      scene.updateInputForDebug(sceneController.keyDown);
-      scene.updateDebugDivElements();
-
-      scene.updateLODTerrain();
-      scene.updateQuadtreeTerrain5();
-
-      gameScene.stats.update();
-
-      gameScene.fog!.color = new THREE.Color(gameScene.worldConfig.fogColor);
-      //mainCamera.near = gameConfig.fogNear;
-      //mainCamera.far = gameConfig.fogFar;
-
-      renderer.render(scene, debugOrbitCamera);
-    }
-    
-  }
-  else if(scene instanceof MenuScene) {
-    scene.update();    
-    renderer.render(scene, menuCamera);
-  }
-  
   requestAnimationFrame(tick);
   
+  var scene = sceneController.currentScene;
   if(scene instanceof GameScene && !scene.isPaused) {
     scene.world.fixedStep();
   }
