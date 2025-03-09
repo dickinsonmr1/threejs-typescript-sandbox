@@ -22,9 +22,9 @@ export class AudioManager {
         return this.audioListener;
     }
 
-    public async loadPositionalSound(asset: string, volume: number, refDistance: number, maxDistance: number): Promise<THREE.PositionalAudio> {
+    public async loadPositionalSound(asset: string, volume: number, refDistance: number, maxDistance: number, loop: boolean = false): Promise<THREE.PositionalAudio> {
 
-        return await this.createPositionalAudio(asset, this.audioListener, volume, refDistance, maxDistance)
+        return await this.createPositionalAudio(asset, this.audioListener, volume, refDistance, maxDistance, loop);
     }
 
     private async loadAudio(url: string): Promise<AudioBuffer> {
@@ -45,7 +45,7 @@ export class AudioManager {
         });
       }
 
-    private async createPositionalAudio(asset: string, listener: THREE.AudioListener, volume: number, refDistance: number, maxDistance: number): Promise<THREE.PositionalAudio> {//} | null {
+    private async createPositionalAudio(asset: string, listener: THREE.AudioListener, volume: number, refDistance: number, maxDistance: number, loop: boolean): Promise<THREE.PositionalAudio> {//} | null {
 
         const buffer = await this.loadAudio(asset);
 

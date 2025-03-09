@@ -178,54 +178,6 @@ export class Player {
             this.emergencyLights2 = new EmergencyLights(scene, rearLeftOffset, rearRightOffset);
             this.emergencyLights2.setVisible(true);    
         }
-
-        /*
-         // ambulance
-         if(vehicleType == VehicleType.Ambulance) {
-
-            let offsetLeft = new THREE.Vector3(-0.55, 0.75, 0.25);
-            let offsetRight = new THREE.Vector3(-0.55, 0.75, -0.25);
-            this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
-            this.emergencyLights.setVisible(true);
-
-            offsetLeft = new THREE.Vector3(1.1, 0.85, 0.25);
-            offsetRight = new THREE.Vector3(1.1, 0.85, -0.25);
-            this.emergencyLights2 = new EmergencyLights(scene, offsetLeft, offsetRight);
-            this.emergencyLights2.setVisible(true);
-        }
-
-        // police car
-        if(vehicleType == VehicleType.Police) {
-
-            let offsetLeft = new THREE.Vector3(0, 0.55, 0.2);
-            let offsetRight = new THREE.Vector3(0, 0.55, -0.2);
-            this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
-            this.emergencyLights.setVisible(true);
-        }
-
-         // fire truck
-         if(vehicleType == VehicleType.FireTruck) {
-
-            let offsetLeft = new THREE.Vector3(-1.1, 1.20, 0.4);
-            let offsetRight = new THREE.Vector3(-1.1, 1.20, -0.4);
-            this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
-            this.emergencyLights.setVisible(true);
-
-            offsetLeft = new THREE.Vector3(1.5, 1.20, 0.4);
-            offsetRight = new THREE.Vector3(1.5, 1.20, -0.4);
-            this.emergencyLights2 = new EmergencyLights(scene, offsetLeft, offsetRight);
-            this.emergencyLights2.setVisible(true);
-        }
-
-        // police tractor
-        if(vehicleType == VehicleType.PoliceTractor) {
-
-            let offsetLeft = new THREE.Vector3(0.45, 1.25, 0.25);
-            let offsetRight = new THREE.Vector3(0.45, 1.25, -0.25);
-            this.emergencyLights = new EmergencyLights(scene, offsetLeft, offsetRight);
-            this.emergencyLights.setVisible(true);
-        }
-        */
        
         this.playerName = vehicleType.toString();
         let gameScene = <GameScene>scene;

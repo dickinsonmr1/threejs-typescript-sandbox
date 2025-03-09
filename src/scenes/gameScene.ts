@@ -226,8 +226,8 @@ export default class GameScene extends THREE.Scene {
 
         this.explosionTexture = this.textureLoader.load('assets/particles/particle-16x16.png');
         //this.explosionTexture = this.textureLoader.load('assets/tank_explosion3.png');
-        this.crosshairTexture = this.textureLoader.load('assets/crosshair061.png');
-        this.playerMarkerTexture = this.textureLoader.load('assets/playerMarkerIcon.png');
+        this.crosshairTexture = this.textureLoader.load('assets/hud/crosshair061.png');
+        this.playerMarkerTexture = this.textureLoader.load('assets/hud/playerMarkerIcon.png');
 
         // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
 

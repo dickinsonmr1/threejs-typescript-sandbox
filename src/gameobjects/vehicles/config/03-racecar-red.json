@@ -9,8 +9,8 @@
 
     "comment": "racecar", 
 
-    "frontWheelHeight": 0.25,
-    "rearWheelHeight": 0.25,
+    "frontWheelHeight": 0.3,
+    "rearWheelHeight": 0.3,
 
     "frontWheelRadius": 0.20,
     "rearWheelRadius": 0.20,
@@ -18,13 +18,13 @@
     "frontWheelModelScale": [0.8, 0.8, 0.8],
     "rearWheelModelScale": [0.8, 0.8, 0.8],
 
-    "frontWheelOffset": [0.3, 0, 0],
-    "rearWheelOffset": [0.1, 0, 0],
+    "frontWheelOffset": [0.35, 0, 0],
+    "rearWheelOffset": [0.15, 0, 0],
 
     "wheelMass": 20,
 
     "frictionSlip": 5.0,
-    "rollInfluence": 0.01,
+    "rollInfluence": 0.005,
     "customSlidingRotationalSpeed": -30,
 
     "suspensionStiffness": 100,
@@ -32,16 +32,16 @@
 
     "maxSteerVal": 0.8,
 
-    "chassisDimensions": [0.8, 0.25, 0.4],
+    "chassisDimensions": [0.7, 0.25, 0.4],
     "centerOfMassAdjust": [0.2, 0.1, 0],
 
-    "chassisMass": 150,
+    "chassisMass": 300,
 
     "modelScale": [0.7, 0.7, 0.7],
     "modelOffset": [0, 0, 0],
     
-    "lowSpeedForce": 3000,
-    "highSpeedForce": 1500,
+    "lowSpeedForce": 1100,
+    "highSpeedForce": 800,
     "topSpeedForHigherTorque": 10,
     "driveSystem": 0
 }
