@@ -37,6 +37,32 @@ export default class SceneController {
     constructor(renderer: THREE.WebGLRenderer, gui: GUI) {
         this.renderer = renderer;
         this.gui = gui;
+                        
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
+    }
+
+    
+    public keyDown = new Set<string>();
+    private handleKeyDown = (event: KeyboardEvent) => {        
+        /*
+        if (['w', 'a', 's', 'd'].includes(event.key)) {
+            event.preventDefault();
+            return;
+        }            
+        */
+        this.keyDown.add(event.key.toLowerCase());
+    }
+
+	private handleKeyUp = (event: KeyboardEvent) => {
+
+        if(this.currentScene instanceof GameScene ) {
+
+		    this.keyDown.delete(event.key.toLowerCase())
+
+            this.gameScene?.handleKeyUp(event);
+
+        }
     }
 
     accelerateGamepadIndex!: number;

@@ -95,7 +95,7 @@ export default class GameScene extends THREE.Scene {
     debugCamera: THREE.PerspectiveCamera;
     debugOrbitControls: OrbitControls;
 
-    private readonly keyDown = new Set<string>();
+    //private readonly keyDown = new Set<string>();
 
     private cubes: BoxObject[] = [];
     private debrisWheels: GltfObject[] = [];
@@ -430,23 +430,23 @@ export default class GameScene extends THREE.Scene {
         this.add(this.lightning);
         */
                 
-        document.addEventListener('keydown', this.handleKeyDown);
-        document.addEventListener('keyup', this.handleKeyUp);
+        //document.addEventListener('keydown', this.handleKeyDown);
+        //document.addEventListener('keyup', this.handleKeyUp);
     }   
 
-    private handleKeyDown = (event: KeyboardEvent) => {        
+    //private handleKeyDown = (event: KeyboardEvent) => {        
         /*
         if (['w', 'a', 's', 'd'].includes(event.key)) {
             event.preventDefault();
             return;
         }            
         */
-        this.keyDown.add(event.key.toLowerCase());
-    }
+        //this.keyDown.add(event.key.toLowerCase());
+    //}
 
-	private handleKeyUp = (event: KeyboardEvent) => {
+	public handleKeyUp = (event: KeyboardEvent) => {
 
-		this.keyDown.delete(event.key.toLowerCase())
+		//this.keyDown.delete(event.key.toLowerCase())
 
 		if (event.key === 'Control')
 		{            
@@ -560,36 +560,36 @@ export default class GameScene extends THREE.Scene {
         }
 	}
 
-    private updateInput() {
+    private updateInput(keyDown: Set<string>) {
 
         this.sceneController.pollGamepads();
 
         // player 1 vehicle controls
-        if(this.keyDown.has('arrowup')) {
+        if(keyDown.has('arrowup')) {
             this.player1.tryAccelerateWithKeyboard();
         }
-        else if(this.keyDown.has('arrowdown')) {
+        else if(keyDown.has('arrowdown')) {
             this.player1.tryReverseWithKeyboard();
         }
 
-        if(this.keyDown.has('arrowleft')) {
+        if(keyDown.has('arrowleft')) {
             this.player1.tryTurnLeftWithKeyboard();
         }
-        else if(this.keyDown.has('arrowright')) {
+        else if(keyDown.has('arrowright')) {
             this.player1.tryTurnRightWithKeyboard();
         }
         
-        if (this.keyDown.has('x')) {
+        if (keyDown.has('x')) {
             let newProjectile = this.player1.tryFireBullets();
         }        
-        if (this.keyDown.has('z')) {
+        if (keyDown.has('z')) {
             this.player1.tryFireFlamethrower();
         }
 
-        if (this.keyDown.has('q')) {
+        if (keyDown.has('q')) {
             this.player2.tryFireFlamethrower();
         }
-        if (this.keyDown.has('shift')) {
+        if (keyDown.has('shift')) {
             this.player1.tryTurbo();
         }
     }
@@ -602,18 +602,18 @@ export default class GameScene extends THREE.Scene {
         this.debugOrbitControls.enabled = this.isPaused;        
     }
 
-    public updateInputForDebug() {
+    public updateInputForDebug(keyDown: Set<string>) {
             
         let cameraMovement = 0.15;
 
         this.sceneController.pollGamepads();
 
-        if(this.keyDown.has('shift')) {
+        if(keyDown.has('shift')) {
             cameraMovement = 0.9;
         }
 
         // forward
-        if(this.keyDown.has('w')) {
+        if(keyDown.has('w')) {
             const moveDirection = new THREE.Vector3();
             this.debugCamera.getWorldDirection(moveDirection); // Get the current forward direction
             
@@ -622,7 +622,7 @@ export default class GameScene extends THREE.Scene {
         }       
 
         // left
-        if(this.keyDown.has('a')) {
+        if(keyDown.has('a')) {
 
             const forwardVector = new THREE.Vector3();
             this.debugCamera.getWorldDirection(forwardVector); // Get the current forward direction
@@ -635,7 +635,7 @@ export default class GameScene extends THREE.Scene {
         }   
 
         // right
-        if(this.keyDown.has('d')) {
+        if(keyDown.has('d')) {
             const forwardVector = new THREE.Vector3();
             this.debugCamera.getWorldDirection(forwardVector); // Get the current forward direction
 
@@ -647,14 +647,14 @@ export default class GameScene extends THREE.Scene {
         } 
 
         // backwards
-        if(this.keyDown.has('s')) {
+        if(keyDown.has('s')) {
             const moveDirection = new THREE.Vector3();
             this.debugCamera.getWorldDirection(moveDirection); // Get the current forward direction
             this.debugCamera.position.add(moveDirection.multiplyScalar(-cameraMovement)); // Move the camera forward by 1 unit
         }   
 
         // up
-        if(this.keyDown.has('q')) {
+        if(keyDown.has('q')) {
             const upVector = new THREE.Vector3(0, 1, 0);
 
             this.debugCamera.position.addScaledVector(upVector, cameraMovement); // Move the camera forward by 1 unit
@@ -662,7 +662,7 @@ export default class GameScene extends THREE.Scene {
         }   
 
         // down
-        if(this.keyDown.has('z')) {
+        if(keyDown.has('z')) {
 
             const upVector = new THREE.Vector3(0, 1, 0);
 
@@ -671,32 +671,32 @@ export default class GameScene extends THREE.Scene {
         }   
 
          // down
-        if(this.keyDown.has('0')) {
+        if(keyDown.has('0')) {
             var targetPosition = this.debugCamera.position;
             //this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = this.player1.getPosition();
             
         }   
         // down
-        if(this.keyDown.has('1')) {
+        if(keyDown.has('1')) {
             var targetPosition = this.player1.getPosition();
 
             this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = this.player1.getPosition();
             
         }   
-        if(this.keyDown.has('2')) {
+        if(keyDown.has('2')) {
             var targetPosition = this.player2.getPosition();
 
             this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
         }   
-        if(this.keyDown.has('3')) {
+        if(keyDown.has('3')) {
             var targetPosition = this.player3.getPosition();
             this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
         }   
-        if(this.keyDown.has('4')) {
+        if(keyDown.has('4')) {
             var targetPosition = this.player4.getPosition();
             this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
@@ -1352,7 +1352,7 @@ export default class GameScene extends THREE.Scene {
 
         if(!this.player1 || this.player1.isVehicleObjectNull()) return;
 
-        this.updateInput();          
+        this.updateInput(this.sceneController.keyDown);          
 
         var cpuPlayers = this.allPlayers.filter(x => x.isCpuPlayer);// && x.playerState == PlayerState.Alive);
         for(var i = 0; i < cpuPlayers.length; i++) {

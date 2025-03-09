@@ -187,7 +187,7 @@ function tick() {
     }
     else {
       debugOrbitControls.update();
-      scene.updateInputForDebug();
+      scene.updateInputForDebug(sceneController.keyDown);
       scene.updateDebugDivElements();
 
       scene.updateLODTerrain();

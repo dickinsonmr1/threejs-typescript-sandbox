@@ -199,7 +199,6 @@ export default class MenuScene extends THREE.Scene {
     }
 
     selectPreviousVehicle() {
-
         this.group.children[this.selectedVehicleIndex].visible = false;
 
         this.selectedVehicleIndex--;
@@ -210,8 +209,6 @@ export default class MenuScene extends THREE.Scene {
     }
 
     selectNextVehicle() {
-
-
         this.group.children[this.selectedVehicleIndex].visible = false;
 
         this.selectedVehicleIndex++;        
@@ -233,7 +230,6 @@ export default class MenuScene extends THREE.Scene {
     }
 
     update() {
-
         this.sceneController.pollGamepadsForMenu();
         
         this.group.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 64);       
