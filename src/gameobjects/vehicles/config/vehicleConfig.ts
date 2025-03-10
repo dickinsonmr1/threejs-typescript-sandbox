@@ -26,14 +26,20 @@ export interface VehicleConfig {
     rearWheelModelScale: number[];
 
     wheelMass: number;
-
-    frictionSlip: number;
-    rollInfluence: number;
-    customSlidingRotationalSpeed: number;
     
+    frictionSlip: number; // Lower slip = more grip (1.2 is high grip)
+    rollInfluence: number; // Reduces car tilting
+    useCustomSlidingRotationalSpeed: boolean;
+    customSlidingRotationalSpeed: number; // Helps prevent sliding
+    
+    // suspension
     suspensionStiffness: number;
     suspensionRestLength: number;
-    
+    dampingRelaxation: number; // Helps reduce bouncing
+    dampingCompression: number; // Stiffens suspension for control
+    maxSuspensionForce: number;
+    maxSuspensionTravel: number;
+
     maxSteerVal: number;
 
     // chassis properties
@@ -56,6 +62,4 @@ export interface VehicleConfig {
     highSpeedForce: number; // reduced torque at higher speed
     topSpeedForHigherTorque: number; // speed at which torque reduction starts
     driveSystem: DriveSystem;
-
-    // TODO: move other config items here such as brake light offsets
 }

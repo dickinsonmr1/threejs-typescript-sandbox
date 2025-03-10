@@ -121,14 +121,14 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             suspensionStiffness: this.vehicleOverrideConfig.suspensionStiffness,
             suspensionRestLength: this.vehicleOverrideConfig.suspensionRestLength,
             frictionSlip: this.vehicleOverrideConfig.frictionSlip, //5.0, // 1.4
-            dampingRelaxation: 6.0,
-            dampingCompression: 5.0,
-            maxSuspensionForce: 100000,
+            dampingRelaxation: this.vehicleOverrideConfig.dampingRelaxation,//6.0,
+            dampingCompression:  this.vehicleOverrideConfig.dampingCompression,//5.0,
+            maxSuspensionForce:  this.vehicleOverrideConfig.maxSuspensionForce,//100000,
             rollInfluence: this.vehicleOverrideConfig.rollInfluence,
             axleLocal: new CANNON.Vec3(0, 0, 1),
             chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
-            maxSuspensionTravel: 10, // 0.3            
-            useCustomSlidingRotationalSpeed: true,
+            maxSuspensionTravel: this.vehicleOverrideConfig.maxSuspensionTravel,//, // 0.3     
+            useCustomSlidingRotationalSpeed: this.vehicleOverrideConfig.useCustomSlidingRotationalSpeed,
             customSlidingRotationalSpeed: this.vehicleOverrideConfig.customSlidingRotationalSpeed,
         };
 
@@ -138,14 +138,14 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             suspensionStiffness: this.vehicleOverrideConfig.suspensionStiffness,
             suspensionRestLength: this.vehicleOverrideConfig.suspensionRestLength,
             frictionSlip: this.vehicleOverrideConfig.frictionSlip, //5.0, // 1.4
-            dampingRelaxation: 6.0,
-            dampingCompression: 5.0,
-            maxSuspensionForce: 100000,
+            dampingRelaxation: this.vehicleOverrideConfig.dampingRelaxation,//6.0,
+            dampingCompression:  this.vehicleOverrideConfig.dampingCompression,//5.0,
+            maxSuspensionForce:  this.vehicleOverrideConfig.maxSuspensionForce,//100000,
             rollInfluence: this.vehicleOverrideConfig.rollInfluence,
             axleLocal: new CANNON.Vec3(0, 0, 1),
             chassisConnectionPointLocal: new CANNON.Vec3(-1, 0, 1), //-1, 0, 1
-            maxSuspensionTravel: 10, // 0.3
-            useCustomSlidingRotationalSpeed: true,
+            maxSuspensionTravel:  this.vehicleOverrideConfig.maxSuspensionTravel,//, // 0.3
+            useCustomSlidingRotationalSpeed: this.vehicleOverrideConfig.useCustomSlidingRotationalSpeed,
             customSlidingRotationalSpeed: this.vehicleOverrideConfig.customSlidingRotationalSpeed,
         };
 

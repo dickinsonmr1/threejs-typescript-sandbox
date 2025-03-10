@@ -25,6 +25,7 @@
 
     "frictionSlip": 5.0,
     "rollInfluence": 0.01,
+    "useCustomSlidingRotationalSpeed": false,
     "customSlidingRotationalSpeed": -30,
 
     "suspensionStiffness": 100,
@@ -47,5 +48,10 @@
     
     "hasEmergencyLights1": true,
     "offsetLeft1": [0.45, 1.25, 0.25],
-    "offsetRight1": [0.45, 1.25, -0.25]
+    "offsetRight1": [0.45, 1.25, -0.25],
+
+    "dampingRelaxation": 2.5,
+    "dampingCompression": 2.0,
+    "maxSuspensionForce": 10000,
+    "maxSuspensionTravel": 2
 }
