@@ -10,4 +10,7 @@ export interface GameConfig {
     useFog: boolean;
     fogNear: number;
     fogFar: number;
+    
+    wheelGroundContactMaterialFriction: number;
+    wheelGroundContactMaterialRestitution: number;
 }

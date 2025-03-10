@@ -96,6 +96,7 @@ export class Player {
     private projectileFactory: ProjectileFactory;// = new ProjectileFactory();
 
     private maxBulletCooldownTimeInSeconds: number = 0.15;
+    private maxUpgradedBulletCooldownTimeInSeconds: number = 0.05;
     private bulletCooldownClock: THREE.Clock = new THREE.Clock(false);
 
     private maxDeathExplosionTimeInSeconds: number = 0.25;
@@ -215,7 +216,7 @@ export class Player {
         this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), 0.075, true);
         this.playerMarker = new PlayerMarker(scene, markerTexture, playerColor, new THREE.Vector3(0,0,0), 0.05, false);
 
-        //this.shield = new Shield(scene, this.getPosition());
+        this.shield = new Shield(scene, this.getPosition());
 
         this.setVehicleObject(vehicle);
 
@@ -414,7 +415,6 @@ export class Player {
 
         this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
 
-
         if(this.bulletCooldownClock.getElapsedTime() > this.maxBulletCooldownTimeInSeconds) {
             this.bulletCooldownClock.stop();
         }        
@@ -426,8 +426,6 @@ export class Player {
         if(this.airstrikeCooldownClock.getElapsedTime() > this.maxAirstrikeCooldownTimeInSeconds) {
             this.airstrikeCooldownClock.stop();
         }
-        
-        //if(this.bulletCooldownTime > 0) this.bulletCooldownTime--;
 
         if(this.shield != null)
             this.shield.updatePosition(this.getPosition());

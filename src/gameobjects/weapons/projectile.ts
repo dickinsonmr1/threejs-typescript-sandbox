@@ -97,7 +97,7 @@ export class Projectile extends SphereObject {
         if(this.projectileType == ProjectileType.Bullet) {
                         
             //const geometry = new THREE.BoxGeometry( 2.5, 0.075, 0.050 ); 
-            const geometry = new THREE.CylinderGeometry( 0.025, 0.050, 3 ); 
+            const geometry = new THREE.CylinderGeometry( 0.025, 0.040, 2 ); 
             //const material = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
             
             const meshMaterial = new THREE.ShaderMaterial({
@@ -440,10 +440,10 @@ export class Projectile extends SphereObject {
 
                 vec3 color;
                 
-                if (normalizedY < 0.5) {
-                    color = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), normalizedY / 0.5);
+                if (normalizedY < 0.2) {
+                    color = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), normalizedY / 0.2);
                 } else {
-                    color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.5, 0.0), (normalizedY - 0.5) / 0.5);
+                    color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.5, 0.0), (normalizedY - 0.8) / 0.8);
                 }
 
                 gl_FragColor = vec4(color, 1.0);
