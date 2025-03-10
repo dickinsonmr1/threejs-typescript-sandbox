@@ -13,4 +13,6 @@ export interface GameConfig {
     
     wheelGroundContactMaterialFriction: number;
     wheelGroundContactMaterialRestitution: number;
+    contactEquationRelaxation: number;
+    contactEquationStiffness: number;
 }

@@ -269,7 +269,9 @@ export default class GameScene extends THREE.Scene {
         this.bouncyWheelMaterial = new CANNON.Material();
         const wheelGroundContactMaterial = new CANNON.ContactMaterial(this.bouncyWheelMaterial, this.groundMaterial, {
             friction: this.gameConfig.wheelGroundContactMaterialFriction, //1.2,
-            restitution: this.gameConfig.wheelGroundContactMaterialRestitution //0.3 // High restitution for bounciness
+            restitution: this.gameConfig.wheelGroundContactMaterialRestitution, //0.3 // High restitution for bounciness
+            contactEquationRelaxation: this.gameConfig.contactEquationRelaxation, // 3
+            contactEquationStiffness: this.gameConfig.contactEquationStiffness, // 1e8
         });
         this.world.addContactMaterial(wheelGroundContactMaterial);
        

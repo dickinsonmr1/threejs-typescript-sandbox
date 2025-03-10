@@ -9,6 +9,8 @@
     "fogNear": 25,
     "fogFar": 75,
 
-    "wheelGroundContactMaterialFriction": 1.7,
-    "wheelGroundContactMaterialRestitution": 0.3
+    "wheelGroundContactMaterialFriction": 1.2,
+    "wheelGroundContactMaterialRestitution": 0.1,
+    "contactEquationRelaxation": 3,
+    "contactEquationStiffness": 1e8
 }

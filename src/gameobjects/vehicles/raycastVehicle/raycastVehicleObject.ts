@@ -577,8 +577,31 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             
         }
 
+        this.dampenLateralVelocityInLocalSpace();
         //this.wheels.forEach(x => x.update());
            
+    }
+
+    private dampenLateralVelocityInLocalSpace() {
+        const chassis = this.chassis.body;
+
+        // Get the vehicle's velocity in world space
+        const velocity = chassis.velocity.clone();
+
+        // Get the chassis orientation
+        const quaternion = chassis.quaternion;
+
+        // Convert velocity to local space
+        const velocityLocal = quaternion.conjugate().vmult(velocity);
+
+        // Reduce lateral movement (y-axis in local space is up)
+        velocityLocal.z *= 0.95; // Dampen sideways motion (lateral velocity)
+
+        // Convert velocity back to world space
+        const velocityWorld = quaternion.vmult(velocityLocal);
+
+        // Apply the adjusted velocity
+        this.chassis.body.velocity.set(velocityWorld.x, chassis.velocity.y, velocityWorld.z);
     }
 
     setAcceptInput(isActive: boolean) {
