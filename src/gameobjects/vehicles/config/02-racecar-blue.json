@@ -27,7 +27,8 @@
     "rollInfluence": 0.005,
     "useCustomSlidingRotationalSpeed": false,
     "customSlidingRotationalSpeed": -30,
-
+    "lateralMotionDampingMultiplier": 0.92,
+    
     "suspensionStiffness": 100,
     "suspensionRestLength": 0.25,
 

@@ -460,7 +460,7 @@ export default class SceneController {
         
         if(this.gameScene?.isPaused) {
             // Deadzone to avoid drift
-            const deadZone = 0.1;
+            const deadZone = 0.15;
 
             let camera = this.gameScene!.debugCamera!;
 

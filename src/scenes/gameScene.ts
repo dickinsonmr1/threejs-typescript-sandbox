@@ -1010,11 +1010,11 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), wheelMaterial, this.positionalBulletSound, this.positionalRocketSound, this.positionalVehicleExplosionSound, this.deathFireSound);
+        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSound, this.positionalRocketSound, this.positionalVehicleExplosionSound, this.deathFireSound);
 
-        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), wheelMaterial, this.positionalBulletSound2, this.positionalRocketSound2, this.positionalVehicleExplosionSound2, this.deathFireSound2);
-        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), wheelMaterial, this.positionalBulletSound3, this.positionalRocketSound3, this.positionalVehicleExplosionSound3, this.deathFireSound3);
-        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), wheelMaterial, this.positionalBulletSound4, this.positionalRocketSound4, this.positionalVehicleExplosionSound4, this.deathFireSound4);
+        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSound2, this.positionalRocketSound2, this.positionalVehicleExplosionSound2, this.deathFireSound2);
+        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSound3, this.positionalRocketSound3, this.positionalVehicleExplosionSound3, this.deathFireSound3);
+        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSound4, this.positionalRocketSound4, this.positionalVehicleExplosionSound4, this.deathFireSound4);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);

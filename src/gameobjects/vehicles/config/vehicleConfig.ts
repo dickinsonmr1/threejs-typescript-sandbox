@@ -31,6 +31,7 @@ export interface VehicleConfig {
     rollInfluence: number; // Reduces car tilting
     useCustomSlidingRotationalSpeed: boolean;
     customSlidingRotationalSpeed: number; // Helps prevent sliding
+    lateralMotionDampingMultiplier?: number; // 
     
     // suspension
     suspensionStiffness: number;

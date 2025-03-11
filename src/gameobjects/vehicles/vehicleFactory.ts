@@ -42,6 +42,7 @@ export class VehicleFactory {
         isDebug: boolean,
         world: CANNON.World, isCpuPlayer: boolean,
         vehicleType: VehicleType, playerColor: THREE.Color,        
+        deadzoneX: number,
         wheelMaterial: CANNON.Material,
         fireBulletSound: THREE.PositionalAudio,
         fireRocketSound: THREE.PositionalAudio,
@@ -251,6 +252,7 @@ export class VehicleFactory {
             fireRocketSound,
             explosionSound,
             deathFireSound,
+            deadzoneX,
             vehicle.vehicleOverrideConfig
         );
     }

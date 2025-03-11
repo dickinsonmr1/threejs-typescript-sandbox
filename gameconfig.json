@@ -2,7 +2,8 @@
     "isDebug": false,
     "controlType": 0,
     "isSoundEnabled": true,
-
+    "gamePadAxesDeadZoneX": 0.12,
+    "gamePadAxesDeadZoneY": 0.12,
     "farDrawDistance": 100,
     
     "useFog": true,

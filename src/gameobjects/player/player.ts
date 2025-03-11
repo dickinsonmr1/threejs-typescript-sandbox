@@ -129,7 +129,9 @@ export class Player {
     public deathFireSound: THREE.PositionalAudio;
 
     private readonly bulletSoundMarker?: THREE.Mesh;    
-    private readonly rocketSoundMarker?: THREE.Mesh;    
+    private readonly rocketSoundMarker?: THREE.Mesh;   
+    
+    private readonly deadzoneX: number;
 
     constructor(scene: THREE.Scene,
         isDebug: boolean,
@@ -146,6 +148,7 @@ export class Player {
         fireRocketSound: THREE.PositionalAudio,
         explosionSound: THREE.PositionalAudio,
         deathFireSound: THREE.PositionalAudio,
+        deadzoneX: number,
         vehicleConfig: VehicleConfig) {
 
         this.scene = scene;
@@ -244,6 +247,8 @@ export class Player {
         //this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
         //scene.add(this.rocketSoundMarker);
         //scene.add(this.bulletSoundMarker);
+
+        this.deadzoneX = deadzoneX;
     }
 
     private getScene(): GameScene {
@@ -549,11 +554,17 @@ export class Player {
     }
 
     tryTurn(x: number): void {
-        this.vehicleObject.tryTurn(x);
+        if(Math.abs(x) > this.deadzoneX)
+            this.vehicleObject.tryTurn(x);
+        else
+            this.vehicleObject.tryStopTurnLeft();
     }
     
     tryTightTurn(x: number): void {
-        this.vehicleObject.tryTightTurn(x);
+        if(Math.abs(x) > this.deadzoneX)
+            this.vehicleObject.tryTightTurn(x);
+        else
+            this.vehicleObject.tryStopTurnLeft();
     }
     
     tryTurnLeftWithKeyboard(): void {
@@ -569,6 +580,7 @@ export class Player {
     }
 
     tryStopTurnRightWithKeyboard(): void {
+        this.vehicleObject.tryStopTurnRight();
     }
 
     tryJump(): void {

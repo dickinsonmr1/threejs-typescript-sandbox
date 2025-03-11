@@ -431,8 +431,23 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
     tryTurn(gamepadStickX: number): void {
         if(!this.isActive) return;
-
+        
         // front wheels
+        /*
+        const deadZone = 0.15;
+        this.raycastVehicle?.setSteeringValue(
+            Math.abs(gamepadStickX) > deadZone
+                ? this.vehicleOverrideConfig.maxSteerVal * gamepadStickX
+                : 0,
+            0
+        );
+
+        this.raycastVehicle?.setSteeringValue(
+            Math.abs(gamepadStickX) > deadZone
+                ? this.vehicleOverrideConfig.maxSteerVal * gamepadStickX
+                : 0,
+            1);
+        */
         this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal * gamepadStickX, 0);
         this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal * gamepadStickX, 1);
 
@@ -510,6 +525,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                 
                 if(this.vehicleOverrideConfig.suspensionRestLength != this.raycastVehicle.wheelInfos[i].suspensionRestLength)
                     this.raycastVehicle.wheelInfos[i].suspensionRestLength = this.vehicleOverrideConfig.suspensionRestLength;
+
+                // TODO: allow more properties to be updated via lil-gui debug panel
                
                 this.raycastVehicle?.updateWheelTransform(i);
 
@@ -595,7 +612,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         const velocityLocal = quaternion.conjugate().vmult(velocity);
 
         // Reduce lateral movement (y-axis in local space is up)
-        velocityLocal.z *= 0.95; // Dampen sideways motion (lateral velocity)
+        if(this.vehicleOverrideConfig.lateralMotionDampingMultiplier)
+            velocityLocal.z *= this.vehicleOverrideConfig.lateralMotionDampingMultiplier;        
+        else
+            velocityLocal.z *= 0.92; // Dampen sideways motion (lateral velocity)
 
         // Convert velocity back to world space
         const velocityWorld = quaternion.vmult(velocityLocal);
