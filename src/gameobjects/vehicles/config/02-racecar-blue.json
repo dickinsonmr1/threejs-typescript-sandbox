@@ -22,8 +22,8 @@
     "rearWheelOffset": [0.15, 0, 0],
 
     "wheelMass": 20,
-
-    "frictionSlip": 5.0,
+    
+    "frictionSlip": 6.0,
     "rollInfluence": 0.005,
     "useCustomSlidingRotationalSpeed": false,
     "customSlidingRotationalSpeed": -30,
@@ -42,13 +42,13 @@
     "modelScale": [0.7, 0.7, 0.7],
     "modelOffset": [0, 0, 0],
     
-    "lowSpeedForce": 1100,
-    "highSpeedForce": 800,
-    "topSpeedForHigherTorque": 10,
+    "lowSpeedForce": 1500,
+    "highSpeedForce": 1000,
+    "topSpeedForHigherTorque": 20,
     "driveSystem": 0,
 
-    "dampingRelaxation": 2.5,
-    "dampingCompression": 2.0,
-    "maxSuspensionForce": 10000,
-    "maxSuspensionTravel": 2
+    "dampingRelaxation": 6.0,
+    "dampingCompression": 5.0,
+    "maxSuspensionForce": 100000,
+    "maxSuspensionTravel": 3.0
 }

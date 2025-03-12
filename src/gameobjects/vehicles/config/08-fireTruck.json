@@ -23,7 +23,7 @@
 
     "wheelMass": 20,
 
-    "frictionSlip": 5.0,
+    "frictionSlip": 6.0,
     "rollInfluence": 0.01,
     "useCustomSlidingRotationalSpeed": false,
     "customSlidingRotationalSpeed": -30,
@@ -37,14 +37,14 @@
     "chassisDimensions": [1.5, 0.70, 0.70],
     "centerOfMassAdjust": [0, 0.6, 0],
 
-    "chassisMass": 1250,
+    "chassisMass": 1500,
 
     "modelScale": [1, 1, 1],
     "modelOffset": [0, 0, 0],
 
-    "lowSpeedForce": 3000,
+    "lowSpeedForce": 3500,
     "highSpeedForce": 1500,
-    "topSpeedForHigherTorque": 10,
+    "topSpeedForHigherTorque": 5,
     "driveSystem": 0,
 
     "hasEmergencyLights1": true,
@@ -54,8 +54,8 @@
     "offsetLeft2": [1.5, 1.20, 0.4],
     "offsetRight2": [1.5, 1.20, -0.4],
 
-    "dampingRelaxation": 2.5,
-    "dampingCompression": 2.0,
-    "maxSuspensionForce": 10000,
-    "maxSuspensionTravel": 2
+    "dampingRelaxation": 6.0,
+    "dampingCompression": 5.0,
+    "maxSuspensionForce": 100000,
+    "maxSuspensionTravel": 3.0
 }

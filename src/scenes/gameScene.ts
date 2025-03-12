@@ -1623,7 +1623,14 @@ export default class GameScene extends THREE.Scene {
         this.debugDivElementManager.updateElementText("PlayerLocation", `Player 1 position: (${playerPosition.x.toFixed(2)}, ${playerPosition.y.toFixed(2)}, ${playerPosition.z.toFixed(2)})`);
         this.debugDivElementManager.updateElementText("AudioListener", `Audio listener position: (${Utility.ThreeVector3ToString(this.audioManager.getAudioListener().position)})`);
         this.debugDivElementManager.updateElementText("Player1Speed", `Player 1 speed: (${this.player1.getVehicleObject().getCurrentSpeed()})`);
-        
+
+        const player1CurrentSpeed = this.player1.getVehicleObject().getCurrentSpeed();
+        document.getElementById('speed')!.innerText = player1CurrentSpeed.toFixed(0).toString();
+
+        if(player1CurrentSpeed >= this.player1.getVehicleObject().vehicleOverrideConfig.topSpeedForHigherTorque)
+            document.getElementById('speed')!.style.color = 'red';
+        else
+            document.getElementById('speed')!.style.color = 'green';
         //this.debugDivElementManager.updateElementText("Player1BulletSoundLocation", `Player 1 bullet sound: (${Utility.ThreeVector3ToString(this.player1.bulletSound?.position)})`);
         //this.debugDivElementManager.updateElementText("Player1RocketSoundLocation", `Player 1 rocket sound: (${Utility.ThreeVector3ToString(this.player1.rocketSound.position)})`);
         
