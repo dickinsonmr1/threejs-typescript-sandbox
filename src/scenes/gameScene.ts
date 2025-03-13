@@ -478,11 +478,13 @@ export default class GameScene extends THREE.Scene {
             this.player1.tryDamage(ProjectileType.Rocket, new THREE.Vector3(0,0,0));            
             this.sceneController.updateHealthOnHud(this.player1.currentHealth);
         }
-        if (event.key === 'y')
-        {			
+        if (event.key === 'y') {			
             this.player2.tryKill();
             this.player3.tryKill();
             this.player4.tryKill();
+        }
+        if(event.key === 'u') {
+            this.player1.tryFireDumpster();
         }
         /*
         /*
@@ -1626,7 +1628,6 @@ export default class GameScene extends THREE.Scene {
 
         const player1CurrentSpeed = this.player1.getVehicleObject().getCurrentSpeed();
         document.getElementById('speed')!.innerText = player1CurrentSpeed.toFixed(0).toString();
-
         if(player1CurrentSpeed >= this.player1.getVehicleObject().vehicleOverrideConfig.topSpeedForHigherTorque)
             document.getElementById('speed')!.style.color = 'red';
         else

@@ -856,7 +856,7 @@ export class Player {
     tryFireDumpster(): void {
         let gameScene = <GameScene>this.scene;
 
-        let forwardVector = new THREE.Vector3(-10, 4, 0);
+        let forwardVector = new THREE.Vector3(-20, 4, 0);
         forwardVector.applyQuaternion(this.getVehicleObject().getModel().quaternion);
         let projectileLaunchVector = forwardVector; 
 
