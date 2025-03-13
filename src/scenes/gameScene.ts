@@ -71,26 +71,10 @@ export default class GameScene extends THREE.Scene {
 
     private readonly audioManager: AudioManager;
 
-    private positionalBulletSound!: THREE.PositionalAudio;
-    private positionalBulletSound2!: THREE.PositionalAudio;
-    private positionalBulletSound3!: THREE.PositionalAudio;
-    private positionalBulletSound4!: THREE.PositionalAudio;
-
-    private positionalRocketSound!: THREE.PositionalAudio;
-    private positionalRocketSound2!: THREE.PositionalAudio;
-    private positionalRocketSound3!: THREE.PositionalAudio;
-    private positionalRocketSound4!: THREE.PositionalAudio;
-
-    private positionalVehicleExplosionSound!: THREE.PositionalAudio;
-    private positionalVehicleExplosionSound2!: THREE.PositionalAudio;
-    private positionalVehicleExplosionSound3!: THREE.PositionalAudio;
-    private positionalVehicleExplosionSound4!: THREE.PositionalAudio;
-    
-    public deathFireSound!: THREE.PositionalAudio;
-    public deathFireSound2!: THREE.PositionalAudio;
-    public deathFireSound3!: THREE.PositionalAudio;
-    public deathFireSound4!: THREE.PositionalAudio;
-
+    private positionalBulletSounds: THREE.PositionalAudio[] = [];
+    private positionalRocketSounds: THREE.PositionalAudio[] = [];
+    private positionalVehicleExplosionSounds: THREE.PositionalAudio[] = [];
+    private deathFireSounds: THREE.PositionalAudio[] = [];
     
     debugCamera: THREE.PerspectiveCamera;
     debugOrbitControls: OrbitControls;
@@ -222,7 +206,7 @@ export default class GameScene extends THREE.Scene {
 
         await this.loadVehicleAssets();
 
-        await this.loadSoundEffects();
+        await this.loadSoundEffects(4);
 
         this.explosionTexture = this.textureLoader.load('assets/particles/particle-16x16.png');
         //this.explosionTexture = this.textureLoader.load('assets/tank_explosion3.png');
@@ -291,7 +275,7 @@ export default class GameScene extends THREE.Scene {
         treeModel.position.copy(this.getWorldPositionOnTerrainAndWater(0, 0));
         treeModel.scale.set(3, 3, 3);
         this.add(treeModel);
-        treeModel.add(this.positionalBulletSound);
+        treeModel.add(this.positionalBulletSounds[0]);
 
         var barrelModelData = await this.gameAssetModelLoader.generateBarrelModel();
         let barrelModel = barrelModelData.scene.clone();
@@ -973,27 +957,14 @@ export default class GameScene extends THREE.Scene {
         this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
     }
 
-    private async loadSoundEffects() {
+    private async loadSoundEffects(numberOfPlayers: number) {
 
-        this.positionalBulletSound = await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100);
-        this.positionalBulletSound2 = await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100);
-        this.positionalBulletSound3 = await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100);
-        this.positionalBulletSound4 = await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100);
-
-        this.positionalRocketSound = await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100);
-        this.positionalRocketSound2 = await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100);
-        this.positionalRocketSound3 = await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100);
-        this.positionalRocketSound4 = await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100);
-
-        this.positionalVehicleExplosionSound = await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.25, 25, 100);
-        this.positionalVehicleExplosionSound2 = await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.25, 25, 100);
-        this.positionalVehicleExplosionSound3 = await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.25, 25, 100);
-        this.positionalVehicleExplosionSound4 = await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.25, 25, 100);
-
-        this.deathFireSound = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);
-        this.deathFireSound2 = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);
-        this.deathFireSound3 = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);
-        this.deathFireSound4 = await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100);        
+        for(var i = 0; i < numberOfPlayers; i++) {
+            this.positionalBulletSounds.push(await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100));
+            this.positionalRocketSounds.push(await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100));
+            this.positionalVehicleExplosionSounds.push(await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.25, 25, 100));
+            this.deathFireSounds.push(await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100));
+        }
     }
 
     async generatePlayers(particleMaterial: THREE.SpriteMaterial, player1VehicleType: VehicleType): Promise<void> {
@@ -1012,11 +983,11 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSound, this.positionalRocketSound, this.positionalVehicleExplosionSound, this.deathFireSound);
+        this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSounds[0], this.positionalRocketSounds[0], this.positionalVehicleExplosionSounds[0], this.deathFireSounds[0]);
 
-        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSound2, this.positionalRocketSound2, this.positionalVehicleExplosionSound2, this.deathFireSound2);
-        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSound3, this.positionalRocketSound3, this.positionalVehicleExplosionSound3, this.deathFireSound3);
-        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSound4, this.positionalRocketSound4, this.positionalVehicleExplosionSound4, this.deathFireSound4);
+        this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSounds[1], this.positionalRocketSounds[1], this.positionalVehicleExplosionSounds[1], this.deathFireSounds[1]);
+        this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSounds[2], this.positionalRocketSounds[2], this.positionalVehicleExplosionSounds[2], this.deathFireSounds[2]);
+        this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial, this.positionalBulletSounds[3], this.positionalRocketSounds[3], this.positionalVehicleExplosionSounds[3], this.deathFireSounds[3]);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
