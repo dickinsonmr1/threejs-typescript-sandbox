@@ -6,6 +6,8 @@ export class AudioManager {
     private audioLoader: THREE.AudioLoader;
     private audioBuffers: Map<string, AudioBuffer>;
 
+    private positionalSounds: Map<string, THREE.PositionalAudio> = new Map<string, THREE.PositionalAudio>;
+
     constructor(camera: THREE.Camera) {        
         this.audioLoader = new THREE.AudioLoader();
         this.audioListener = new THREE.AudioListener();
@@ -20,7 +22,7 @@ export class AudioManager {
 
     public getAudioListener(): THREE.AudioListener {
         return this.audioListener;
-    }
+    }    
 
     public async loadPositionalSound(asset: string, volume: number, refDistance: number, maxDistance: number, loop: boolean = false): Promise<THREE.PositionalAudio> {
 
@@ -62,8 +64,27 @@ export class AudioManager {
         return positionalAudio;
     }    
 
-    playSound(key: string) {
-        // TODO: implement
+    public addSound(key: string, sound: THREE.PositionalAudio) {      
+      this.positionalSounds.set(key, sound);
+    }
+
+    public getSound(key: string): THREE.PositionalAudio | null {
+      let sound = this.positionalSounds.get(key);
+      return sound ?? null;
+    }
+
+    public playSound(key: string, detune: boolean) {
+      const sound = this.positionalSounds.get(key);
+      if(sound) {          
+        if(sound.isPlaying)
+          sound.stop();
+
+        sound.play();
+
+        if(detune) {
+          sound.detune = Math.floor(Math.random() * 1600 - 800);
+        }
+      }          
     }
 
     update(newListenerPosition: THREE.Vector3): void {

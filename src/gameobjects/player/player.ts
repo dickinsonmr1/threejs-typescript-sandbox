@@ -123,11 +123,6 @@ export class Player {
         return this.deathCount;
     }
 
-    public bulletSound: THREE.PositionalAudio;
-    public rocketSound: THREE.PositionalAudio;
-    public explosionSound: THREE.PositionalAudio;
-    public deathFireSound: THREE.PositionalAudio;
-
     private readonly bulletSoundMarker?: THREE.Mesh;    
     private readonly rocketSoundMarker?: THREE.Mesh;   
     
@@ -144,10 +139,14 @@ export class Player {
         rightHeadlightOffset: THREE.Vector3,
         leftBrakeLightOffset: THREE.Vector3,
         rightBrakeLightOffset: THREE.Vector3,
-        fireBulletSound: THREE.PositionalAudio,
-        fireRocketSound: THREE.PositionalAudio,
-        explosionSound: THREE.PositionalAudio,
-        deathFireSound: THREE.PositionalAudio,
+        //fireBulletSound: THREE.PositionalAudio,
+        //fireRocketSound: THREE.PositionalAudio,
+        //explosionSound: THREE.PositionalAudio,
+        //deathFireSound: THREE.PositionalAudio,
+        public bulletSoundKey: string,
+        public rocketSoundKey: string,
+        public explosionSoundKey: string,
+        public deathFireSoundKey: string,
         deadzoneX: number,
         vehicleConfig: VehicleConfig) {
 
@@ -230,18 +229,18 @@ export class Player {
         this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, this.flamethrowerBoundingBoxMaterial);
         scene.add(this.flamethrowerBoundingBox);
 
-        this.bulletSound = fireBulletSound;
-        this.rocketSound = fireRocketSound;
-        this.explosionSound = explosionSound;
-        this.deathFireSound = deathFireSound;
-        
+       
         //this.bulletSound.position.copy(this.getPosition());
         //this.rocketSound.position.copy(this.getPosition());
         //scene.add(this.bulletSound);
         //scene.add(this.rocketSound);
-        this.vehicleObject.getChassis().mesh.add(this.bulletSound);
-        this.vehicleObject.getChassis().mesh.add(this.rocketSound);
-        this.vehicleObject.getChassis().mesh.add(this.explosionSound);
+
+        let audioManager = gameScene.getAudioManager();
+        
+
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound(bulletSoundKey)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound(rocketSoundKey)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound(explosionSoundKey)!);
 
         //this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
         //this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
@@ -686,7 +685,7 @@ export class Player {
                 this.getPosition(),
                 3,
                 3000,
-                this.deathFireSound
+                gameScene.getAudioManager().getSound(this.deathFireSoundKey)!
             );
             this.fireObjects.push(deathFire);
             
@@ -695,9 +694,11 @@ export class Player {
 
             this.generateRandomExplosion();
 
-            if(this.explosionSound.isPlaying)
-                this.explosionSound.stop();
-            this.explosionSound.play();
+            gameScene.getAudioManager().playSound(this.explosionSoundKey, false);
+
+            //if(this.explosionSound.isPlaying)
+                //this.explosionSound.stop();
+            //this.explosionSound.play();
             //this.explosionSound.detune = Math.floor(Math.random() * 1600 - 800);
 
             let wheels = this.vehicleObject.getWheelModels();
@@ -794,11 +795,13 @@ export class Player {
 
             this.rocketCooldownClock.start();
 
-            if(this.rocketSound.isPlaying)
-                this.rocketSound.stop();
+            gameScene.getAudioManager().playSound(this.rocketSoundKey, true);
 
-            this.rocketSound.play();
-            this.rocketSound.detune = Math.floor(Math.random() * 1600 - 800);
+            //if(this.rocketSound.isPlaying)
+                //this.rocketSound.stop();
+
+            //this.rocketSound.play();
+            //this.rocketSound.detune = Math.floor(Math.random() * 1600 - 800);
         }       
     }
 
@@ -843,13 +846,20 @@ export class Player {
             //this.bulletCooldownTime = this.maxBulletCooldownTime;
             this.bulletCooldownClock.start();
 
-            if(this.bulletSound != null) {
+            //if(this.bulletSound != null) {
+                
+                // TODO: replace with audio manager call
+                /*
                 if(this.bulletSound.isPlaying)
                     this.bulletSound.stop();
 
                 this.bulletSound.play();
                 this.bulletSound.detune = Math.floor(Math.random() * 1600 - 800);
-            }
+                */
+                //
+                let audioManager = gameScene.getAudioManager();
+                audioManager.playSound('player1-bullet', true);
+            //}
         }
     }
 

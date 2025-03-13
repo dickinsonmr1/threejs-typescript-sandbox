@@ -44,10 +44,11 @@ export class VehicleFactory {
         vehicleType: VehicleType, playerColor: THREE.Color,        
         deadzoneX: number,
         wheelMaterial: CANNON.Material,
-        fireBulletSound: THREE.PositionalAudio,
-        fireRocketSound: THREE.PositionalAudio,
-        explosionSound: THREE.PositionalAudio,
-        deathFireSound: THREE.PositionalAudio) : Player {
+        bulletSoundKey: string,
+        rocketSoundKey: string,
+        explosionSoundKey: string,
+        deathFireSoundKey: string
+        ) : Player {
         //isCpuPlayer: boolean, playerTeam: PlayerTeam, scene: THREE.Scene) : Player {        
         
         let gameScene = <GameScene>scene;
@@ -248,10 +249,10 @@ export class VehicleFactory {
             rightHeadlightOffset,
             leftBrakeLightOffset,
             rightBrakeLightOffset,
-            fireBulletSound,
-            fireRocketSound,
-            explosionSound,
-            deathFireSound,
+            bulletSoundKey,
+            rocketSoundKey,
+            explosionSoundKey,
+            deathFireSoundKey,
             deadzoneX,
             vehicle.vehicleOverrideConfig
         );
