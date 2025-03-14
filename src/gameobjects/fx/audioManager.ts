@@ -73,6 +73,12 @@ export class AudioManager {
       return sound ?? null;
     }
 
+    public playLoopedSound(key: string) {
+      const sound = this.positionalSounds.get(key);
+      if(sound && !sound.isPlaying)
+          sound.play();
+    }
+
     public playSound(key: string, detune: boolean) {
       const sound = this.positionalSounds.get(key);
       if(sound) {          
@@ -85,6 +91,12 @@ export class AudioManager {
           sound.detune = Math.floor(Math.random() * 1600 - 800);
         }
       }          
+    }
+
+    public stopSound(key: string) {
+      const sound = this.positionalSounds.get(key);
+      if(sound && sound.isPlaying)
+          sound.stop();        
     }
 
     update(newListenerPosition: THREE.Vector3): void {

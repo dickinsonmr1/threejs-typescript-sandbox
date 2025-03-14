@@ -147,6 +147,7 @@ export class Player {
         public rocketSoundKey: string,
         public explosionSoundKey: string,
         public deathFireSoundKey: string,
+        public flamethrowerSoundKey: string,
         deadzoneX: number,
         vehicleConfig: VehicleConfig) {
 
@@ -241,6 +242,7 @@ export class Player {
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound(bulletSoundKey)!);
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound(rocketSoundKey)!);
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound(explosionSoundKey)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound(flamethrowerSoundKey)!);
 
         //this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
         //this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
@@ -368,10 +370,10 @@ export class Player {
                 this.flamethrowerBoundingBox.visible = true;
             }
 
-            this.flamethrowerActive = false;
+            //this.flamethrowerActive = false;
         }
         else {
-            this.flamethrowerBoundingBox.visible = false;
+            this.flamethrowerBoundingBox.visible = false;            
         }
         
         if(this.headLights != null)
@@ -830,8 +832,18 @@ export class Player {
             this.flamethrowerEmitter.setQuaternion(this.getModelQuaternion());
         }
     
+        let gameScene = <GameScene>this.scene;
+        gameScene.getAudioManager().playLoopedSound(this.flamethrowerSoundKey);
+
         this.flamethrowerEmitter.emitParticles();
         this.flamethrowerActive = true;
+    }
+
+    tryStopFireFlamethrower() {
+        this.flamethrowerActive = false;
+
+        let gameScene = <GameScene>this.scene;
+        gameScene.getAudioManager().stopSound(this.flamethrowerSoundKey);
     }
 
     tryFireBullets(): void {

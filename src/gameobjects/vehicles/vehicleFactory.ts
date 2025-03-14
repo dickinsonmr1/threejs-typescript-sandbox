@@ -47,7 +47,8 @@ export class VehicleFactory {
         bulletSoundKey: string,
         rocketSoundKey: string,
         explosionSoundKey: string,
-        deathFireSoundKey: string
+        deathFireSoundKey: string,
+        flamethrowerSoundKey: string,
         ) : Player {
         //isCpuPlayer: boolean, playerTeam: PlayerTeam, scene: THREE.Scene) : Player {        
         
@@ -253,6 +254,7 @@ export class VehicleFactory {
             rocketSoundKey,
             explosionSoundKey,
             deathFireSoundKey,
+            flamethrowerSoundKey,
             deadzoneX,
             vehicle.vehicleOverrideConfig
         );

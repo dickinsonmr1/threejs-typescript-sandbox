@@ -211,6 +211,7 @@ export default class SceneController {
                 this.gameScene?.player1.tryFireFlamethrower();
             });
             specialWeaponButton.addEventListener('touchend', () => {
+                this.gameScene?.player1.tryStopFireFlamethrower();
                 //
             });
         }
@@ -551,6 +552,7 @@ export default class SceneController {
                         console.log(`pressed: ${buttonIndex}`);
                         this.gameScene?.player1.tryFireFlamethrower();
                     }
+
                     if(buttonIndex == GamepadEnums.FACE_4) {
                         console.log(`pressed: ${buttonIndex}`);
                         //this.gameScene?.player2.tryFireFlamethrower();
@@ -590,6 +592,13 @@ export default class SceneController {
                             console.log(`button no longer pressed: ${buttonIndex}`);
                             this.gameScene?.player1.tryStopTurbo();
                     }
+                    // stopped firing flamethrower
+                    if(this.gamepadPrevious.buttons[this.fireFlameThrowerGamepadIndex].pressed
+                        && buttonIndex == this.fireFlameThrowerGamepadIndex) {
+
+                            this.gameScene?.player1.tryStopFireFlamethrower();
+                    }
+                    
                 }
             }
         })

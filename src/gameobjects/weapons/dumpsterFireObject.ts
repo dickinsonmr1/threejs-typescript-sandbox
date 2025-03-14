@@ -94,7 +94,7 @@ export class DumpsterFireObject {
                 Utility.CannonVec3ToThreeVec3(this.body.position),
                 1,
                 DumpsterFireObject.maxLifeTimeinMs,
-                gameScene.deathFireSound
+                gameScene.getAudioManager().getSound('player1-deathFire')!
             );
         }
 
