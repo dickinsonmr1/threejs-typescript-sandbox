@@ -295,6 +295,10 @@ export class RigidVehicleObject implements IPlayerVehicle {
         //this.rigidVehicleObject?.setWheelForce(0, 1);
     }
 
+    applyImpulseWhileWheelsAreDisabled(impulse: CANNON.Vec3): void {
+        throw new Error("Method not implemented.");
+    }
+
     update() {
         this.chassis.update();            
         this.wheels.forEach(x => x.update());   

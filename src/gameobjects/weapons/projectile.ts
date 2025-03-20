@@ -41,7 +41,10 @@ export class Projectile extends SphereObject {
     bulletMesh!: THREE.Mesh;
 
     
-	private readonly velocity = new THREE.Vector3();    
+	private readonly velocity = new THREE.Vector3();  
+    public getVelocity(): THREE.Vector3 {
+        return this.velocity;
+    }  
 
 	private isDead: boolean = false;
 

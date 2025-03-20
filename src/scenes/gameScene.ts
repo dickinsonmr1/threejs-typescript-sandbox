@@ -977,13 +977,13 @@ export default class GameScene extends THREE.Scene {
             this.audioManager.addSound(`player${i+1}-rocket`, await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100));            
 
             //this.positionalVehicleExplosionSounds.push(await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.25, 25, 100));
-            this.audioManager.addSound(`player${i+1}-explosion`, await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.25, 25, 100));
+            this.audioManager.addSound(`player${i+1}-explosion`, await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.75, 25, 100));
 
             //this.deathFireSounds.push(await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100));
-            this.audioManager.addSound(`player${i+1}-deathFire`, await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100));
+            this.audioManager.addSound(`player${i+1}-deathFire`, await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.50, 25, 100));
 
             // https://opengameart.org/content/fire-loop
-            this.audioManager.addSound(`player${i+1}-flamethrower`, await this.audioManager.loadPositionalSound('assets/audio/qubodupFireLoop.ogg', 0.75, 25, 100, true));
+            this.audioManager.addSound(`player${i+1}-flamethrower`, await this.audioManager.loadPositionalSound('assets/audio/qubodupFireLoop.ogg', 0.50, 25, 100, true));
         }
 
         this.audioManager.addSound(`fw_01`, await this.audioManager.loadPositionalSound('assets/audio/fw_01.ogg', 0.25, 25, 100));
@@ -1194,6 +1194,12 @@ export default class GameScene extends THREE.Scene {
                     }
                     else {
                         if(player.getPosition().distanceTo(projectile.getPosition()) < 1 && player.currentHealth > 0){
+
+                            //const impactForce = projectile.body?.velocity.clone().scale(projectile.body?.mass * 100);
+
+                            const impactForce = Utility.ThreeVec3ToCannonVec3(projectile.getVelocity()).clone()
+                                    .scale(projectile.body!.mass * 100);
+
                             this.generateRandomExplosion(
                                 projectile.projectileType,
                                 projectile.getPosition(),
@@ -1205,7 +1211,8 @@ export default class GameScene extends THREE.Scene {
                             );
                             projectile.kill();
                             this.remove(projectile.group);
-                            player.tryDamage(projectile.projectileType, projectile.getPosition());
+                            
+                            player.tryDamage(projectile.projectileType, projectile.getPosition(), impactForce);
                             
                             if(player.playerId == this.player1.playerId) {
                                 this.sceneController.updateHealthOnHud(this.player1.currentHealth);
@@ -1461,6 +1468,9 @@ export default class GameScene extends THREE.Scene {
                 default:
                     break;
                 }
+
+                if(randomWeaponFiring != 100 && randomWeaponFiring != 101)
+                    cpuPlayer.tryStopFireFlamethrower();
             }
         }
 

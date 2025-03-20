@@ -28,6 +28,8 @@ export interface IPlayerVehicle {
     tryTurnRight(): void;
     tryStopTurnRight(): void;
 
+    applyImpulseWhileWheelsAreDisabled(impulse: CANNON.Vec3): void;
+
     tryJump(): void;
     tryTurbo(): void;
 

@@ -495,6 +495,31 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         this.raycastVehicle?.setSteeringValue(0, 1);
     }
 
+    applyImpulseWhileWheelsAreDisabled(impulse: CANNON.Vec3):void {
+
+        const originalStiffness = this.raycastVehicle?.wheelInfos.map(wheel => wheel.suspensionStiffness); // Save original values
+
+        this.disableSuspension(this.raycastVehicle!);
+        
+        this.chassis.body.invInertia.set(1, 1, 1); // Equalize resistance to rotation
+        this.chassis.body.applyImpulse(impulse, this.chassis.body.position.clone().vadd(this.chassis.body.shapeOffsets[0]));        
+        this.chassis.body.torque.set(0, 0, 0);                
+
+        this.enableSuspension(this.raycastVehicle!, originalStiffness!);
+    }
+
+    private disableSuspension(vehicle: CANNON.RaycastVehicle) {
+        vehicle.wheelInfos.forEach((wheel) => {
+          wheel.suspensionStiffness = 0; // Disable suspension
+        });
+      }
+      
+    private enableSuspension(vehicle: CANNON.RaycastVehicle, originalStiffness: number[]) {
+        vehicle.wheelInfos.forEach((wheel, index) => {
+          wheel.suspensionStiffness = originalStiffness[index]; // Restore original values
+        });
+      }
+
     update() {
         
         //this.raycastVehicle?.updateVehicle(1);

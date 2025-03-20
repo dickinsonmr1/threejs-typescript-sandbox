@@ -270,6 +270,13 @@ export class Player {
         return this.vehicleObject.getChassis().body;
     }
 
+    getChassisBodyCenterOfMassVec3(): CANNON.Vec3 {
+        let chassisBody = this.vehicleObject.getChassis().body;
+
+        return chassisBody.position.clone().vadd(chassisBody.shapeOffsets[0]);
+        //return chassis.body.position.clone().vsub(chassis.centerOfMassAdjust);
+    } 
+
     isModelNull(): boolean {
         return !this.vehicleObject.getModel();
     }
@@ -597,16 +604,23 @@ export class Player {
         this.turboParticleEmitter.pause();
     }
     
-    tryDamage(projectileType: ProjectileType, damageLocation: THREE.Vector3): void {
+    tryDamage(projectileType: ProjectileType, damageLocation: THREE.Vector3, impactForce?: CANNON.Vec3): void {
         
         if(projectileType == ProjectileType.Bullet)
             this.currentHealth -= 5;
-        else if(projectileType == ProjectileType.Rocket)
+        else if(projectileType == ProjectileType.Rocket) {
             this.currentHealth -= 20;
+
+            if(impactForce != undefined) {
+                //this.getChassisBody().applyForce(impactForce, Utility.ThreeVec3ToCannonVec3(damageLocation))
+                //this.getChassisBody().applyImpulse(impactForce, Utility.ThreeVec3ToCannonVec3(damageLocation))
+                this.getVehicleObject().applyImpulseWhileWheelsAreDisabled(impactForce);                                        
+            }
+        }
 
         this.healthBar.updateValue(this.currentHealth);
 
-        if(this.currentHealth <= 0)
+        if(this.currentHealth <= 0)         
             this.tryKill();
     }
 
