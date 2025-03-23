@@ -36,6 +36,7 @@ import { TextureHeightMapArray2 } from '../gameobjects/fx/textureToArray2';
 import { QuadtreeTerrainSystem5 } from '../gameobjects/terrain/quadtree5/QuadtreeTerrainSystem5';
 import LODTerrainSystem from '../gameobjects/terrain/lodTerrainSystem';
 import { AudioManager } from '../gameobjects/fx/audioManager';
+import { SonicPulseEmitter } from '../gameobjects/weapons/sonicPulseEmitter';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -140,29 +141,7 @@ export default class GameScene extends THREE.Scene {
             `
     });
 
-    sonicePulseCylinderMesh!: THREE.Mesh;
-    sonicPulseShaderMaterial: THREE.ShaderMaterial = new THREE.ShaderMaterial({
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        side: THREE.DoubleSide,
-        vertexShader: `
-            varying vec3 vPosition;
-            void main()
-            {
-                vPosition = position;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-            `,
-        fragmentShader: `
-            varying vec3 vPosition;
-            void main()
-            {
-                // Map the y position to a 0-1 range for alpha
-                float alpha = 0.25 - (vPosition.y / 100.0);
-                gl_FragColor = vec4(0.0, 1.0, 1.0, alpha);
-            }
-            `
-    });
+    sonicPulseEmitters: SonicPulseEmitter[] = [];
 
     terrainChunk!: TerrainChunk;
     LODTerrainSystem!: LODTerrainSystem;
@@ -293,16 +272,6 @@ export default class GameScene extends THREE.Scene {
         cylinderMesh.position.set(20, cylinderMesh.position.y, 20);            
         this.add(cylinderMesh);
 
-
-        this.sonicePulseCylinderMesh = new THREE.Mesh(
-            new THREE.CylinderGeometry(5, 5, 0.25, 32, 1, true),
-            this.sonicPulseShaderMaterial);
-        this.sonicePulseCylinderMesh.position.set(-20, 3, -20);            
-        this.add(this.sonicePulseCylinderMesh);
-
-        
-
-        
         this.bouncyWheelMaterial = new CANNON.Material();
         const wheelGroundContactMaterial = new CANNON.ContactMaterial(this.bouncyWheelMaterial, this.groundMaterial, {
             friction: this.gameConfig.wheelGroundContactMaterialFriction, //1.2,
@@ -318,6 +287,10 @@ export default class GameScene extends THREE.Scene {
         });
 
         await this.generatePlayers(particleMaterial, player1VehicleType);
+
+        
+        //let sonicPulseEmitter = new SonicPulseEmitter(this, this.player1.getPosition());           
+        //this.sonicPulseEmitters.push(sonicPulseEmitter);
 
         let material = new THREE.SpriteMaterial( { map: this.crosshairTexture, color: 0xffffff, depthTest: false, depthWrite: false });//,transparent: true, opacity: 0.5 } );
         this.crosshairSprite = new THREE.Sprite( material );
@@ -522,6 +495,9 @@ export default class GameScene extends THREE.Scene {
         }
         if(event.key === 'u') {
             this.player1.tryFireDumpster();
+        }
+        if(event.key === 'y') {
+            this.player1.tryFireSonicPulse();
         }
         /*
         /*
@@ -840,6 +816,11 @@ export default class GameScene extends THREE.Scene {
         );
         this.debrisWheels.push(debrisWheel);
     }    
+
+    public async generateSonicPulse(position: THREE.Vector3) {
+        let sonicPulse = new SonicPulseEmitter(this, position);
+        this.sonicPulseEmitters.push(sonicPulse);
+    }
     
     private async generateRandomPickup(mapWidth: number, mapHeight: number) {        
         let pickupTextureRocket = this.textureLoader.load('assets/pickups/pickup-rockets.png');
@@ -1520,6 +1501,9 @@ export default class GameScene extends THREE.Scene {
                 case 120:
                     cpuPlayer.tryFireDumpster();
                     break;
+                case 121:
+                    cpuPlayer.tryFireSonicPulse();
+                    break;
                 default:
                     break;
                 }
@@ -1611,11 +1595,11 @@ export default class GameScene extends THREE.Scene {
 
         this.flamethrowerEmitters.forEach(x => x.update());
 
+        this.sonicPulseEmitters.forEach(x => x.update());
+
         this.allPlayers.forEach(player => player.update(this.cpuPlayerBehavior));
         
         let playerPosition = this.player1.getPosition();
-
-        this.sonicePulseCylinderMesh.position.copy(playerPosition);
 
         var otherPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
         otherPlayers.forEach(enemy => {

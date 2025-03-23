@@ -901,6 +901,11 @@ export class Player {
 
         gameScene.generateRandomDumpster(this.getPosition(), projectileLaunchVector);
     }
+
+    tryFireSonicPulse(): void {
+        let gameScene = <GameScene>this.scene;
+        gameScene.generateSonicPulse(this.getPosition());
+    }
     
     // TODO: try fire additional weapons
 
