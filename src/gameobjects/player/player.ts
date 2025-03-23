@@ -648,7 +648,7 @@ export class Player {
 
         if(this.playerState == PlayerState.Alive) {
 
-            if(randInt(0, 2) == 0)
+            if(randInt(0, 1) == 0)
                 this.tryJump();
 
             this.playerState = PlayerState.Dead;
@@ -841,16 +841,19 @@ export class Player {
     }
 
     tryFireFlamethrower(): void {        
-        this.flamethrowerEmitter.setPosition(this.getPosition());
-        if(!this.isVehicleObjectNull() && !this.isModelNull()) {                
-            this.flamethrowerEmitter.setQuaternion(this.getModelQuaternion());
-        }
-    
-        let gameScene = <GameScene>this.scene;
-        gameScene.getAudioManager().playLoopedSound(this.flamethrowerSoundKey);
 
-        this.flamethrowerEmitter.emitParticles();
-        this.flamethrowerActive = true;
+        if(this.playerState == PlayerState.Alive) {
+            this.flamethrowerEmitter.setPosition(this.getPosition());
+            if(!this.isVehicleObjectNull() && !this.isModelNull()) {                
+                this.flamethrowerEmitter.setQuaternion(this.getModelQuaternion());
+            }
+        
+            let gameScene = <GameScene>this.scene;
+            gameScene.getAudioManager().playLoopedSound(this.flamethrowerSoundKey);
+
+            this.flamethrowerEmitter.emitParticles();
+            this.flamethrowerActive = true;
+        }
     }
 
     tryStopFireFlamethrower() {

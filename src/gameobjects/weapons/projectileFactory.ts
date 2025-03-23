@@ -59,7 +59,7 @@ export default class ProjectileFactory {
                 return new Projectile(scene, isDebug,
                     playerId,
                     ProjectileType.Bullet,
-                    0.05,                   // radius
+                    0.02,                   // radius
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
                     quaternion,

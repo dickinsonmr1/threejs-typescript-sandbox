@@ -117,7 +117,53 @@ export default class GameScene extends THREE.Scene {
 
     basicMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial( { color: 0xFFFF00 });
     basicSemitransparentMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial( { color: 0xFFFF00, transparent: true, opacity: 0.5 });
-    
+    worldMarkerShaderMaterial: THREE.ShaderMaterial = new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+        vertexShader: `
+            varying vec3 vPosition;
+            void main()
+            {
+                vPosition = position;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+            `,
+        fragmentShader: `
+            varying vec3 vPosition;
+            void main()
+            {
+                // Map the y position to a 0-1 range for alpha
+                float alpha = 0.25 - (vPosition.y / 100.0);
+                gl_FragColor = vec4(1.0, 1.0, 0.0, alpha);
+            }
+            `
+    });
+
+    sonicePulseCylinderMesh!: THREE.Mesh;
+    sonicPulseShaderMaterial: THREE.ShaderMaterial = new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+        vertexShader: `
+            varying vec3 vPosition;
+            void main()
+            {
+                vPosition = position;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+            `,
+        fragmentShader: `
+            varying vec3 vPosition;
+            void main()
+            {
+                // Map the y position to a 0-1 range for alpha
+                float alpha = 0.25 - (vPosition.y / 100.0);
+                gl_FragColor = vec4(0.0, 1.0, 1.0, alpha);
+            }
+            `
+    });
+
     terrainChunk!: TerrainChunk;
     LODTerrainSystem!: LODTerrainSystem;
     quadtreeTerrainSystem5!: QuadtreeTerrainSystem5;
@@ -242,10 +288,19 @@ export default class GameScene extends THREE.Scene {
             this.world, objectMaterial);
 
         let cylinderMesh = new THREE.Mesh(
-            new THREE.CylinderGeometry(1, 1, 200, 16, 1, true),
-            this.basicSemitransparentMaterial);
-        cylinderMesh.position.set(20, 0, 20);            
+            new THREE.CylinderGeometry(1, 1, 100, 16, 1, false),
+            this.worldMarkerShaderMaterial);
+        cylinderMesh.position.set(20, cylinderMesh.position.y, 20);            
         this.add(cylinderMesh);
+
+
+        this.sonicePulseCylinderMesh = new THREE.Mesh(
+            new THREE.CylinderGeometry(5, 5, 0.25, 32, 1, true),
+            this.sonicPulseShaderMaterial);
+        this.sonicePulseCylinderMesh.position.set(-20, 3, -20);            
+        this.add(this.sonicePulseCylinderMesh);
+
+        
 
         
         this.bouncyWheelMaterial = new CANNON.Material();
@@ -1559,6 +1614,8 @@ export default class GameScene extends THREE.Scene {
         this.allPlayers.forEach(player => player.update(this.cpuPlayerBehavior));
         
         let playerPosition = this.player1.getPosition();
+
+        this.sonicePulseCylinderMesh.position.copy(playerPosition);
 
         var otherPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
         otherPlayers.forEach(enemy => {

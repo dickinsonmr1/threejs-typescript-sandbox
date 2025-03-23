@@ -15,8 +15,8 @@
     "frontWheelRadius": 0.25,
     "rearWheelRadius": 0.25,
 
-    "frontWheelModelScale": [0.5, 0.75, 0.75],
-    "rearWheelModelScale": [0.5, 0.75, 0.75],
+    "frontWheelModelScale": [0.75, 0.75, 0.75],
+    "rearWheelModelScale": [0.75, 0.75, 0.75],
 
     "frontWheelOffset": [0.25, 0, 0],
     "rearWheelOffset": [0.5, 0, 0],
