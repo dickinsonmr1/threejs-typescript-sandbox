@@ -108,6 +108,9 @@ export class Player {
     private maxAirstrikeCooldownTimeInSeconds: number = 0.25;
     private airstrikeCooldownClock: THREE.Clock = new THREE.Clock(false);
 
+    private maxSonicePulseCooldownTimeInSeconds: number = 1.00;
+    private sonicPulseCooldownClock: THREE.Clock = new THREE.Clock(false);
+
     flamethrowerBoundingBox: THREE.Mesh;
     flamethrowerBoundingBoxMaterial: THREE.MeshBasicMaterial;
     flamethrowerActive: boolean = false;
@@ -148,6 +151,7 @@ export class Player {
         public explosionSoundKey: string,
         public deathFireSoundKey: string,
         public flamethrowerSoundKey: string,
+        public sonicPulseSoundKey: string,
         deadzoneX: number,
         vehicleConfig: VehicleConfig) {
 
@@ -438,6 +442,10 @@ export class Player {
 
         if(this.airstrikeCooldownClock.getElapsedTime() > this.maxAirstrikeCooldownTimeInSeconds) {
             this.airstrikeCooldownClock.stop();
+        }
+
+        if(this.sonicPulseCooldownClock.getElapsedTime() > this.maxSonicePulseCooldownTimeInSeconds) {
+            this.sonicPulseCooldownClock.stop();
         }
 
         if(this.shield != null)
@@ -903,8 +911,15 @@ export class Player {
     }
 
     tryFireSonicPulse(): void {
-        let gameScene = <GameScene>this.scene;
-        gameScene.generateSonicPulse(this.getPosition());
+
+        if(!this.sonicPulseCooldownClock.running) {
+
+            let gameScene = <GameScene>this.scene;
+            gameScene.getAudioManager().playSound(this.sonicPulseSoundKey, false);
+            gameScene.generateSonicPulse(this.getPosition());
+
+            this.sonicPulseCooldownClock.start();
+        }
     }
     
     // TODO: try fire additional weapons

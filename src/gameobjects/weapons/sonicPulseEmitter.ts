@@ -8,7 +8,7 @@ export class SonicPulseEmitter {
     meshes: THREE.Mesh[] = [];
 
     private static maxLifeTimeinMs: number = 1000;
-    private static growthFactor: number = 1.25;
+    private growthFactor: number = 1.1;
 
     sonicPulseShaderMaterial: THREE.ShaderMaterial = new THREE.ShaderMaterial({
         transparent: true,
@@ -58,8 +58,9 @@ export class SonicPulseEmitter {
     }
 
     update() {
+        //this.growthFactor * 0.99;
         this.meshes.forEach(mesh => {
-            mesh.scale.set(mesh.scale.x * SonicPulseEmitter.growthFactor, 1, mesh.scale.z *  SonicPulseEmitter.growthFactor)
+            mesh.scale.set(mesh.scale.x * this.growthFactor, 1, mesh.scale.z *  this.growthFactor)
         });
     }
 
