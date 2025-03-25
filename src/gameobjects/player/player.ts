@@ -23,6 +23,7 @@ import { randFloatSpread, randInt } from "three/src/math/MathUtils.js";
 import EmergencyLights from "../vehicles/emergencyLights";
 import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
 import { VehicleConfig } from "../vehicles/config/vehicleConfig";
+import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
 
 export enum PlayerState {
     Alive,
@@ -95,21 +96,27 @@ export class Player {
     private fireLeft: boolean = false;
     private projectileFactory: ProjectileFactory;// = new ProjectileFactory();
 
-    private maxBulletCooldownTimeInSeconds: number = 0.15;
-    private maxUpgradedBulletCooldownTimeInSeconds: number = 0.05;
-    private bulletCooldownClock: THREE.Clock = new THREE.Clock(false);
+    //private maxBulletCooldownTimeInSeconds: number = 0.15;
+    //private maxUpgradedBulletCooldownTimeInSeconds: number = 0.05;
+    //private bulletCooldownClock: THREE.Clock = new THREE.Clock(false);
 
-    private maxDeathExplosionTimeInSeconds: number = 0.25;
-    private deathExplosionCooldownClock: THREE.Clock = new THREE.Clock(false);
+    private bulletCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.15, 0.05);
 
-    private maxRocketCooldownTimeInSeconds: number = 0.5;
-    private rocketCooldownClock: THREE.Clock = new THREE.Clock(false);
+    //private maxDeathExplosionTimeInSeconds: number = 0.25;
+    //private deathExplosionCooldownClock: THREE.Clock = new THREE.Clock(false);
+    private deathExplosionCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.25, 0.25);
 
-    private maxAirstrikeCooldownTimeInSeconds: number = 0.25;
-    private airstrikeCooldownClock: THREE.Clock = new THREE.Clock(false);
+    //private maxRocketCooldownTimeInSeconds: number = 0.5;
+    //private rocketCooldownClock: THREE.Clock = new THREE.Clock(false);
+    private rocketCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.5, 0.5);
 
-    private maxSonicePulseCooldownTimeInSeconds: number = 1.00;
-    private sonicPulseCooldownClock: THREE.Clock = new THREE.Clock(false);
+    //private maxAirstrikeCooldownTimeInSeconds: number = 0.25;
+    //private airstrikeCooldownClock: THREE.Clock = new THREE.Clock(false);
+    private airstrikeCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.25, 0.25);
+
+    //private maxSonicePulseCooldownTimeInSeconds: number = 1.00;
+    //private sonicPulseCooldownClock: THREE.Clock = new THREE.Clock(false);
+    private sonicPulseCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1.00, 1.00);
 
     flamethrowerBoundingBox: THREE.Mesh;
     flamethrowerBoundingBoxMaterial: THREE.MeshBasicMaterial;
@@ -306,7 +313,7 @@ export class Player {
 
         if(this.playerState == PlayerState.Dead) {
             
-            if(this.deathExplosionCooldownClock.getElapsedTime() > this.maxDeathExplosionTimeInSeconds) {
+            if(this.deathExplosionCooldownClock.isExpired()) {
                 this.deathExplosionCooldownClock.stop();
 
                 this.generateRandomExplosion();
@@ -432,21 +439,10 @@ export class Player {
 
         this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
 
-        if(this.bulletCooldownClock.getElapsedTime() > this.maxBulletCooldownTimeInSeconds) {
-            this.bulletCooldownClock.stop();
-        }        
-
-        if(this.rocketCooldownClock.getElapsedTime() > this.maxRocketCooldownTimeInSeconds) {
-            this.rocketCooldownClock.stop();
-        }
-
-        if(this.airstrikeCooldownClock.getElapsedTime() > this.maxAirstrikeCooldownTimeInSeconds) {
-            this.airstrikeCooldownClock.stop();
-        }
-
-        if(this.sonicPulseCooldownClock.getElapsedTime() > this.maxSonicePulseCooldownTimeInSeconds) {
-            this.sonicPulseCooldownClock.stop();
-        }
+        this.bulletCooldownClock.stopIfExpired();
+        this.rocketCooldownClock.stopIfExpired();
+        this.airstrikeCooldownClock.stopIfExpired();
+        this.sonicPulseCooldownClock.stopIfExpired();
 
         if(this.shield != null)
             this.shield.updatePosition(this.getPosition());
@@ -810,7 +806,7 @@ export class Player {
 
     tryFireRocket(): void {
 
-        if(!this.rocketCooldownClock.running) {
+        if(!this.rocketCooldownClock.isRunning()) {
 
             let projectile = this.createProjectile(ProjectileType.Rocket);
 
@@ -831,7 +827,7 @@ export class Player {
 
     tryFireAirStrike(): void {
 
-        if(!this.airstrikeCooldownClock.running) {
+        if(!this.airstrikeCooldownClock.isRunning()) {
 
             if(this.activeAirstrike == null || this.activeAirstrike.isDetonated) {
                 let projectile = this.createProjectile(ProjectileType.Airstrike);
@@ -873,7 +869,7 @@ export class Player {
 
     tryFireBullets(): void {
         //if(this.bulletCooldownTime <= 0) {
-        if(!this.bulletCooldownClock.running) {
+        if(!this.bulletCooldownClock.isRunning()) {
 
             let projectile = this.createProjectile(ProjectileType.Bullet);
 
@@ -912,7 +908,7 @@ export class Player {
 
     tryFireSonicPulse(): void {
 
-        if(!this.sonicPulseCooldownClock.running) {
+        if(!this.sonicPulseCooldownClock.isRunning()) {
 
             let gameScene = <GameScene>this.scene;
             gameScene.getAudioManager().playSound(this.sonicPulseSoundKey, false);
