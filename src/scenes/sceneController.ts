@@ -43,7 +43,6 @@ export default class SceneController {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
     }
-
     
     public keyDown = new Set<string>();
     private handleKeyDown = (event: KeyboardEvent) => {        
@@ -416,7 +415,7 @@ export default class SceneController {
         this.gamepadPrevious = gamepad;
     }
 
-    pollGamepads() {
+    pollGamepadsForGameScene() {
 
         if(!(this.currentScene instanceof GameScene))
             return;
@@ -597,8 +596,7 @@ export default class SceneController {
                         && buttonIndex == this.fireFlameThrowerGamepadIndex) {
 
                             this.gameScene?.player1.tryStopFireFlamethrower();
-                    }
-                    
+                    }                    
                 }
             }
         })
@@ -846,11 +844,11 @@ export default class SceneController {
         if(!isPaused) {
             this.gameScene?.updateWater();
             this.gameScene?.updatePrecipitation();
+            this.gameScene?.updateInput(this.keyDown);
             this.gameScene?.update();
-            
+                        
             this.gameScene?.updateLODTerrain();
-            this.gameScene?.updateQuadtreeTerrain5();
-            
+            this.gameScene?.updateQuadtreeTerrain5();            
         }
         else {
             this.gameScene?.updateInputForDebug(this.keyDown);

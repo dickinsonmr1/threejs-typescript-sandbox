@@ -582,11 +582,16 @@ export default class GameScene extends THREE.Scene {
         if (event.key === 'z') {
             this.player1.tryStopFireFlamethrower();
         }
+        if (event.key === 'Tab') {
+            this.player1.trySelectNextWeapon();
+        }
 	}
 
-    private updateInput(keyDown: Set<string>) {
+    public updateInput(keyDown: Set<string>) {
 
-        this.sceneController.pollGamepads();
+        this.sceneController.pollGamepadsForGameScene();
+
+        if(!this.player1 || this.player1.isVehicleObjectNull()) return;
 
         // player 1 vehicle controls
         if(keyDown.has('arrowup')) {
@@ -618,6 +623,13 @@ export default class GameScene extends THREE.Scene {
         }
     }
 
+    public pollGamepads(gamepad: Gamepad) {
+
+        // if paused....
+
+        // if not paused...
+    }
+
     public togglePauseGame() {
         this.isPaused = !this.isPaused;
 
@@ -630,7 +642,7 @@ export default class GameScene extends THREE.Scene {
             
         let cameraMovement = 0.15;
 
-        this.sceneController.pollGamepads();
+        this.sceneController.pollGamepadsForGameScene();
 
         if(keyDown.has('shift')) {
             cameraMovement = 0.9;
@@ -1410,7 +1422,7 @@ export default class GameScene extends THREE.Scene {
 
         if(!this.player1 || this.player1.isVehicleObjectNull()) return;
 
-        this.updateInput(this.sceneController.keyDown);          
+        //this.updateInput(this.sceneController.keyDown);          
 
         var cpuPlayers = this.allPlayers.filter(x => x.isCpuPlayer);// && x.playerState == PlayerState.Alive);
         for(var i = 0; i < cpuPlayers.length; i++) {

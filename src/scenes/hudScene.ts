@@ -14,10 +14,6 @@ export enum HudIconLocation {
 }
 
 export default class HudScene extends THREE.Scene {
-    /**
-     *
-     */
-    camera: THREE.OrthographicCamera;
     private healthBar?: HudHealthBar;
     private turboBar?: HudHealthBar;
     private shieldBar?: HudHealthBar;
@@ -29,25 +25,16 @@ export default class HudScene extends THREE.Scene {
     weaponInventory: THREE.Texture[] = [];
     selectedWeaponIndex: number = 0;
     
-    sceneController: SceneController;
-
     hudDivElementManager!: HudDivElementManager;
 
-    constructor(camera: THREE.OrthographicCamera, sceneController: SceneController) {
+    constructor(private camera: THREE.OrthographicCamera, private sceneController: SceneController) {
         super();
-
-        this.camera = camera;
-        this.sceneController = sceneController;
-
-       
     }
 
     private readonly hudWidth = window.innerWidth / 2.25;
     private readonly hudHeight = window.innerHeight / 2.25;
 
-    async initialize(player1MaxHealth: number) {
-
-        
+    async initialize(player1MaxHealth: number) {        
         /////////////////////////////////////////////
 
         let textureLoader = new THREE.TextureLoader();
@@ -72,11 +59,19 @@ export default class HudScene extends THREE.Scene {
 
         let specialIconTexture = textureLoader.load('assets/hud/specialIcon.png');
         specialIconTexture.colorSpace = THREE.SRGBColorSpace;
-        
+
+        let shockwaveIconTexture = textureLoader.load('assets/hud/shockwaveIcon3.png');
+        shockwaveIconTexture.colorSpace = THREE.SRGBColorSpace;
+
+        let lightningIconTexture = textureLoader.load('assets/hud/shockwaveIcon2.png');
+        lightningIconTexture.colorSpace = THREE.SRGBColorSpace;        
+
         this.weaponInventory.push(specialIconTexture);
         this.weaponInventory.push(rocketTexture);
         this.weaponInventory.push(fireIconTexture);
         this.weaponInventory.push(freezeIconTexture);
+        this.weaponInventory.push(shockwaveIconTexture);
+        this.weaponInventory.push(lightningIconTexture);
 
         this.healthBar = new HudHealthBar(this, HudBarType.TopCenterMain,
             this.hudWidth, this.hudHeight,
