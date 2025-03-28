@@ -73,7 +73,7 @@ export default class GameScene extends THREE.Scene {
 
     private readonly audioManager: AudioManager;
 
-    private animatedSprite!: AnimatedSprite;
+    private animatedSprites: AnimatedSprite[] = [];
     private clock: THREE.Clock = new THREE.Clock();
     
     //lightningMaterial!: THREE.ShaderMaterial;
@@ -614,11 +614,18 @@ export default class GameScene extends THREE.Scene {
         this.lightning = new THREE.Line(geometry2, lightningMaterial3);
         this.add(this.lightning);
 
-        this.animatedSprite = new AnimatedSprite('assets/spritesheets/spritesheet-spark.png', 2, 3, 10); // 4x4 spritesheet, 10 FPS
-        this.animatedSprite.getMesh().position.set(0, 5, 0);
-        this.animatedSprite.getMesh().scale.set(2, 2, 2);
-        this.add(this.animatedSprite.getMesh());
-                
+
+        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/spritesheet-spark.png', 2, 3, 10, true, new THREE.Vector3(0, 5, 0)));
+
+        // https://opengameart.org/content/9-frame-fire-animation-16x-32x-64x        
+        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/Fire 64x.png', 3, 3, 5, true, new THREE.Vector3(5, 5, 5)));
+       
+        // https://opengameart.org/content/2d-explosion-animations-frame-by-frame
+        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 1.png', 8, 8, 120, true, new THREE.Vector3(-5, 5, 5)));                
+        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 2.png', 8, 8, 120, true, new THREE.Vector3(-4, 5, 5)));                
+        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 3.png', 8, 8, 120, true, new THREE.Vector3(-3, 5, 5)));                
+        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 4.png', 8, 8, 120, true, new THREE.Vector3(-2, 5, 5)));                
+ 
         //document.addEventListener('keydown', this.handleKeyDown);
         //document.addEventListener('keyup', this.handleKeyUp);
     }   
@@ -836,7 +843,6 @@ export default class GameScene extends THREE.Scene {
 
         // left
         if(keyDown.has('a')) {
-
             const forwardVector = new THREE.Vector3();
             this.debugCamera.getWorldDirection(forwardVector); // Get the current forward direction
 
@@ -876,7 +882,6 @@ export default class GameScene extends THREE.Scene {
 
         // down
         if(keyDown.has('z')) {
-
             const upVector = new THREE.Vector3(0, 1, 0);
 
             this.debugCamera.position.addScaledVector(upVector, -cameraMovement); // Move the camera forward by 1 unit
@@ -917,7 +922,6 @@ export default class GameScene extends THREE.Scene {
     }
 
     updateCamera() {
-
         if(this.followCam != null)
             this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.1);
 		if(this.player1 != null && !this.player1.isModelNull())
@@ -958,8 +962,7 @@ export default class GameScene extends THREE.Scene {
         this.cubes.push(cube);
     }
 
-    public async generateRandomDebrisWheel(randPosition?: THREE.Vector3, quaternion?: THREE.Quaternion) {
-        
+    public async generateRandomDebrisWheel(randPosition?: THREE.Vector3, quaternion?: THREE.Quaternion) {        
         if(randPosition == null)
             randPosition = new THREE.Vector3(randFloat(-10, 10), randFloat(5, 10), randFloat(-10, -10));
 
@@ -1727,9 +1730,8 @@ export default class GameScene extends THREE.Scene {
             //this.animateSprite();
         //}
 
-        if(this.animatedSprite != null) {
-            this.animatedSprite.update(this.clock.getDelta());
-        }
+        let time = this.clock.getDelta();
+        this.animatedSprites.forEach(x => x.update(time));
         
         this.cubes.forEach(x => x.update());
 
