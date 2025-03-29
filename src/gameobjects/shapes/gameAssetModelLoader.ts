@@ -256,6 +256,11 @@ export default class GameAssetModelLoader {
         var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
         var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
 
+        // TODO: killdozer shovel
+        //var shovel = body?.children.find(x => x.name == 'shovel');
+        //shovel?.position.add(new THREE.Vector3(0, 3, 0));
+        //shovel?.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
+
         wheel1?.removeFromParent();
         wheel2?.removeFromParent();
         wheel3?.removeFromParent();

@@ -16,6 +16,12 @@ export enum DriveSystem {
     RearWheelDrive
 }
 
+export enum ShovelState {
+    Stop,
+    RotateForwards,
+    RotateBackwards
+}
+
 export class RaycastVehicleObject implements IPlayerVehicle {
     
     wheels: RaycastWheelObject[] = [];
@@ -26,6 +32,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     // TODO: use these
     private model!: THREE.Group;
     private wheelModels: THREE.Group[] = [];
+    private shovelModel!: THREE.Group;
+    
+    private shovelModelRotation: number = 0;
+    private shovelState: ShovelState = 0;
 
     modelOffset?: THREE.Vector3;
     
@@ -56,35 +66,15 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     vehicleOverrideConfig: VehicleConfig;
 
     constructor(scene: THREE.Scene,
-        isDebug: boolean,
-        //position: THREE.Vector3,
-        //color: number = 0xffffff,
+        isDebug: boolean,        
         world: CANNON.World,
-        //chassisDimensions: CANNON.Vec3,        
-        //centerOfMassAdjust: CANNON.Vec3,
-        //chassisMass: number,
         wheelMaterial: CANNON.Material,
-
-        //frontWheelRadius: number,
-        //rearWheelRadius: number,
-
-        //frontWheelOffset: CANNON.Vec3,
-        //rearWheelOffset: CANNON.Vec3,
-
-        //frontWheelHeight: number,
-        //rearWheelHeight: number,
-                
-        //wheelMass: number,
 
         modelData: GLTF,
         wheelModelData: GLTF,
 
-        //modelScale: THREE.Vector3, // = new THREE.Vector3(1, 1, 1),
-        //modelOffset: THREE.Vector3, // = new THREE.Vector3(0, 0, 0),
-        //frontWheelModelScale: THREE.Vector3,
-        //rearWheelModelScale: THREE.Vector3,
-        //driveSystem: DriveSystem,
-        vehicleOverrideConfig: VehicleConfig) { //} = new THREE.Vector3(1, 1, 1)) {
+        vehicleOverrideConfig: VehicleConfig)
+    {
 
         this.vehicleOverrideConfig = vehicleOverrideConfig;
 
@@ -225,6 +215,20 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             this.model.scale.set(modelScale.x, modelScale.y, modelScale.z);         
             this.model.rotateY(Math.PI / 2);
 
+
+            /*
+            // TODO: killdozer shovel
+            let shovelModel = this.getShovel();
+            if(shovelModel != null) {
+                //console.log('found shovel');
+                shovelModel?.position.add(new THREE.Vector3(0, 0.0, 0));
+                shovelModel?.rotateOnAxis(new THREE.Vector3(1, 0, 0), -3 * Math.PI / 4);
+
+                this.shovelModelRotation -= Math.PI / 64;
+                // rotate 0 through -3*PI / 4
+            }
+            */
+
             scene.add(this.model);
         }
 
@@ -247,6 +251,15 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             */           
         }
         
+    }
+
+    private getShovel(): THREE.Object3D<THREE.Object3DEventMap> | undefined {
+        let bodyModel = this.model.children.find(x => x.name == 'body');
+        return bodyModel?.children.find(x => x.name == 'shovel');
+    }
+
+    private rotateShovelModel() {
+
     }
 
     respawnPosition(x: number, y: number, z: number): void {
@@ -617,6 +630,30 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             this.model.quaternion.copy(temp);
             */
             
+        }
+
+        let shovelModel = this.getShovel();
+        if(shovelModel != null) {
+            // rotate 0 through -3*PI / 4
+
+            switch(this.shovelState) {
+
+                case ShovelState.Stop:
+                    this.shovelModelRotation = 0;
+                    break;
+                case ShovelState.RotateBackwards:
+                    this.shovelModelRotation = -Math.PI / 64;
+                    break;
+                case ShovelState.RotateForwards:
+                    this.shovelModelRotation = Math.PI / 64;
+                    break;
+            }
+            
+            //if(this.shovelModelRotation < -3*Math.PI / 4)
+                //this.shovelModelRotation = 0;
+
+            //shovelModel?.position.add(new THREE.Vector3(0, 0.0, 0));
+            shovelModel?.rotateOnAxis(new THREE.Vector3(1, 0, 0), this.shovelModelRotation);            
         }
 
         this.dampenLateralVelocityInLocalSpace();

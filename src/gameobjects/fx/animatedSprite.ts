@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Utility } from '../../utility';
 
 export class AnimatedSprite {
     private texture: THREE.Texture;
@@ -9,7 +10,7 @@ export class AnimatedSprite {
     private elapsedTime: number = 0;
     private isAlive: boolean = true;
 
-    constructor(scene: THREE.Scene, texturePath: string,
+    constructor(private scene: THREE.Scene, texturePath: string,
             private frameCountX: number, private frameCountY: number, private frameRate: number,
             private loop: boolean,
             position: THREE.Vector3 = new THREE.Vector3(0,0,0), 
@@ -30,7 +31,7 @@ export class AnimatedSprite {
 
         this.isAlive = true;
 
-        scene.add(this.sprite);
+        this.scene.add(this.sprite);
     }
 
     setScale(position: THREE.Vector3) {
@@ -59,11 +60,12 @@ export class AnimatedSprite {
                     this.frameY++;
                     if (this.frameY >= this.frameCountY) {
                         this.frameY = 0;                        
+
+                        if(!this.loop)
+                            this.kill();
                     }
                 }
 
-                // if(!this.loop)
-                // this.kill();
                 this.texture.offset.set(this.frameX / this.frameCountX, 1 - (this.frameY + 1) / this.frameCountY);
             }
         }
@@ -71,5 +73,6 @@ export class AnimatedSprite {
 
     kill() {
         this.isAlive = false;
+        Utility.disposeSprite(this.sprite);
     }
 }
