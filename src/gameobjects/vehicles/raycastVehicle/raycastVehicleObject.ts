@@ -8,6 +8,7 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Utils } from "utils/Utils";
 import { NumberController } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { VehicleConfig } from "../config/vehicleConfig";
+import { WeaponCoolDownClock } from "../../weapons/weaponCooldownClock";
 
 
 export enum DriveSystem {
@@ -16,10 +17,10 @@ export enum DriveSystem {
     RearWheelDrive
 }
 
-export enum ShovelState {
-    Stop,
-    RotateForwards,
-    RotateBackwards
+export enum ShovelState {    
+    RotateBackwards = -1,
+    Stop = 0,
+    RotateForwards = 1,
 }
 
 export class RaycastVehicleObject implements IPlayerVehicle {
@@ -34,8 +35,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     private wheelModels: THREE.Group[] = [];
     private shovelModel!: THREE.Group;
     
+    private shovelModelTimer: number = 0;    
     private shovelModelRotation: number = 0;
-    private shovelState: ShovelState = 0;
+    private shovelState: ShovelState = ShovelState.RotateBackwards;
+    private shovelCooldownClock1: WeaponCoolDownClock;
 
     modelOffset?: THREE.Vector3;
     
@@ -228,7 +231,6 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                 // rotate 0 through -3*PI / 4
             }
             */
-
             scene.add(this.model);
         }
 
@@ -250,7 +252,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             } 
             */           
         }
-        
+
+        this.shovelCooldownClock1 = new WeaponCoolDownClock(60, 1);
+        this.shovelCooldownClock1.start();
+
     }
 
     private getShovel(): THREE.Object3D<THREE.Object3DEventMap> | undefined {
@@ -634,26 +639,56 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         let shovelModel = this.getShovel();
         if(shovelModel != null) {
-            // rotate 0 through -3*PI / 4
 
+            const rotationAmplitude = -3 * Math.PI / 4; // -3π/4
+            const elapsedTime = this.shovelCooldownClock1.getElapsedTime() % 0.5; // Normalize to 0.5-second cycle
+            const progress = elapsedTime * 2 * Math.PI; // Convert to full sine wave cycle
+        
+            // Smooth rotation using sin wave (alternates between 0 and -3π/4)
+            let angle = rotationAmplitude * Math.sin(progress);
+            shovelModel?.rotation.set(angle, 0, 0);
+
+            /*
+            let angle = 0;
+            // rotate 0 through -3*PI / 4
+            if(this.shovelCooldownClock1.isRunning()) {
+            
+                const elapsedTime = this.shovelCooldownClock1.getElapsedTime();
+                const direction = Math.floor(elapsedTime / 0.5) % 2 === 0
+                                    ? 1
+                                    : -1;
+                angle = (-3 * Math.PI / 4) * Math.floor(elapsedTime) % 2;
+                //angle = direction * (3 * Math.PI / 4) * elapsedTime % 2;
+        
+                this.shovelState = direction as ShovelState;
+
+                this.shovelCooldownClock1.stopIfExpired();                
+            }
+
+            if(!this.shovelCooldownClock1.isRunning()) {
+                this.shovelState = ShovelState.Stop;
+                //shovelModel?.rotation.set(0, 0, 0);
+            }
+            
             switch(this.shovelState) {
 
                 case ShovelState.Stop:
                     this.shovelModelRotation = 0;
                     break;
                 case ShovelState.RotateBackwards:
-                    this.shovelModelRotation = -Math.PI / 64;
+                    //this.shovelModelRotation = -3 * Math.PI / 4;
+                    this.shovelModelRotation += Math.PI / 32;
                     break;
                 case ShovelState.RotateForwards:
-                    this.shovelModelRotation = Math.PI / 64;
+                    //this.shovelModelRotation = 0;
+                    this.shovelModelRotation -= Math.PI / 32;
                     break;
             }
             
-            //if(this.shovelModelRotation < -3*Math.PI / 4)
-                //this.shovelModelRotation = 0;
-
-            //shovelModel?.position.add(new THREE.Vector3(0, 0.0, 0));
-            shovelModel?.rotateOnAxis(new THREE.Vector3(1, 0, 0), this.shovelModelRotation);            
+            shovelModel?.rotation.set(angle, 0, 0);
+            //shovelModel?.rotation.set(this.shovelModelRotation, 0, 0);//setthis.shovelModelRotation * this.shovelState;
+            //shovelModel?.rotateOnAxis(new THREE.Vector3(1, 0, 0), this.shovelModelRotation);            
+            */
         }
 
         this.dampenLateralVelocityInLocalSpace();

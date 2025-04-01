@@ -20,6 +20,10 @@ export class WeaponCoolDownClock {
         this.cooldownClock.stop();
     }
 
+    public getElapsedTime(): number {
+        return this.cooldownClock.getElapsedTime();
+    }
+
     public isExpired(): boolean {
         return this.cooldownClock.getElapsedTime() > this.cooldownTimeInSeconds;
     }
