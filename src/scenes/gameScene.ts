@@ -1537,13 +1537,13 @@ export default class GameScene extends THREE.Scene {
 
                     if(flamethrowerBoundingBox != null && enemyBoundingBox != null && flamethrowerBoundingBox?.intersectsBox(enemyBoundingBox)){
                         enemy.tryDamageWithFlamethrower();
-                        player.flamethrowerBoundingBoxMaterial.color.set(0xff0000);
+                        player.boundingMeshMaterial.color.set(0xff0000);
                         anyHits = true;
                     }
                 });
             }
             if(!anyHits) {
-                player.flamethrowerBoundingBoxMaterial.color.set(0xffffff);
+                player.boundingMeshMaterial.color.set(0xffffff);
             }
         });
     }

@@ -121,8 +121,10 @@ export class Player {
     public shovelCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(8, 1);
 
     flamethrowerBoundingBox: THREE.Mesh;
-    flamethrowerBoundingBoxMaterial: THREE.MeshBasicMaterial;
+    boundingMeshMaterial: THREE.MeshBasicMaterial;
     flamethrowerActive: boolean = false;
+
+    shovelBoundingMesh: THREE.Mesh;
     
     private activeAirstrike!: Projectile;
 
@@ -242,10 +244,13 @@ export class Player {
         //const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
         const cylinderGeometry = new THREE.CylinderGeometry(0.6, 0.4, 3);
         //const cylinderGeometry = new THREE.BoxGeometry(1, 5, 1)
-        this.flamethrowerBoundingBoxMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-        this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, this.flamethrowerBoundingBoxMaterial);
+        this.boundingMeshMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+        this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, this.boundingMeshMaterial);
         scene.add(this.flamethrowerBoundingBox);
 
+        const BoxGeometry = new THREE.BoxGeometry(1.5, 1, 1.5);
+        this.shovelBoundingMesh = new THREE.Mesh(BoxGeometry, this.boundingMeshMaterial);
+        scene.add(this.shovelBoundingMesh);
        
         //this.bulletSound.position.copy(this.getPosition());
         //this.rocketSound.position.copy(this.getPosition());
@@ -400,12 +405,13 @@ export class Player {
                 
         this.playerMarker.setTargetLocation(new THREE.Vector3(this.getPosition().x, this.getPosition().y + 2, this.getPosition().z));
 
+        // flamethrower intersection mesh
         let offset = new THREE.Vector3(-2, 0, 0);
         offset.applyQuaternion(this.vehicleObject.getModel().quaternion);
         var flamethrowerBoundingCylinderOffset = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), offset);
         this.flamethrowerBoundingBox.position.set(flamethrowerBoundingCylinderOffset.x, flamethrowerBoundingCylinderOffset.y, flamethrowerBoundingCylinderOffset.z);
         this.flamethrowerBoundingBox.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2);
-        this.flamethrowerBoundingBox.applyQuaternion(this.vehicleObject.getModel().quaternion);
+        this.flamethrowerBoundingBox.applyQuaternion(this.vehicleObject.getModel().quaternion);       
 
         if(this.flamethrowerActive) {
             if(this.isDebug) { 
@@ -417,6 +423,21 @@ export class Player {
         else {
             this.flamethrowerBoundingBox.visible = false;            
         }
+
+        // shovel intersection mesh
+        offset = new THREE.Vector3(-1, 0.5, 0);
+        offset.applyQuaternion(this.vehicleObject.getModel().quaternion);
+        var boundingMeshOffset = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), offset);
+        this.shovelBoundingMesh.position.set(boundingMeshOffset.x, boundingMeshOffset.y, boundingMeshOffset.z);
+        this.shovelBoundingMesh.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2);
+        this.shovelBoundingMesh.applyQuaternion(this.vehicleObject.getModel().quaternion);
+
+        if(this.shovelCooldownClock.isRunningAndNotExpired()) {
+            if(this.isDebug)
+                this.shovelBoundingMesh.visible = true;
+        }
+        else
+            this.shovelBoundingMesh.visible = false
         
         if(this.headLights != null)
             this.headLights.update(
