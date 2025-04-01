@@ -118,6 +118,8 @@ export class Player {
     //private sonicPulseCooldownClock: THREE.Clock = new THREE.Clock(false);
     private sonicPulseCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1.00, 1.00);
 
+    public shovelCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(8, 1);
+
     flamethrowerBoundingBox: THREE.Mesh;
     flamethrowerBoundingBoxMaterial: THREE.MeshBasicMaterial;
     flamethrowerActive: boolean = false;
@@ -137,6 +139,8 @@ export class Player {
     private readonly rocketSoundMarker?: THREE.Mesh;   
     
     private readonly deadzoneX: number;
+
+    vehicleType: VehicleType;
 
     constructor(scene: THREE.Scene,
         isDebug: boolean,
@@ -165,6 +169,7 @@ export class Player {
         this.scene = scene;
         this.isDebug = isDebug;
         this.isCpuPlayer = isCpuPlayer;
+        this.vehicleType = vehicleType;
 
         this.playerId = uuidv4();
         this.healthBar = new HealthBar(scene, maxHealth);
@@ -342,6 +347,25 @@ export class Player {
 
         this.vehicleObject.update();
 
+        if(this.vehicleType == VehicleType.Killdozer) {
+            let shovelModel = this.getShovel(this.vehicleObject.getModel());
+            if(shovelModel != null) {
+
+            if(this.shovelCooldownClock.isRunningAndNotExpired()) {
+                
+                const rotationAmplitude = -3 * Math.PI / 4; // -3π/4
+                const elapsedTime = this.shovelCooldownClock.getElapsedTime() % 0.5; // Normalize to 0.5-second cycle
+                const progress = elapsedTime * 2 * Math.PI; // Convert to full sine wave cycle
+            
+                // Smooth rotation using sin wave (alternates between 0 and -3π/4)
+                let angle = rotationAmplitude * Math.sin(progress);
+                shovelModel?.rotation.set(angle, 0, 0);
+            }
+            else
+                shovelModel?.rotation.set(0,0,0);
+        }
+        }
+
         //this.bulletSound.position.copy(this.getPosition());        
         //this.bulletSound.updateMatrixWorld(true);
 
@@ -443,12 +467,18 @@ export class Player {
         this.rocketCooldownClock.stopIfExpired();
         this.airstrikeCooldownClock.stopIfExpired();
         this.sonicPulseCooldownClock.stopIfExpired();
+        this.shovelCooldownClock.stopIfExpired();
 
         if(this.shield != null)
             this.shield.updatePosition(this.getPosition());
 
         //this.bulletSoundMarker.position.copy(this.bulletSound.position);
         //this.rocketSoundMarker.position.copy(this.rocketSound.position);
+    }
+
+    private getShovel(model: THREE.Group): THREE.Object3D<THREE.Object3DEventMap> | undefined {
+        let bodyModel = model.children.find(x => x.name == 'body');
+        return bodyModel?.children.find(x => x.name == 'shovel');
     }
 
     public createProjectile(projectileType: ProjectileType): Projectile {
@@ -915,6 +945,43 @@ export class Player {
             gameScene.generateSonicPulse(this.getPosition());
 
             this.sonicPulseCooldownClock.start();
+        }
+    }
+
+    tryFireShovel(): void {
+        if(this.vehicleType != VehicleType.Killdozer)
+            return;
+
+        this.shovelCooldownClock.start();
+    }
+
+    tryFireSpecialWeapon() {
+        switch(this.vehicleType) {
+            case VehicleType.Killdozer:
+                this.tryFireShovel();
+                break;
+            case VehicleType.Taxi:
+                break;
+            case VehicleType.Ambulance:
+                break;
+            case VehicleType.RaceCar:
+                break;
+            case VehicleType.RaceCarRed:
+                break;
+            case VehicleType.Police:
+                break;
+            case VehicleType.TrashTruck:
+                break;
+            case VehicleType.Offroader:
+                break;
+            case VehicleType.FireTruck:
+                break;
+            case VehicleType.PoliceTractor:
+                break;
+            case VehicleType.Harvester:
+                break;
+            case VehicleType.PickupTruck:
+                break;
         }
     }
     

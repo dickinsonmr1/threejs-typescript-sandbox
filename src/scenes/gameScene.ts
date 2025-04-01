@@ -683,6 +683,9 @@ export default class GameScene extends THREE.Scene {
         if(event.key === 't') {
             this.player1.tryFireSonicPulse();
         }
+        if(event.key === 'r') {
+            this.player1.tryFireShovel();
+        }
         /*
         /*
         if (event.key === 'x')

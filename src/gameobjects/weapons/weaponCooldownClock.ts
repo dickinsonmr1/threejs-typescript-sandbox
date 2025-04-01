@@ -12,6 +12,10 @@ export class WeaponCoolDownClock {
         return this.cooldownClock.running;
     }
 
+    public isRunningAndNotExpired(): boolean {
+        return this.isRunning() && !this.isExpired();
+    }
+
     public start(): void {
         this.cooldownClock.start();
     }
