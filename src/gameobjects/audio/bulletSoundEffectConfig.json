@@ -1,0 +1,8 @@
+{
+    "soundKey": "bullet",
+    "asset": "assets/audio/gunshot.ogg",
+    "volume": 0.25,
+    "refDistance": 25,
+    "maxDistance": 100,
+    "loop": false
+}

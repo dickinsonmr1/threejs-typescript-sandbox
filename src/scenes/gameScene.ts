@@ -39,8 +39,10 @@ import { AudioManager } from '../gameobjects/audio/audioManager';
 import { SonicPulseEmitter } from '../gameobjects/weapons/sonicPulseEmitter';
 import { AnimatedSprite } from '../gameobjects/fx/animatedSprite';
 import { PlayerSoundKeyMap } from '../gameobjects/audio/playerSoundKeyMap';
+import { SoundEffectConfig } from '../gameobjects/audio/soundEffectConfig';
 
-import playerSoundKeyMapJson from '../gameobjects/audio/playerSoundKeyMap.json'
+import playerSoundKeyMapJson from '../gameobjects/audio/playerSoundKeyMap.json';
+import bulletSoundEffectConfigJson from '../gameobjects/audio/bulletSoundEffectConfig.json'
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -76,6 +78,8 @@ export default class GameScene extends THREE.Scene {
 
     private readonly audioManager: AudioManager;
     private playerSoundKeyMap: PlayerSoundKeyMap = playerSoundKeyMapJson;
+
+    private bulletSoundEffectConfig: SoundEffectConfig = bulletSoundEffectConfigJson;
 
     private animatedSprites: AnimatedSprite[] = [];
     private clock: THREE.Clock = new THREE.Clock();
@@ -1205,8 +1209,9 @@ export default class GameScene extends THREE.Scene {
 
         for(var i = 0; i < numberOfPlayers; i++) {
 
-            //this.positionalBulletSounds.push(await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100));
-            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.bulletSoundKey, await this.audioManager.loadPositionalSound('assets/audio/gunshot.ogg', 0.25, 25, 100));            
+            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.bulletSoundKey,
+                await this.audioManager.loadPositionalSound(this.bulletSoundEffectConfig.asset, this.bulletSoundEffectConfig.volume,
+                    this.bulletSoundEffectConfig.refDistance, this.bulletSoundEffectConfig.maxDistance));            
             
             //this.positionalRocketSounds.push(await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100));
             this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.rocketSoundKey, await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100));          
