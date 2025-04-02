@@ -19,7 +19,7 @@ import vehicleConfigPickupTruck from './config/11-pickupTruck.json'
 import vehicleConfigPoliceTractor from './config/09-policeTractor.json'
 import vehicleConfigKilldozer from './config/04-killdozer.json'
 import vehicleConfigHarvester from './config/10-harvester.json'
-import { PlayerSoundKeyMap } from "../player/playerSoundKeyMap";
+import { PlayerSoundKeyMap } from "../audio/playerSoundKeyMap";
 export class VehicleFactory {
     
     crosshairTexture: THREE.Texture;

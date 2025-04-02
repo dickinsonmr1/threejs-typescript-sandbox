@@ -35,12 +35,12 @@ import GameAssetModelLoader from '../gameobjects/shapes/gameAssetModelLoader';
 import { TextureHeightMapArray2 } from '../gameobjects/fx/textureToArray2';
 import { QuadtreeTerrainSystem5 } from '../gameobjects/terrain/quadtree5/QuadtreeTerrainSystem5';
 import LODTerrainSystem from '../gameobjects/terrain/lodTerrainSystem';
-import { AudioManager } from '../gameobjects/fx/audioManager';
+import { AudioManager } from '../gameobjects/audio/audioManager';
 import { SonicPulseEmitter } from '../gameobjects/weapons/sonicPulseEmitter';
 import { AnimatedSprite } from '../gameobjects/fx/animatedSprite';
-import { PlayerSoundKeyMap } from '../gameobjects/player/playerSoundKeyMap';
+import { PlayerSoundKeyMap } from '../gameobjects/audio/playerSoundKeyMap';
 
-import playerSoundKeyMapJson from '../gameobjects/player/playerSoundKeyMap.json'
+import playerSoundKeyMapJson from '../gameobjects/audio/playerSoundKeyMap.json'
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291

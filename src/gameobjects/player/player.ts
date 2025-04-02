@@ -24,7 +24,7 @@ import EmergencyLights from "../vehicles/emergencyLights";
 import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
 import { VehicleConfig } from "../vehicles/config/vehicleConfig";
 import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
-import { PlayerSoundKeyMap } from "./playerSoundKeyMap";
+import { PlayerSoundKeyMap } from "../audio/playerSoundKeyMap";
 
 export enum PlayerState {
     Alive,
