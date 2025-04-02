@@ -93,6 +93,20 @@ export class AudioManager {
       }          
     }
 
+    public playSoundIfNotCurrentlyPlaying(key: string, detune: boolean) {
+      const sound = this.positionalSounds.get(key);
+      if(sound) {          
+        if(sound.isPlaying)
+          return;
+
+        sound.play();
+
+        if(detune) {
+          sound.detune = Math.floor(Math.random() * 1600 - 800);
+        }
+      }          
+    }
+
     public stopSound(key: string) {
       const sound = this.positionalSounds.get(key);
       if(sound && sound.isPlaying)

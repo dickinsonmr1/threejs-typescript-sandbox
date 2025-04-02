@@ -119,6 +119,7 @@ export class Player {
     private sonicPulseCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1.00, 1.00);
 
     public shovelCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(8, 1);
+    public currentShovelAngle: number = 0;
 
     flamethrowerBoundingBox: THREE.Mesh;
     boundingMeshMaterial: THREE.MeshBasicMaterial;
@@ -165,6 +166,7 @@ export class Player {
         public deathFireSoundKey: string,
         public flamethrowerSoundKey: string,
         public sonicPulseSoundKey: string,
+        public shovelSoundKey: string,
         deadzoneX: number,
         vehicleConfig: VehicleConfig) {
 
@@ -365,8 +367,14 @@ export class Player {
                 // Smooth rotation using sin wave (alternates between 0 and -3π/4)
                 let angle = rotationAmplitude * Math.sin(progress);
                 shovelModel?.rotation.set(angle, 0, 0);
+
+                this.currentShovelAngle = angle;
+                if(elapsedTime < 0.1) {
+                    let gameScene = <GameScene>this.scene;
+                    gameScene.getAudioManager().playSoundIfNotCurrentlyPlaying(this.shovelSoundKey, false);
+                }                    
             }
-            else
+            else 
                 shovelModel?.rotation.set(0,0,0);
         }
         }

@@ -1218,6 +1218,9 @@ export default class GameScene extends THREE.Scene {
 
             // https://pixabay.com/sound-effects/cinematic-energy-impact-pure-power-228339/
             this.audioManager.addSound(`player${i+1}-sonicpulse`, await this.audioManager.loadPositionalSound('assets/audio/cinematic-energy-impact-pure-power-228339.mp3', 0.50, 25, 100));
+
+            // https://pixabay.com/sound-effects/thud-82914/
+            this.audioManager.addSound(`player${i+1}-shovel`, await this.audioManager.loadPositionalSound('assets/audio/shovel-thud-short.ogg', 0.50, 25, 100));
         }
 
         this.audioManager.addSound(`fw_01`, await this.audioManager.loadPositionalSound('assets/audio/fw_01.ogg', 0.25, 25, 100));
@@ -1245,19 +1248,19 @@ export default class GameScene extends THREE.Scene {
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
         this.player1 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial,
-            "player1-bullet", "player1-rocket", "player1-explosion", "player1-deathFire", "player1-flamethrower", "player1-sonicpulse");   
+            "player1-bullet", "player1-rocket", "player1-explosion", "player1-deathFire", "player1-flamethrower", "player1-sonicpulse", "player1-shovel");   
             //this.positionalBulletSounds[0], this.positionalRocketSounds[0], this.positionalVehicleExplosionSounds[0], this.deathFireSounds[0]);
 
         this.player2 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial,
-            "player2-bullet", "player2-rocket", "player2-explosion", "player2-deathFire", "player2-flamethrower", "player2-sonicpulse");   
+            "player2-bullet", "player2-rocket", "player2-explosion", "player2-deathFire", "player2-flamethrower", "player2-sonicpulse", "player2-shovel");   
             //this.positionalBulletSounds[1], this.positionalRocketSounds[1], this.positionalVehicleExplosionSounds[1], this.deathFireSounds[1]);
 
         this.player3 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial,
-            "player3-bullet", "player3-rocket", "player3-explosion", "player3-deathFire", "player3-flamethrower", "player3-sonicpulse");   
+            "player3-bullet", "player3-rocket", "player3-explosion", "player3-deathFire", "player3-flamethrower", "player3-sonicpulse", "player3-shovel");   
             //this.positionalBulletSounds[2], this.positionalRocketSounds[2], this.positionalVehicleExplosionSounds[2], this.deathFireSounds[2]);
 
         this.player4 = vehicleFactory.generatePlayer(this, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial,
-            "player4-bullet", "player4-rocket", "player4-explosion", "player4-deathFire", "player4-flamethrower", "player4-sonicpulse");    
+            "player4-bullet", "player4-rocket", "player4-explosion", "player4-deathFire", "player4-flamethrower", "player4-sonicpulse", "player4-shovel");    
             //this.positionalBulletSounds[3], this.positionalRocketSounds[3], this.positionalVehicleExplosionSounds[3], this.deathFireSounds[3]);
 
         this.allPlayers.push(this.player1);          
@@ -1548,6 +1551,40 @@ export default class GameScene extends THREE.Scene {
         });
     }
 
+    private checkKilldozerShovelForCollision() {
+        this.allPlayers.forEach(player => {
+            
+            var anyHits = false;
+            if(player.shovelCooldownClock.isRunningAndNotExpired() && player.currentShovelAngle > -Math.PI / 32) {
+
+                var enemyPlayers = this.allPlayers.filter(x => x.playerId != player.playerId);
+                enemyPlayers.forEach(enemy => {
+                                        
+                    const weaponBoundingBox = new THREE.Box3().setFromObject(player.shovelBoundingMesh);
+                    var enemyBoundingBox = new THREE.Box3().setFromObject(enemy.getVehicleObject().getChassis().mesh);
+
+                    if(weaponBoundingBox != null && enemyBoundingBox != null && weaponBoundingBox?.intersectsBox(enemyBoundingBox)){
+                        enemy.tryDamage(ProjectileType.Rocket, new THREE.Vector3(0,0,0));
+                        this.generateRandomExplosion(
+                            ProjectileType.Rocket,
+                                enemy.getPosition(),
+                                new THREE.Color('black'),
+                                new THREE.Color('black'),
+                                new THREE.Color('brown'),
+                                new THREE.Color('brown'),
+                                new THREE.Color('gray')
+                        );
+                        player.boundingMeshMaterial.color.set(0xff0000);
+                        anyHits = true;
+                    }
+                });
+            }
+            if(!anyHits) {
+                player.boundingMeshMaterial.color.set(0xffffff);
+            }
+        });
+    }
+
     private checkPickupsForCollisionWithPlayers() {
         this.pickups.forEach(pickup => {
             this.allPlayers.forEach(player => {
@@ -1702,6 +1739,9 @@ export default class GameScene extends THREE.Scene {
                 case 121:
                     cpuPlayer.tryFireSonicPulse();
                     break;
+                case 122:
+                    cpuPlayer.tryFireSpecialWeapon();
+                    break;
                 default:
                     break;
                 }
@@ -1752,6 +1792,7 @@ export default class GameScene extends THREE.Scene {
 
         this.checkProjectilesForCollision();
         this.checkFlamethrowerForCollision();
+        this.checkKilldozerShovelForCollision();
         this.checkPickupsForCollisionWithPlayers();
 
         this.world.contacts.forEach((contact) => {
