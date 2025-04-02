@@ -19,6 +19,7 @@ import vehicleConfigPickupTruck from './config/11-pickupTruck.json'
 import vehicleConfigPoliceTractor from './config/09-policeTractor.json'
 import vehicleConfigKilldozer from './config/04-killdozer.json'
 import vehicleConfigHarvester from './config/10-harvester.json'
+import { PlayerSoundKeyMap } from "../player/playerSoundKeyMap";
 export class VehicleFactory {
     
     crosshairTexture: THREE.Texture;
@@ -39,18 +40,13 @@ export class VehicleFactory {
     }
 
     generatePlayer(scene: THREE.Scene,
+        playerIndex: number,
         isDebug: boolean,
         world: CANNON.World, isCpuPlayer: boolean,
         vehicleType: VehicleType, playerColor: THREE.Color,        
         deadzoneX: number,
         wheelMaterial: CANNON.Material,
-        bulletSoundKey: string,
-        rocketSoundKey: string,
-        explosionSoundKey: string,
-        deathFireSoundKey: string,
-        flamethrowerSoundKey: string,
-        sonicPulseSoundKey: string,
-        shovelSoundKey: string
+        playerSoundKeyMap: PlayerSoundKeyMap
         ) : Player {
         //isCpuPlayer: boolean, playerTeam: PlayerTeam, scene: THREE.Scene) : Player {        
         
@@ -239,6 +235,7 @@ export class VehicleFactory {
         }
         
         return new Player(scene,
+            playerIndex,
             isDebug,
             isCpuPlayer,
             vehicleType,
@@ -252,13 +249,7 @@ export class VehicleFactory {
             rightHeadlightOffset,
             leftBrakeLightOffset,
             rightBrakeLightOffset,
-            bulletSoundKey,
-            rocketSoundKey,
-            explosionSoundKey,
-            deathFireSoundKey,
-            flamethrowerSoundKey,
-            sonicPulseSoundKey,
-            shovelSoundKey,
+            playerSoundKeyMap,
             deadzoneX,
             vehicle.vehicleOverrideConfig
         );

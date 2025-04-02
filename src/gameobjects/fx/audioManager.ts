@@ -64,8 +64,12 @@ export class AudioManager {
         return positionalAudio;
     }    
 
-    public addSound(key: string, sound: THREE.PositionalAudio) {      
+    public addSound(key: string, sound: THREE.PositionalAudio): void {      
       this.positionalSounds.set(key, sound);
+    }
+
+    public addSoundWithPlayerIndexPrefix(playerIndexPrefix: number, key: string, sound: THREE.PositionalAudio): void {      
+      this.positionalSounds.set(`player${playerIndexPrefix+1}-${key}`, sound);
     }
 
     public getSound(key: string): THREE.PositionalAudio | null {
@@ -73,10 +77,19 @@ export class AudioManager {
       return sound ?? null;
     }
 
+    public getPlayerSpecificSound(playerIndexPrefix: number, key: string): THREE.PositionalAudio | null {
+      let sound = this.positionalSounds.get(`player${playerIndexPrefix+1}-${key}`);
+      return sound ?? null;
+    }
+
     public playLoopedSound(key: string) {
       const sound = this.positionalSounds.get(key);
       if(sound && !sound.isPlaying)
           sound.play();
+    }
+
+    public playPlayerSpecificLoopedSound(playerIndex: number, key: string) {
+      this.playLoopedSound(`player${playerIndex+1}-${key}`);
     }
 
     public playSound(key: string, detune: boolean) {
@@ -93,6 +106,10 @@ export class AudioManager {
       }          
     }
 
+    public playPlayerSpecificSound(playerIndex: number, key: string, detune: boolean) {
+      this.playSound(`player${playerIndex+1}-${key}`, detune);
+    }
+
     public playSoundIfNotCurrentlyPlaying(key: string, detune: boolean) {
       const sound = this.positionalSounds.get(key);
       if(sound) {          
@@ -107,8 +124,16 @@ export class AudioManager {
       }          
     }
 
-    public stopSound(key: string) {
-      const sound = this.positionalSounds.get(key);
+    public playPlayerSpecificSoundIfNotCurrentlyPlaying(playerIndex: number, key: string, detune: boolean) {
+      this.playSoundIfNotCurrentlyPlaying(`player${playerIndex+1}-${key}`, detune);        
+    }
+
+    public stopSound(key: string, playerIndex?: number) {
+      let prefix = '';
+      if(playerIndex != null)
+        prefix = `player${playerIndex+1}-`;
+
+      const sound = this.positionalSounds.get(`${prefix}${key}`);
       if(sound && sound.isPlaying)
           sound.stop();        
     }
