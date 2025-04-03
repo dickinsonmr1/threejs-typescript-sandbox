@@ -1,0 +1,8 @@
+{
+    "soundKey": "rocket",
+    "asset": "assets/audio/rlauncher.ogg",
+    "volume": 0.25,
+    "refDistance": 25,
+    "maxDistance": 100,
+    "loop": false
+}

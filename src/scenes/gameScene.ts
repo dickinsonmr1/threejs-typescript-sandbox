@@ -39,10 +39,16 @@ import { AudioManager } from '../gameobjects/audio/audioManager';
 import { SonicPulseEmitter } from '../gameobjects/weapons/sonicPulseEmitter';
 import { AnimatedSprite } from '../gameobjects/fx/animatedSprite';
 import { PlayerSoundKeyMap } from '../gameobjects/audio/playerSoundKeyMap';
-import { SoundEffectConfig } from '../gameobjects/audio/soundEffectConfig';
+import { SoundEffectConfig } from '../gameobjects/audio/config/soundEffectConfig';
 
 import playerSoundKeyMapJson from '../gameobjects/audio/playerSoundKeyMap.json';
-import bulletSoundEffectConfigJson from '../gameobjects/audio/bulletSoundEffectConfig.json'
+import bulletSoundEffectConfigJson from '../gameobjects/audio/config/bullet.json';
+import rocketSoundEffectConfigJson from '../gameobjects/audio/config/rocket.json';
+import explosionSoundEffectConfigJson from '../gameobjects/audio/config/rocket.json';
+import deathFireSoundEffectConfigJson from '../gameobjects/audio/config/deathFire.json';
+import flamethrowerSoundEffectConfigJson from '../gameobjects/audio/config/flamethrower.json';
+import sonicPulseSoundEffectConfigJson from '../gameobjects/audio/config/sonicPulse.json';
+import shovelSoundEffectConfigJson from '../gameobjects/audio/config/shovel.json';
 
 // npm install cannon-es-debugger
 // https://youtu.be/Ht1JzJ6kB7g?si=jhEQ6AHaEjUeaG-B&t=291
@@ -80,6 +86,12 @@ export default class GameScene extends THREE.Scene {
     private playerSoundKeyMap: PlayerSoundKeyMap = playerSoundKeyMapJson;
 
     private bulletSoundEffectConfig: SoundEffectConfig = bulletSoundEffectConfigJson;
+    private rocketSoundEffectConfig: SoundEffectConfig = rocketSoundEffectConfigJson;
+    private explosionSoundEffectConfig: SoundEffectConfig = explosionSoundEffectConfigJson;
+    private deathFireSoundEffectConfig: SoundEffectConfig = deathFireSoundEffectConfigJson;
+    private flamethrowerSoundEffectConfig: SoundEffectConfig = flamethrowerSoundEffectConfigJson;
+    private sonicPulseSoundEffectConfig: SoundEffectConfig = sonicPulseSoundEffectConfigJson;
+    private shovelSoundEffectConfig: SoundEffectConfig = shovelSoundEffectConfigJson;
 
     private animatedSprites: AnimatedSprite[] = [];
     private clock: THREE.Clock = new THREE.Clock();
@@ -1214,7 +1226,9 @@ export default class GameScene extends THREE.Scene {
                     this.bulletSoundEffectConfig.refDistance, this.bulletSoundEffectConfig.maxDistance));            
             
             //this.positionalRocketSounds.push(await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100));
-            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.rocketSoundKey, await this.audioManager.loadPositionalSound('assets/audio/rlauncher.ogg', 0.25, 25, 100));          
+            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.rocketSoundKey,
+                await this.audioManager.loadPositionalSound(this.rocketSoundEffectConfig.asset, this.rocketSoundEffectConfig.volume,
+                    this.bulletSoundEffectConfig.refDistance, this.bulletSoundEffectConfig.maxDistance));        
             
             ////https://pixabay.com/sound-effects/firework-explosion-with-echo-147321/
             //this.audioManager.addSound(`player${i+1}-rocket`, await this.audioManager.loadPositionalSound('assets/audio/firework-launch.ogg', 0.75, 25, 100));          
@@ -1223,21 +1237,31 @@ export default class GameScene extends THREE.Scene {
             //this.audioManager.addSoundWithPlayerIndexPrefix(i, `rocket`, await this.audioManager.loadPositionalSound('assets/audio/rocket-small.ogg', 0.25, 25, 100));          
 
             //this.positionalVehicleExplosionSounds.push(await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.25, 25, 100));
-            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.explosionSoundKey, await this.audioManager.loadPositionalSound('assets/audio/explosion-under-snow-sfx-230505.mp3', 0.75, 25, 100));
+            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.explosionSoundKey,
+                await this.audioManager.loadPositionalSound(this.explosionSoundEffectConfig.asset, this.explosionSoundEffectConfig.volume,
+                    this.explosionSoundEffectConfig.refDistance, this.explosionSoundEffectConfig.maxDistance));        
 
             //this.deathFireSounds.push(await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.25, 25, 100));
-            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.deathFireSoundKey, await this.audioManager.loadPositionalSound('assets/audio/fire-whoosh-85834.mp3', 0.50, 25, 100));
+            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.deathFireSoundKey,
+                await this.audioManager.loadPositionalSound(this.deathFireSoundEffectConfig.asset, this.deathFireSoundEffectConfig.volume,
+                    this.deathFireSoundEffectConfig.refDistance, this.deathFireSoundEffectConfig.maxDistance));        
 
             // https://opengameart.org/content/fire-loop
-            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.flamethrowerSoundKey, await this.audioManager.loadPositionalSound('assets/audio/qubodupFireLoop.ogg', 0.50, 25, 100, true));
+            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.flamethrowerSoundKey,
+                await this.audioManager.loadPositionalSound(this.flamethrowerSoundEffectConfig.asset, this.flamethrowerSoundEffectConfig.volume,
+                    this.flamethrowerSoundEffectConfig.refDistance, this.flamethrowerSoundEffectConfig.maxDistance));        
 
             // https://pixabay.com/sound-effects/cinematic-energy-impact-pure-power-228339/
-            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.sonicPulseSoundKey, await this.audioManager.loadPositionalSound('assets/audio/cinematic-energy-impact-pure-power-228339.mp3', 0.50, 25, 100));
+            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.sonicPulseSoundKey,
+                await this.audioManager.loadPositionalSound(this.sonicPulseSoundEffectConfig.asset, this.sonicPulseSoundEffectConfig.volume,
+                    this.sonicPulseSoundEffectConfig.refDistance, this.sonicPulseSoundEffectConfig.maxDistance));        
 
             // https://pixabay.com/sound-effects/thud-82914/
-            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.shovelSoundKey, await this.audioManager.loadPositionalSound('assets/audio/shovel-thud-short.ogg', 0.50, 25, 100));
+            this.audioManager.addSoundWithPlayerIndexPrefix(i, this.playerSoundKeyMap.shovelSoundKey,
+                await this.audioManager.loadPositionalSound(this.shovelSoundEffectConfig.asset, this.shovelSoundEffectConfig.volume,
+                    this.shovelSoundEffectConfig.refDistance, this.shovelSoundEffectConfig.maxDistance));       
         }
-
+        
         this.audioManager.addSound(`fw_01`, await this.audioManager.loadPositionalSound('assets/audio/fw_01.ogg', 0.25, 25, 100));
         this.audioManager.addSound(`fw_02`, await this.audioManager.loadPositionalSound('assets/audio/fw_02.ogg', 0.25, 25, 100));
         this.audioManager.addSound(`fw_03`, await this.audioManager.loadPositionalSound('assets/audio/fw_03.ogg', 0.25, 25, 100));
