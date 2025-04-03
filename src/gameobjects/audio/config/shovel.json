@@ -1,8 +1,0 @@
-{
-    "soundKey": "shovel",
-    "asset": "assets/audio/shovel-thud-short.ogg",
-    "volume": 0.25,
-    "refDistance": 25,
-    "maxDistance": 100,
-    "loop": false
-}

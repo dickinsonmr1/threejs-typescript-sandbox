@@ -1,8 +1,0 @@
-{
-    "soundKey": "deathFire",
-    "asset": "assets/audio/fire-whoosh-85834.mp3",
-    "volume": 0.50,
-    "refDistance": 25,
-    "maxDistance": 100,
-    "loop": false
-}

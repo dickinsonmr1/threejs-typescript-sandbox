@@ -24,7 +24,6 @@ import EmergencyLights from "../vehicles/emergencyLights";
 import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
 import { VehicleConfig } from "../vehicles/config/vehicleConfig";
 import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
-import { PlayerSoundKeyMap } from "../audio/playerSoundKeyMap";
 
 export enum PlayerState {
     Alive,
@@ -162,7 +161,6 @@ export class Player {
         //fireRocketSound: THREE.PositionalAudio,
         //explosionSound: THREE.PositionalAudio,
         //deathFireSound: THREE.PositionalAudio,
-        public playerSoundKeyMap: PlayerSoundKeyMap,
         deadzoneX: number,
         vehicleConfig: VehicleConfig) {
 
@@ -257,11 +255,10 @@ export class Player {
 
         let audioManager = gameScene.getAudioManager();
         
-
-        this.vehicleObject.getChassis().mesh.add(audioManager.getSound(this.playerSoundKeyMap.bulletSoundKey, this.playerIndex)!);
-        this.vehicleObject.getChassis().mesh.add(audioManager.getSound(this.playerSoundKeyMap.rocketSoundKey, this.playerIndex)!);
-        this.vehicleObject.getChassis().mesh.add(audioManager.getSound(this.playerSoundKeyMap.explosionSoundKey, this.playerIndex)!);
-        this.vehicleObject.getChassis().mesh.add(audioManager.getSound(this.playerSoundKeyMap.flamethrowerSoundKey, this.playerIndex)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound('bullet', this.playerIndex)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound('rocket', this.playerIndex)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound('explosion', this.playerIndex)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound('flamethrower', this.playerIndex)!);
 
         //this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
         //this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
@@ -367,7 +364,7 @@ export class Player {
                 this.currentShovelAngle = angle;
                 if(elapsedTime < 0.1) {
                     let gameScene = <GameScene>this.scene;
-                    gameScene.getAudioManager().playSoundIfNotCurrentlyPlaying(this.playerSoundKeyMap.shovelSoundKey, false, this.playerIndex);
+                    gameScene.getAudioManager().playSoundIfNotCurrentlyPlaying('shovel', false, this.playerIndex);
                 }                    
             }
             else 
@@ -760,7 +757,7 @@ export class Player {
                 this.getPosition(),
                 3,
                 3000,
-                gameScene.getAudioManager().getSound(this.playerSoundKeyMap.deathFireSoundKey, this.playerIndex)!
+                gameScene.getAudioManager().getSound('deathFire', this.playerIndex)!
             );
             this.fireObjects.push(deathFire);
             
@@ -769,7 +766,7 @@ export class Player {
 
             this.generateRandomExplosion();
 
-            gameScene.getAudioManager().playSound(this.playerSoundKeyMap.explosionSoundKey, false, this.playerIndex);
+            gameScene.getAudioManager().playSound('explosion', false, this.playerIndex);
 
             //if(this.explosionSound.isPlaying)
                 //this.explosionSound.stop();
@@ -870,7 +867,7 @@ export class Player {
 
             this.rocketCooldownClock.start();
 
-            gameScene.getAudioManager().playSound(this.playerSoundKeyMap.rocketSoundKey, true, this.playerIndex);
+            gameScene.getAudioManager().playSound('rocket', true, this.playerIndex);
 
             //if(this.rocketSound.isPlaying)
                 //this.rocketSound.stop();
@@ -908,7 +905,7 @@ export class Player {
             }
         
             let gameScene = <GameScene>this.scene;
-            gameScene.getAudioManager().playLoopedSound(this.playerSoundKeyMap.flamethrowerSoundKey, this.playerIndex);
+            gameScene.getAudioManager().playLoopedSound('flamethrower', this.playerIndex);
 
             this.flamethrowerEmitter.emitParticles();
             this.flamethrowerActive = true;
@@ -919,7 +916,7 @@ export class Player {
         this.flamethrowerActive = false;
 
         let gameScene = <GameScene>this.scene;
-        gameScene.getAudioManager().stopSound(this.playerSoundKeyMap.flamethrowerSoundKey, this.playerIndex);
+        gameScene.getAudioManager().stopSound('flamethrower', this.playerIndex);
     }
 
     tryFireBullets(): void {
@@ -946,7 +943,7 @@ export class Player {
                 */
                 //
                 let audioManager = gameScene.getAudioManager();
-                audioManager.playSound(this.playerSoundKeyMap.bulletSoundKey, true, this.playerIndex);
+                audioManager.playSound('bullet', true, this.playerIndex);
             //}
         }
     }
@@ -966,7 +963,7 @@ export class Player {
         if(!this.sonicPulseCooldownClock.isRunning()) {
 
             let gameScene = <GameScene>this.scene;
-            gameScene.getAudioManager().playSound(this.playerSoundKeyMap.sonicPulseSoundKey, false, this.playerIndex);
+            gameScene.getAudioManager().playSound('sonicPulse', false, this.playerIndex);
             gameScene.generateSonicPulse(this.getPosition());
 
             this.sonicPulseCooldownClock.start();

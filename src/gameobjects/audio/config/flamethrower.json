@@ -1,8 +1,0 @@
-{
-    "soundKey": "flamethrower",
-    "asset": "assets/audio/qubodupFireLoop.ogg",
-    "volume": 0.50,
-    "refDistance": 25,
-    "maxDistance": 100,
-    "loop": true
-}

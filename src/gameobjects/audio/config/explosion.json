@@ -1,8 +1,0 @@
-{
-    "soundKey": "explosion",
-    "asset": "assets/audio/explosion-under-snow-sfx-230505.mp3",
-    "volume": 0.75,
-    "refDistance": 25,
-    "maxDistance": 100,
-    "loop": false
-}

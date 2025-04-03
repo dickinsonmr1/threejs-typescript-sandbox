@@ -1,9 +1,0 @@
-{    
-    "bulletSoundKey": "bullet",
-    "rocketSoundKey": "rocket",
-    "explosionSoundKey": "explosion",
-    "deathFireSoundKey": "deathFire",
-    "flamethrowerSoundKey": "flamethrower",
-    "sonicPulseSoundKey": "sonicpulse",
-    "shovelSoundKey": "shovel"
-}

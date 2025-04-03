@@ -1,0 +1,72 @@
+[
+    {
+        "soundKey": "bullet",
+        "asset": "assets/audio/gunshot.ogg",
+        "volume": 0.25,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": false,
+        "createInstancePerPlayer": true,
+        "comment": ""
+    },
+    {
+        "soundKey": "rocket",
+        "asset": "assets/audio/rlauncher.ogg",
+        "volume": 0.25,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": false,
+        "createInstancePerPlayer": true,
+        "comment": ""
+    },
+    {
+        "soundKey": "deathFire",
+        "asset": "assets/audio/fire-whoosh-85834.mp3",
+        "volume": 0.50,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": false,
+        "createInstancePerPlayer": true,
+        "comment": ""
+    },
+    {
+        "soundKey": "explosion",
+        "asset": "assets/audio/explosion-under-snow-sfx-230505.mp3",
+        "volume": 0.75,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": false,
+        "createInstancePerPlayer": true,
+        "comment": ""
+    },
+    {
+        "soundKey": "flamethrower",
+        "asset": "assets/audio/qubodupFireLoop.ogg",
+        "volume": 0.50,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": true,
+        "createInstancePerPlayer": true,
+        "comment": "https://opengameart.org/content/fire-loop"
+    },
+    {
+        "soundKey": "sonicPulse",
+        "asset": "assets/audio/cinematic-energy-impact-pure-power-228339.mp3",
+        "volume": 0.50,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": false,
+        "createInstancePerPlayer": true,
+        "comment": "https://pixabay.com/sound-effects/cinematic-energy-impact-pure-power-228339/"
+    },
+    {
+        "soundKey": "shovel",
+        "asset": "assets/audio/shovel-thud-short.ogg",
+        "volume": 0.25,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": false,
+        "createInstancePerPlayer": true,
+        "comment": "https://pixabay.com/sound-effects/thud-82914/"
+    }
+]

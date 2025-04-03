@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { SoundEffectConfig } from './config/soundEffectConfig';
+import { SoundEffectConfig } from './config/soundEffectLibrary';
 
 export class AudioManager {
 
@@ -27,7 +27,7 @@ export class AudioManager {
 
     public async loadPositionalSound(config: SoundEffectConfig): Promise<THREE.PositionalAudio> {
 
-        return await this.createPositionalAudio(config.asset, this.audioListener, config.volume, config.refDistance, config.maxDistance, config.loop);
+        return await this.createPositionalAudio(config.asset!, this.audioListener, config.volume!, config.refDistance!, config.maxDistance!, config.loop);
     }
 
     private async loadAudio(url: string): Promise<AudioBuffer> {
