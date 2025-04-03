@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { SoundEffectConfig } from './config/soundEffectConfig';
 
 export class AudioManager {
 
@@ -24,9 +25,9 @@ export class AudioManager {
         return this.audioListener;
     }    
 
-    public async loadPositionalSound(asset: string, volume: number, refDistance: number, maxDistance: number, loop: boolean = false): Promise<THREE.PositionalAudio> {
+    public async loadPositionalSound(config: SoundEffectConfig): Promise<THREE.PositionalAudio> {
 
-        return await this.createPositionalAudio(asset, this.audioListener, volume, refDistance, maxDistance, loop);
+        return await this.createPositionalAudio(config.asset, this.audioListener, config.volume, config.refDistance, config.maxDistance, config.loop);
     }
 
     private async loadAudio(url: string): Promise<AudioBuffer> {
@@ -47,7 +48,7 @@ export class AudioManager {
         });
       }
 
-    private async createPositionalAudio(asset: string, listener: THREE.AudioListener, volume: number, refDistance: number, maxDistance: number, loop: boolean): Promise<THREE.PositionalAudio> {//} | null {
+    private async createPositionalAudio(asset: string, listener: THREE.AudioListener, volume: number, refDistance: number, maxDistance: number, loop?: boolean): Promise<THREE.PositionalAudio> {//} | null {
 
         const buffer = await this.loadAudio(asset);
 
@@ -55,7 +56,7 @@ export class AudioManager {
         positionalAudio.setBuffer(buffer);
         positionalAudio.setRefDistance(refDistance);
         positionalAudio.setMaxDistance(maxDistance);
-        positionalAudio.setLoop(false);
+        positionalAudio.setLoop(loop == true);
         positionalAudio.setRolloffFactor(0.1);
         positionalAudio.setVolume(volume);        
         //positionalAudio.position.set(100, 100, 100);
@@ -63,37 +64,31 @@ export class AudioManager {
     
         return positionalAudio;
     }    
+    private generateSoundKey(key: string, playerIndex?: number): string {
+      let prefix = '';
+      if(playerIndex != null)
+        prefix = `player${playerIndex+1}-`;
 
-    public addSound(key: string, sound: THREE.PositionalAudio): void {      
-      this.positionalSounds.set(key, sound);
+      return `${prefix}${key}`;
     }
 
-    public addSoundWithPlayerIndexPrefix(playerIndexPrefix: number, key: string, sound: THREE.PositionalAudio): void {      
-      this.positionalSounds.set(`player${playerIndexPrefix+1}-${key}`, sound);
+    public addSound(key: string, sound: THREE.PositionalAudio, playerIndex?: number): void {      
+      this.positionalSounds.set(this.generateSoundKey(key, playerIndex), sound);
     }
 
-    public getSound(key: string): THREE.PositionalAudio | null {
-      let sound = this.positionalSounds.get(key);
+    public getSound(key: string, playerIndex?: number): THREE.PositionalAudio | null {
+      let sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
       return sound ?? null;
     }
 
-    public getPlayerSpecificSound(playerIndexPrefix: number, key: string): THREE.PositionalAudio | null {
-      let sound = this.positionalSounds.get(`player${playerIndexPrefix+1}-${key}`);
-      return sound ?? null;
-    }
-
-    public playLoopedSound(key: string) {
-      const sound = this.positionalSounds.get(key);
+    public playLoopedSound(key: string, playerIndex?: number) {
+      const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
       if(sound && !sound.isPlaying)
           sound.play();
     }
 
-    public playPlayerSpecificLoopedSound(playerIndex: number, key: string) {
-      this.playLoopedSound(`player${playerIndex+1}-${key}`);
-    }
-
-    public playSound(key: string, detune: boolean) {
-      const sound = this.positionalSounds.get(key);
+    public playSound(key: string, detune: boolean, playerIndex?: number) {        
+      const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
       if(sound) {          
         if(sound.isPlaying)
           sound.stop();
@@ -106,12 +101,8 @@ export class AudioManager {
       }          
     }
 
-    public playPlayerSpecificSound(playerIndex: number, key: string, detune: boolean) {
-      this.playSound(`player${playerIndex+1}-${key}`, detune);
-    }
-
-    public playSoundIfNotCurrentlyPlaying(key: string, detune: boolean) {
-      const sound = this.positionalSounds.get(key);
+    public playSoundIfNotCurrentlyPlaying(key: string, detune: boolean, playerIndex?: number) {
+      const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
       if(sound) {          
         if(sound.isPlaying)
           return;
@@ -124,16 +115,8 @@ export class AudioManager {
       }          
     }
 
-    public playPlayerSpecificSoundIfNotCurrentlyPlaying(playerIndex: number, key: string, detune: boolean) {
-      this.playSoundIfNotCurrentlyPlaying(`player${playerIndex+1}-${key}`, detune);        
-    }
-
     public stopSound(key: string, playerIndex?: number) {
-      let prefix = '';
-      if(playerIndex != null)
-        prefix = `player${playerIndex+1}-`;
-
-      const sound = this.positionalSounds.get(`${prefix}${key}`);
+      const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
       if(sound && sound.isPlaying)
           sound.stop();        
     }
