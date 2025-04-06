@@ -41,6 +41,7 @@ import { AnimatedSprite } from '../gameobjects/fx/animatedSprite';
 
 import soundEffectLibraryJson from '../gameobjects/audio/config/soundEffectLibrary.json';
 import { SoundEffectConfig } from '../gameobjects/audio/config/soundEffectLibrary';
+import { AnimatedShaderSprite } from '../gameobjects/fx/animatedShaderSprite';
 
 
 // npm install cannon-es-debugger
@@ -77,8 +78,9 @@ export default class GameScene extends THREE.Scene {
 
     private readonly audioManager: AudioManager;
     private soundEffectLibraryConfig: SoundEffectConfig[] = soundEffectLibraryJson;
-
+    
     private animatedSprites: AnimatedSprite[] = [];
+    private shaderAnimatedSprites: AnimatedShaderSprite[] = [];
     private clock: THREE.Clock = new THREE.Clock();
     
     //lightningMaterial!: THREE.ShaderMaterial;
@@ -624,7 +626,6 @@ export default class GameScene extends THREE.Scene {
         this.lightning = new THREE.Line(geometry2, lightningMaterial3);
         this.add(this.lightning);
 
-
         //this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/spritesheet-spark.png', 2, 3, 10, true, new THREE.Vector3(0, 5, 0)));
 
         // https://opengameart.org/content/9-frame-fire-animation-16x-32x-64x        
@@ -698,7 +699,16 @@ export default class GameScene extends THREE.Scene {
         }
 
         if(event.key === 'm') {
-            this.animatedSprites.push(new AnimatedSprite(this, this.animatedSpriteExplosionTexture, 8, 8, 120, false, this.player1.getPosition()));                
+            //this.animatedSprites.push(new AnimatedSprite(this, this.animatedSpriteExplosionTexture, 8, 8, 120, false, this.player1.getPosition()));                
+            this.shaderAnimatedSprites.push(
+                new AnimatedShaderSprite(this, this.animatedSpriteExplosionTexture, this.player1.getPosition().clone().add(new THREE.Vector3(0, 1, 0)), false,
+                {
+                    columns: 8,
+                    rows: 8,
+                    fps: 30,
+                    scale: 1,
+                    camera: this.camera                    
+                }));
         }
         /*
         /*
@@ -1771,6 +1781,9 @@ export default class GameScene extends THREE.Scene {
         
         this.animatedSprites.forEach(x => x.update(time));
         this.animatedSprites = this.animatedSprites.filter(x => x.isAlive);
+
+    
+        this.shaderAnimatedSprites.forEach(x => x.update(time))
         
         this.cubes.forEach(x => x.update());
 
