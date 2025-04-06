@@ -2,32 +2,32 @@ import * as THREE from 'three';
 import { Utility } from '../../utility';
 
 export class AnimatedSprite {
-    private texture: THREE.Texture;
+    //private texture: THREE.Texture;
     private material: THREE.SpriteMaterial;
     private sprite: THREE.Sprite;
     private frameX: number = 0;
     private frameY: number = 0;
     private elapsedTime: number = 0;
-    private isAlive: boolean = true;
+    public isAlive: boolean = true;
 
-    constructor(private scene: THREE.Scene, texturePath: string,
+    constructor(private scene: THREE.Scene, texture: THREE.Texture,
             private frameCountX: number, private frameCountY: number, private frameRate: number,
             private loop: boolean,
             position: THREE.Vector3 = new THREE.Vector3(0,0,0), 
             scale: THREE.Vector3 = new THREE.Vector3(1, 1, 1)) {
 
-        let textureLoader = new THREE.TextureLoader();
-        this.texture = textureLoader.load(texturePath);
-        this.texture.magFilter = THREE.NearestFilter; // Avoid blurring
-        this.texture.minFilter = THREE.NearestFilter;
+        //let textureLoader = new THREE.TextureLoader();
+        //this.texture = textureLoader.load(texturePath);
+        //this.texture.magFilter = THREE.NearestFilter; // Avoid blurring
+        //this.texture.minFilter = THREE.NearestFilter;
         
-        this.material = new THREE.SpriteMaterial({ map: this.texture });
+        this.material = new THREE.SpriteMaterial({ map: texture.clone() });
         this.sprite = new THREE.Sprite(this.material);
         this.sprite.position.copy(position);
         this.sprite.scale.copy(scale);
         
         // Set the correct UV scale for one frame
-        this.texture.repeat.set(1 / this.frameCountX, 1 / this.frameCountY);
+        this.material.map?.repeat.set(1 / this.frameCountX, 1 / this.frameCountY);
 
         this.isAlive = true;
 
@@ -66,7 +66,7 @@ export class AnimatedSprite {
                     }
                 }
 
-                this.texture.offset.set(this.frameX / this.frameCountX, 1 - (this.frameY + 1) / this.frameCountY);
+                this.material.map?.offset.set(this.frameX / this.frameCountX, 1 - (this.frameY + 1) / this.frameCountY);
             }
         }
     }

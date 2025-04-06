@@ -109,6 +109,8 @@ export default class GameScene extends THREE.Scene {
     public explosionTexture: THREE.Texture = new THREE.Texture();
     public crosshairTexture: THREE.Texture = new THREE.Texture();
     public playerMarkerTexture: THREE.Texture = new THREE.Texture();
+    public animatedSpriteExplosionTexture: THREE.Texture = new THREE.Texture();
+    public animatedSpriteSparkTexture: THREE.Texture = new THREE.Texture();
 
     public groundMaterial!: CANNON.Material;
     public wheelGroundContactMaterial!: CANNON.ContactMaterial;
@@ -249,6 +251,8 @@ export default class GameScene extends THREE.Scene {
         //this.explosionTexture = this.textureLoader.load('assets/tank_explosion3.png');
         this.crosshairTexture = this.textureLoader.load('assets/hud/crosshair061.png');
         this.playerMarkerTexture = this.textureLoader.load('assets/hud/playerMarkerIcon.png');
+        this.animatedSpriteExplosionTexture = this.textureLoader.load('assets/spritesheets/explosion 1.png');
+        this.animatedSpriteSparkTexture = this.textureLoader.load('assets/spritesheets/spritesheet-spark.png');
 
         // https://www.youtube.com/watch?v=V_yjydXVIwQ&list=PLFky-gauhF46LALXSriZcXLJjwtZLjehn&index=4
 
@@ -538,6 +542,7 @@ export default class GameScene extends THREE.Scene {
             "LightObjectCount",
 
             "ParticleEmitterCount",
+            "AnimatedSpriteCount",
             "ShaderParticleCount",
             "RendererTotalGeometry",
             "RendererTotalTextures",
@@ -620,16 +625,16 @@ export default class GameScene extends THREE.Scene {
         this.add(this.lightning);
 
 
-        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/spritesheet-spark.png', 2, 3, 10, true, new THREE.Vector3(0, 5, 0)));
+        //this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/spritesheet-spark.png', 2, 3, 10, true, new THREE.Vector3(0, 5, 0)));
 
         // https://opengameart.org/content/9-frame-fire-animation-16x-32x-64x        
-        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/Fire 64x.png', 3, 3, 5, true, new THREE.Vector3(5, 5, 5)));
+        //this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/Fire 64x.png', 3, 3, 5, true, new THREE.Vector3(5, 5, 5)));
        
         // https://opengameart.org/content/2d-explosion-animations-frame-by-frame
-        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 1.png', 8, 8, 120, true, new THREE.Vector3(-5, 5, 5)));                
-        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 2.png', 8, 8, 120, true, new THREE.Vector3(-4, 5, 5)));                
-        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 3.png', 8, 8, 120, true, new THREE.Vector3(-3, 5, 5)));                
-        this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 4.png', 8, 8, 120, true, new THREE.Vector3(-2, 5, 5)));                
+        //this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 1.png', 8, 8, 120, true, new THREE.Vector3(-5, 5, 5)));                
+        //this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 2.png', 8, 8, 120, true, new THREE.Vector3(-4, 5, 5)));                
+        //this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 3.png', 8, 8, 120, true, new THREE.Vector3(-3, 5, 5)));                
+        //this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/explosion 4.png', 8, 8, 120, true, new THREE.Vector3(-2, 5, 5)));                
  
         //document.addEventListener('keydown', this.handleKeyDown);
         //document.addEventListener('keyup', this.handleKeyUp);
@@ -688,8 +693,12 @@ export default class GameScene extends THREE.Scene {
         if(event.key === 't') {
             this.player1.tryFireSonicPulse();
         }
-        if(event.key === 'r') {
+        if(event.key === 'r') {            
             this.player1.tryFireShovel();
+        }
+
+        if(event.key === 'm') {
+            this.animatedSprites.push(new AnimatedSprite(this, this.animatedSpriteExplosionTexture, 8, 8, 120, false, this.player1.getPosition()));                
         }
         /*
         /*
@@ -1759,7 +1768,9 @@ export default class GameScene extends THREE.Scene {
         //}
 
         let time = this.clock.getDelta();
+        
         this.animatedSprites.forEach(x => x.update(time));
+        this.animatedSprites = this.animatedSprites.filter(x => x.isAlive);
         
         this.cubes.forEach(x => x.update());
 
@@ -1951,6 +1962,8 @@ export default class GameScene extends THREE.Scene {
             emitterTotalParticleCount += x.getTotalParticleCount();
         })
         this.debugDivElementManager.updateElementText("ParticleCount", `total emitter particles (sprites): ${emitterTotalParticleCount}`);
+        
+        this.debugDivElementManager.updateElementText("AnimatedSpriteCount", `total animated spites: ${this.animatedSprites.length}`);
 
         // physics objects
         let totalPhysicsObjectCount: number = this.world.bodies.length;        
