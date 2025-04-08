@@ -96,28 +96,12 @@ export class Player {
     private fireLeft: boolean = false;
     private projectileFactory: ProjectileFactory;// = new ProjectileFactory();
 
-    //private maxBulletCooldownTimeInSeconds: number = 0.15;
-    //private maxUpgradedBulletCooldownTimeInSeconds: number = 0.05;
-    //private bulletCooldownClock: THREE.Clock = new THREE.Clock(false);
-
     private bulletCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.15, 0.05);
-
-    //private maxDeathExplosionTimeInSeconds: number = 0.25;
-    //private deathExplosionCooldownClock: THREE.Clock = new THREE.Clock(false);
     private deathExplosionCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.25, 0.25);
-
-    //private maxRocketCooldownTimeInSeconds: number = 0.5;
-    //private rocketCooldownClock: THREE.Clock = new THREE.Clock(false);
     private rocketCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.5, 0.5);
-
-    //private maxAirstrikeCooldownTimeInSeconds: number = 0.25;
-    //private airstrikeCooldownClock: THREE.Clock = new THREE.Clock(false);
+    private triRocketCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1, 1);
     private airstrikeCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.25, 0.25);
-
-    //private maxSonicePulseCooldownTimeInSeconds: number = 1.00;
-    //private sonicPulseCooldownClock: THREE.Clock = new THREE.Clock(false);
     private sonicPulseCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1.00, 1.00);
-
     public shovelCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(8, 1);
     public currentShovelAngle: number = 0;
 
@@ -372,6 +356,10 @@ export class Player {
         }
         }
 
+        if(this.triRocketCooldownClock.isRunningAndNotExpired()) {
+
+        }
+
         //this.bulletSound.position.copy(this.getPosition());        
         //this.bulletSound.updateMatrixWorld(true);
 
@@ -490,6 +478,7 @@ export class Player {
         this.airstrikeCooldownClock.stopIfExpired();
         this.sonicPulseCooldownClock.stopIfExpired();
         this.shovelCooldownClock.stopIfExpired();
+        this.triRocketCooldownClock.stopIfExpired();
 
         if(this.shield != null)
             this.shield.updatePosition(this.getPosition());
@@ -577,6 +566,72 @@ export class Player {
             this.activeAirstrike = projectile;
 
         return projectile;
+    }
+
+    public createProjectiles(projectileType: ProjectileType) : Projectile[] {
+        let projectiles: Projectile[] = [];
+                   
+        let scene = <GameScene>this.scene;
+
+        for(let i = 0; i < 3; i++) {
+
+            let launchLocation = i;        
+    
+            let forwardVector = new THREE.Vector3(-2, 0, 0);
+            forwardVector.applyQuaternion(this.vehicleObject.getModel().quaternion);
+            let projectileLaunchVector = forwardVector; 
+    
+            let topOffset = -3;
+            let frontOffset = 3;
+            let sideOffset = 3;
+    
+            let sideVector = new THREE.Vector3();
+            switch(launchLocation) {
+                case ProjectileLaunchLocation.Left:                
+                    sideVector = new THREE.Vector3(0, 0, sideOffset);
+                    break;
+                case ProjectileLaunchLocation.Center:
+                    sideVector = new THREE.Vector3(frontOffset, topOffset, 0);
+                    break;                
+                case ProjectileLaunchLocation.Right:
+                    sideVector = new THREE.Vector3(0, 0, -sideOffset);
+                    break;
+            }
+            sideVector.applyQuaternion(this.vehicleObject.getModel().quaternion);
+    
+            //axis-aligned bounding box
+            const aabb = new THREE.Box3().setFromObject(this.vehicleObject.getChassis().mesh);
+            const size = aabb.getSize(new THREE.Vector3());
+    
+            const vec = new THREE.Vector3();
+            this.vehicleObject.getModel().getWorldPosition(vec);
+    
+            // offset to front of gun
+            var tempPosition = vec.add(
+                    sideVector.clone().multiplyScalar(-size.z * 0.12)
+            );
+    
+            // offset to side of car
+            // +x is in left of car, -x is to right of car
+            // +z is in front of car, -z is to rear of car
+            //var tempPosition = vec.add(
+                //this.directionVector.clone().multiplyScalar(-size.z * 5)
+            //);
+            //tempPosition.add(this.directionVector.clone().multiplyScalar(size.z * 1.5));
+    
+            var projectile = this.projectileFactory.generateProjectile(
+                this.scene, this.isDebug,
+                this.playerId,
+                projectileType,            
+                tempPosition,           // launchPosition relative to chassis
+                projectileLaunchVector,  
+                this.vehicleObject.getModel().quaternion,          
+                scene.getWorld());              
+
+            projectiles.push(projectile);
+        }
+
+        return projectiles;
     }
 
     private setVehicleObject(vehicle: IPlayerVehicle) {
@@ -812,7 +867,6 @@ export class Player {
 
     tryRespawn() {
         this.refillHealth();        
-
         
         this.playerState = PlayerState.Alive;        
         this.tryStopTurbo();
@@ -875,6 +929,19 @@ export class Player {
             //this.rocketSound.play();
             //this.rocketSound.detune = Math.floor(Math.random() * 1600 - 800);
         }       
+    }
+
+    tryFireTriRockets() {
+        if(!this.triRocketCooldownClock.isRunning()) {
+
+            let projectiles = this.createProjectiles(ProjectileType.Rocket);
+
+            let gameScene = <GameScene>this.scene;
+            projectiles.forEach(x => gameScene.addNewProjectile(x));
+
+            this.triRocketCooldownClock.start();
+            gameScene.getAudioManager().playSound('rocket', true, this.playerIndex);
+        }   
     }
 
     tryFireAirStrike(): void {
@@ -983,26 +1050,37 @@ export class Player {
                 this.tryFireShovel();
                 break;
             case VehicleType.Taxi:
+                this.tryFireFlamethrower();
                 break;
             case VehicleType.Ambulance:
+                this.tryFireFlamethrower();
                 break;
             case VehicleType.RaceCar:
+                this.tryFireFlamethrower();
                 break;
             case VehicleType.RaceCarRed:
+                this.tryFireFlamethrower();
                 break;
             case VehicleType.Police:
+                this.tryFireSonicPulse();
                 break;
             case VehicleType.TrashTruck:
+                this.tryFireDumpster();
                 break;
             case VehicleType.Offroader:
+                this.tryFireTriRockets();
                 break;
             case VehicleType.FireTruck:
+                this.tryFireFlamethrower();
                 break;
             case VehicleType.PoliceTractor:
+                this.tryFireFlamethrower();
                 break;
             case VehicleType.Harvester:
+                this.tryFireFlamethrower();
                 break;
             case VehicleType.PickupTruck:
+                this.tryFireTriRockets();
                 break;
         }
     }

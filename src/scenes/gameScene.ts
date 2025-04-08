@@ -710,6 +710,10 @@ export default class GameScene extends THREE.Scene {
                     camera: this.camera                    
                 }));
         }
+
+        if(event.key === 'n') {            
+            this.player1.tryFireTriRockets();
+        }
         /*
         /*
         if (event.key === 'x')

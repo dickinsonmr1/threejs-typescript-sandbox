@@ -549,7 +549,7 @@ export default class SceneController {
                     }
                     if(buttonIndex == this.fireFlameThrowerGamepadIndex) {
                         console.log(`pressed: ${buttonIndex}`);
-                        this.gameScene?.player1.tryFireFlamethrower();
+                        this.gameScene?.player1.tryFireSpecialWeapon();
                     }
 
                     if(buttonIndex == GamepadEnums.FACE_4) {
