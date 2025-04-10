@@ -30,10 +30,21 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     //private readonly maxForce: number = 1500;
 
     private driveSystem: DriveSystem;
+
+    private forwardVelocity: number = 0;
+
     private currentSpeed: number = 0;
 
+    private brakeThresholdSpeed: number = 0.5;
+
+    private brakeForce: number = 50;
+
     public getCurrentSpeed(): number {
-        return this.currentSpeed;
+        return Math.abs(this.forwardVelocity);
+    }
+
+    public getForwardVelocity(): number {
+        return this.forwardVelocity;
     }
 
     private isActive: boolean = true;
@@ -293,14 +304,14 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         // rear wheels
         if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(-engineForce, 2);
-            this.raycastVehicle?.applyEngineForce(-engineForce, 3);
+            this.setWheelForceAndDisableBrake(-engineForce, 2);
+            this.setWheelForceAndDisableBrake(-engineForce, 3);            
         }
 
         // front wheels
         if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(-engineForce, 0);
-            this.raycastVehicle?.applyEngineForce(-engineForce, 1);
+            this.setWheelForceAndDisableBrake(-engineForce, 0);
+            this.setWheelForceAndDisableBrake(-engineForce, 1);
         }
     }
 
@@ -331,47 +342,64 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         let engineForce = this.calculateEngineForce();
 
         // rear wheels
-        if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(-engineForce * joystickY, 2);
-            this.raycastVehicle?.applyEngineForce(-engineForce * joystickY, 3);
+        if(this.driveSystem != DriveSystem.FrontWheelDrive) {            
+            this.setWheelForceAndDisableBrake(-engineForce * joystickY, 2);
+            this.setWheelForceAndDisableBrake(-engineForce * joystickY, 3);            
         }
 
         // front wheels
         if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(-engineForce * joystickY, 0);
-            this.raycastVehicle?.applyEngineForce(-engineForce * joystickY, 1);
+            this.setWheelForceAndDisableBrake(-engineForce * joystickY, 0);
+            this.setWheelForceAndDisableBrake(-engineForce * joystickY, 1);            
         }
-
     }
 
     tryStopAccelerate(): void {
         if(!this.isActive) return;
 
         // rear wheels
-        this.raycastVehicle?.applyEngineForce(0, 2);
-        this.raycastVehicle?.applyEngineForce(0, 3);
-        
+        this.setWheelForceAndDisableBrake(0, 2);
+        this.setWheelForceAndDisableBrake(0, 3);            
+
         // front wheels
-        this.raycastVehicle?.applyEngineForce(0, 0);
-        this.raycastVehicle?.applyEngineForce(0, 1);
+        this.setWheelForceAndDisableBrake(0, 0);
+        this.setWheelForceAndDisableBrake(0, 1);                   
+    }
+
+    tryBrake(): void {
+         // rear
+         this.raycastVehicle?.setBrake(this.brakeForce, 2);
+         this.raycastVehicle?.setBrake(this.brakeForce, 3);
+ 
+         // front
+         this.raycastVehicle?.setBrake(this.brakeForce, 0);
+         this.raycastVehicle?.setBrake(this.brakeForce, 1);        
     }
 
     tryReverse(): void {
         if(!this.isActive) return;
 
-        let engineForce = this.calculateEngineForce();
+         
+        //if(Math.abs(this.forwardVelocity) > this.brakeThresholdSpeed) {
 
-        // rear wheels
-        if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(engineForce, 2);
-            this.raycastVehicle?.applyEngineForce(engineForce, 3);
-        }
+            //this.tryBrake();            
+        //}
+        //else
+        //{                    
+            let engineForce = this.calculateEngineForce();
 
-        // front wheels
-        if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(engineForce, 0);
-            this.raycastVehicle?.applyEngineForce(engineForce, 1);
-        }
+            // rear wheels
+            if(this.driveSystem != DriveSystem.FrontWheelDrive) {
+                this.raycastVehicle?.applyEngineForce(engineForce, 2);
+                this.raycastVehicle?.applyEngineForce(engineForce, 3);
+            }
+
+            // front wheels
+            if(this.driveSystem != DriveSystem.RearWheelDrive) {
+                this.raycastVehicle?.applyEngineForce(engineForce, 0);
+                this.raycastVehicle?.applyEngineForce(engineForce, 1);
+            }
+        //}
     }
 
     tryReverseWithJoystick(joystickY: number): void {
@@ -382,14 +410,14 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         // rear wheels        
         if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(engineForce * amount, 2);
-            this.raycastVehicle?.applyEngineForce(engineForce * amount, 3);
+            this.setWheelForceAndDisableBrake(engineForce * amount, 2);
+            this.setWheelForceAndDisableBrake(engineForce * amount, 3);
         }
 
         // front wheels
         if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.raycastVehicle?.applyEngineForce(engineForce * amount, 0);
-            this.raycastVehicle?.applyEngineForce(engineForce * amount, 1);
+            this.setWheelForceAndDisableBrake(engineForce * amount, 0);
+            this.setWheelForceAndDisableBrake(engineForce * amount, 1);
         }
     }
 
@@ -397,12 +425,12 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         if(!this.isActive) return;
 
         // rear wheels
-        this.raycastVehicle?.applyEngineForce(0, 2);
-        this.raycastVehicle?.applyEngineForce(0, 3);
+        this.setWheelForceAndDisableBrake(0, 2);
+        this.setWheelForceAndDisableBrake(0, 3);
 
         // front wheels
-        this.raycastVehicle?.applyEngineForce(0, 0);
-        this.raycastVehicle?.applyEngineForce(0, 1);
+        this.setWheelForceAndDisableBrake(0, 0);
+        this.setWheelForceAndDisableBrake(0, 1);
     }
 
     tryTurn(gamepadStickX: number): void {
@@ -442,6 +470,11 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         // rear wheels
         //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 2);
         //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 3);
+    }
+
+    private setWheelForceAndDisableBrake(force: number, wheelIndex: number) {
+        this.raycastVehicle?.setBrake(0, wheelIndex);
+        this.raycastVehicle?.applyEngineForce(force, wheelIndex);
     }
 
     tryTurnLeft() {
@@ -499,10 +532,12 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     update() {
         
         //this.raycastVehicle?.updateVehicle(1);
+
+        // todo: look at resetting brake and engine force to 0 here
+        
         this.chassis.update();  
 
-        const forwardVelocity = this.chassis.body.velocity.dot(this.chassis.body.quaternion.vmult(new CANNON.Vec3(1, 0, 0)));
-        this.currentSpeed = Math.abs(forwardVelocity); 
+        this.forwardVelocity = this.chassis.body.velocity.dot(this.chassis.body.quaternion.vmult(new CANNON.Vec3(1, 0, 0)));
 
         if(this.vehicleOverrideConfig.driveSystem != this.driveSystem)
             this.driveSystem = this.vehicleOverrideConfig.driveSystem;

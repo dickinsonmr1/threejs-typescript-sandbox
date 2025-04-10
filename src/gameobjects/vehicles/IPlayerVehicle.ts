@@ -14,12 +14,14 @@ export interface IPlayerVehicle {
     vehicleOverrideConfig: VehicleConfig;
 
     getCurrentSpeed(): number;
+    getForwardVelocity(): number;
 
     tryTurn(x: number): void;
     tryTightTurn(x: number): void;
     tryAccelerate(): void;
     tryAccelerateWithJoystick(y: number): void;
     tryStopAccelerate(): void;
+    tryBrake(): void;
     tryReverse(): void;
     tryReverseWithJoystick(y: number): void;
     tryStopReverse(): void;

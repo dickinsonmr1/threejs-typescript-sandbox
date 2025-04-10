@@ -143,6 +143,9 @@ export class RigidVehicleObject implements IPlayerVehicle {
     getCurrentSpeed(): number {
         throw new Error("Method not implemented.");
     }
+    getForwardVelocity(): number {
+        throw new Error("Method not implemented.");
+    }
     getRaycastVehicle(): CANNON.RaycastVehicle {
         throw new Error("Method not implemented.");
     }
@@ -166,6 +169,10 @@ export class RigidVehicleObject implements IPlayerVehicle {
     }
     
     tryTurbo(): void {
+        throw new Error("Method not implemented.");
+    }
+
+    tryBrake(): void {
         throw new Error("Method not implemented.");
     }
 
