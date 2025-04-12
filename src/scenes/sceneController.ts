@@ -844,7 +844,9 @@ export default class SceneController {
         if(!isPaused) {
             this.gameScene?.updateWater();
             this.gameScene?.updatePrecipitation();
-            this.gameScene?.updateInput(this.keyDown);
+
+            this.gameScene?.preUpdate();
+            this.gameScene?.processInput(this.keyDown);
             this.gameScene?.update();
                         
             this.gameScene?.updateLODTerrain();

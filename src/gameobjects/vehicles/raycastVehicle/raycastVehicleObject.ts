@@ -477,6 +477,13 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         this.raycastVehicle?.applyEngineForce(force, wheelIndex);
     }
 
+    private resetForceAndBrake() {
+        this.raycastVehicle?.wheelInfos.forEach((wheel, index) => {
+            this.raycastVehicle?.setBrake(0, index);
+            this.raycastVehicle?.applyEngineForce(0, index);
+          });
+    }
+
     tryTurnLeft() {
         if(!this.isActive) return;
 
@@ -529,11 +536,14 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         });
       }
 
-    update() {
+    public preUpdate() {
+
+        this.resetForceAndBrake();
+    }
+
+    public update() {
         
         //this.raycastVehicle?.updateVehicle(1);
-
-        // todo: look at resetting brake and engine force to 0 here
         
         this.chassis.update();  
 

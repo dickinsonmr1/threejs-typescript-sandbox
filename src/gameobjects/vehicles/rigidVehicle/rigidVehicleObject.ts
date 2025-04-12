@@ -305,6 +305,10 @@ export class RigidVehicleObject implements IPlayerVehicle {
     applyImpulseWhileWheelsAreDisabled(impulse: CANNON.Vec3): void {
         throw new Error("Method not implemented.");
     }
+    
+    preUpdate(): void {
+        throw new Error("Method not implemented.");
+    }
 
     update() {
         this.chassis.update();            

@@ -38,6 +38,7 @@ export interface IPlayerVehicle {
     resetPosition(position: THREE.Vector3): void;
     respawnPosition(x: number, y: number, z: number): void;
 
+    preUpdate(): void;
     update(): void;
 
     setAcceptInput(isActive: boolean): void;

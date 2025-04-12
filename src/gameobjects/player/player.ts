@@ -293,6 +293,10 @@ export class Player {
         this.target.setForwardTargetLocation(targetLocation);
     }
 
+    preUpdate(): void {
+        this.vehicleObject.preUpdate();
+    }
+
     update(cpuPlayerBehaviorOverride?: CpuPlayerPattern): void {
             
         this.fireObjects.forEach(x => {

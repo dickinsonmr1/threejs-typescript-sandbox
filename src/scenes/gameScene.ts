@@ -802,7 +802,7 @@ export default class GameScene extends THREE.Scene {
         }
 	}
 
-    public updateInput(keyDown: Set<string>) {
+    public processInput(keyDown: Set<string>) {
 
         this.sceneController.pollGamepadsForGameScene();
 
@@ -1633,6 +1633,10 @@ export default class GameScene extends THREE.Scene {
         if(this.precipitationSystem != null) {
             this.precipitationSystem.animateRain();
         }
+    }
+
+    preUpdate() {
+        this.allPlayers.forEach(player => player.preUpdate());
     }
 
     update() {
