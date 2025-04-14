@@ -18,15 +18,16 @@ export interface IPlayerVehicle {
 
     tryTurn(x: number): void;
     tryTightTurn(x: number): void;
+
     tryAccelerate(y: number): void;
     tryStopAccelerate(): void;
+
     tryBrake(): void;
+
     tryReverse(y: number): void;
     tryStopReverse(): void;
-    tryTurnLeft(): void;
-    tryStopTurnLeft(): void;
-    tryTurnRight(): void;
-    tryStopTurnRight(): void;
+
+    resetTurn(): void;
 
     applyImpulseWhileWheelsAreDisabled(impulse: CANNON.Vec3): void;
 

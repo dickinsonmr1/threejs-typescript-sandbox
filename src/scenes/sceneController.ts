@@ -153,19 +153,19 @@ export default class SceneController {
         if(leftButton != null) {
 
             leftButton.addEventListener('touchstart', () => {
-                this.gameScene?.player1.tryTurnLeftWithKeyboard();
+                this.gameScene?.player1.tryTurn(1.0);
             });
             leftButton.addEventListener('touchend', () => {
-                this.gameScene?.player1.tryStopTurnLeftWithKeyboard();
+                this.gameScene?.player1.resetTurn();
             });
         }
 
         if(rightButton != null) {
             rightButton.addEventListener('touchstart', () => {
-                this.gameScene?.player1.tryTurnRightWithKeyboard();
+                this.gameScene?.player1.tryTurn(-1.0);
             });
             rightButton.addEventListener('touchend', () => {
-                this.gameScene?.player1.tryStopTurnRightWithKeyboard();
+                this.gameScene?.player1.resetTurn();
             });
         }
 

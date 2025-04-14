@@ -774,10 +774,10 @@ export default class GameScene extends THREE.Scene {
         }
 
         if(event.key === 'ArrowLeft') {
-            this.player1.tryStopTurnLeftWithKeyboard();
+            this.player1.resetTurn();
         }
         else if(event.key === 'ArrowRight') {
-            this.player1.tryStopTurnRightWithKeyboard();
+            this.player1.resetTurn();
         }
 
         if(event.key === ' ') {
@@ -817,10 +817,10 @@ export default class GameScene extends THREE.Scene {
         }
 
         if(keyDown.has('arrowleft')) {
-            this.player1.tryTurnLeftWithKeyboard();
+            this.player1.tryTurn(1.0);
         }
         else if(keyDown.has('arrowright')) {
-            this.player1.tryTurnRightWithKeyboard();
+            this.player1.tryTurn(-1.0);
         }
         
         if (keyDown.has('x')) {
@@ -1662,7 +1662,7 @@ export default class GameScene extends THREE.Scene {
             let cpuPlayer = cpuPlayers[i];
 
             if(cpuPlayer.playerState != PlayerState.Alive){
-                cpuPlayer.tryStopTurnLeftWithKeyboard();
+                cpuPlayer.resetTurn();
                 cpuPlayer.tryStopAccelerate();
                 cpuPlayer.tryStopReverse();
                 continue;

@@ -236,7 +236,8 @@ export class RigidVehicleObject implements IPlayerVehicle {
         this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal, 2);
         this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal, 3);
     }
-    tryStopTurnLeft(): void {
+
+    resetTurn(): void {
         // front wheels
         this.rigidVehicle?.setSteeringValue(0, 0);
         this.rigidVehicle?.setSteeringValue(0, 1);
@@ -305,7 +306,7 @@ export class RigidVehicleObject implements IPlayerVehicle {
     applyImpulseWhileWheelsAreDisabled(impulse: CANNON.Vec3): void {
         throw new Error("Method not implemented.");
     }
-    
+
     preUpdate(): void {
         throw new Error("Method not implemented.");
     }

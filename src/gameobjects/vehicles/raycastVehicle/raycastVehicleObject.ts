@@ -465,27 +465,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
           });
     }
 
-    tryTurnLeft() {
-        if(!this.isActive) return;
-
-        this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal, 0);
-        this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal, 1);
-    }
-
-    tryStopTurnLeft() {
-        if(!this.isActive) return;
-
-        this.raycastVehicle?.setSteeringValue(0, 0);
-        this.raycastVehicle?.setSteeringValue(0, 1);
-    }
-
-    tryTurnRight(): void {
-        if(!this.isActive) return;
-
-        this.raycastVehicle?.setSteeringValue(-this.vehicleOverrideConfig.maxSteerVal, 0);
-        this.raycastVehicle?.setSteeringValue(-this.vehicleOverrideConfig.maxSteerVal, 1);
-    }
-    tryStopTurnRight(): void {
+    resetTurn() {
         if(!this.isActive) return;
 
         this.raycastVehicle?.setSteeringValue(0, 0);

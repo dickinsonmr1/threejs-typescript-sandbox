@@ -656,7 +656,7 @@ export class Player {
     }
         
     tryReverse(joystickY: number): void {
-        this.vehicleObject.tryReverseWithJoystick(joystickY);
+        this.vehicleObject.tryReverse(joystickY);
         this.brakeLights.setVisible(true);
     }
 
@@ -669,30 +669,18 @@ export class Player {
         if(Math.abs(x) > this.deadzoneX)
             this.vehicleObject.tryTurn(x);
         else
-            this.vehicleObject.tryStopTurnLeft();
+            this.vehicleObject.resetTurn();
     }
     
     tryTightTurn(x: number): void {
         if(Math.abs(x) > this.deadzoneX)
             this.vehicleObject.tryTightTurn(x);
         else
-            this.vehicleObject.tryStopTurnLeft();
-    }
-    
-    tryTurnLeftWithKeyboard(): void {
-        this.vehicleObject.tryTurnLeft();
+            this.vehicleObject.resetTurn();
     }
 
-    tryStopTurnLeftWithKeyboard(): void {
-        this.vehicleObject.tryStopTurnLeft(); // same as right
-    }
-
-    tryTurnRightWithKeyboard(): void {
-        this.vehicleObject.tryTurnRight();
-    }
-
-    tryStopTurnRightWithKeyboard(): void {
-        this.vehicleObject.tryStopTurnRight();
+    resetTurn(): void {
+        this.vehicleObject.resetTurn();
     }
 
     tryJump(): void {
