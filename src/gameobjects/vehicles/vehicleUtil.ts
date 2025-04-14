@@ -69,9 +69,9 @@ export class VehicleUtil {
         //follower.applyEngineForce(acceleration * maxSpeed, 2);  // Rear wheels
         
         if(distance > distantThreshold)            
-            follower.tryAccelerateWithJoystick(1);
+            follower.tryAccelerate(1);
         else if(distance > closeThreshold)
-            follower.tryAccelerateWithJoystick(0.5);
+            follower.tryAccelerate(0.5);
     }
 
     static calculateSteeringOnIPlayerVehicle(leader: IPlayerVehicle, follower: IPlayerVehicle): number {

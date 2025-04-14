@@ -767,10 +767,10 @@ export default class GameScene extends THREE.Scene {
 
         // player 1
         if(event.key === 'ArrowUp') {
-            this.player1.tryStopAccelerateWithKeyboard();
+            this.player1.tryStopAccelerate();
         }
         else if(event.key === 'ArrowDown') {
-            this.player1.tryStopReverseWithKeyboard();
+            this.player1.tryStopReverse();
         }
 
         if(event.key === 'ArrowLeft') {
@@ -810,10 +810,10 @@ export default class GameScene extends THREE.Scene {
 
         // player 1 vehicle controls
         if(keyDown.has('arrowup')) {
-            this.player1.tryAccelerateWithKeyboard();
+            this.player1.tryAccelerate(1.0);
         }
         else if(keyDown.has('arrowdown')) {
-            this.player1.tryReverseWithKeyboard();
+            this.player1.tryReverse(1.0);
         }
 
         if(keyDown.has('arrowleft')) {
@@ -1663,14 +1663,14 @@ export default class GameScene extends THREE.Scene {
 
             if(cpuPlayer.playerState != PlayerState.Alive){
                 cpuPlayer.tryStopTurnLeftWithKeyboard();
-                cpuPlayer.tryStopAccelerateWithKeyboard();
-                cpuPlayer.tryStopReverseWithKeyboard();
+                cpuPlayer.tryStopAccelerate();
+                cpuPlayer.tryStopReverse();
                 continue;
             }
 
             if(this.cpuPlayerBehavior == CpuPlayerPattern.Stop) {
-                cpuPlayer.tryStopAccelerateWithKeyboard();
-                cpuPlayer.tryStopReverseWithKeyboard();
+                cpuPlayer.tryStopAccelerate();
+                cpuPlayer.tryStopReverse();
                 continue;
             }
 

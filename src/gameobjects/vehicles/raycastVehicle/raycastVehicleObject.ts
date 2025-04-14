@@ -296,25 +296,6 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         return this.chassis.mesh.position;
     }
 
-    tryAccelerate(): void {
-           
-        if(!this.isActive) return;
-
-        let engineForce = this.calculateEngineForce();
-
-        // rear wheels
-        if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.setWheelForceAndDisableBrake(-engineForce, 2);
-            this.setWheelForceAndDisableBrake(-engineForce, 3);            
-        }
-
-        // front wheels
-        if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.setWheelForceAndDisableBrake(-engineForce, 0);
-            this.setWheelForceAndDisableBrake(-engineForce, 1);
-        }
-    }
-
     private calculateEngineForce(): number {
         //const maxEngineForce = 5000;  // Max torque at low speed for 
         const minEngineForce = this.vehicleOverrideConfig.highSpeedForce;  // Reduced torque at high speed
@@ -336,7 +317,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         return currentEngineForce;
     }
 
-    tryAccelerateWithJoystick(joystickY: number): void {
+    tryAccelerate(joystickY: number): void {
         if(!this.isActive) return;
 
         let engineForce = this.calculateEngineForce();

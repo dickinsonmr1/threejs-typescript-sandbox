@@ -171,19 +171,19 @@ export default class SceneController {
 
         if(upButton != null) {
             upButton.addEventListener('touchstart', () => {
-                this.gameScene?.player1.tryAccelerateWithKeyboard();
+                this.gameScene?.player1.tryAccelerate(1);
             });
             upButton.addEventListener('touchend', () => {
-                this.gameScene?.player1.tryStopAccelerateWithKeyboard();
+                this.gameScene?.player1.tryStopAccelerate();
             });
         }
 
         if(downButton != null) {
             downButton.addEventListener('touchstart', () => {
-                this.gameScene?.player1.tryReverseWithKeyboard();
+                this.gameScene?.player1.tryReverse(1.0);
             });
             downButton.addEventListener('touchend', () => {
-                this.gameScene?.player1.tryStopReverseWithKeyboard();
+                this.gameScene?.player1.tryStopReverse();
             });            
         }
 
@@ -362,11 +362,11 @@ export default class SceneController {
            this.gameScene?.player1.tryTurn(-output.vector.x);
            
             if(output.vector.y > 0.25)
-                this.gameScene?.player1.tryAccelerateWithJoystick(output.vector.y);
+                this.gameScene?.player1.tryAccelerate(output.vector.y);
             else if (output.vector.y < -0.25)
-                this.gameScene?.player1.tryReverseWithJoystick(output.vector.y);
+                this.gameScene?.player1.tryReverse(output.vector.y);
             else {
-                this.gameScene?.player1.tryStopAccelerateWithKeyboard();           
+                this.gameScene?.player1.tryStopAccelerate();           
             }
         });
  
@@ -375,8 +375,8 @@ export default class SceneController {
  
             // stop the player
             //this.player.setVelocity(0, 0);
-            this.gameScene?.player1.tryStopAccelerateWithKeyboard();       
-            this.gameScene?.player1.tryStopReverseWithKeyboard();
+            this.gameScene?.player1.tryStopAccelerate();       
+            this.gameScene?.player1.tryStopReverse();
         })
     }
 
@@ -532,11 +532,11 @@ export default class SceneController {
                 if(isPressed) {                
                     if(buttonIndex == this.accelerateGamepadIndex) {
                         //console.log(`pressed: ${buttonIndex}`);
-                        this.gameScene?.player1.tryAccelerateWithKeyboard();
+                        this.gameScene?.player1.tryAccelerate(1.0);
                     }
                     if(buttonIndex == this.brakeOrReverseGamepadIndex) {
                         console.log(`pressed: ${buttonIndex}`);
-                        this.gameScene?.player1.tryReverseWithKeyboard();
+                        this.gameScene?.player1.tryReverse(1.0);
                     }
                     if(buttonIndex == this.firePrimaryWeaponGamepadIndex) { // && !this.gamepadPrevious.buttons[this.firePrimaryWeaponGamepadIndex].pressed) {
                         console.log(`pressed: ${buttonIndex}`);
@@ -579,12 +579,12 @@ export default class SceneController {
                     if(this.gamepadPrevious.buttons[this.accelerateGamepadIndex].pressed
                         && buttonIndex == this.accelerateGamepadIndex) {
                             console.log(`button no longer pressed: ${buttonIndex}`);
-                            this.gameScene?.player1.tryStopAccelerateWithKeyboard();
+                            this.gameScene?.player1.tryStopAccelerate();
                     }
                     if(this.gamepadPrevious.buttons[this.brakeOrReverseGamepadIndex].pressed
                         && buttonIndex == this.brakeOrReverseGamepadIndex) {
                             console.log(`button no longer pressed: ${buttonIndex}`);
-                            this.gameScene?.player1.tryStopReverseWithKeyboard();
+                            this.gameScene?.player1.tryStopReverse();
                     }
                     if(this.gamepadPrevious.buttons[GamepadEnums.LEFT_SHOULDER].pressed
                         && buttonIndex == GamepadEnums.LEFT_SHOULDER) {

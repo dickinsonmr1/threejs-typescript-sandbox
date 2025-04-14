@@ -645,33 +645,22 @@ export class Player {
     getVehicleObject(): IPlayerVehicle {
         return this.vehicleObject;
     }
-
-
-    tryAccelerateWithKeyboard(): void {
-        this.vehicleObject.tryAccelerate();
-        this.brakeLights.setVisible(false);
-    }
     
-    tryAccelerateWithJoystick(joystickY: number): void {
-        this.vehicleObject.tryAccelerateWithJoystick(joystickY);
+    tryAccelerate(joystickY: number): void {
+        this.vehicleObject.tryAccelerate(joystickY);
         this.brakeLights.setVisible(false);
     }
 
-    tryStopAccelerateWithKeyboard(): void {
+    tryStopAccelerate(): void {
         this.vehicleObject.tryStopAccelerate();
     }
-    
-    tryReverseWithKeyboard(): void {
-        this.vehicleObject.tryReverse();
-        this.brakeLights.setVisible(true);
-    }
         
-    tryReverseWithJoystick(joystickY: number): void {
+    tryReverse(joystickY: number): void {
         this.vehicleObject.tryReverseWithJoystick(joystickY);
         this.brakeLights.setVisible(true);
     }
 
-    tryStopReverseWithKeyboard(): void {
+    tryStopReverse(): void {
         this.vehicleObject.tryStopReverse();
         this.brakeLights.setVisible(false);
     }
