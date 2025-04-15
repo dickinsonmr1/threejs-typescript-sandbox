@@ -24,6 +24,11 @@
     "wheelMass": 20,
 
     "frictionSlip": 6.0,
+    "frictionSlipRear": 2.0,
+
+    "driftingFrictionSlipFront": 2.5,
+    "driftingFrictionSlipRear": 1.5,
+    
     "rollInfluence": 0.005,
     "useCustomSlidingRotationalSpeed": false,
     "customSlidingRotationalSpeed": -30,

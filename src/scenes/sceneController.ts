@@ -709,6 +709,10 @@ export default class SceneController {
             const playerFolder = this.gui.addFolder('Player 1 Config')
             // wheels
             playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'frictionSlip', 0, 10, 0.1).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'frictionSlipRear', 0, 10, 0.1).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'driftingFrictionSlipFront', 0, 10, 0.1).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'driftingFrictionSlipRear', 0, 10, 0.1).listen();
+
             playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'rollInfluence', 0, 1, 0.01).listen();
             playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'customSlidingRotationalSpeed', -90, 0, 5).listen();
 
