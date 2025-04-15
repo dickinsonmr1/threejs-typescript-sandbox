@@ -511,7 +511,8 @@ export default class SceneController {
         }
         else 
         */
-        this.gameScene?.player1.tryTurn(-gamepad.axes[0]);
+       
+        this.gameScene?.player1?.tryTurn(-gamepad.axes[0]);
         
         // https://gabrielromualdo.com/articles/2020-12-15-how-to-use-the-html5-gamepad-api       
         
@@ -522,7 +523,7 @@ export default class SceneController {
 
         gamepad.buttons.map(e => e.pressed).forEach((isPressed, buttonIndex) => {
 
-            if(!this.gameScene) return;
+            if(!this.gameScene || !this.gameScene?.player1) return;
 
             if(isPressed && buttonIndex == GamepadEnums.START && !this.gamepadPrevious.buttons[GamepadEnums.START].pressed) {
                 this.tryTogglePauseMenu();

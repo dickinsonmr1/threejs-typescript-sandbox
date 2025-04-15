@@ -25,6 +25,8 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     private wheelModels: THREE.Group[] = [];
 
     modelOffset?: THREE.Vector3;
+
+    private isDrifting: boolean = false;
     
     //private readonly maxSteerVal: number = Math.PI / 4;//0.7;
     //private readonly maxForce: number = 1500;
@@ -125,7 +127,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             directionLocal: new CANNON.Vec3(0, -1, 0),
             suspensionStiffness: this.vehicleOverrideConfig.suspensionStiffness,
             suspensionRestLength: this.vehicleOverrideConfig.suspensionRestLength,
-            frictionSlip: this.vehicleOverrideConfig.frictionSlip, //5.0, // 1.4
+            frictionSlip: this.vehicleOverrideConfig.frictionSlipRear ?? this.vehicleOverrideConfig.frictionSlip, //5.0, // 1.4
             dampingRelaxation: this.vehicleOverrideConfig.dampingRelaxation,//6.0,
             dampingCompression:  this.vehicleOverrideConfig.dampingCompression,//5.0,
             maxSuspensionForce:  this.vehicleOverrideConfig.maxSuspensionForce,//100000,
@@ -357,49 +359,34 @@ export class RaycastVehicleObject implements IPlayerVehicle {
          this.raycastVehicle?.setBrake(this.brakeForce, 1);        
     }
 
-    tryReverse(): void {
+    setDrifting(): void {
+        this.isDrifting = true;
+    }
+
+    tryReverse(joystickY: number): void {
         if(!this.isActive) return;
 
-         
         //if(Math.abs(this.forwardVelocity) > this.brakeThresholdSpeed) {
-
             //this.tryBrake();            
         //}
         //else
-        //{                    
-            let engineForce = this.calculateEngineForce();
+        //{     
 
-            // rear wheels
+            let engineForce = this.calculateEngineForce();
+            var amount = Math.abs(joystickY);
+
+            // rear wheels        
             if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-                this.raycastVehicle?.applyEngineForce(engineForce, 2);
-                this.raycastVehicle?.applyEngineForce(engineForce, 3);
+                this.setWheelForceAndDisableBrake(engineForce * amount, 2);
+                this.setWheelForceAndDisableBrake(engineForce * amount, 3);
             }
 
             // front wheels
             if(this.driveSystem != DriveSystem.RearWheelDrive) {
-                this.raycastVehicle?.applyEngineForce(engineForce, 0);
-                this.raycastVehicle?.applyEngineForce(engineForce, 1);
+                this.setWheelForceAndDisableBrake(engineForce * amount, 0);
+                this.setWheelForceAndDisableBrake(engineForce * amount, 1);
             }
-        //}
-    }
-
-    tryReverseWithJoystick(joystickY: number): void {
-        if(!this.isActive) return;
-
-        let engineForce = this.calculateEngineForce();
-        var amount = Math.abs(joystickY);
-
-        // rear wheels        
-        if(this.driveSystem != DriveSystem.FrontWheelDrive) {
-            this.setWheelForceAndDisableBrake(engineForce * amount, 2);
-            this.setWheelForceAndDisableBrake(engineForce * amount, 3);
-        }
-
-        // front wheels
-        if(this.driveSystem != DriveSystem.RearWheelDrive) {
-            this.setWheelForceAndDisableBrake(engineForce * amount, 0);
-            this.setWheelForceAndDisableBrake(engineForce * amount, 1);
-        }
+        // }
     }
 
     tryStopReverse(): void {
@@ -462,6 +449,11 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         this.raycastVehicle?.wheelInfos.forEach((wheel, index) => {
             this.raycastVehicle?.setBrake(0, index);
             this.raycastVehicle?.applyEngineForce(0, index);
+
+            if(index <= 1)
+                wheel.frictionSlip = this.vehicleOverrideConfig.frictionSlip;
+            else if(index >= 2)
+                wheel.frictionSlip = this.vehicleOverrideConfig.frictionSlipRear ?? this.vehicleOverrideConfig.frictionSlip;
           });
     }
 
@@ -516,10 +508,22 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         //this.wheels.forEach(x => x.update());
         
         if(this.raycastVehicle != null) {
+
+            // todo: rewrite using foreach
             for(let i = 0; i < this.raycastVehicle.wheelInfos.length; i++) {
 
-                if(this.vehicleOverrideConfig.frictionSlip != this.raycastVehicle.wheelInfos[i].frictionSlip)
-                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.frictionSlip;
+                // drift for rear wheels
+                if(this.isDrifting && i >= 2) {
+                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.driftingFrictionSlipRear ?? this.vehicleOverrideConfig.frictionSlip;
+                }
+                // drift for front wheels
+                else if(!this.isDrifting && i <= 1) {
+                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.driftingFrictionSlipFront ?? this.vehicleOverrideConfig.frictionSlip;
+                }
+                else {
+                    if(this.vehicleOverrideConfig.frictionSlip != this.raycastVehicle.wheelInfos[i].frictionSlip)
+                        this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.frictionSlip;
+                }
 
                 if(this.vehicleOverrideConfig.rollInfluence != this.raycastVehicle.wheelInfos[i].rollInfluence)
                     this.raycastVehicle.wheelInfos[i].rollInfluence = this.vehicleOverrideConfig.rollInfluence;

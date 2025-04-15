@@ -656,6 +656,7 @@ export class Player {
     }
         
     tryReverse(joystickY: number): void {
+        this.vehicleObject.setDrifting();
         this.vehicleObject.tryReverse(joystickY);
         this.brakeLights.setVisible(true);
     }
