@@ -37,7 +37,8 @@
     "suspensionStiffness": 100,
     "suspensionRestLength": 0.25,
 
-    "maxSteerVal": 0.6,
+    "maxSteerVal": 0.4,
+    "driftingMaxSteerVal": 0.6,
 
     "chassisDimensions": [0.9, 0.35, 0.45],
     "centerOfMassAdjust": [0, 0.35, 0],
@@ -47,7 +48,7 @@
     "modelScale": [0.7, 0.7, 0.7],
     "modelOffset": [0, 0, 0],
     
-    "lowSpeedForce": 3000,
+    "lowSpeedForce": 3500,
     "highSpeedForce": 1500,
     "topSpeedForHigherTorque": 10,
     "driveSystem": 1,

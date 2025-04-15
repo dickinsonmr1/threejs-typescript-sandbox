@@ -28,10 +28,10 @@ export interface VehicleConfig {
     wheelMass: number;
     
     frictionSlip: number; // Lower slip = more grip (1.2 is high grip)
-    frictionSlipRear?: number; // Lower slip = more grip (1.2 is high grip)
+    frictionSlipRear: number; // Lower slip = more grip (1.2 is high grip)
 
-    driftingFrictionSlipFront?: number; // Lower slip = more grip (1.2 is high grip)
-    driftingFrictionSlipRear?: number; // Lower slip = more grip (1.2 is high grip)
+    driftingFrictionSlipFront: number; // Lower slip = more grip (1.2 is high grip)
+    driftingFrictionSlipRear: number; // Lower slip = more grip (1.2 is high grip)
 
     rollInfluence: number; // Reduces car tilting
     useCustomSlidingRotationalSpeed: boolean;
@@ -47,6 +47,7 @@ export interface VehicleConfig {
     maxSuspensionTravel: number;
 
     maxSteerVal: number;
+    driftingMaxSteerVal: number;
 
     // chassis properties
     chassisMass: number;

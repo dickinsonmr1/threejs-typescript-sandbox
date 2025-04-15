@@ -27,6 +27,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     modelOffset?: THREE.Vector3;
 
     private isDrifting: boolean = false;
+    private isTurning: boolean = false;
     
     //private readonly maxSteerVal: number = Math.PI / 4;//0.7;
     //private readonly maxForce: number = 1500;
@@ -127,7 +128,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             directionLocal: new CANNON.Vec3(0, -1, 0),
             suspensionStiffness: this.vehicleOverrideConfig.suspensionStiffness,
             suspensionRestLength: this.vehicleOverrideConfig.suspensionRestLength,
-            frictionSlip: this.vehicleOverrideConfig.frictionSlipRear ?? this.vehicleOverrideConfig.frictionSlip, //5.0, // 1.4
+            frictionSlip: this.vehicleOverrideConfig.frictionSlipRear, //5.0, // 1.4
             dampingRelaxation: this.vehicleOverrideConfig.dampingRelaxation,//6.0,
             dampingCompression:  this.vehicleOverrideConfig.dampingCompression,//5.0,
             maxSuspensionForce:  this.vehicleOverrideConfig.maxSuspensionForce,//100000,
@@ -363,6 +364,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         this.isDrifting = true;
     }
 
+    setTurning(): void {
+        this.isTurning = true;
+    }
+
     tryReverse(joystickY: number): void {
         if(!this.isActive) return;
 
@@ -420,8 +425,15 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                 : 0,
             1);
         */
-        this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal * gamepadStickX, 0);
-        this.raycastVehicle?.setSteeringValue(this.vehicleOverrideConfig.maxSteerVal * gamepadStickX, 1);
+
+        this.setDrifting();   
+
+        let driftVal = this.isDrifting
+        ? this.vehicleOverrideConfig.driftingMaxSteerVal
+        : this.vehicleOverrideConfig.maxSteerVal;
+        
+        this.raycastVehicle?.setSteeringValue(driftVal * gamepadStickX, 0);
+        this.raycastVehicle?.setSteeringValue(driftVal * gamepadStickX, 1);
 
         // rear wheels
         //this.raycastVehicle?.setSteeringValue(-this.maxSteerVal * gamepadStickX, 2);
@@ -446,6 +458,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     private resetForceAndBrake() {
+
+        this.isDrifting = false;
+        this.isTurning = false;
+        
         this.raycastVehicle?.wheelInfos.forEach((wheel, index) => {
             this.raycastVehicle?.setBrake(0, index);
             this.raycastVehicle?.applyEngineForce(0, index);
@@ -453,7 +469,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
             if(index <= 1)
                 wheel.frictionSlip = this.vehicleOverrideConfig.frictionSlip;
             else if(index >= 2)
-                wheel.frictionSlip = this.vehicleOverrideConfig.frictionSlipRear ?? this.vehicleOverrideConfig.frictionSlip;
+                wheel.frictionSlip = this.vehicleOverrideConfig.frictionSlipRear;
           });
     }
 
@@ -514,11 +530,11 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
                 // drift for rear wheels
                 if(this.isDrifting && i >= 2) {
-                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.driftingFrictionSlipRear ?? this.vehicleOverrideConfig.frictionSlip;
+                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.driftingFrictionSlipRear;
                 }
                 // drift for front wheels
                 else if(!this.isDrifting && i <= 1) {
-                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.driftingFrictionSlipFront ?? this.vehicleOverrideConfig.frictionSlip;
+                    this.raycastVehicle.wheelInfos[i].frictionSlip = this.vehicleOverrideConfig.driftingFrictionSlipFront;
                 }
                 else {
                     if(this.vehicleOverrideConfig.frictionSlip != this.raycastVehicle.wheelInfos[i].frictionSlip)

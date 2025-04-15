@@ -37,7 +37,8 @@
     "suspensionStiffness": 100,
     "suspensionRestLength": 0.25,
 
-    "maxSteerVal": 0.5,
+    "maxSteerVal": 0.7,
+    "driftingMaxSteerVal": 0.8,
 
     "chassisDimensions": [0.75, 0.5, 0.5],
     "centerOfMassAdjust": [0.5, 0.4, 0],

@@ -718,6 +718,7 @@ export default class SceneController {
 
             // wheel turn amount
             playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'maxSteerVal', 0, Math.PI, Math.PI / 16).listen();
+            playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'driftingMaxSteerVal', 0, Math.PI, Math.PI / 16).listen();
 
             // engine / drive system
             playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'lowSpeedForce', 0, 10000, 100).listen();

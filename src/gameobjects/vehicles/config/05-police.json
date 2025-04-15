@@ -38,6 +38,7 @@
     "suspensionRestLength": 0.25,
 
     "maxSteerVal": 0.7,
+    "driftingMaxSteerVal": 0.8,
 
     "chassisDimensions": [1, 0.35, 0.5],
     "centerOfMassAdjust": [0, 0.25, 0],
