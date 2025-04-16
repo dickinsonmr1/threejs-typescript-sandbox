@@ -51,6 +51,10 @@
     "lowSpeedForce": 1500,
     "highSpeedForce": 1000,
     "topSpeedForHigherTorque": 20,
+        
+    "reverseLowSpeedForce": 2000,
+    "reverseHighSpeedForce": 1000,
+    "reverseTopSpeedForHigherTorque": 5,
     "driveSystem": 0,
 
     "dampingRelaxation": 6.0,

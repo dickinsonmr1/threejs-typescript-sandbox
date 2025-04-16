@@ -68,5 +68,10 @@ export interface VehicleConfig {
     lowSpeedForce: number; // max torque at low speed for faster acceleration
     highSpeedForce: number; // reduced torque at higher speed
     topSpeedForHigherTorque: number; // speed at which torque reduction starts
+
+    reverseLowSpeedForce: number;
+    reverseHighSpeedForce: number;
+    reverseTopSpeedForHigherTorque: number;
+
     driveSystem: DriveSystem;
 }

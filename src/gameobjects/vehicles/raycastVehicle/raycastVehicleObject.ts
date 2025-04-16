@@ -38,7 +38,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
     private currentSpeed: number = 0;
 
-    private brakeThresholdSpeed: number = 0.5;
+    private brakeThresholdSpeed: number = 0.25;
 
     private brakeForce: number = 50;
 
@@ -300,17 +300,15 @@ export class RaycastVehicleObject implements IPlayerVehicle {
     }
 
     private calculateEngineForce(): number {
-        //const maxEngineForce = 5000;  // Max torque at low speed for 
-        const minEngineForce = this.vehicleOverrideConfig.highSpeedForce;  // Reduced torque at high speed
-        const topSpeed = this.vehicleOverrideConfig.topSpeedForHigherTorque;          // The speed at which torque reduction starts
+        const minEngineForce = this.vehicleOverrideConfig.highSpeedForce;       // Reduced torque at high speed
+        const topSpeed = this.vehicleOverrideConfig.topSpeedForHigherTorque;    // The speed at which torque reduction starts
 
         // Scale engine force based on speed
         let currentEngineForce = 0;
 
-        let scaledEngineForce = this.vehicleOverrideConfig.lowSpeedForce * (1 - Math.min(this.currentSpeed / topSpeed, 1)); 
+        let scaledEngineForce = this.vehicleOverrideConfig.lowSpeedForce * (1 - Math.min(Math.abs(this.currentSpeed) / topSpeed, 1)); 
         scaledEngineForce = Math.max(scaledEngineForce, minEngineForce); // Clamp to min force
         currentEngineForce = scaledEngineForce;
-
 
         // smoother throttle response
 
@@ -320,11 +318,31 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         return currentEngineForce;
     }
 
-    tryAccelerate(joystickY: number): void {
+    private calculateReverseEngineForce(): number {
+        const minEngineForce = this.vehicleOverrideConfig.reverseHighSpeedForce;       // Reduced torque at high speed
+        const topSpeed = this.vehicleOverrideConfig.reverseTopSpeedForHigherTorque;    // The speed at which torque reduction starts
+
+        // Scale engine force based on speed
+        let currentEngineForce = 0;
+
+        let scaledEngineForce = this.vehicleOverrideConfig.reverseLowSpeedForce * (1 - Math.min(Math.abs(this.currentSpeed) / topSpeed, 1)); 
+        scaledEngineForce = Math.max(scaledEngineForce, minEngineForce); // Clamp to min force
+        currentEngineForce = scaledEngineForce;
+
+        // smoother throttle response
+
+        //const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+        //currentEngineForce = lerp(currentEngineForce, scaledEngineForce, deltaTime * 5);
+
+        return currentEngineForce;
+    }
+
+    tryAccelerate(joystickY: number = 1.0): void {
         if(!this.isActive) return;
 
         let engineForce = this.calculateEngineForce();
 
+        console.log(`forward: ${engineForce}`);
         // rear wheels
         if(this.driveSystem != DriveSystem.FrontWheelDrive) {            
             this.setWheelForceAndDisableBrake(-engineForce * joystickY, 2);
@@ -368,17 +386,18 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         this.isTurning = true;
     }
 
-    tryReverse(joystickY: number): void {
+    tryReverse(joystickY: number = 1.0): void {
         if(!this.isActive) return;
 
-        //if(Math.abs(this.forwardVelocity) > this.brakeThresholdSpeed) {
-            //this.tryBrake();            
-        //}
-        //else
-        //{     
-
-            let engineForce = this.calculateEngineForce();
+        if(this.forwardVelocity < -this.brakeThresholdSpeed) {
+            this.tryBrake();            
+        }
+        else
+        {     
+            let engineForce = this.calculateReverseEngineForce();
             var amount = Math.abs(joystickY);
+
+            console.log(`reverse: ${engineForce}`);
 
             // rear wheels        
             if(this.driveSystem != DriveSystem.FrontWheelDrive) {
@@ -391,7 +410,7 @@ export class RaycastVehicleObject implements IPlayerVehicle {
                 this.setWheelForceAndDisableBrake(engineForce * amount, 0);
                 this.setWheelForceAndDisableBrake(engineForce * amount, 1);
             }
-        // }
+        }
     }
 
     tryStopReverse(): void {
@@ -516,7 +535,10 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         
         this.chassis.update();  
 
-        this.forwardVelocity = this.chassis.body.velocity.dot(this.chassis.body.quaternion.vmult(new CANNON.Vec3(1, 0, 0)));
+        //this.forwardVelocity = this.chassis.body.velocity.dot(this.chassis.body.quaternion.vmult(new CANNON.Vec3(1, 0, 0)));
+        
+        const velocity = this.chassis.body.velocity;
+        this.forwardVelocity = this.chassis.body.vectorToLocalFrame(velocity).x;
 
         if(this.vehicleOverrideConfig.driveSystem != this.driveSystem)
             this.driveSystem = this.vehicleOverrideConfig.driveSystem;

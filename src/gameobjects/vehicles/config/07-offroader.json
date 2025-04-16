@@ -23,8 +23,8 @@
 
     "wheelMass": 20,
 
-    "frictionSlip": 6.0,
-    "frictionSlipRear": 2.0,
+    "frictionSlip": 5.0,
+    "frictionSlipRear": 4.0,
 
     "driftingFrictionSlipFront": 2.5,
     "driftingFrictionSlipRear": 1.5,
@@ -37,7 +37,7 @@
     "suspensionStiffness": 100,
     "suspensionRestLength": 0.25,
 
-    "maxSteerVal": 0.4,
+    "maxSteerVal": 0.35,
     "driftingMaxSteerVal": 0.6,
 
     "chassisDimensions": [0.9, 0.35, 0.45],
@@ -48,9 +48,14 @@
     "modelScale": [0.7, 0.7, 0.7],
     "modelOffset": [0, 0, 0],
     
-    "lowSpeedForce": 3500,
+    "lowSpeedForce": 5000,
     "highSpeedForce": 1500,
     "topSpeedForHigherTorque": 10,
+    
+    "reverseLowSpeedForce": 2000,
+    "reverseHighSpeedForce": 1000,
+    "reverseTopSpeedForHigherTorque": 5,
+    
     "driveSystem": 1,
 
     "dampingRelaxation": 6.0,

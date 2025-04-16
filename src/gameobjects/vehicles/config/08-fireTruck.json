@@ -51,6 +51,11 @@
     "lowSpeedForce": 3500,
     "highSpeedForce": 1500,
     "topSpeedForHigherTorque": 5,
+    
+    "reverseLowSpeedForce": 2000,
+    "reverseHighSpeedForce": 1000,
+    "reverseTopSpeedForHigherTorque": 5,
+    
     "driveSystem": 0,
 
     "hasEmergencyLights1": true,

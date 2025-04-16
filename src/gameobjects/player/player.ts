@@ -667,6 +667,7 @@ export class Player {
     }
 
     tryTurn(x: number): void {
+
         if(Math.abs(x) > this.deadzoneX)
             this.vehicleObject.tryTurn(x);
         else
