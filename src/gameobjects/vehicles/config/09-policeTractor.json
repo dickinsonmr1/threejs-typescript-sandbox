@@ -10,12 +10,12 @@
     "comment": "policeTractor", 
 
     "frontWheelHeight": 0.25,
-    "rearWheelHeight": 0.5,
+    "rearWheelHeight": 0.45,
 
-    "frontWheelRadius": 0.25,
+    "frontWheelRadius": 0.4,
     "rearWheelRadius": 0.5,
 
-    "frontWheelModelScale": [1, 1, 1],
+    "frontWheelModelScale": [1, 1.5, 1.5],
     "rearWheelModelScale": [1, 2, 2],
 
     "frontWheelOffset": [0.25, 0, 0],
@@ -40,7 +40,7 @@
     "maxSteerVal": 0.7,
     "driftingMaxSteerVal": 0.8,
 
-    "chassisDimensions": [1, 0.5, 0.6],
+    "chassisDimensions": [1, 0.4, 0.6],
     "centerOfMassAdjust": [0, 0.4, 0],
 
     "chassisMass": 1000,

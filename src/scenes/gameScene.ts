@@ -1024,7 +1024,7 @@ export default class GameScene extends THREE.Scene {
         if(quaternion == null)
             quaternion = new THREE.Quaternion();
         
-        position.y += 2;
+        position.y += 2.75;
         var debrisWheel = new DumpsterFireObject(
             this,
             this.dumpsterModel.scene,
@@ -1957,7 +1957,7 @@ export default class GameScene extends THREE.Scene {
 
         const player1CurrentSpeed = this.player1.getVehicleObject().getForwardVelocity();
         document.getElementById('speed')!.innerText = player1CurrentSpeed.toFixed(0).toString();
-        if(player1CurrentSpeed >= this.player1.getVehicleObject().vehicleOverrideConfig.topSpeedForHigherTorque)
+        if(Math.abs(player1CurrentSpeed) >= Math.abs(this.player1.getVehicleObject().vehicleOverrideConfig.topSpeedForHigherTorque))
             document.getElementById('speed')!.style.color = 'red';
         else
             document.getElementById('speed')!.style.color = 'green';

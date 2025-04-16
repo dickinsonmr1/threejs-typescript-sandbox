@@ -102,6 +102,8 @@ export class Player {
     private triRocketCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1, 1);
     private airstrikeCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.25, 0.25);
     private sonicPulseCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1.00, 1.00);
+    private dumpsterCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1.00, 1.00);
+
     public shovelCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(8, 1);
     public currentShovelAngle: number = 0;
 
@@ -483,6 +485,7 @@ export class Player {
         this.sonicPulseCooldownClock.stopIfExpired();
         this.shovelCooldownClock.stopIfExpired();
         this.triRocketCooldownClock.stopIfExpired();
+        this.dumpsterCooldownClock.stopIfExpired();
 
         if(this.shield != null)
             this.shield.updatePosition(this.getPosition());
@@ -999,13 +1002,18 @@ export class Player {
     }
 
     tryFireDumpster(): void {
-        let gameScene = <GameScene>this.scene;
 
-        let forwardVector = new THREE.Vector3(-20, 4, 0);
-        forwardVector.applyQuaternion(this.getVehicleObject().getModel().quaternion);
-        let projectileLaunchVector = forwardVector; 
+        if(!this.dumpsterCooldownClock.isRunning()) {
+            let gameScene = <GameScene>this.scene;
 
-        gameScene.generateRandomDumpster(this.getPosition(), projectileLaunchVector);
+            let forwardVector = new THREE.Vector3(-22.5, -1, 0);
+            forwardVector.applyQuaternion(this.getVehicleObject().getModel().quaternion);
+            let projectileLaunchVector = forwardVector; 
+
+            gameScene.generateRandomDumpster(this.getPosition(), projectileLaunchVector);
+
+            this.dumpsterCooldownClock.start();
+        }        
     }
 
     tryFireSonicPulse(): void {

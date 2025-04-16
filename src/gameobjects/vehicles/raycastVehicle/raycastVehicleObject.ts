@@ -342,7 +342,6 @@ export class RaycastVehicleObject implements IPlayerVehicle {
 
         let engineForce = this.calculateEngineForce();
 
-        console.log(`forward: ${engineForce}`);
         // rear wheels
         if(this.driveSystem != DriveSystem.FrontWheelDrive) {            
             this.setWheelForceAndDisableBrake(-engineForce * joystickY, 2);
@@ -396,8 +395,6 @@ export class RaycastVehicleObject implements IPlayerVehicle {
         {     
             let engineForce = this.calculateReverseEngineForce();
             var amount = Math.abs(joystickY);
-
-            console.log(`reverse: ${engineForce}`);
 
             // rear wheels        
             if(this.driveSystem != DriveSystem.FrontWheelDrive) {

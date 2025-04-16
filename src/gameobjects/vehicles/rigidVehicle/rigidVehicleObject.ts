@@ -237,6 +237,10 @@ export class RigidVehicleObject implements IPlayerVehicle {
         this.rigidVehicle?.setSteeringValue(-this.rigidMaxSteerVal, 3);
     }
 
+    setDrifting(): void {
+        throw new Error("Method not implemented.");
+    }
+
     resetTurn(): void {
         // front wheels
         this.rigidVehicle?.setSteeringValue(0, 0);

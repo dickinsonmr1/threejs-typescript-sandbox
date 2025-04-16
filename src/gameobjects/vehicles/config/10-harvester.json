@@ -10,16 +10,16 @@
     "comment": "harvester", 
 
     "frontWheelHeight": 0.25,
-    "rearWheelHeight": 0.5,
+    "rearWheelHeight": 0.45,
 
-    "frontWheelRadius": 0.25,
+    "frontWheelRadius": 0.4,
     "rearWheelRadius": 0.5,
 
-    "frontWheelModelScale": [1, 1, 1],
-    "rearWheelModelScale": [2, 2, 2],
+    "frontWheelModelScale": [1, 1.5, 1.5],
+    "rearWheelModelScale": [1, 2, 2],
 
     "frontWheelOffset": [0.25, 0, 0],
-    "rearWheelOffset": [0.25, 0.1, 0],
+    "rearWheelOffset": [0.25, -0.1, 0],
 
     "wheelMass": 20,
 

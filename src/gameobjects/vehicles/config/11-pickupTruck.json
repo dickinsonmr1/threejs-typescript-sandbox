@@ -9,14 +9,14 @@
 
     "comment": "truck", 
 
-    "frontWheelHeight": 0.25,
-    "rearWheelHeight": 0.25,
+    "frontWheelHeight": 0.20,
+    "rearWheelHeight": 0.20,
 
-    "frontWheelRadius": 0.25,
-    "rearWheelRadius": 0.25,
+    "frontWheelRadius": 0.20,
+    "rearWheelRadius": 0.20,
 
-    "frontWheelModelScale": [0.75, 0.75, 0.75],
-    "rearWheelModelScale": [0.75, 0.75, 0.75],
+    "frontWheelModelScale": [0.5, 0.75, 0.75],
+    "rearWheelModelScale": [0.5, 0.75, 0.75],
 
     "frontWheelOffset": [0.25, 0, 0],
     "rearWheelOffset": [0.5, 0, 0],
@@ -40,7 +40,7 @@
     "maxSteerVal": 0.7,
     "driftingMaxSteerVal": 0.8,
 
-    "chassisDimensions": [1, 0.5, 0.5],
+    "chassisDimensions": [1, 0.5, 0.4],
     "centerOfMassAdjust": [0, 0.4, 0],
 
     "chassisMass": 600,
