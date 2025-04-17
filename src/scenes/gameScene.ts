@@ -74,7 +74,7 @@ export default class GameScene extends THREE.Scene {
 
     private readonly textureLoader = new THREE.TextureLoader();
 
-    private readonly camera: THREE.PerspectiveCamera;
+    public readonly camera: THREE.PerspectiveCamera;
 
     private readonly audioManager: AudioManager;
     private soundEffectLibraryConfig: SoundEffectConfig[] = soundEffectLibraryJson;

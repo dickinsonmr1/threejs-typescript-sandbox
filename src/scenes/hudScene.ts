@@ -3,6 +3,7 @@ import HudHealthBar, { HudBarType } from '../gameobjects/hudHealthBar';
 import SceneController from './sceneController';
 import { HudDivElementManager } from './hudDivElementManager';
 import {Text} from 'troika-three-text'
+import MeshHealthBar from '../gameobjects/meshHealthBar';
 
 export enum HudIconLocation {
     UpperLeft,
@@ -20,6 +21,8 @@ export default class HudScene extends THREE.Scene {
 
     private ammoText!: Text;
     private spriteCenterBottom!: THREE.Sprite;
+
+    private meshHealthBars: MeshHealthBar[] = [];
 
 
     weaponInventory: THREE.Texture[] = [];
@@ -96,6 +99,13 @@ export default class HudScene extends THREE.Scene {
             100,
             shieldIconTexture,
             new THREE.Color('blue'));
+
+        this.meshHealthBars.push(new MeshHealthBar(this, 100, new THREE.Color('red')));
+        this.meshHealthBars.push(new MeshHealthBar(this, 100, new THREE.Color('blue')));
+        this.meshHealthBars.push(new MeshHealthBar(this, 100, new THREE.Color('green')));
+        this.meshHealthBars.push(new MeshHealthBar(this, 100,new THREE.Color('yellow')));
+
+        //this.meshHealthBars[0].updateHealthBarPosition(this.camera, new THREE.Vector3(10, 10, 10), this.);
 
         this.ammoText = this.generateTroikaThreeText(new THREE.Vector3(0,0,-5), "Ammo", 10, 'middle', 'middle', 0xFFFFFF);
         //this.add(this.statBar1Text);
@@ -192,7 +202,7 @@ export default class HudScene extends THREE.Scene {
         return text;
     }
 
-    update() {
+    update(positions: THREE.Vector3[], gameCamera: THREE.Camera) {
 
         if(this.hudDivElementManager != null) {
             this.hudDivElementManager.updateElementText("Special", `Special: 5`);
@@ -208,6 +218,13 @@ export default class HudScene extends THREE.Scene {
             //this.statBar1Text.quaternion.copy(this.camera.quaternion);
             //this.statBar1Text.rotation.y += 0.01;
         }       
+
+        if(this.meshHealthBars.length > 0) {
+            this.meshHealthBars[0].updateHealthBarPosition(this.camera, positions[0], gameCamera);
+            this.meshHealthBars[1].updateHealthBarPosition(this.camera, positions[1], gameCamera);
+            this.meshHealthBars[2].updateHealthBarPosition(this.camera, positions[2], gameCamera);
+            this.meshHealthBars[3].updateHealthBarPosition(this.camera, positions[3], gameCamera);
+        }
     }
 
     updateHealthBar(currentValue: number) {

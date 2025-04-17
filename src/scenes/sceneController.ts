@@ -872,6 +872,13 @@ export default class SceneController {
     }
 
     private updateHudScene() {
-        this.hudScene?.update();
+        this.hudScene?.update(
+        [
+            this.gameScene?.player1?.getPosition() ?? new THREE.Vector3(0,0,0),
+            this.gameScene?.player2?.getPosition() ?? new THREE.Vector3(0,0,0),
+            this.gameScene?.player3?.getPosition() ?? new THREE.Vector3(0,0,0),
+            this.gameScene?.player4?.getPosition() ?? new THREE.Vector3(0,0,0),
+
+        ], this.gameScene!.camera);   
     }
 }
