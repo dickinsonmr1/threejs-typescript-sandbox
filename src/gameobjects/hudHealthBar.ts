@@ -138,9 +138,9 @@ export default class HudHealthBar {
             opacity: 0.2
         }));
         this.healthBarOutlineSprite.center.set(xAlign, yAlign);
-        this.healthBarOutlineSprite.scale.set(this.spriteMaxWidth, this.spriteMaxHeight, 1);
+        this.healthBarOutlineSprite.scale.set(this.spriteMaxWidth + 4, this.spriteMaxHeight + 4, 1);
         this.group.add( this.healthBarOutlineSprite );
-        this.healthBarOutlineSprite.position.set(x, y, 0);     
+        this.healthBarOutlineSprite.position.set(x - 2, y, 0);     
 
         let color = colorOverride ?? new THREE.Color('green');
         this.healthBarSprite = new THREE.Sprite( new THREE.SpriteMaterial({
@@ -163,7 +163,7 @@ export default class HudHealthBar {
             sprite.center.set( 0.5, 0.5 );
             sprite.scale.set( iconSize, iconSize, 1 );
             this.group.add(sprite);
-            sprite.position.set(x, y, 0);
+            sprite.position.set(x - 32, y, 0);
         }
         scene.add(this.group);
     }

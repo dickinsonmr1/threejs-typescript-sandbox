@@ -100,10 +100,6 @@ export default class HudScene extends THREE.Scene {
             shieldIconTexture,
             new THREE.Color('blue'));
 
-        this.meshHealthBars.push(new MeshHealthBar(this, 100, new THREE.Color('red')));
-        this.meshHealthBars.push(new MeshHealthBar(this, 100, new THREE.Color('blue')));
-        this.meshHealthBars.push(new MeshHealthBar(this, 100, new THREE.Color('green')));
-        this.meshHealthBars.push(new MeshHealthBar(this, 100,new THREE.Color('yellow')));
 
         //this.meshHealthBars[0].updateHealthBarPosition(this.camera, new THREE.Vector3(10, 10, 10), this.);
 
@@ -134,6 +130,17 @@ export default class HudScene extends THREE.Scene {
         this.hudDivElementManager.addElement("Lightning", "");        
 
         this.hudDivElementManager.hideAllElements();
+    }
+    async initializeMeshHealthBars(player1Id: string, player1MaxHealth: number,
+        player2Id: string, player2MaxHealth: number,
+        player3Id: string, player3MaxHealth: number,
+        player4Id: string, player4MaxHealth: number
+    ) {
+
+        this.meshHealthBars.push(new MeshHealthBar(this, player1Id, player1MaxHealth));//, new THREE.Color('red')));
+        this.meshHealthBars.push(new MeshHealthBar(this, player2Id, player2MaxHealth));//, new THREE.Color('blue')));
+        this.meshHealthBars.push(new MeshHealthBar(this, player3Id, player3MaxHealth));//, new THREE.Color('green')));
+        this.meshHealthBars.push(new MeshHealthBar(this, player4Id, player4MaxHealth));//,new THREE.Color('yellow')));
     }
 
     generateIcon(texture: THREE.Texture, color: THREE.Color, location: HudIconLocation): THREE.Sprite {
@@ -200,6 +207,14 @@ export default class HudScene extends THREE.Scene {
         text.sync();
 
         return text;
+    }
+
+    updateMeshHealthBar(playerId: string, currentHealth: number) {
+        let healthBar = this.meshHealthBars.find(x => x.playerId == playerId);
+        if(healthBar != null) {
+            healthBar.updateValue(currentHealth);
+            healthBar?.setVisible(currentHealth > 0);
+        }            
     }
 
     update(positions: THREE.Vector3[], gameCamera: THREE.Camera) {

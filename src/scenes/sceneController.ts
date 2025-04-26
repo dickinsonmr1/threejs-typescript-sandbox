@@ -730,6 +730,19 @@ export default class SceneController {
         // todo: fix behavior because of async
         var player1MaxHealth = this.gameScene?.player1?.maxHealth ?? 100;
         this.hudScene?.initialize(player1MaxHealth);
+        this.hudScene?.initializeMeshHealthBars(
+            this.gameScene!.player1?.playerId,
+            this.gameScene!.player1?.maxHealth,
+
+            this.gameScene!.player2?.playerId,
+            this.gameScene!.player2?.maxHealth,
+
+            this.gameScene!.player3?.playerId,
+            this.gameScene!.player3?.maxHealth,
+
+            this.gameScene!.player4?.playerId,
+            this.gameScene!.player4?.maxHealth,
+        );
     
         // TODO: get folder by name to add items like CpuPlayerBehavior later
     }

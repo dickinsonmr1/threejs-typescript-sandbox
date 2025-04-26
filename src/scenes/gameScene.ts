@@ -1867,12 +1867,18 @@ export default class GameScene extends THREE.Scene {
 
         this.sonicPulseEmitters.forEach(x => x.update());
 
-        this.allPlayers.forEach(player => player.update(this.cpuPlayerBehavior));
+        this.allPlayers.forEach(player =>
+        {
+            player.update(this.cpuPlayerBehavior)
+            this.sceneController.hudScene?.updateMeshHealthBar(player.playerId, player.currentHealth);
+        });
         
         let playerPosition = this.player1.getPosition();
 
         var otherPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
         otherPlayers.forEach(enemy => {
+
+            //this.sceneController.hudScene?.updateMeshHealthBar(enemy.playerId, enemy.currentHealth);
             if(this.player1.getPosition().distanceTo(enemy.getPosition()) > 15) {
                 enemy.healthBar.setVisible(false);                
             }

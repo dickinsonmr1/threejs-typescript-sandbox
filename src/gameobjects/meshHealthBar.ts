@@ -15,11 +15,14 @@ export default class MeshHealthBar {
     static maxHeight: number = 20;
     static borderWidth: number = 2;
 
+    public playerId: string;
     private readonly maxValue: number;
     private currentValue: number;
+    
+    constructor(scene: THREE.Scene, playerId: string, maxValue: number, private overrideColor?: THREE.Color) {
 
-    constructor(scene: THREE.Scene, maxValue: number, private overrideColor?: THREE.Color) {
-
+        this.playerId = playerId;
+        
         this.maxValue = maxValue;
         this.currentValue = this.maxValue;
 
@@ -27,8 +30,8 @@ export default class MeshHealthBar {
             this.overrideColor = overrideColor;
 
         const outlineGeometry = new THREE.PlaneGeometry(
-            MeshHealthBar.maxWidth + MeshHealthBar.borderWidth*2,
-            MeshHealthBar.maxHeight + MeshHealthBar.borderWidth*2
+            MeshHealthBar.maxWidth + MeshHealthBar.borderWidth * 2,
+            MeshHealthBar.maxHeight + MeshHealthBar.borderWidth * 2
         );
         this.outlineMaterial = new THREE.MeshBasicMaterial({
             color: 'grey',
@@ -42,12 +45,14 @@ export default class MeshHealthBar {
         const barGeometry = new THREE.PlaneGeometry(MeshHealthBar.maxWidth, MeshHealthBar.maxHeight);
         this.barMaterial = new THREE.MeshBasicMaterial({
             color: overrideColor ?? 'green',
-            opacity: 0.7,
+            opacity: 0.9,
             blending: THREE.AdditiveBlending
         });
 
         this.barMesh = new THREE.Mesh(barGeometry, this.barMaterial);
         this.group.add(this.barMesh);
+
+        this.updateValue(this.currentValue);
 
         scene.add(this.group);
     }
@@ -68,7 +73,7 @@ export default class MeshHealthBar {
             this.outlineMesh.visible = true;
         };
 
-        this.barMesh.scale.x =  this.calculateCurrentHealthBarWidth();
+        this.barMesh.scale.x = this.calculateCurrentHealthBarWidth();
         
         if(!this.overrideColor) {
             if(this.currentValue > 0.5 * this.maxValue) {
@@ -86,7 +91,7 @@ export default class MeshHealthBar {
 
 
     private calculateCurrentHealthBarWidth(): number {
-        return (this.currentValue / this.maxValue) * HealthBar.maxWidth;
+        return (this.currentValue / this.maxValue);// * HealthBar.maxWidth;
     }
 
     /*
@@ -117,14 +122,14 @@ export default class MeshHealthBar {
         if(!isOnScreen)
             return;
     
-        const x = (position.x * 0.5 + 0.5) * window.innerWidth;
-        const y = ((position.y * 0.5) + 0.5) * window.innerHeight;
+        const screenX = (position.x * 0.5 + 0.5) * window.innerWidth;
+        const screenY = (position.y * 0.5 + 0.5) * window.innerHeight;
     
-        const hudX = x - window.innerWidth / 2;
-        const hudY = y - window.innerHeight / 2;
+        const hudX = screenX - window.innerWidth / 2;
+        const hudY = screenY - window.innerHeight / 2;
     
         this.outlineMesh.position.set(hudX, hudY, 0);
-        this.barMesh.position.set(hudX, hudY, 0);
+        this.barMesh.position.set(hudX + ((this.currentValue / this.maxValue) * MeshHealthBar.maxWidth / 2) - MeshHealthBar.maxWidth / 2, hudY, 0);
     }
     
     setVisible(isVisible: boolean) {
