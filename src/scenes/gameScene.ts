@@ -208,7 +208,7 @@ export default class GameScene extends THREE.Scene {
         
         this.camera = camera;
 
-        this.audioManager = new AudioManager(this.camera);
+        this.audioManager = new AudioManager(this.camera, gameConfig.isSoundEnabled);
         // asset from here: https://opengameart.org/content/light-machine-gun
         // asset from here: https://opengameart.org/content/q009s-weapon-sounds
 

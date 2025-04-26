@@ -9,12 +9,16 @@ export class AudioManager {
 
     private positionalSounds: Map<string, THREE.PositionalAudio> = new Map<string, THREE.PositionalAudio>;
 
-    constructor(camera: THREE.Camera) {        
+    constructor(camera: THREE.Camera, private isEnabled: boolean) {        
         this.audioLoader = new THREE.AudioLoader();
         this.audioListener = new THREE.AudioListener();
         this.audioBuffers = new Map();
 
-        camera.add(this.audioListener);
+        camera.add(this.audioListener);        
+    }
+
+    public enableAudio(isEnabled: boolean) {
+      this.isEnabled = isEnabled;
     }
 
     public getAudioLoader(): THREE.AudioLoader {
@@ -82,9 +86,11 @@ export class AudioManager {
     }
 
     public playLoopedSound(key: string, playerIndex?: number) {
-      const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
-      if(sound && !sound.isPlaying)
-          sound.play();
+      if(this.isEnabled) {
+        const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
+        if(sound && !sound.isPlaying)
+            sound.play();
+      }
     }
 
     public playSound(key: string, detune: boolean, playerIndex?: number) {        
@@ -92,8 +98,9 @@ export class AudioManager {
       if(sound) {          
         if(sound.isPlaying)
           sound.stop();
-
-        sound.play();
+        
+        if(this.isEnabled)
+          sound.play();
 
         if(detune) {
           sound.detune = Math.floor(Math.random() * 1600 - 800);
@@ -107,7 +114,8 @@ export class AudioManager {
         if(sound.isPlaying)
           return;
 
-        sound.play();
+        if(this.isEnabled)
+          sound.play();
 
         if(detune) {
           sound.detune = Math.floor(Math.random() * 1600 - 800);

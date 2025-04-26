@@ -32,7 +32,7 @@ export class FireObject extends ParticleEmitter {
     emitPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
 
     soundGroup: THREE.Group = new THREE.Group();
-    deathFireSound: THREE.PositionalAudio;
+    deathFireSound?: THREE.PositionalAudio;
 
     // tutorial from here: https://www.youtube.com/watch?v=DtRFv9_XfnE
 
@@ -43,7 +43,8 @@ export class FireObject extends ParticleEmitter {
         position: THREE.Vector3,
         numberParticles: number,
         maxEmitterLifetime: number,
-        deathFireSound: THREE.PositionalAudio) {
+        deathFireSound: THREE.PositionalAudio,
+        isSoundEnabled: boolean) {
                     
         super();
         
@@ -76,21 +77,22 @@ export class FireObject extends ParticleEmitter {
        //if(this.pointLightObject.pointLight)
             //this.particleGroup.add(this.pointLightObject.pointLight)
 
-        this.deathFireSound = deathFireSound;
-        
-        this.particleGroup.add(this.deathFireSound);
-        scene.add(this.particleGroup);     
+        if(isSoundEnabled) {
+            this.deathFireSound = deathFireSound;
+            
+            this.particleGroup.add(this.deathFireSound);
+            scene.add(this.particleGroup);     
 
-        this.soundGroup.add(this.deathFireSound);
-        scene.add(this.soundGroup);
+            this.soundGroup.add(this.deathFireSound);
+            scene.add(this.soundGroup);
 
-        this.deathFireSound.play();
-        
+            this.deathFireSound.play();
+        }
+
         setTimeout(() => {
             this.isEmitting = false
         }, maxEmitterLifetime);        
     }
-
 
     private emitParticles(emitPosition: THREE.Vector3): void {
         for(let i = 0; i < this.numberParticles; i++) {
@@ -126,7 +128,6 @@ export class FireObject extends ParticleEmitter {
 
             this.particleGroup.add(sprite);
         }
-
     }
 
     getPosition(): THREE.Vector3 {
@@ -148,7 +149,9 @@ export class FireObject extends ParticleEmitter {
     kill() {                
         this.scene.remove(this.particleGroup);
 
-        this.deathFireSound.stop();
+        if(this.deathFireSound)
+            this.deathFireSound.stop();
+        
         this.scene.remove(this.soundGroup);
     }
 
