@@ -798,7 +798,8 @@ export class Player {
                 this.getPosition(),
                 3,
                 3000,
-                gameScene.getAudioManager().getSound('deathFire', this.playerIndex)!
+                gameScene.getAudioManager().getSound('deathFire', this.playerIndex)!,
+                gameScene.gameConfig.isSoundEnabled
             );
             this.fireObjects.push(deathFire);
             
