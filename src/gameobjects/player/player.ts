@@ -76,7 +76,6 @@ export class Player {
 
     playerState: PlayerState = PlayerState.Alive;
 
-    healthBar: HealthBar;
     headLights!: Headlights;
     brakeLights!: Brakelights;
     emergencyLights!: EmergencyLights;
@@ -155,8 +154,7 @@ export class Player {
         this.isCpuPlayer = isCpuPlayer;
         this.vehicleType = vehicleType;
 
-        this.playerId = uuidv4();
-        this.healthBar = new HealthBar(scene, maxHealth);
+        this.playerId = uuidv4();        
         
         this.maxHealth= maxHealth;
         this.currentHealth = maxHealth;
@@ -371,11 +369,7 @@ export class Player {
 
         //this.rocketSound.position.copy(this.getPosition());
         //this.rocketSound.updateMatrixWorld(true);
-
-        let healthBarOffset = new THREE.Vector3(0, 0, 0.5);
-        healthBarOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
-        this.healthBar.update(Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), healthBarOffset));
-
+        
         if(this.target != null) {
             let targetOffset = new THREE.Vector3(-5, 0, 0);
             targetOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
@@ -715,8 +709,6 @@ export class Player {
             }
         }
 
-        this.healthBar.updateValue(this.currentHealth);
-
         if(this.currentHealth <= 0)         
             this.tryKill();
     }
@@ -725,8 +717,6 @@ export class Player {
         
         this.currentHealth -= 0.5;
 
-        this.healthBar.updateValue(this.currentHealth);
-
         if(this.currentHealth <= 0)
             this.tryKill();
     }
@@ -734,8 +724,6 @@ export class Player {
     tryDamageWithAirstrike(): void {
         
         this.currentHealth -= 2;
-
-        this.healthBar.updateValue(this.currentHealth);
 
         if(this.currentHealth <= 0)
             this.tryKill();
@@ -843,8 +831,6 @@ export class Player {
             this.fireObjects.push(smokeObject);            
 
             this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
-
-            this.healthBar.updateValue(0);
 
             setTimeout(() => {
                 this.playerState = PlayerState.Respawning
@@ -1092,8 +1078,7 @@ export class Player {
     }
 
     refillHealth(): void {
-        this.currentHealth = this.maxHealth;
-        this.healthBar.updateValue(this.currentHealth);
+        this.currentHealth = this.maxHealth;        
 
         if(this.playerId == this.getScene().player1.playerId)
             this.getScene().sceneController.updateHealthOnHud(this.currentHealth);

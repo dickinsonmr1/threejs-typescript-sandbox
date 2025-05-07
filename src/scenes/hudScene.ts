@@ -209,11 +209,11 @@ export default class HudScene extends THREE.Scene {
         return text;
     }
 
-    updateMeshHealthBar(playerId: string, currentHealth: number) {
+    updateMeshHealthBar(playerId: string, currentHealth: number, distanceFromCamera: number) {
         let healthBar = this.meshHealthBars.find(x => x.playerId == playerId);
         if(healthBar != null) {
             healthBar.updateValue(currentHealth);
-            healthBar?.setVisible(currentHealth > 0);
+            healthBar?.setVisible(currentHealth > 0 && distanceFromCamera < 25);
         }            
     }
 

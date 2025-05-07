@@ -1864,27 +1864,13 @@ export default class GameScene extends THREE.Scene {
         this.particleEmitters = this.particleEmitters.filter(x => !x.isDead);
 
         this.flamethrowerEmitters.forEach(x => x.update());
-
         this.sonicPulseEmitters.forEach(x => x.update());
 
-        this.allPlayers.forEach(player =>
-        {
-            player.update(this.cpuPlayerBehavior)
-            this.sceneController.hudScene?.updateMeshHealthBar(player.playerId, player.currentHealth);
-        });
-        
-        let playerPosition = this.player1.getPosition();
-
-        var otherPlayers = this.allPlayers.filter(x => x.playerId != this.player1.playerId);
-        otherPlayers.forEach(enemy => {
-
-            //this.sceneController.hudScene?.updateMeshHealthBar(enemy.playerId, enemy.currentHealth);
-            if(this.player1.getPosition().distanceTo(enemy.getPosition()) > 15) {
-                enemy.healthBar.setVisible(false);                
-            }
-            else {
-                enemy.healthBar.setVisible(true);                
-            }
+        let player1Position = this.player1.getPosition();
+        this.allPlayers.forEach(player => {
+            player.update(this.cpuPlayerBehavior);
+            let distance = player1Position.distanceTo(player.getPosition());
+            this.sceneController.hudScene?.updateMeshHealthBar(player.playerId, player.currentHealth, distance);
         });
     
         if(!this.player1.isModelNull() && this.crosshairSprite != null) {
@@ -1906,7 +1892,7 @@ export default class GameScene extends THREE.Scene {
                 }
             }
 
-            let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(playerPosition), Utility.ThreeVec3ToCannonVec3(this.crosshairSprite.position));                
+            let ray = new CANNON.Ray(Utility.ThreeVec3ToCannonVec3(player1Position), Utility.ThreeVec3ToCannonVec3(this.crosshairSprite.position));                
             var raycastResult: CANNON.RaycastResult = new CANNON.RaycastResult();
 
             // intersect multiple bodies
