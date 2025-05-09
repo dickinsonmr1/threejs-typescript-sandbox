@@ -102,9 +102,8 @@ export class GltfObject {
             throw new Error("No physics material set!")
     }
     
-    getPosition() {
-        //return this.mesh?.position;
-        return null;
+    getPosition() {        
+       //return null;
     }
 
     update() {

@@ -1005,7 +1005,7 @@ export class Player {
             forwardVector.applyQuaternion(this.getVehicleObject().getModel().quaternion);
             let projectileLaunchVector = forwardVector; 
 
-            gameScene.generateRandomDumpster(this.getPosition(), projectileLaunchVector);
+            gameScene.generateRandomDumpster(this.playerId, this.getPosition(), projectileLaunchVector);
 
             this.dumpsterCooldownClock.start();
         }        

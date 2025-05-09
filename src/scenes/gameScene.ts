@@ -98,6 +98,7 @@ export default class GameScene extends THREE.Scene {
 
     private cubes: BoxObject[] = [];
     private debrisWheels: GltfObject[] = [];
+    private dumpsters: DumpsterFireObject[] = [];
     private bouncyWheelMaterial!: CANNON.Material;
 
     private lightning!: THREE.Line;
@@ -682,7 +683,7 @@ export default class GameScene extends THREE.Scene {
             forwardVector.applyQuaternion(this.player1.getVehicleObject().getModel().quaternion);
             let projectileLaunchVector = forwardVector; 
 
-            this.generateRandomDumpster(this.player1.getPosition(), projectileLaunchVector);
+            this.generateRandomDumpster(this.player1.playerId, this.player1.getPosition(), projectileLaunchVector);
         }
         if (event.key === 'o')
         {			
@@ -1025,14 +1026,15 @@ export default class GameScene extends THREE.Scene {
         this.debrisWheels.push(debrisWheel);
     }
 
-    public async generateRandomDumpster(position: THREE.Vector3, launchVector: THREE.Vector3, quaternion?: THREE.Quaternion) {
+    public async generateRandomDumpster(playerId: string, position: THREE.Vector3, launchVector: THREE.Vector3, quaternion?: THREE.Quaternion) {
         
         if(quaternion == null)
             quaternion = new THREE.Quaternion();
         
         position.y += 2.75;
-        var debrisWheel = new DumpsterFireObject(
+        var dumpster = new DumpsterFireObject(
             this,
+            playerId,
             this.dumpsterModel.scene,
             position,
             quaternion,
@@ -1043,7 +1045,7 @@ export default class GameScene extends THREE.Scene {
             this.world,
             this.bouncyWheelMaterial
         );
-        this.debrisWheels.push(debrisWheel);
+        this.dumpsters.push(dumpster);
     }    
 
     public async generateSonicPulse(position: THREE.Vector3) {
@@ -1272,12 +1274,13 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
-        const maxVehicleTypeEnum = Math.max(...Object.values(VehicleType).filter(v => typeof v === 'number')) as VehicleType;
+        const values = Object.values(VehicleType).filter(v => typeof v === 'number') as number[];
+        const maxVehicleTypeEnum = Math.max(...values);
 
         this.player1 = vehicleFactory.generatePlayer(this, 0, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
-        this.player2 = vehicleFactory.generatePlayer(this, 1, this.gameConfig.isDebug,this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('blue'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
-        this.player3 = vehicleFactory.generatePlayer(this, 2, this.gameConfig.isDebug,this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('green'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
-        this.player4 = vehicleFactory.generatePlayer(this, 3, this.gameConfig.isDebug,this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('yellow'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
+        this.player2 = vehicleFactory.generatePlayer(this, 1, this.gameConfig.isDebug, this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('blue'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
+        this.player3 = vehicleFactory.generatePlayer(this, 2, this.gameConfig.isDebug, this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('green'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
+        this.player4 = vehicleFactory.generatePlayer(this, 3, this.gameConfig.isDebug, this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('yellow'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
@@ -1536,6 +1539,45 @@ export default class GameScene extends THREE.Scene {
                 */
             };
             
+        });
+
+        this.projectiles = this.projectiles.filter(x => !x.shouldRemove);
+    }
+
+    private checkDumpstersForCollision() { 
+        this.dumpsters.forEach(dumpster => {
+
+            if(dumpster.shouldRemove) {
+                //dumpster.kill();
+                //dumpster.group.children.forEach(x => this.remove(x));
+                //this.remove(dumpster.group);      
+            }
+            else
+            {
+                let playersToCheck = this.allPlayers.filter(x => x.playerId != dumpster.playerId);
+                playersToCheck.forEach(player => {
+                    if(player.getPosition().distanceTo(dumpster.getPosition()) < 2 && player.currentHealth > 0){
+
+                        this.generateRandomExplosion(
+                            ProjectileType.Rocket,
+                            dumpster.getPosition(),
+                        new THREE.Color('white'),
+                        new THREE.Color('white'),
+                        new THREE.Color('yellow'),
+                        new THREE.Color('orange'),
+                        new THREE.Color('red')
+                        );
+                        dumpster.kill();
+                        this.remove(dumpster.group);
+                        
+                        player.tryDamage(ProjectileType.Rocket, dumpster.getPosition());
+                        
+                        if(player.playerId == this.player1.playerId) {
+                            this.sceneController.updateHealthOnHud(this.player1.currentHealth);
+                        }
+                    }
+                });
+            };            
         });
 
         this.projectiles = this.projectiles.filter(x => !x.shouldRemove);
@@ -1805,6 +1847,8 @@ export default class GameScene extends THREE.Scene {
 
         this.debrisWheels.forEach(x => x.update());
 
+        this.dumpsters.forEach(x => x.update());
+
         this.pickups.forEach(x => x.update());
 
         this.projectiles.forEach(x => x.update());
@@ -1819,6 +1863,7 @@ export default class GameScene extends THREE.Scene {
         this.checkFlamethrowerForCollision();
         this.checkKilldozerShovelForCollision();
         this.checkPickupsForCollisionWithPlayers();
+        this.checkDumpstersForCollision();
 
         this.world.contacts.forEach((contact) => {
             if ((contact.bi === this.player1.getChassisBody() && contact.bj === this.player2.getChassisBody()) || 

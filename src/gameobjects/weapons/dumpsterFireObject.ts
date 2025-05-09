@@ -14,6 +14,7 @@ export class DumpsterFireObject {
     group: THREE.Group = new THREE.Group();
     //mesh: THREE.Mesh; // bounding box mesh
     body?: CANNON.Body;
+    isDead: boolean = false;
 
     physicsPositionOffset: THREE.Vector3;
 
@@ -27,6 +28,7 @@ export class DumpsterFireObject {
      *
      */
     constructor(scene: THREE.Scene,
+        public playerId: string,
         //asset: string,        
         modelData: THREE.Group,
         position: THREE.Vector3,
@@ -112,12 +114,16 @@ export class DumpsterFireObject {
             throw new Error("No physics material set!")
     }
     
-    getPosition() {
-        //return this.mesh?.position;
-        return null;
+    getPosition(): THREE.Vector3 {
+        return Utility.CannonVec3ToThreeVec3(this.body!.position);
     }
 
     update() {
+
+        if(this.isDead) {
+            this.kill();
+            return;
+        }
 
         if(this.body != null) {
 
@@ -137,7 +143,14 @@ export class DumpsterFireObject {
         }
     }
 
+    get shouldRemove() {
+		return this.isDead;
+	}
+
     kill() {
+
+        this.isDead = true;
+
         if(this.model != null ){
             this.scene.remove(this.model);
         }
