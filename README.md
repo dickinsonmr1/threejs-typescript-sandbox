@@ -10,3 +10,5 @@ npm init vite@latest
 Three.js packages:
 npm install three
 npm install @types/three 
+
+Icons from Font Awesome Free: https://github.com/FortAwesome/Font-Awesome
