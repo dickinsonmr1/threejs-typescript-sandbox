@@ -639,6 +639,12 @@ export default class GameScene extends THREE.Scene {
  
         //document.addEventListener('keydown', this.handleKeyDown);
         //document.addEventListener('keyup', this.handleKeyUp);
+
+        document.getElementById('notificationDiv')!.innerHTML = `<i class="fa-solid fa-location-dot"></i> Objective: Destroy all enemies!`;
+        document.getElementById('notificationDiv')!.style.opacity = '80%';            
+        setTimeout(() => {
+            document.getElementById('notificationDiv')!.style.opacity = '0%';
+        }, 2000);
     }   
 
     //private handleKeyDown = (event: KeyboardEvent) => {        

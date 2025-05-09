@@ -140,6 +140,25 @@
 			-o-user-select: none;
 			user-select: none;
         }
+		.label-notification {
+			font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            position: absolute;
+            width: 100%;            
+            color: white;
+			background-color: black;
+            font-size: 4vw;
+            text-align: center;
+            line-height: 50px;
+			opacity: 1;
+			transition: opacity 1s ease-out;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;
+			user-select: none;
+        }
 		.label-subtitle {
 			font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
             position: absolute;
@@ -207,8 +226,8 @@
 		#up { bottom: 100px; left: 60px; }
         #down { bottom: 20px; left: 60px; }
 
-		#menuLeft { top: 50%; left: 10% }
-        #menuRight { top: 50%; right: 10% }
+		#menuLeft { top: 50%; left: 20% }
+        #menuRight { top: 50%; right: 20% }
 
 		#joystickContainerStatic {
 			height: 100%;
@@ -298,8 +317,8 @@
 		<div id="specialweapon" class="control-button">Y</div>
 		<div id="jump" class="control-button">A</div>
 		-->
-		<div id="inGameOnScreenControlsDiv">
-			<!--<div id="score" class="control-button-medium">0 lives remaining</div>-->
+		<div id="inGameOnScreenControlsDiv" style="visibility: hidden;">			
+			<div id="notificationDiv" class="label-notification" style="left: 0%; top:25%; opacity: 0%; visibility: visible;"><i class="fa-solid fa-skull"></i> Enemy Destroyed</div>	
 			<div id="score" class="inventory" style="background-color: rgba(80, 124, 177, 0.264);">
 				<img src="assets/hud/carIcon.png" style="width: 50px; height: 50px;"/>
 				<div class="text" style="color: white">  0</div>

@@ -181,7 +181,7 @@ export class Player {
             this.emergencyLights2.setVisible(true);    
         }
        
-        this.playerName = vehicleType.toString();
+        this.playerName = vehicleConfig.vehicleName;
         let gameScene = <GameScene>scene;
 
         let material = new THREE.SpriteMaterial({
@@ -793,6 +793,14 @@ export class Player {
             
             let smokeEmitPosition = this.getPosition().add(new THREE.Vector3(0, 0.5, 0));
             let smokeObject = new SmokeObject2(this.scene, scene.explosionTexture, smokeEmitPosition, 1, 3000);
+
+            const announcement = this.playerIndex == 0 ? "You were destroyed!" : `${this.playerName} was destroyed!`
+            document.getElementById('notificationDiv')!.innerHTML = '<i class="fa-solid fa-skull"></i> ' + announcement;
+            document.getElementById('notificationDiv')!.style.opacity = '80%';            
+            setTimeout(() => {
+                document.getElementById('notificationDiv')!.style.opacity = '0%';
+                //document.getElementById('notificationDiv')!.style.transition = 'opacity 0.3s ease';
+            }, 2000);
 
             this.generateRandomExplosion();
 
