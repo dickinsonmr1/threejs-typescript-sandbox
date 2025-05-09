@@ -1266,10 +1266,12 @@ export default class GameScene extends THREE.Scene {
 
         var vehicleFactory = new VehicleFactory(this.crosshairTexture, this.playerMarkerTexture, particleMaterial);
 
+        const maxVehicleTypeEnum = Math.max(...Object.values(VehicleType).filter(v => typeof v === 'number')) as VehicleType;
+
         this.player1 = vehicleFactory.generatePlayer(this, 0, this.gameConfig.isDebug, this.world, false, player1VehicleType, new THREE.Color('red'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
-        this.player2 = vehicleFactory.generatePlayer(this, 1, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('blue'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
-        this.player3 = vehicleFactory.generatePlayer(this, 2, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('green'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
-        this.player4 = vehicleFactory.generatePlayer(this, 3, this.gameConfig.isDebug,this.world, true, randInt(0, 12), new THREE.Color('yellow'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
+        this.player2 = vehicleFactory.generatePlayer(this, 1, this.gameConfig.isDebug,this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('blue'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
+        this.player3 = vehicleFactory.generatePlayer(this, 2, this.gameConfig.isDebug,this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('green'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
+        this.player4 = vehicleFactory.generatePlayer(this, 3, this.gameConfig.isDebug,this.world, true, randInt(0, maxVehicleTypeEnum), new THREE.Color('yellow'), this.gameConfig.gamePadAxesDeadZoneX, wheelMaterial);
 
         this.allPlayers.push(this.player1);          
         this.allPlayers.push(this.player2);
