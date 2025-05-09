@@ -70,7 +70,28 @@
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 20px;
+            font-size: 1vw;
+            text-align: center;
+            line-height: 50px;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;
+			user-select: none;
+			-ms-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+        }
+		.menu-button-large {
+            position: absolute;
+            width: 200px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1vw;
             text-align: center;
             line-height: 50px;
 			-webkit-touch-callout: none;
@@ -103,12 +124,67 @@
 			user-select: none;
         }
 		.label-title {
+			font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
             position: absolute;
-            width: 50%;
+            width: 100%;            
+            color: white;
+			background-color: black;
+            font-size: 4vw;
+            text-align: center;
+            line-height: 50px;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;
+			user-select: none;
+        }
+		.label-notification {
+			font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            position: absolute;
+            width: 100%;            
+            color: white;
+			background-color: black;
+            font-size: 4vw;
+            text-align: center;
+            line-height: 50px;
+			opacity: 1;
+			transition: opacity 1s ease-out;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;
+			user-select: none;
+        }
+		.label-subtitle {
+			font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            position: absolute;
+            width: 100%;
             height: 50px;          			
             color: black;
-			border-bottom: 6px solid red;
-            font-size: 36px;
+
+            font-size: 3vw;
+            text-align: center;
+            line-height: 50px;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;
+			user-select: none;
+        }
+		.label-subtitle2 {
+			font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            position: absolute;
+            width: 100%;
+            height: 50px;          			
+            color: black;
+
+            font-size: 2vw;
             text-align: center;
             line-height: 50px;
 			-webkit-touch-callout: none;
@@ -150,8 +226,8 @@
 		#up { bottom: 100px; left: 60px; }
         #down { bottom: 20px; left: 60px; }
 
-		#menuLeft { top: 50%; left: 25% }
-        #menuRight { top: 50%; right: 25% }
+		#menuLeft { top: 50%; left: 20% }
+        #menuRight { top: 50%; right: 20% }
 
 		#joystickContainerStatic {
 			height: 100%;
@@ -185,14 +261,45 @@
 		#toggledebug { top: 20px; right: 20px; }
 		#reset { top: 20px; right: 75px; }
 		
+		#pageTitle {top: 20px; left: 50%}
 		#vehicleSelectionTitle {top: 20px; left: 50%}
+		#vehicleName {top: 200px; left: 50%}
+		#mapSelectionTitle {bottom: 10%; left: 50%}
 		#previousMenu {top: 20px; left: 20px }
+		#statsTable {
+			width: 500px;
+			border-width: 10px;
+			left: 40%;
+			bottom: 20%;
+			position: fixed;
+			font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+			font-size: 1.5vw;
+			justify-items: left;
+		}
 		#startgameLevel1 { bottom: 2%; left: 25%; }
 		#startgameLevel2 { bottom: 2%; left: 75%; }
 
 		#gamePaused {top: 100px; left: 50%}
+
+		.health-container {
+			width: 200px;
+			height: 30px;
+			background-color: #999;
+			border: 2px solid #555;
+			border-radius: 5px;
+			position: relative;
+		}
+
+		.health-bar {
+			height: 100%;
+			background-color: #00cc00;
+			border-radius: 4px 0 0 4px;
+			transition: width 0.3s ease;
+			z-index: 1;
+		}
 	</style>
-    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-DZCANoTh.js"></script>
+	<script src="https://kit.fontawesome.com/00bf9be869.js" crossorigin="anonymous"></script>
+    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-DQES7Cx-.js"></script>
   </head>
   <body>
 	<!--<div id="joystickContainerStatic"></div>-->		
@@ -204,7 +311,6 @@
 	<div id="up" class="control-button">&#x2B06;</div>
 	<div id="down" class="control-button">&#x2B07;</div>
 	-->
-
 	<div id="gameSceneDiv">
 		<!--
 		<div id="primaryweapon" class="control-button">B</div>
@@ -212,8 +318,8 @@
 		<div id="specialweapon" class="control-button">Y</div>
 		<div id="jump" class="control-button">A</div>
 		-->
-		<div id="inGameOnScreenControlsDiv">
-			<!--<div id="score" class="control-button-medium">0 lives remaining</div>-->
+		<div id="inGameOnScreenControlsDiv" style="visibility: hidden;">			
+			<div id="notificationDiv" class="label-notification" style="left: 0%; top:25%; opacity: 0%; visibility: visible;"><i class="fa-solid fa-skull"></i> Enemy Destroyed</div>	
 			<div id="score" class="inventory" style="background-color: rgba(80, 124, 177, 0.264);">
 				<img src="assets/hud/carIcon.png" style="width: 50px; height: 50px;"/>
 				<div class="text" style="color: white">  0</div>
@@ -264,12 +370,53 @@
 		</div>
 		<div id="vehicleSelectionDiv">
 			<div id="previousMenu" class="control-button-medium">Back</div>
-			<div id="vehicleSelectionTitle" class="label-title" style="left: 25%;">SELECT VEHICLE</div>	
-			<div id="menuLeft" class="control-button">&#8592;</div>
-			<div id="menuRight" class="control-button">&#8594;</div>
-			<div id="startgameLevel1" class="control-button-large" style="bottom: 2%; left: 30%;">Map: Arena</div>
-			<div id="startgameLevel2" class="control-button-large" style="bottom: 2%; left: 50%;">Map: Field</div>
-			<div id="startgameLevel3" class="control-button-large" style="bottom: 2%; left: 70%;">Map: Mountain</div>
+			<div id="pageTitle" class="label-title" style="left: 0%;"><i class="fa-solid fa-car-burst"></i> CAR COMBAT</div>	
+			<div id="vehicleSelectionTitle" class="label-subtitle" style="top:10%;left: 0%;"><i class="fa-solid fa-car"></i> Select Vehicle</div>	
+			<div id="vehicleName" class="label-subtitle2" style="top:20%;left: 0%;"><i class="fa-solid fa-car"></i>**</div>	
+			<div id="menuLeft" class="control-button"><i class="fa-solid fa-arrow-left"></i></div>
+			<div id="menuRight" class="control-button"><i class="fa-solid fa-arrow-right"></i></div>
+			<table id="statsTable" class="statsTable">
+				<tr>
+					<td><i class="fa-solid fa-heart" style="width: 50px"></i></td>
+					<td style="color:black;width:200px;">Health</td>
+					<td>
+						<div class="health-container">
+							<div id="healthbar-fill-1" class="health-bar" style="width: 40%; background-color: orange; color: orange;"></div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><i class="fa-solid fa-star"></i></td>
+					<td style="color:black">Special</td>
+					<td>
+						<div class="health-container">
+							<div id="healthbar-fill-2" class="health-bar" style="width: 40%; background-color: orange; color: orange;"></div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><i class="fa-solid fa-gauge-simple-high"></i></td>
+					<td style="color:black">Speed</td>
+					<td>
+						<div class="health-container">
+							<div id="healthbar-fill-3" class="health-bar" style="width: 40%; background-color: orange; color: orange;"></div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><i class="fa-solid fa-shield"></i></td>
+					<td style="color:black">Defense</td>
+					<td>
+						<div class="health-container">
+							<div id="healthbar-fill-4" class="health-bar" style="width: 40%; background-color: orange; color: orange;"></div>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<div id="mapSelectionTitle" class="label-subtitle" style="left: 0%;"><i class="fa-solid fa-map-location-dot"></i> Select Map to Start Game</div>	
+			<div id="startgameLevel1" class="menu-button-large" style="bottom: 1%; left: 30%;"><i class="fa-solid fa-tree"></i> Arena</div>
+			<div id="startgameLevel2" class="menu-button-large" style="bottom: 1%; left: 50%;"><i class="fa-solid fa-snowflake"></i> Field</div>
+			<div id="startgameLevel3" class="menu-button-large" style="bottom: 1%; left: 70%;"><i class="fa-solid fa-mountain"></i> Mountain</div>
 		</div>
 	</div>
 	
