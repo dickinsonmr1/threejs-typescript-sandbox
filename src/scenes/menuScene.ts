@@ -18,6 +18,7 @@ import vehicleConfigPoliceTractor from '../gameobjects/vehicles/config/09-police
 import vehicleConfigKilldozer from '../gameobjects/vehicles/config/04-killdozer.json'
 import vehicleConfigHarvester from '../gameobjects/vehicles/config/10-harvester.json'
 import { VehicleConfig } from '../gameobjects/vehicles/config/vehicleConfig';
+import MeshHealthBar from '../gameobjects/meshHealthBar';
 
 export default class MenuScene extends THREE.Scene {
 
@@ -49,6 +50,8 @@ export default class MenuScene extends THREE.Scene {
         this.sceneController = sceneController;       
 
         this.group = new THREE.Group();
+
+        this.background = new THREE.Color('lightgray');
     }
 
     async initialize() {
@@ -59,25 +62,27 @@ export default class MenuScene extends THREE.Scene {
         //let sprite = this.generateIcon(dummyTexture, new THREE.Color('blue'));//, HudIconLocation.CenterBottom);
         //this.add(sprite);
 
-        this.statBar1 = new HealthBar(this, 100, new THREE.Color('orange'));
+        /*
+        this.statBar1 = new HealthBar(this, 100);// new THREE.Color('green'));
         this.statBar1.update(new THREE.Vector3(0, -4, 0));
         this.statBar1.updateValue(80);
 
-        this.statBar2 = new HealthBar(this, 100, new THREE.Color('orange'));
+        this.statBar2 = new HealthBar(this, 100);//, new THREE.Color('orange'));
         this.statBar2.update(new THREE.Vector3(0, -4.5, 0));
         this.statBar2.updateValue(25);
 
-        this.statBar3 = new HealthBar(this, 100, new THREE.Color('orange'));
+        this.statBar3 = new HealthBar(this, 100);//, new THREE.Color('orange'));
         this.statBar3.update(new THREE.Vector3(0, -5, 0));
         this.statBar3.updateValue(50);
 
-        this.statBar4 = new HealthBar(this, 100, new THREE.Color('orange'));
+        this.statBar4 = new HealthBar(this, 100);//, new THREE.Color('orange'));
         this.statBar4.update(new THREE.Vector3(0, -5.5, 0));
         this.statBar4.updateValue(33);
+*/
+        //this.vehicleNameText = this.generateTroikaThreeText(new THREE.Vector3(5, 0.5, 0), "", 0.75, 'center', 'center', 0x0000AA);
+        //this.add(this.vehicleNameText);
 
-        this.vehicleNameText = this.generateTroikaThreeText(new THREE.Vector3(5, 1, 0), "", 1, 'center', 'center', 0x0000AA);
-        this.add(this.vehicleNameText);
-
+        /*
         this.statBar1Text = this.generateTroikaThreeText(new THREE.Vector3(0, -3, -0.5), "Health", 0.4, 'right', 'middle', 0x0000AA);
         this.add(this.statBar1Text);
 
@@ -89,7 +94,7 @@ export default class MenuScene extends THREE.Scene {
 
         this.statBar4Text = this.generateTroikaThreeText(new THREE.Vector3(0, -4.5, -0.5), "Defense", 0.4, 'right', 'middle', 0x0000AA);
         this.add(this.statBar4Text);
-
+*/
         this.generateVehicles();    
     }
 
@@ -197,11 +202,29 @@ export default class MenuScene extends THREE.Scene {
         var selectedItem = this.group.children[this.selectedVehicleIndex];
 
         selectedItem.visible = true;
-        this.vehicleNameText.text = selectedItem.userData["vehicleName"];
-        this.statBar1.updateValue(selectedItem.userData["health"]);
-        this.statBar2.updateValue(selectedItem.userData["special"]);
-        this.statBar3.updateValue(selectedItem.userData["speed"]);
-        this.statBar4.updateValue(selectedItem.userData["defensiveSpecial"]);
+        //this.vehicleNameText.text = selectedItem.userData["vehicleName"];
+        if(this.statBar1 != null)
+            this.statBar1.updateValue(selectedItem.userData["health"]);
+        if(this.statBar2 != null)
+            this.statBar2.updateValue(selectedItem.userData["special"]);
+        if(this.statBar3 != null)
+            this.statBar3.updateValue(selectedItem.userData["speed"]);
+        if(this.statBar4 != null)
+            this.statBar4.updateValue(selectedItem.userData["defensiveSpecial"]);
+
+        document.getElementById('vehicleName')!.innerText = selectedItem.userData["vehicleName"];
+
+        const fill1 = document.getElementById('healthbar-fill-1');
+        fill1!.style.width = selectedItem.userData["health"]*2 + 'px';//`${Math.max(0, Math.min(100, 1)) * 100}%`;
+
+        const fill2 = document.getElementById('healthbar-fill-2');
+        fill2!.style.width = selectedItem.userData["special"]*2 + 'px';//`${Math.max(0, Math.min(100, 1)) * 100}%`;
+
+        const fill3 = document.getElementById('healthbar-fill-3');        
+        fill3!.style.width = selectedItem.userData["speed"]*2 + 'px';//`${Math.max(0, Math.min(100, 1)) * 100}%`;
+
+        const fill4 = document.getElementById('healthbar-fill-4');
+        fill4!.style.width = selectedItem.userData["defensiveSpecial"]*2 +'px';//`${Math.max(0, Math.min(100, 1)) * 100}%`;
     }
 
     update() {
