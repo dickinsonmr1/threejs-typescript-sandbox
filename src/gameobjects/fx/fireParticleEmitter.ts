@@ -1,6 +1,13 @@
 import * as THREE from 'three'
+import { ParticleEmitter } from './particleEmitter';
 
-export class FireParticleEmitter {
+export class FireParticleEmitter extends ParticleEmitter {
+    
+    isEmitting: boolean = true;
+    isDead!: boolean;
+    particleGroup!: THREE.Group<THREE.Object3DEventMap>;
+    scene: THREE.Scene;
+
     /**
      *
      */
@@ -9,22 +16,30 @@ export class FireParticleEmitter {
     private fireParticleMaterial!: THREE.ShaderMaterial;
     private smokeParticleMaterial!: THREE.ShaderMaterial;
 
-    constructor(scene: THREE.Scene) {
-                
-        this.fireParticles = this.createFireParticles(3);
-        this.smokeParticles = this.createSmokeParticles(2.5, new THREE.Vector3(0, 3, 0));
+    constructor(scene: THREE.Scene, maxEmitterLifeTimeInMs: number, position: THREE.Vector3) {
+
+        super();
+
+        this.scene = scene;
+
+        this.fireParticles = this.createFireParticles(1, new THREE.Vector3(0,0,0));
+        this.smokeParticles = this.createSmokeParticles(0.75, new THREE.Vector3(0,0,0));//new THREE.Vector3(0, 3, 0));
         scene.add(this.fireParticles);
         scene.add(this.smokeParticles);
+
+        setTimeout(() => {
+            this.isEmitting = false
+        }, maxEmitterLifeTimeInMs);     
     }    
 
-    private createFireParticles(fireSize: number): THREE.Points {
+    private createFireParticles(fireSize: number, position: THREE.Vector3): THREE.Points {
         // Create particle attributes
-        const particleCount = 1000;
+        const particleCount = 500;
         const positions = new Float32Array(particleCount * 3);
         const velocities = new Float32Array(particleCount * 3);
         const lifetimes = new Float32Array(particleCount);
 
-        const origin = new THREE.Vector3(100, 5, 100);
+        const origin = new THREE.Vector3().addVectors(position, new THREE.Vector3(0, -0.5, 0));
 
         const lifetimeMax = 5.0; // max lifetime in seconds
 
@@ -38,7 +53,7 @@ export class FireParticleEmitter {
             positions.set([origin.x + randOffsetX, origin.y, origin.z + randOffsetZ], i * 3);
             velocities.set([
                 (Math.random() * 0.2) - 0.1,
-                Math.random() * 3.0,
+                Math.random() * 5.0,
                 (Math.random() * 0.2) - 0.1,
             ], i * 3);
             lifetimes[i] = Math.random() * lifetimeMax;
@@ -56,6 +71,7 @@ export class FireParticleEmitter {
                 uniform float u_time;
                 uniform float u_lifetime;
                 uniform vec3 u_origin;
+                uniform float u_maxLifetime;
 
                 attribute vec3 velocity;
                 attribute float lifetime;
@@ -111,6 +127,7 @@ export class FireParticleEmitter {
                 u_time: { value: 0.0 },
                 u_lifetime: { value: lifetimeMax },
                 u_origin: { value: origin },
+                u_maxLifeTime: { value: 3.0 },
             },
             transparent: true,
             depthWrite: false,
@@ -129,7 +146,7 @@ export class FireParticleEmitter {
         const velocities = new Float32Array(particleCount * 3);
         const lifetimes = new Float32Array(particleCount);
 
-        const origin = new THREE.Vector3(100, 5, 100);
+        const origin = new THREE.Vector3().addVectors(startOffset, new THREE.Vector3(0,1,0))
 
         const lifetimeMax = 5.0; // max lifetime in seconds
 
@@ -168,6 +185,7 @@ export class FireParticleEmitter {
                 uniform float u_time;
                 uniform float u_lifetime;
                 uniform vec3 u_origin;
+                uniform float u_maxLifetime;
 
                 attribute vec3 velocity;
                 attribute float lifetime;
@@ -228,6 +246,7 @@ export class FireParticleEmitter {
                 u_time: { value: 0.0 },
                 u_lifetime: { value: lifetimeMax },
                 u_origin: { value: origin },
+                u_maxLifeTime: {value: 3.0}
             },
             transparent: true,
             depthWrite: false,
@@ -241,10 +260,72 @@ export class FireParticleEmitter {
 
     public update(clock: THREE.Clock): void {
         
+        if(this.isDead) {
+            this.kill();
+            return;
+        }
+
+        if(!this.isEmitting) {
+            setTimeout(() => {
+                this.isDead = true
+            }, 1000);        
+        }
+
         let fireMaterial = this.fireParticles.material as THREE.ShaderMaterial;
         fireMaterial.uniforms['u_time'].value = clock.getElapsedTime();
 
         let smokeMaterial = this.smokeParticles.material as THREE.ShaderMaterial;
         smokeMaterial.uniforms['u_time'].value = clock.getElapsedTime();
+
+    }
+
+    getPosition(): THREE.Vector3 {
+        throw new Error('Method not implemented.');
+    }
+    setPosition(position: THREE.Vector3): void {
+        this.fireParticles.position.copy(position);
+        this.smokeParticles.position.copy(position);
+    }
+    setQuaternion(quaternion: THREE.Quaternion): void {
+        throw new Error('Method not implemented.');
+    }
+
+    pause(): void {
+        throw new Error('Method not implemented.');
+    }
+    resume(): void {
+        throw new Error('Method not implemented.');
+    }
+    stop(): void {
+        throw new Error('Method not implemented.');
+    }
+    setEmitPosition(position: THREE.Vector3): void {
+        this.fireParticles.position.copy(position);
+        this.smokeParticles.position.copy(position);
+    }
+    getParticleCount(): number {
+
+        return this.smokeParticles.geometry.getAttribute('position').count
+               + this.fireParticles.geometry.getAttribute('position').count;
+    }
+
+    kill(): void {
+        this.disposePoints(this.fireParticles, this.scene);
+        this.disposePoints(this.smokeParticles, this.scene);
+    }
+
+    private disposePoints(points: THREE.Points, scene: THREE.Scene) {
+        // Remove from scene (if added)
+        scene.remove(points);
+
+        // Dispose geometry
+        points.geometry.dispose();
+
+        // Dispose material(s)
+        if (Array.isArray(points.material)) {
+            points.material.forEach((mat) => mat.dispose());
+        } else {
+            points.material.dispose();
+        }
     }
 }

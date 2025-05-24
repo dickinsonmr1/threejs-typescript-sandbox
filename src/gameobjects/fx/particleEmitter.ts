@@ -9,7 +9,7 @@ export abstract class ParticleEmitter {
     abstract getPosition(): THREE.Vector3;
     abstract setPosition(position: THREE.Vector3): void;
     abstract setQuaternion(quaternion: THREE.Quaternion): void;
-    abstract update(): void;
+    abstract update(clock?: THREE.Clock): void;
     abstract kill(): void;
     abstract pause(): void;
     abstract resume(): void;

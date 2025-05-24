@@ -1852,9 +1852,9 @@ export default class GameScene extends THREE.Scene {
         this.pickups.forEach(x => x.update());
 
         this.projectiles.forEach(x => x.update());
-        this.particleEmitters.forEach(x => x.update());
+        this.particleEmitters.forEach(x => x.update(this.clock));
 
-        this.fireParticleEmitters.forEach(x => x.update());
+        this.fireParticleEmitters.forEach(x => x.update(this.clock));
         this.fireParticleEmitters.forEach(x => x.setEmitPosition(new THREE.Vector3(-3, 2.5, -3)));
 
         //this.rainShaderParticleEmitter.update();
@@ -1921,7 +1921,7 @@ export default class GameScene extends THREE.Scene {
 
         let player1Position = this.player1.getPosition();
         this.allPlayers.forEach(player => {
-            player.update(this.cpuPlayerBehavior);
+            player.update(this.clock, this.cpuPlayerBehavior);
             let distance = player1Position.distanceTo(player.getPosition());
             this.sceneController.hudScene?.updateMeshHealthBar(player.playerId, player.currentHealth, distance);
         });

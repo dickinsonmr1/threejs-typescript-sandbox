@@ -24,6 +24,7 @@ import EmergencyLights from "../vehicles/emergencyLights";
 import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
 import { VehicleConfig } from "../vehicles/config/vehicleConfig";
 import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
+import { FireParticleEmitter } from "../fx/fireParticleEmitter";
 
 export enum PlayerState {
     Alive,
@@ -297,12 +298,15 @@ export class Player {
         this.vehicleObject.preUpdate();
     }
 
-    update(cpuPlayerBehaviorOverride?: CpuPlayerPattern): void {
+    update(clock: THREE.Clock, cpuPlayerBehaviorOverride?: CpuPlayerPattern): void {
             
-        this.fireObjects.forEach(x => {
-            x.setEmitPosition(this.vehicleObject.getChassis().getPosition());
+        this.fireObjects.forEach(x => {            
+            x.setPosition(this.vehicleObject.getChassis().getPosition());
+
+            // todo: figure out if need to handle FireParticleEmitter objects differently
+             //x.setEmitPosition(this.vehicleObject.getChassis().getPosition());
         });
-        this.fireObjects.forEach(x => x.update());
+        this.fireObjects.forEach(x => x.update(clock));
 
         if(this.playerState == PlayerState.Dead) {
             
@@ -789,7 +793,10 @@ export class Player {
                 gameScene.getAudioManager().getSound('deathFire', this.playerIndex)!,
                 gameScene.gameConfig.isSoundEnabled
             );
-            this.fireObjects.push(deathFire);
+            //this.fireObjects.push(deathFire);
+
+            let fireParticleEmitter = new FireParticleEmitter(this.scene, 3000, this.getPosition());
+            this.fireObjects.push(fireParticleEmitter);
             
             let smokeEmitPosition = this.getPosition().add(new THREE.Vector3(0, 0.5, 0));
             let smokeObject = new SmokeObject2(this.scene, scene.explosionTexture, smokeEmitPosition, 1, 3000);
@@ -835,8 +842,7 @@ export class Player {
             );
             smokeObject.setEmitPosition(this.getPosition());
             */
-
-            this.fireObjects.push(smokeObject);            
+            //this.fireObjects.push(smokeObject);            
 
             this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
 
@@ -848,6 +854,8 @@ export class Player {
 
     tryRespawn() {
         this.refillHealth();        
+
+        this.fireObjects.forEach(x => x.kill());
         
         this.playerState = PlayerState.Alive;        
         this.tryStopTurbo();
