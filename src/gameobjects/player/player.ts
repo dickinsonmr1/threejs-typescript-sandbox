@@ -73,7 +73,7 @@ export class Player {
     maxHealth: number;
     currentHealth: number;
 
-    static RespawnTimeinMs: number = 3000;
+    static RespawnTimeinMs: number = 5000;
 
     playerState: PlayerState = PlayerState.Alive;
 
@@ -301,10 +301,10 @@ export class Player {
     update(clock: THREE.Clock, cpuPlayerBehaviorOverride?: CpuPlayerPattern): void {
             
         this.fireObjects.forEach(x => {            
-            x.setPosition(this.vehicleObject.getChassis().getPosition());
+            //x.setPosition(this.vehicleObject.getChassis().getPosition());
 
             // todo: figure out if need to handle FireParticleEmitter objects differently
-             //x.setEmitPosition(this.vehicleObject.getChassis().getPosition());
+            x.setEmitPosition(this.vehicleObject.getChassis().getPosition());
         });
         this.fireObjects.forEach(x => x.update(clock));
 

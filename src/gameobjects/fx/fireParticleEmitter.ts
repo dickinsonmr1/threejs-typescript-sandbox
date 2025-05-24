@@ -11,10 +11,13 @@ export class FireParticleEmitter extends ParticleEmitter {
     /**
      *
      */
+
     private smokeParticles: THREE.Points;
     private fireParticles: THREE.Points;
     private fireParticleMaterial!: THREE.ShaderMaterial;
     private smokeParticleMaterial!: THREE.ShaderMaterial;
+
+    private emitPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
 
     constructor(scene: THREE.Scene, maxEmitterLifeTimeInMs: number, position: THREE.Vector3) {
 
@@ -22,8 +25,10 @@ export class FireParticleEmitter extends ParticleEmitter {
 
         this.scene = scene;
 
-        this.fireParticles = this.createFireParticles(1, new THREE.Vector3(0,0,0));
-        this.smokeParticles = this.createSmokeParticles(0.75, new THREE.Vector3(0,0,0));//new THREE.Vector3(0, 3, 0));
+        this.emitPosition = new THREE.Vector3(0,0,0);
+
+        this.fireParticles = this.createFireParticles(1, position);
+        this.smokeParticles = this.createSmokeParticles(0.75, position);//new THREE.Vector3(0, 3, 0));
         scene.add(this.fireParticles);
         scene.add(this.smokeParticles);
 
@@ -34,7 +39,7 @@ export class FireParticleEmitter extends ParticleEmitter {
 
     private createFireParticles(fireSize: number, position: THREE.Vector3): THREE.Points {
         // Create particle attributes
-        const particleCount = 500;
+        const particleCount = 250;
         const positions = new Float32Array(particleCount * 3);
         const velocities = new Float32Array(particleCount * 3);
         const lifetimes = new Float32Array(particleCount);
@@ -71,7 +76,8 @@ export class FireParticleEmitter extends ParticleEmitter {
                 uniform float u_time;
                 uniform float u_lifetime;
                 uniform vec3 u_origin;
-                uniform float u_maxLifetime;
+                uniform float u_simulationLifetime;
+                uniform vec3 u_emitPosition;
 
                 attribute vec3 velocity;
                 attribute float lifetime;
@@ -93,10 +99,11 @@ export class FireParticleEmitter extends ParticleEmitter {
                     v_opacity = 1.0 - lifeProgress;
 
                     // When the particle has reached its lifetime, reset
-                    if (lifeProgress >= 1.0) {
-                        pos = u_origin; // Reset to the origin
+                    if (lifeProgress >= 2.0) {
+                        pos = u_emitPosition; // Reset to the offset
                         v_color = vec3(1.0, 0.5, 0.0);
                         v_opacity = 1.0;
+                        lifeProgress = 0.0;
                     }
                     
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
@@ -127,7 +134,8 @@ export class FireParticleEmitter extends ParticleEmitter {
                 u_time: { value: 0.0 },
                 u_lifetime: { value: lifetimeMax },
                 u_origin: { value: origin },
-                u_maxLifeTime: { value: 3.0 },
+                u_emitPosition: { value: this.emitPosition},
+                u_simulationLifetime: { value: 1.0 },
             },
             transparent: true,
             depthWrite: false,
@@ -139,22 +147,18 @@ export class FireParticleEmitter extends ParticleEmitter {
         return particleSystem;
     }
 
-    private createSmokeParticles(smokeSize: number, startOffset: THREE.Vector3): THREE.Points {
+    private createSmokeParticles(smokeSize: number, position: THREE.Vector3): THREE.Points {
         // Create particle attributes
         const particleCount = 250;
         const positions = new Float32Array(particleCount * 3);
         const velocities = new Float32Array(particleCount * 3);
         const lifetimes = new Float32Array(particleCount);
 
-        const origin = new THREE.Vector3().addVectors(startOffset, new THREE.Vector3(0,1,0))
+        const origin = new THREE.Vector3().addVectors(position, new THREE.Vector3(0,1,0))
 
         const lifetimeMax = 5.0; // max lifetime in seconds
 
         for (let i = 0; i < particleCount; i++) {
-
-            //let randOffsetX = (Math.random() * smokeSize) - smokeSize/2;
-            //let randOffsetZ = (Math.random() * smokeSize) - smokeSize/2;
-
             const angle = Math.random() * Math.PI * 2; // Random angle between 0 and 2π
             const r = Math.sqrt(Math.random()) * smokeSize; // Random radius with sqrt for uniform distribution
             const randOffsetX = Math.cos(angle) * r;
@@ -162,7 +166,7 @@ export class FireParticleEmitter extends ParticleEmitter {
 
             positions.set([
                 origin.x + randOffsetX,
-                origin.y + startOffset.y,
+                origin.y + position.y,
                 origin.z + randOffsetZ
             ], i * 3);
             velocities.set([
@@ -185,7 +189,8 @@ export class FireParticleEmitter extends ParticleEmitter {
                 uniform float u_time;
                 uniform float u_lifetime;
                 uniform vec3 u_origin;
-                uniform float u_maxLifetime;
+                uniform float u_simulationLifetime;
+                uniform vec3 u_emitPosition;
 
                 attribute vec3 velocity;
                 attribute float lifetime;
@@ -194,6 +199,7 @@ export class FireParticleEmitter extends ParticleEmitter {
                 varying vec3 v_color;
 
                 void main() {
+
                     float age = mod(u_time, lifetime);
                     float lifeProgress = age / lifetime;
 
@@ -212,11 +218,12 @@ export class FireParticleEmitter extends ParticleEmitter {
                         v_opacity = 0.25 * (1.0 - lifeProgress);
                     */
 
-                    // When the particle has reached its lifetime, reset
+                    // When the particle has reached its lifetime, reset unless we are past simulation lifetime
                     if (lifeProgress >= 2.0) {
-                        pos = u_origin; // Reset to the origin
+                        pos = u_emitPosition; // Reset to the offset
                         v_color = vec3(0.0, 0.0, 0.0);
-                        v_opacity = 0.25;
+                        v_opacity = 0.25;    
+                        lifeProgress = 0.0;                    
                     }
 
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
@@ -246,7 +253,8 @@ export class FireParticleEmitter extends ParticleEmitter {
                 u_time: { value: 0.0 },
                 u_lifetime: { value: lifetimeMax },
                 u_origin: { value: origin },
-                u_maxLifeTime: {value: 3.0}
+                u_emitPosition: { value: this.emitPosition},
+                u_simulationLifetime: {value: 1.0}
             },
             transparent: true,
             depthWrite: false,
@@ -273,10 +281,11 @@ export class FireParticleEmitter extends ParticleEmitter {
 
         let fireMaterial = this.fireParticles.material as THREE.ShaderMaterial;
         fireMaterial.uniforms['u_time'].value = clock.getElapsedTime();
+        fireMaterial.uniforms['u_emitPosition'].value = this.emitPosition;
 
         let smokeMaterial = this.smokeParticles.material as THREE.ShaderMaterial;
         smokeMaterial.uniforms['u_time'].value = clock.getElapsedTime();
-
+        smokeMaterial.uniforms['u_emitPosition'].value = this.emitPosition;
     }
 
     getPosition(): THREE.Vector3 {
@@ -300,8 +309,10 @@ export class FireParticleEmitter extends ParticleEmitter {
         throw new Error('Method not implemented.');
     }
     setEmitPosition(position: THREE.Vector3): void {
-        this.fireParticles.position.copy(position);
-        this.smokeParticles.position.copy(position);
+        
+        //this.fireParticles.position.copy(position);
+        //this.smokeParticles.position.copy(position);
+        this.emitPosition = position;
     }
     getParticleCount(): number {
 
