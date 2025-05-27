@@ -313,7 +313,7 @@ export class Player {
             if(this.deathExplosionCooldownClock.isExpired()) {
                 this.deathExplosionCooldownClock.stop();
 
-                this.generateRandomExplosion();
+                //this.generateRandomExplosion();
                 this.deathExplosionCooldownClock.start();
             }        
 
