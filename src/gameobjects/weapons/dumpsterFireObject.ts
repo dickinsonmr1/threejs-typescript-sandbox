@@ -4,7 +4,7 @@ import * as CANNON from 'cannon-es'
 import { Utility } from "../../utility";
 import GameScene from "../../scenes/gameScene";
 import { randFloat } from "three/src/math/MathUtils.js";
-import { FireObject } from "../fx/fireObject";
+import { FireCpuParticleEmitter } from "../fx/fireCpuParticleEmitter";
 import { ParticleEmitter } from "../fx/particleEmitter";
 
 export class DumpsterFireObject {
@@ -88,7 +88,7 @@ export class DumpsterFireObject {
 
             let gameScene = <GameScene>scene;
 
-            this.particleEmitter = new FireObject(
+            this.particleEmitter = new FireCpuParticleEmitter(
                 gameScene,
                 gameScene.explosionTexture,
                 new THREE.Color('yellow'),

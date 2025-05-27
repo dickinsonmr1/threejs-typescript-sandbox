@@ -3,7 +3,7 @@ import { PointLightObject } from "./pointLightObject";
 import { ParticleEmitter } from "./particleEmitter";
 import { Utility } from "../../utility";
 
-export class FireObject extends ParticleEmitter {
+export class FireCpuParticleEmitter extends ParticleEmitter {
         
     pause(): void {
         throw new Error("Method not implemented.");

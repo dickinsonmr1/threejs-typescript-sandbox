@@ -5,7 +5,7 @@ import { Utility } from "../../utility";
 import Headlights from "../vehicles/headLights";
 import * as THREE from "three";
 import { v4 as uuidv4 } from 'uuid';
-import { FireObject } from "../fx/fireObject";
+import { FireCpuParticleEmitter } from "../fx/fireCpuParticleEmitter";
 import GameScene from "../../scenes/gameScene";
 import ProjectileFactory from "../weapons/projectileFactory";
 import { Projectile, ProjectileLaunchLocation } from "../weapons/projectile";
@@ -782,7 +782,7 @@ export class Player {
 
             let gameScene = <GameScene>this.scene;
 
-            let deathFire = new FireObject(
+            let deathFire = new FireCpuParticleEmitter(
                 this.scene,
                 scene.explosionTexture,
                 new THREE.Color('yellow'),
