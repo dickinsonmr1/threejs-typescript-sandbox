@@ -25,6 +25,7 @@ import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
 import { VehicleConfig } from "../vehicles/config/vehicleConfig";
 import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
 import { FireParticleEmitter } from "../fx/fireParticleEmitter";
+import { ExplosionGpuParticleEmitter } from "../fx/explosionGpuParticleEmitter";
 
 export enum PlayerState {
     Alive,
@@ -313,7 +314,7 @@ export class Player {
             if(this.deathExplosionCooldownClock.isExpired()) {
                 this.deathExplosionCooldownClock.stop();
 
-                //this.generateRandomExplosion();
+                this.generateRandomExplosionGpu();
                 this.deathExplosionCooldownClock.start();
             }        
 
@@ -809,7 +810,7 @@ export class Player {
                 //document.getElementById('notificationDiv')!.style.transition = 'opacity 0.3s ease';
             }, 2000);
 
-            this.generateRandomExplosion();
+            this.generateRandomExplosionGpu();
 
             gameScene.getAudioManager().playSound('explosion', false, this.playerIndex);
 
@@ -1131,6 +1132,11 @@ export class Player {
         return particleCount;
     }
 
+    tryGenerateRandomExplosion(): void {
+        this.generateRandomExplosionGpu();
+    }
+
+    /*
     private generateRandomExplosion(): void {
         let scene = this.getScene();                
         scene.generateRandomExplosion(ProjectileType.Rocket,
@@ -1141,5 +1147,14 @@ export class Player {
             new THREE.Color('orange'),
             new THREE.Color('red')
         );
+    }
+    */
+
+    private generateRandomExplosionGpu(clock?: THREE.Clock): void {
+
+        let gameScene = <GameScene>this.scene;        
+        let particleEmitter = new ExplosionGpuParticleEmitter(this.scene, gameScene.getClock(), 100, 5, 1, this.getPosition());
+        
+        this.fireObjects.push(particleEmitter);
     }
 }

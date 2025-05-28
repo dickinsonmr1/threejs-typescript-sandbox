@@ -82,6 +82,10 @@ export default class GameScene extends THREE.Scene {
     private animatedSprites: AnimatedSprite[] = [];
     private shaderAnimatedSprites: AnimatedShaderSprite[] = [];
     private clock: THREE.Clock = new THREE.Clock();
+
+    public getClock(): THREE.Clock {
+        return this.clock;
+    }
     
     //lightningMaterial!: THREE.ShaderMaterial;
     //lightningMaterial2!: THREE.ShaderMaterial;
@@ -703,6 +707,9 @@ export default class GameScene extends THREE.Scene {
         }
         if(event.key === 'r') {            
             this.player1.tryFireShovel();
+        }
+        if(event.key === 'h') {            
+            this.player1.tryGenerateRandomExplosion();
         }
 
         if(event.key === 'm') {

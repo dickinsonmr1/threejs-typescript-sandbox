@@ -161,12 +161,12 @@ export class FireParticleEmitter extends ParticleEmitter {
 
             positions.set([
                 origin.x + randOffsetX,
-                origin.y + position.y,
+                origin.y + 1,
                 origin.z + randOffsetZ
             ], i * 3);
             velocities.set([
                 (Math.random() * 1) - 0.5,
-                Math.random() * 2 + 2,
+                Math.random() * 2,
                 (Math.random() * 1) - 0.5,
             ], i * 3);
             lifetimes[i] = Math.random() * particleLifetimeMax;
