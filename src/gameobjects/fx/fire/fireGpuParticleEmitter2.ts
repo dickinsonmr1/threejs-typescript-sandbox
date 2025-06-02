@@ -1,19 +1,20 @@
+// todo: version of FireGpuParticleEmitter that creates a new instance of THREE.Points every time particles need to be emitted
 import * as THREE from 'three'
-import { ParticleEmitter } from './particleEmitter';
+import { ParticleEmitter } from '../particleEmitter';
 
-export class FireParticleEmitter extends ParticleEmitter {
+export class FireGpuParticleEmitter2 extends ParticleEmitter {
     
+    particleGroup!: THREE.Group<THREE.Object3DEventMap>;    
     isEmitting: boolean = true;
     isDead!: boolean;
-    particleGroup!: THREE.Group<THREE.Object3DEventMap>;
     scene: THREE.Scene;
 
     /**
      *
      */
 
-    private smokeParticles: THREE.Points;
-    private fireParticles: THREE.Points;
+    private smokeParticleSystems: THREE.Points[] = [];
+    private fireParticleSystems: THREE.Points[] = [];
     private fireParticleMaterial!: THREE.ShaderMaterial;
     private smokeParticleMaterial!: THREE.ShaderMaterial;
 
@@ -27,15 +28,24 @@ export class FireParticleEmitter extends ParticleEmitter {
 
         this.emitPosition = new THREE.Vector3(0,0,0);
 
-        this.fireParticles = this.createFireParticles(1, position);
-        this.smokeParticles = this.createSmokeParticles(0.75, position);//new THREE.Vector3(0, 3, 0));
-        scene.add(this.fireParticles);
-        scene.add(this.smokeParticles);
+        this.emitParticles(position);
 
         setTimeout(() => {
             this.isEmitting = false
         }, maxEmitterLifeTimeInMs);     
-    }    
+    }  
+    
+    private emitParticles(position: THREE.Vector3): void {
+        
+        let fireParticles = this.createFireParticles(1, position);
+        let smokeParticles = this.createSmokeParticles(0.75, position);//new THREE.Vector3(0, 3, 0));
+
+        this.scene.add(fireParticles);
+        this.scene.add(smokeParticles);
+
+        this.fireParticleSystems.push(fireParticles);
+        this.smokeParticleSystems.push(smokeParticles);
+    }
 
     private createFireParticles(fireSize: number, position: THREE.Vector3): THREE.Points {
         // Create particle attributes
@@ -258,21 +268,33 @@ export class FireParticleEmitter extends ParticleEmitter {
             }, 1000);        
         }
 
-        let fireMaterial = this.fireParticles.material as THREE.ShaderMaterial;
-        fireMaterial.uniforms['u_time'].value = clock.getElapsedTime();
-        fireMaterial.uniforms['u_emitPosition'].value = this.emitPosition; // todo: make this work
+        this.emitParticles(this.emitPosition);
 
-        let smokeMaterial = this.smokeParticles.material as THREE.ShaderMaterial;
-        smokeMaterial.uniforms['u_time'].value = clock.getElapsedTime();
-        smokeMaterial.uniforms['u_emitPosition'].value = this.emitPosition; // todo: make this work
+        this.fireParticleSystems.forEach(particleSystem => {
+            let material = particleSystem.material as THREE.ShaderMaterial;
+            material.uniforms['u_time'].value = clock.getElapsedTime();
+            material.uniforms['u_emitPosition'].value = this.emitPosition; // todo: make this work
+        });
+
+        this.smokeParticleSystems.forEach(particleSystem => {
+            let material = particleSystem.material as THREE.ShaderMaterial;
+            material.uniforms['u_time'].value = clock.getElapsedTime();
+            material.uniforms['u_emitPosition'].value = this.emitPosition; // todo: make this work        
+        });
+        
     }
 
     getPosition(): THREE.Vector3 {
         throw new Error('Method not implemented.');
     }
     setPosition(position: THREE.Vector3): void {
-        this.fireParticles.position.copy(position);
-        this.smokeParticles.position.copy(position);
+
+        this.fireParticleSystems.forEach(particleSystem => {
+            particleSystem.position.copy(position);
+        });
+        this.smokeParticleSystems.forEach(particleSystem => {
+            particleSystem.position.copy(position);
+        });
     }
     setQuaternion(quaternion: THREE.Quaternion): void {
         throw new Error('Method not implemented.');
@@ -295,13 +317,17 @@ export class FireParticleEmitter extends ParticleEmitter {
     }
     getParticleCount(): number {
 
-        return this.smokeParticles.geometry.getAttribute('position').count
-               + this.fireParticles.geometry.getAttribute('position').count;
+        let count = 0;
+
+        this.fireParticleSystems.forEach( x=> count += x.geometry.getAttribute('position').count);
+        this.smokeParticleSystems.forEach( x=> count += x.geometry.getAttribute('position').count);
+
+        return count;
     }
 
     kill(): void {
-        this.disposePoints(this.fireParticles, this.scene);
-        this.disposePoints(this.smokeParticles, this.scene);
+        this.fireParticleSystems.forEach( x=> this.disposePoints(x, this.scene));
+        this.smokeParticleSystems.forEach( x=> this.disposePoints(x, this.scene));
     }
 
     private disposePoints(points: THREE.Points, scene: THREE.Scene) {

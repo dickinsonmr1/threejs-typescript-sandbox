@@ -24,7 +24,7 @@ import EmergencyLights from "../vehicles/emergencyLights";
 import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
 import { VehicleConfig } from "../vehicles/config/vehicleConfig";
 import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
-import { FireParticleEmitter } from "../fx/fireParticleEmitter";
+import { FireGpuParticleEmitter } from "../fx/fireGpuParticleEmitter";
 import { ExplosionGpuParticleEmitter } from "../fx/explosionGpuParticleEmitter";
 
 export enum PlayerState {
@@ -796,7 +796,7 @@ export class Player {
             );
             //this.fireObjects.push(deathFire);
 
-            let fireParticleEmitter = new FireParticleEmitter(this.scene, 3000, this.getPosition());
+            let fireParticleEmitter = new FireGpuParticleEmitter(this.scene, 3000, this.getPosition());
             this.fireObjects.push(fireParticleEmitter);
             
             let smokeEmitPosition = this.getPosition().add(new THREE.Vector3(0, 0.5, 0));
@@ -1153,8 +1153,8 @@ export class Player {
     private generateRandomExplosionGpu(clock?: THREE.Clock): void {
 
         let gameScene = <GameScene>this.scene;        
-        let particleEmitter = new ExplosionGpuParticleEmitter(this.scene, gameScene.getClock(), 100, 5, 1, this.getPosition());
-        
+        let particleEmitter = new ExplosionGpuParticleEmitter(this.scene, gameScene.getClock(), 25, 4.0, 2, this.getPosition());
+
         this.fireObjects.push(particleEmitter);
     }
 }

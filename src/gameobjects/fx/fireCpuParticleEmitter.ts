@@ -149,6 +149,11 @@ export class FireCpuParticleEmitter extends ParticleEmitter {
     kill() {                
         this.scene.remove(this.particleGroup);
 
+        this.particleGroup.children.forEach((child) => {
+            let item = <THREE.Sprite>child;
+            Utility.disposeSprite(item);
+        });
+
         if(this.deathFireSound)
             this.deathFireSound.stop();
         

@@ -51,16 +51,19 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
             //const randOffsetX = Math.cos(angle) * r;
             //const randOffsetZ = Math.sin(angle) * r;
 
-            positions.set([origin.x, origin.y, origin.z], i * 3);
+            positions.set([origin.x + (Math.random() * 1 - 0.5),
+                origin.y + (Math.random() * 1 - 0.5),
+                origin.z + (Math.random() * 1 - 0.5)
+            ], i * 3);
 
             const dir = new THREE.Vector3(
-                (Math.random() * 10 - 0.5),
-                (Math.random() * 10  - 0.5),
-                (Math.random() * 10 - 0.5)
-            ).normalize().multiplyScalar(Math.random() * 2.0);
+                (Math.random() * 1 - 0.5),
+                (Math.random() * 1),
+                (Math.random() * 1 - 0.5)
+            ).normalize().multiplyScalar(Math.random() * maxVelocity);
             
             velocities.set([dir.x, dir.y, dir.z], i * 3);
-            lifetimes[i] = particleLifetimeMax;
+            lifetimes[i] = particleLifetimeMax - (Math.random() * 0.5);
             spawnTimes[i] = clock.getElapsedTime();
         }
 
@@ -77,7 +80,7 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
         this.fireParticleMaterial = new THREE.ShaderMaterial({
             vertexShader: `
                 
-                // global input to both vertex and fragment shaders (same value across all vertices/fragemnts in single draw call)
+                // global input to both vertex and fragment shaders (same value across all vertices/fragments in single draw call)
                 uniform float u_time;
                 uniform vec3 u_origin;
                 uniform vec3 u_emitPosition;
@@ -92,25 +95,26 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
                 varying float vLifetime;
 
                 void main() {            
-                    //float age = mod(u_time, lifetime);
-                    //float lifeProgress = age / lifetime;
-
                     float age = u_time - spawnTime;
                     float lifeProgress = clamp(age / lifetime, 0.0, 1.0);
 
                     vLifetime = lifeProgress;
 
-                    float velocityDecayFactor = pow(1.0 - vLifetime, 2.0); //1.0;
+                    vec3 gravity = vec3(0.0, -1.0, 0.0);
+                      // Position update with gravity
+                    vec3 displaced = position 
+                        + velocity * age 
+                        + 0.5 * gravity * (age * age);
 
-                    // Reset particle position if lifetime is reached
-                    vec3 pos = position + velocity * age * velocityDecayFactor;
+                    //float velocityDecayFactor = 5.0; //pow(1.0 - vLifetime, 2.0);
+
+                    vec3 pos = displaced; //position + velocity * age * velocityDecayFactor;
                                   
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                    gl_PointSize = 1.0 * (300.0 / -mvPosition.z) * (1.0 + lifeProgress);
                     // scale with perspective, shrink with time                                    
+                    gl_PointSize = 1.0 * (300.0 / -mvPosition.z) * (1.0 - lifeProgress);
 
                     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-
                 }
             `,
             fragmentShader: `
@@ -125,17 +129,20 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
                     float t = vLifetime;
                     vec3 color;
 
-                    if (t < 0.5) {
-                        float localT = t / 0.5;
+                    float cutOff1 = 0.25;
+                    float cutOff2 = 0.40;
+
+                    if (t < cutOff1) {
+                        float localT = t / cutOff1;
                         color = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), localT); // White → Yellow
-                    } else if (t < 0.85) {
-                        float localT = (t - 0.5) / (0.85 - 0.5);
+                    } else if (t < cutOff2) {
+                        float localT = (t - cutOff1) / (0.85 - cutOff1);
                         color = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.5, 0.0), localT); // Yellow → Orange
                     } else {
-                        float localT = (t - 0.85) / (1.0 - 0.85);
+                        float localT = (t - cutOff2) / (1.0 -cutOff2);
                         color = mix(vec3(1.0, 0.5, 0.0), vec3(1.0, 0.0, 0.0), localT); // Orange → Red
                     }
-                    float opacity = 1.0 - t;
+                    float opacity = 0.8 - (t / 2.0);
 
                     // Render particle with fading opacity
                     gl_FragColor = vec4(color, opacity);
@@ -148,7 +155,8 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
                 u_emitPosition: { value: this.emitPosition}
             },
             transparent: true,
-            depthWrite: false,
+            depthWrite: true,
+            blending: THREE.AdditiveBlending
         });
       
         // Create the particle system

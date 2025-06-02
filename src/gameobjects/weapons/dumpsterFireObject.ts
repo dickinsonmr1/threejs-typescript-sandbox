@@ -155,6 +155,8 @@ export class DumpsterFireObject {
             this.scene.remove(this.model);
         }
 
+        this.particleEmitter.kill();
+
         if(this.body != null) {
             let gameScene = <GameScene>this.scene;
             gameScene.world.removeBody(this.body);

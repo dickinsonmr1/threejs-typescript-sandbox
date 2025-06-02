@@ -3,7 +3,7 @@ import { PointLightObject } from "./pointLightObject";
 import { ParticleEmitter } from "./particleEmitter";
 import { Utility } from "../../utility";
 
-export class VehicleExplosionObject extends ParticleEmitter {
+export class ExplosionCpuParticleEmitter extends ParticleEmitter {
     
     setEmitPosition(position: THREE.Vector3): void {
         throw new Error("Method not implemented.");

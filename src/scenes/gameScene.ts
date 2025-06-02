@@ -15,7 +15,7 @@ import { ProjectileType } from '../gameobjects/weapons/projectileType';
 import SceneController from './sceneController';
 import { Player, PlayerState, VehicleType } from '../gameobjects/player/player';
 import { FlamethrowerEmitter } from '../gameobjects/weapons/flamethrowerEmitter';
-import { VehicleExplosionObject } from '../gameobjects/fx/vehicleExplosionObject';
+import { ExplosionCpuParticleEmitter } from '../gameobjects/fx/explosionCpuParticleEmitter';
 import { Utility } from '../utility';
 import { TextureHeightMapArray } from '../gameobjects/textureToArray';
 import { Water } from 'three/addons/objects/Water.js';
@@ -42,6 +42,7 @@ import { AnimatedSprite } from '../gameobjects/fx/animatedSprite';
 import soundEffectLibraryJson from '../gameobjects/audio/config/soundEffectLibrary.json';
 import { SoundEffectConfig } from '../gameobjects/audio/config/soundEffectLibrary';
 import { AnimatedShaderSprite } from '../gameobjects/fx/animatedShaderSprite';
+import { ExplosionGpuParticleEmitter } from '../gameobjects/fx/explosionGpuParticleEmitter';
 
 
 // npm install cannon-es-debugger
@@ -1197,7 +1198,10 @@ export default class GameScene extends THREE.Scene {
             
             this.audioManager.playSound(`fw_0${rand}`, false);
 
-            this.addToParticleEmitters(new VehicleExplosionObject(
+            this.addToParticleEmitters(new ExplosionGpuParticleEmitter(this, this.clock, 10, 5, 1000, position));
+
+            /*
+            this.addToParticleEmitters(new ExplosionCpuParticleEmitter(
                 this,
                 this.explosionTexture,
                 lightColor,
@@ -1213,6 +1217,7 @@ export default class GameScene extends THREE.Scene {
                 opacityReduction,
                 scaleMultiplier)            
             );
+            */
         }
     }
 
@@ -1859,7 +1864,6 @@ export default class GameScene extends THREE.Scene {
         this.pickups.forEach(x => x.update());
 
         this.projectiles.forEach(x => x.update());
-        this.particleEmitters.forEach(x => x.update(this.clock));
 
         this.fireParticleEmitters.forEach(x => x.update(this.clock));
         this.fireParticleEmitters.forEach(x => x.setEmitPosition(new THREE.Vector3(-3, 2.5, -3)));
@@ -1920,7 +1924,7 @@ export default class GameScene extends THREE.Scene {
 
         this.spotlight?.update();
 
-        this.particleEmitters.forEach(x => x.update());
+        this.particleEmitters.forEach(x => x.update(this.clock));
         this.particleEmitters = this.particleEmitters.filter(x => !x.isDead);
 
         this.flamethrowerEmitters.forEach(x => x.update());
