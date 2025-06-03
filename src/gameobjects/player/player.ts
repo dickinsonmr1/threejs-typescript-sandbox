@@ -26,6 +26,7 @@ import { VehicleConfig } from "../vehicles/config/vehicleConfig";
 import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
 import { FireGpuParticleEmitter } from "../fx/fireGpuParticleEmitter";
 import { ExplosionGpuParticleEmitter } from "../fx/explosionGpuParticleEmitter";
+import { FireGpuParticleEmitter2 } from "../fx/fire/fireGpuParticleEmitter2";
 
 export enum PlayerState {
     Alive,
@@ -796,7 +797,8 @@ export class Player {
             );
             //this.fireObjects.push(deathFire);
 
-            let fireParticleEmitter = new FireGpuParticleEmitter(this.scene, 3000, this.getPosition());
+            //let fireParticleEmitter = new FireGpuParticleEmitter(this.scene, 3000, this.getPosition());
+            let fireParticleEmitter = new FireGpuParticleEmitter2(this.scene, 5000, 10, this.getPosition());
             this.fireObjects.push(fireParticleEmitter);
             
             let smokeEmitPosition = this.getPosition().add(new THREE.Vector3(0, 0.5, 0));
@@ -1136,6 +1138,10 @@ export class Player {
         this.generateRandomExplosionGpu();
     }
 
+    tryGenerateRandomFireParticles(): void {
+        this.generateRandomExplosionGpu();
+    }
+
     /*
     private generateRandomExplosion(): void {
         let scene = this.getScene();                
@@ -1151,10 +1157,13 @@ export class Player {
     */
 
     private generateRandomExplosionGpu(clock?: THREE.Clock): void {
-
         let gameScene = <GameScene>this.scene;        
-        let particleEmitter = new ExplosionGpuParticleEmitter(this.scene, gameScene.getClock(), 25, 4.0, 2, this.getPosition());
+        let particleEmitter = new ExplosionGpuParticleEmitter(gameScene, gameScene.getClock(), 5, 10, 1000, this.getPosition());
+        this.fireObjects.push(particleEmitter);
+    }
 
+    private emitFireParticlesGpu(clock?: THREE.Clock): void {
+        let particleEmitter = new FireGpuParticleEmitter2(this.scene, 5000, 5, this.getPosition());
         this.fireObjects.push(particleEmitter);
     }
 }
