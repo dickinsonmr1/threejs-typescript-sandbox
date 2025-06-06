@@ -246,6 +246,7 @@ export class Player {
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('rocket', this.playerIndex)!);
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('explosion', this.playerIndex)!);
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('flamethrower', this.playerIndex)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound('deathFire', this.playerIndex)!);
 
         //this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
         //this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
@@ -784,6 +785,7 @@ export class Player {
 
             let gameScene = <GameScene>this.scene;
 
+            /*
             let deathFire = new FireCpuParticleEmitter(
                 this.scene,
                 scene.explosionTexture,
@@ -795,11 +797,14 @@ export class Player {
                 gameScene.getAudioManager().getSound('deathFire', this.playerIndex)!,
                 gameScene.gameConfig.isSoundEnabled
             );
-            //this.fireObjects.push(deathFire);
+            this.fireObjects.push(deathFire);
+            */
 
             //let fireParticleEmitter = new FireGpuParticleEmitter(this.scene, 3000, this.getPosition());
-            let fireParticleEmitter = new FireGpuParticleEmitter2(this.scene, 5000, 10, this.getPosition());
+            let fireParticleEmitter = new FireGpuParticleEmitter2(this.scene, Player.RespawnTimeinMs, 10, this.getPosition());
             this.fireObjects.push(fireParticleEmitter);
+
+            gameScene.getAudioManager().playSound('deathfire', true, this.playerIndex);
             
             let smokeEmitPosition = this.getPosition().add(new THREE.Vector3(0, 0.5, 0));
             let smokeObject = new SmokeObject2(this.scene, scene.explosionTexture, smokeEmitPosition, 1, 3000);
@@ -891,6 +896,8 @@ export class Player {
 
         if(this.emergencyLights2 != null)
             this.emergencyLights2.setVisible(true);
+
+        this.fireObjects.forEach(x => x.kill());
         //this.turboParticleEmitter.isEmitting = true;
     }
 

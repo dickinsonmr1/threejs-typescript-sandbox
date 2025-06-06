@@ -1859,7 +1859,7 @@ export default class GameScene extends THREE.Scene {
 
         this.debrisWheels.forEach(x => x.update());
 
-        this.dumpsters.forEach(x => x.update());
+        this.dumpsters.forEach(x => x.update(this.clock));
 
         this.pickups.forEach(x => x.update());
 

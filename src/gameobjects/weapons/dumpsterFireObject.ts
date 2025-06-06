@@ -6,6 +6,7 @@ import GameScene from "../../scenes/gameScene";
 import { randFloat } from "three/src/math/MathUtils.js";
 import { FireCpuParticleEmitter } from "../fx/fireCpuParticleEmitter";
 import { ParticleEmitter } from "../fx/particleEmitter";
+import { FireGpuParticleEmitter2 } from "../fx/fire/fireGpuParticleEmitter2";
 
 export class DumpsterFireObject {
     
@@ -88,6 +89,7 @@ export class DumpsterFireObject {
 
             let gameScene = <GameScene>scene;
 
+            /*
             this.particleEmitter = new FireCpuParticleEmitter(
                 gameScene,
                 gameScene.explosionTexture,
@@ -99,6 +101,9 @@ export class DumpsterFireObject {
                 gameScene.getAudioManager().getSound('player1-deathFire')!,
                 gameScene.gameConfig.isSoundEnabled
             );
+            */
+
+            this.particleEmitter = new FireGpuParticleEmitter2(gameScene, DumpsterFireObject.maxLifeTimeinMs, 2, Utility.CannonVec3ToThreeVec3(this.body.position));
         }
 
         setTimeout(() => {
@@ -118,7 +123,7 @@ export class DumpsterFireObject {
         return Utility.CannonVec3ToThreeVec3(this.body!.position);
     }
 
-    update() {
+    update(clock: THREE.Clock) {
 
         if(this.isDead) {
             this.kill();
@@ -138,7 +143,7 @@ export class DumpsterFireObject {
             //this.group.position.copy(Utility.CannonVec3ToThreeVec3(this.body.position).add(this.physicsPositionOffset));
             //this.group.quaternion.copy(Utility.CannonQuaternionToThreeQuaternion(this.body.quaternion));
             
-            this.particleEmitter.update();
+            this.particleEmitter.update(clock);
             this.particleEmitter.setEmitPosition(this.model.position);
         }
     }

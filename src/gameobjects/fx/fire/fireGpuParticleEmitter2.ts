@@ -28,6 +28,8 @@ export class FireGpuParticleEmitter2 extends ParticleEmitter {
     isDead!: boolean;
     scene: THREE.Scene;
 
+    frameCount: number = 0;
+
     particlesPerInstance: number;
 
     /**
@@ -51,10 +53,15 @@ export class FireGpuParticleEmitter2 extends ParticleEmitter {
 
         this.emitPosition = new THREE.Vector3(0,0,0);
 
-        this.emitParticles(particlesPerInstance, position);
+        //this.emitParticles(particlesPerInstance, position);
 
         setTimeout(() => {
-            this.isEmitting = false
+
+            this.isEmitting = false;
+            setTimeout(() => {
+                this.kill();
+            }, 500);     
+
         }, maxSimulationLifeTimeInMs);     
     }  
     
@@ -285,35 +292,37 @@ export class FireGpuParticleEmitter2 extends ParticleEmitter {
             return;
         }
 
-        if(!this.isEmitting) {
-            setTimeout(() => {
-                this.isDead = true
-            }, 1000);        
-        }
+        //if(!this.isEmitting) {
+            //setTimeout(() => {
+                //this.isDead = true
+            //}, 1000);        
+        //}
 
-        this.emitParticles(this.particlesPerInstance, this.emitPosition);
+        this.frameCount++;        
+        if (this.frameCount % 2 === 0 && this.isEmitting)
+            this.emitParticles(this.particlesPerInstance, this.emitPosition);
 
         this.fireParticleSystems.forEach(particleSystem => {
 
-            if(particleSystem.isEmitting) {
-                let material = particleSystem.particles.material as THREE.ShaderMaterial;
-                material.uniforms['u_time'].value = clock.getElapsedTime();
-                material.uniforms['u_emitPosition'].value = this.emitPosition; // todo: make this work
+            if(particleSystem.isDead) {
+                this.disposePoints(particleSystem.particles, this.scene);
             }
             else {
-                this.disposePoints(particleSystem.particles, this.scene);
+                let material = particleSystem.particles.material as THREE.ShaderMaterial;
+                material.uniforms['u_time'].value = clock.getElapsedTime();
+                material.uniforms['u_emitPosition'].value = this.emitPosition; // todo: make this work            
             }
         });
 
         this.smokeParticleSystems.forEach(particleSystem => {
 
-            if(particleSystem.isEmitting) {
+            if(particleSystem.isDead) {
+                this.disposePoints(particleSystem.particles, this.scene);
+            }
+            else {
                 let material = particleSystem.particles.material as THREE.ShaderMaterial;
                 material.uniforms['u_time'].value = clock.getElapsedTime();
                 material.uniforms['u_emitPosition'].value = this.emitPosition; // todo: make this work        
-            }
-            else {
-                this.disposePoints(particleSystem.particles, this.scene);
             }
         });
         
@@ -361,8 +370,11 @@ export class FireGpuParticleEmitter2 extends ParticleEmitter {
     }
 
     kill(): void {
-        this.fireParticleSystems.forEach( x=> this.disposePoints(x.particles, this.scene));
-        this.smokeParticleSystems.forEach( x=> this.disposePoints(x.particles, this.scene));
+        
+        this.isDead = true;
+
+        this.fireParticleSystems.forEach(x => this.disposePoints(x.particles, this.scene));
+        this.smokeParticleSystems.forEach(x => this.disposePoints(x.particles, this.scene));
     }
 
     private disposePoints(points: THREE.Points, scene: THREE.Scene) {
