@@ -1730,9 +1730,10 @@ export default class GameScene extends THREE.Scene {
                 continue;
             }
 
-            if(this.cpuPlayerBehavior == CpuPlayerPattern.Stop) {
+            if(this.cpuPlayerBehavior == CpuPlayerPattern.Stop || this.cpuPlayerBehavior == CpuPlayerPattern.StopAndAttack) {
                 cpuPlayer.tryStopAccelerate();
                 cpuPlayer.tryStopReverse();
+                cpuPlayer.tryStopTurbo();
                 continue;
             }
 
@@ -1787,7 +1788,7 @@ export default class GameScene extends THREE.Scene {
             }
 
             // weapons
-            if(this.cpuPlayerBehavior == CpuPlayerPattern.FollowAndAttack || this.cpuPlayerBehavior == CpuPlayerPattern.StopAndAttack) {
+            if(this.cpuPlayerBehavior as CpuPlayerPattern == CpuPlayerPattern.FollowAndAttack || this.cpuPlayerBehavior as CpuPlayerPattern == CpuPlayerPattern.StopAndAttack) {
                 let randomWeaponFiring = THREE.MathUtils.randInt(80, 200);
                 switch(randomWeaponFiring) {            
                 case 81:

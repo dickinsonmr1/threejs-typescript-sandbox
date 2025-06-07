@@ -310,6 +310,7 @@ export class Player {
             x.setEmitPosition(this.vehicleObject.getChassis().getPosition());
         });
         this.fireObjects.forEach(x => x.update(clock));
+        this.fireObjects = this.fireObjects.filter(x => !x.isDead);
 
         if(this.playerState == PlayerState.Dead) {
             

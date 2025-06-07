@@ -325,7 +325,9 @@ export class FireGpuParticleEmitter2 extends ParticleEmitter {
                 material.uniforms['u_emitPosition'].value = this.emitPosition; // todo: make this work        
             }
         });
-        
+
+        this.fireParticleSystems = this.fireParticleSystems.filter(x => !x.isDead);
+        this.smokeParticleSystems = this.smokeParticleSystems.filter(x => !x.isDead);
     }
 
     getPosition(): THREE.Vector3 {
@@ -373,8 +375,15 @@ export class FireGpuParticleEmitter2 extends ParticleEmitter {
         
         this.isDead = true;
 
-        this.fireParticleSystems.forEach(x => this.disposePoints(x.particles, this.scene));
-        this.smokeParticleSystems.forEach(x => this.disposePoints(x.particles, this.scene));
+        this.fireParticleSystems.forEach(x => {
+            this.disposePoints(x.particles, this.scene);            
+        });
+        this.fireParticleSystems.length = 0;
+
+        this.smokeParticleSystems.forEach(x => {
+            this.disposePoints(x.particles, this.scene);
+        });
+        this.smokeParticleSystems.length = 0;
     }
 
     private disposePoints(points: THREE.Points, scene: THREE.Scene) {
@@ -382,7 +391,9 @@ export class FireGpuParticleEmitter2 extends ParticleEmitter {
         scene.remove(points);
 
         // Dispose geometry
-        points.geometry.dispose();
+        if (points.geometry) {
+            points.geometry.dispose();
+        }
 
         // Dispose material(s)
         if (Array.isArray(points.material)) {
