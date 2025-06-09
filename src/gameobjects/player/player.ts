@@ -1134,10 +1134,30 @@ export class Player {
 
         this.vehicleObject.resetPosition(position);
     }
-
-    getTotalParticleCount(): number {
+    
+    getTotalSpriteParticleCount(): number {
         let particleCount = 0;
-        this.fireObjects.forEach(x => particleCount += x.getParticleCount());
+        
+        let items = this.fireObjects.filter(this.isNotGpuParticleEmitter);
+        items.forEach(x => {
+            particleCount += x.getParticleCount()
+        });
+
+        particleCount += this.turboParticleEmitter.getParticleCount();
+
+        return particleCount;
+    }
+
+    isNotGpuParticleEmitter(item: ParticleEmitter): item is Exclude<ParticleEmitter, FireGpuParticleEmitter2> {
+        return !(item instanceof FireGpuParticleEmitter2);
+    }
+
+    getTotalGpuParticleCount(): number {
+        
+        let particleCount = 0;
+
+        let items = this.fireObjects.filter(x => x instanceof FireGpuParticleEmitter2);
+        items.forEach(x => particleCount += x.getParticleCount());        
         
         return particleCount;
     }

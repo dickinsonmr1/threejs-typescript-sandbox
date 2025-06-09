@@ -545,13 +545,15 @@ export default class GameScene extends THREE.Scene {
             "Player1RocketSoundLocation",
             "Objective",
             "ParticleCount",
-            "WeaponCount",
+            "FlamethrowerParticleCount",
             "PhysicsObjectCount",
             "LightObjectCount",
 
             "ParticleEmitterCount",
             "AnimatedSpriteCount",
             "ShaderParticleCount",
+            "CpuParticleCount",
+            "GpuParticleCount",
             "RendererTotalGeometry",
             "RendererTotalTextures",
             "RendererTotalPrograms",
@@ -2028,7 +2030,7 @@ export default class GameScene extends THREE.Scene {
         this.flamethrowerEmitters.forEach(x => {
             flameThrowerEmitterTotalParticleCount += x.sprites.length;
         });
-        this.debugDivElementManager.updateElementText("WeaponCount", `flamethrower particles (sprites): ${flameThrowerEmitterTotalParticleCount}`);
+        this.debugDivElementManager.updateElementText("FlamethrowerParticleCount", `flamethrower particles (sprites): ${flameThrowerEmitterTotalParticleCount}`);
 
         // total particles
         let emitterTotalParticleCount: number = 0;
@@ -2037,9 +2039,19 @@ export default class GameScene extends THREE.Scene {
         });
 
         this.allPlayers.forEach(x => {
-            emitterTotalParticleCount += x.getTotalParticleCount();
+            emitterTotalParticleCount += x.getTotalSpriteParticleCount();
         })
-        this.debugDivElementManager.updateElementText("ParticleCount", `total emitter particles (sprites): ${emitterTotalParticleCount}`);
+        this.allPlayers.forEach(x => {
+            emitterTotalParticleCount += x.getTotalSpriteParticleCount();
+        })
+        this.debugDivElementManager.updateElementText("CpuParticleCount", `total CPU emitter particles (sprites): ${emitterTotalParticleCount}`);
+
+        let emitterTotalGpuParticleCount: number = 0;        
+        this.allPlayers.forEach(x => {
+            emitterTotalGpuParticleCount += x.getTotalGpuParticleCount();
+        })
+        this.debugDivElementManager.updateElementText("GpuParticleCount", `total GPU emitter particles (THREE.Points): ${emitterTotalGpuParticleCount}`);
+
         
         this.debugDivElementManager.updateElementText("AnimatedSpriteCount", `total animated spites: ${this.animatedSprites.length}`);
 
