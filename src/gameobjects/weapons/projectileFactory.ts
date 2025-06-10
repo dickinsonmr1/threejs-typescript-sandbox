@@ -100,7 +100,7 @@ export default class ProjectileFactory {
                     launchPosition,           // launchPosition relative to chassis
                     launchVector,
                     quaternion,
-                    0.4,
+                    0.25,
                     startColor,
                     particleColor1,
                     particleColor2,

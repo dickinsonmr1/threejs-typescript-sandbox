@@ -712,7 +712,7 @@ export default class GameScene extends THREE.Scene {
             this.player1.tryFireShovel();
         }
         if(event.key === 'h') {            
-            this.player1.tryGenerateRandomExplosion();
+            this.player1.tryGenerateRandomExplosionGpu();
         }
 
         if(event.key === 'm') {
@@ -1170,27 +1170,29 @@ export default class GameScene extends THREE.Scene {
             */
 
             let particleInitialScale = 0.1;
+
             let numberParticles: number;
             let scaleMultiplier = 1;
             let opacityReduction = 0.01;
             let velocityMultiplier = 0.98;
+
             switch(projectileType) {                
                 case ProjectileType.Bullet:
                     numberParticles = 5;
-                    particleInitialScale = 0.1;
+                    particleInitialScale = 0.5;
                     scaleMultiplier = 0.95;
                     opacityReduction = 0.0075;
                     break;
                 case ProjectileType.Rocket:                
                     numberParticles = 25;
-                    particleInitialScale = 0.5;
+                    particleInitialScale = 1;
                     scaleMultiplier = 0.99;
                     opacityReduction = 0.0075;
                     break;
                 case ProjectileType.Airstrike:
                 default:
                     numberParticles = 20;
-                    particleInitialScale = 5;
+                    particleInitialScale = 20;
                     scaleMultiplier = 0.99;
                     opacityReduction = 0.0075;
                     break;                
@@ -1200,7 +1202,7 @@ export default class GameScene extends THREE.Scene {
             
             this.audioManager.playSound(`fw_0${rand}`, false);
 
-            this.addToParticleEmitters(new ExplosionGpuParticleEmitter(this, this.clock, 10, 5, 1000, position));
+            this.addToParticleEmitters(new ExplosionGpuParticleEmitter(this, this.clock, numberParticles, particleInitialScale, 5, 1000, position));
 
             /*
             this.addToParticleEmitters(new ExplosionCpuParticleEmitter(

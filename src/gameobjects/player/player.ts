@@ -99,6 +99,8 @@ export class Player {
     private projectileFactory: ProjectileFactory;// = new ProjectileFactory();
 
     private bulletCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.15, 0.05);
+    private megaGunCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.05, 0.05);
+
     private deathExplosionCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.25, 0.25);
     private rocketCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(0.5, 0.5);
     private triRocketCooldownClock: WeaponCoolDownClock = new WeaponCoolDownClock(1, 1);
@@ -317,7 +319,7 @@ export class Player {
             if(this.deathExplosionCooldownClock.isExpired()) {
                 this.deathExplosionCooldownClock.stop();
 
-                this.generateRandomExplosionGpu();
+                this.generateRandomExplosionGpu(0.5);
                 this.deathExplosionCooldownClock.start();
             }        
 
@@ -482,6 +484,7 @@ export class Player {
         this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
 
         this.bulletCooldownClock.stopIfExpired();
+        this.megaGunCooldownClock.stopIfExpired();
         this.rocketCooldownClock.stopIfExpired();
         this.airstrikeCooldownClock.stopIfExpired();
         this.sonicPulseCooldownClock.stopIfExpired();
@@ -818,7 +821,7 @@ export class Player {
                 //document.getElementById('notificationDiv')!.style.transition = 'opacity 0.3s ease';
             }, 2000);
 
-            this.generateRandomExplosionGpu();
+            this.generateRandomExplosionGpu(1);
 
             gameScene.getAudioManager().playSound('explosion', false, this.playerIndex);
 
@@ -1015,6 +1018,35 @@ export class Player {
         }
     }
 
+     tryFireMegaGun(): void {
+        //if(this.bulletCooldownTime <= 0) {
+        if(!this.megaGunCooldownClock.isRunning()) {
+
+            let projectile = this.createProjectile(ProjectileType.Bullet);
+
+            let gameScene = <GameScene>this.scene;
+            gameScene.addNewProjectile(projectile);
+
+            //this.bulletCooldownTime = this.maxBulletCooldownTime;
+            this.megaGunCooldownClock.start();
+
+            //if(this.bulletSound != null) {
+                
+                // TODO: replace with audio manager call
+                /*
+                if(this.bulletSound.isPlaying)
+                    this.bulletSound.stop();
+
+                this.bulletSound.play();
+                this.bulletSound.detune = Math.floor(Math.random() * 1600 - 800);
+                */
+                //
+                let audioManager = gameScene.getAudioManager();
+                audioManager.playSound('bullet', true, this.playerIndex);
+            //}
+        }
+    }
+
     tryFireDumpster(): void {
 
         if(!this.dumpsterCooldownClock.isRunning()) {
@@ -1085,7 +1117,7 @@ export class Player {
                 this.tryFireFlamethrower();
                 break;
             case VehicleType.PickupTruck:
-                this.tryFireTriRockets();
+                this.tryFireMegaGun();
                 break;
         }
     }
@@ -1137,7 +1169,7 @@ export class Player {
     
     getTotalSpriteParticleCount(): number {
         let particleCount = 0;
-        
+
         let items = this.fireObjects.filter(this.isNotGpuParticleEmitter);
         items.forEach(x => {
             particleCount += x.getParticleCount()
@@ -1163,11 +1195,11 @@ export class Player {
     }
 
     tryGenerateRandomExplosion(): void {
-        this.generateRandomExplosionGpu();
+        this.generateRandomExplosionGpu(1);
     }
 
-    tryGenerateRandomFireParticles(): void {
-        this.generateRandomExplosionGpu();
+    tryGenerateRandomExplosionGpu(): void {
+        this.generateRandomExplosionGpu(1);
     }
 
     /*
@@ -1184,9 +1216,9 @@ export class Player {
     }
     */
 
-    private generateRandomExplosionGpu(clock?: THREE.Clock): void {
+    private generateRandomExplosionGpu(particleSize: number, clock?: THREE.Clock): void {
         let gameScene = <GameScene>this.scene;        
-        let particleEmitter = new ExplosionGpuParticleEmitter(gameScene, gameScene.getClock(), 5, 10, 1000, this.getPosition());
+        let particleEmitter = new ExplosionGpuParticleEmitter(gameScene, gameScene.getClock(), 5, particleSize, 10, 1000, this.getPosition());
         this.fireObjects.push(particleEmitter);
     }
 

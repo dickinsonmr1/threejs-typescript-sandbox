@@ -17,7 +17,7 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
 
     private emitPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
 
-    constructor(scene: THREE.Scene, clock: THREE.Clock, particleCount: number, maxVelocity: number, maxEmitterLifeTimeInMs: number, position: THREE.Vector3) {
+    constructor(scene: THREE.Scene, clock: THREE.Clock, particleCount: number, initialParticleSize: number, maxVelocity: number, maxEmitterLifeTimeInMs: number, position: THREE.Vector3) {
 
         super();
 
@@ -25,7 +25,7 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
 
         this.emitPosition = new THREE.Vector3(0,0,0);
 
-        this.fireParticles = this.createFireParticles(particleCount, maxVelocity, position, clock);
+        this.fireParticles = this.createFireParticles(particleCount, initialParticleSize, maxVelocity, position, clock);
         scene.add(this.fireParticles);
 
         setTimeout(() => {
@@ -33,12 +33,13 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
         }, maxEmitterLifeTimeInMs);     
     }    
 
-    private createFireParticles(particleCount: number, maxVelocity: number, position: THREE.Vector3, clock: THREE.Clock): THREE.Points {
+    private createFireParticles(particleCount: number, initialParticleSize: number, maxVelocity: number, position: THREE.Vector3, clock: THREE.Clock): THREE.Points {
         // Create particle attributes
         const positions = new Float32Array(particleCount * 3);
         const velocities = new Float32Array(particleCount * 3);
         const lifetimes = new Float32Array(particleCount);
         const spawnTimes = new Float32Array(particleCount);
+        const initialParticleSizes = new Float32Array(particleCount);
 
         const origin = new THREE.Vector3().addVectors(position, new THREE.Vector3(0, -0.5, 0));
 
@@ -65,6 +66,7 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
             velocities.set([dir.x, dir.y, dir.z], i * 3);
             lifetimes[i] = particleLifetimeMax - (Math.random() * 0.5);
             spawnTimes[i] = clock.getElapsedTime();
+            initialParticleSizes[i] = initialParticleSize;
         }
 
         // Buffer geometry
@@ -75,6 +77,7 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
         geometry.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 3));
         geometry.setAttribute('lifetime', new THREE.Float32BufferAttribute(lifetimes, 1));
         geometry.setAttribute('spawnTime', new THREE.Float32BufferAttribute(spawnTimes, 1));
+        geometry.setAttribute('initialParticleSize', new THREE.Float32BufferAttribute(initialParticleSizes, 1));
 
         // Shader material
         this.fireParticleMaterial = new THREE.ShaderMaterial({
@@ -90,6 +93,7 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
                 attribute vec3 velocity;
                 attribute float lifetime;
                 attribute float spawnTime;
+                attribute float initialParticleSize;
 
                 // passed to fragment shader
                 varying float vLifetime;
@@ -112,7 +116,7 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
                                   
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
                     // scale with perspective, shrink with time                                    
-                    gl_PointSize = 1.0 * (300.0 / -mvPosition.z) * (1.0 - lifeProgress);
+                    gl_PointSize = initialParticleSize * (300.0 / -mvPosition.z) * (1.0 - lifeProgress);
 
                     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                 }
@@ -160,7 +164,7 @@ export class ExplosionGpuParticleEmitter extends ParticleEmitter {
         });
       
         // Create the particle system
-        const particleSystem = new THREE.Points(geometry, this.fireParticleMaterial);
+        const particleSystem = new THREE.Points(geometry, this.fireParticleMaterial.clone());
       
         return particleSystem;
     }
