@@ -551,7 +551,7 @@ export default class GameScene extends THREE.Scene {
 
             "ParticleEmitterCount",
             "AnimatedSpriteCount",
-            "ShaderParticleCount",
+            "GrassBillboardsCount",
             "CpuParticleCount",
             "GpuParticleCount",
             "RendererTotalGeometry",
@@ -1353,6 +1353,7 @@ export default class GameScene extends THREE.Scene {
                     100000
                 );
                 this.add( billboards );
+                this.grassBillboards = billboards;
             }                
         })
         .catch((error) => {
@@ -2030,9 +2031,9 @@ export default class GameScene extends THREE.Scene {
         this.flamethrowerEmitters.forEach(x => {
             flameThrowerEmitterTotalParticleCount += x.sprites.length;
         });
-        this.debugDivElementManager.updateElementText("FlamethrowerParticleCount", `flamethrower particles (sprites): ${flameThrowerEmitterTotalParticleCount}`);
+        this.debugDivElementManager.updateElementText("FlamethrowerParticleCount", `Flamethrower particles (sprites): ${flameThrowerEmitterTotalParticleCount}`);
 
-        // total particles
+        // particles
         let emitterTotalParticleCount: number = 0;
         this.particleEmitters.forEach(x => {
             emitterTotalParticleCount += x.getParticleCount();
@@ -2040,24 +2041,27 @@ export default class GameScene extends THREE.Scene {
 
         this.allPlayers.forEach(x => {
             emitterTotalParticleCount += x.getTotalSpriteParticleCount();
-        })
-        this.allPlayers.forEach(x => {
-            emitterTotalParticleCount += x.getTotalSpriteParticleCount();
-        })
-        this.debugDivElementManager.updateElementText("CpuParticleCount", `total CPU emitter particles (sprites): ${emitterTotalParticleCount}`);
+        });
+        this.projectiles.forEach(x => {
+            if(x.particleEmitterObject != null)
+                emitterTotalParticleCount += x.particleEmitterObject.getParticleCount();
+
+            if(x.particleEmitterSmokeObject != null)
+                emitterTotalParticleCount += x.particleEmitterSmokeObject.getParticleCount();
+        });
+        this.debugDivElementManager.updateElementText("CpuParticleCount", `Total CPU emitter particles (sprites): ${emitterTotalParticleCount}`);
 
         let emitterTotalGpuParticleCount: number = 0;        
         this.allPlayers.forEach(x => {
             emitterTotalGpuParticleCount += x.getTotalGpuParticleCount();
         })
-        this.debugDivElementManager.updateElementText("GpuParticleCount", `total GPU emitter particles (THREE.Points): ${emitterTotalGpuParticleCount}`);
-
+        this.debugDivElementManager.updateElementText("GpuParticleCount", `Total GPU emitter particles (THREE.Points): ${emitterTotalGpuParticleCount}`);
         
-        this.debugDivElementManager.updateElementText("AnimatedSpriteCount", `total animated spites: ${this.animatedSprites.length}`);
+        this.debugDivElementManager.updateElementText("AnimatedSpriteCount", `Total animated spites: ${this.animatedSprites.length}`);
 
         // physics objects
         let totalPhysicsObjectCount: number = this.world.bodies.length;        
-        this.debugDivElementManager.updateElementText("PhysicsObjectCount", `total physics objects: ${totalPhysicsObjectCount}`);
+        this.debugDivElementManager.updateElementText("PhysicsObjectCount", `Total physics objects: ${totalPhysicsObjectCount}`);
 
         // lights
         var arrayLightTypes = ['SpotLight', 'HemisphereLight', 'AmbientLight', 'DirectionalLight', 'PointLight', 'RectAreaLight'];
@@ -2071,15 +2075,17 @@ export default class GameScene extends THREE.Scene {
 
         // particle emitters
         let particleEmitterCount: number = this.particleEmitters.length;
-        this.debugDivElementManager.updateElementText("ParticleEmitterCount", `Particle emitter count: ${particleEmitterCount}`);
+        this.debugDivElementManager.updateElementText("ParticleEmitterCount", `GameScene particle emitter count: ${particleEmitterCount}`);
 
         // grass billboards
-        let shaderParticleCount = this.grassBillboards?.geometry.attributes.position.count ?? 0;
+        let grassBillboardsCount = this.grassBillboards?.geometry.attributes.position.count ?? 0;
+        /*
         this.projectiles.forEach(x => {
             if(x.particleEmitterObject != null)
                 shaderParticleCount += x.particleEmitterObject.getParticleCount();
         });
-        this.debugDivElementManager.updateElementText("ShaderParticleCount", `Shader particle count: ${shaderParticleCount}`);
+        */
+        this.debugDivElementManager.updateElementText("GrassBillboardsCount", `Grass billboards count: ${grassBillboardsCount}`);
 
         const renderer = this.sceneController.getWebGLRenderer();
         if(renderer.info != null) {
