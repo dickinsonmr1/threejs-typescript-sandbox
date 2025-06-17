@@ -43,6 +43,7 @@ import soundEffectLibraryJson from '../gameobjects/audio/config/soundEffectLibra
 import { SoundEffectConfig } from '../gameobjects/audio/config/soundEffectLibrary';
 import { AnimatedShaderSprite } from '../gameobjects/fx/animatedShaderSprite';
 import { ExplosionGpuParticleEmitter } from '../gameobjects/fx/explosionGpuParticleEmitter';
+import { Lightning, LightningType } from '../gameobjects/weapons/lightning';
 
 
 // npm install cannon-es-debugger
@@ -106,8 +107,6 @@ export default class GameScene extends THREE.Scene {
     private dumpsters: DumpsterFireObject[] = [];
     private bouncyWheelMaterial!: CANNON.Material;
 
-    private lightning!: THREE.Line;
-
     private pickups: PickupObject2[] = [];
     private projectiles: Projectile[] = [];
 
@@ -167,18 +166,8 @@ export default class GameScene extends THREE.Scene {
 
     sonicPulseEmitters: SonicPulseEmitter[] = [];
 
-    fireCylinderMaterial!: THREE.ShaderMaterial;
-    turboFireMesh!: THREE.Mesh;
-
-    lightningCylinderMaterial!: THREE.ShaderMaterial;
-    lightningCylinderMesh!: THREE.Mesh;
-
-    lightningCylinderMaterial2!: THREE.ShaderMaterial;
-    lightningCylinderMesh2!: THREE.Mesh;
-    lightningCylinderLastStrikeTime: number = 0;
-    lightningBranchMeshes: THREE.Mesh[] = [];
-    lightningMeshGroup: THREE.Group = new THREE.Group();
-
+    lightningWeapons: Lightning[] = [];
+    
     terrainChunk!: TerrainChunk;
     LODTerrainSystem!: LODTerrainSystem;
     quadtreeTerrainSystem5!: QuadtreeTerrainSystem5;
@@ -309,166 +298,8 @@ export default class GameScene extends THREE.Scene {
             this.worldMarkerShaderMaterial);
         cylinderMesh.position.set(20, cylinderMesh.position.y, 20);            
         this.add(cylinderMesh);
-
+       
         /*
-        this.lightningMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                time: { value: 0 },
-                color: { value: new THREE.Color(0x88ccff) }, // Light blue color
-            },
-            vertexShader: `
-            varying vec2 vUv;
-            void main() {
-                vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-            `,
-            fragmentShader: `
-                uniform float time;
-                uniform vec3 color;
-                varying vec2 vUv;
-
-                // Simple hash function for randomness
-                float hash(float n) {
-                    return fract(sin(n) * 43758.5453123);
-                }
-
-                // Simple noise function
-                float noise(float x) {
-                    float i = floor(x);
-                    float f = fract(x);
-                    float u = f * f * (3.0 - 2.0 * f);
-                    return mix(hash(i), hash(i + 1.0), u);
-                }
-
-                // Lightning shape function
-                float lightning(vec2 uv, float t) {
-                    float y = uv.y * 10.0; // Scale y
-                    float x = sin(y + time * 5.0) * 0.2; // Sine wave offset
-                    float n = noise(y + t * 2.0) * 0.3 - 0.15; // Add noise to make it jagged
-                    return smoothstep(0.02, 0.0, abs(uv.x - (0.5 + x + n))); // Define lightning width
-                }
-
-                void main() {
-                    float t = mod(time, 1.0);
-                    float l = lightning(vUv, t);
-                    
-                    // Flickering effect
-                    float flicker = smoothstep(0.4, 0.5, sin(time * 10.0)) * 0.6 + 0.4;
-                    
-                    vec3 lightningColor = color * flicker;
-                    
-                    gl_FragColor = vec4(lightningColor, l);
-                }
-            `,
-            transparent: true,
-            depthWrite: false
-        });
-        
-        // Create a plane or quad for the effect
-        const lightningGeometry = new THREE.PlaneGeometry(25, 25);
-        const lightningMesh = new THREE.Mesh(lightningGeometry, this.lightningMaterial);
-        lightningMesh.position.set(10, 20, 10);
-        this.add(lightningMesh);
-
-
-        const start = new THREE.Vector3(0, 20, 0);
-        const end = new THREE.Vector3(-10, 20, -10);
-        const control1 = new THREE.Vector3(0.5, -1, 0);
-        const control2 = new THREE.Vector3(-0.5, -1.5, 0);
-
-        const curve = new THREE.CatmullRomCurve3([
-            start,
-            control1,
-            control2,
-            end
-        ]);
-
-        const points = curve.getPoints(30);
-        const geometry = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 20, 0.1, 8, false);
-
-       this.lightningMaterial2 = new THREE.ShaderMaterial({
-            uniforms: {
-                time: { value: 0 },
-                color: { value: new THREE.Color(0x88ccff) },
-            },
-            vertexShader: `
-                uniform float time;
-                varying float vStrength;
-
-                void main() {
-                    vec3 pos = position;
-                    float noiseFactor = sin(pos.y * 10.0 + time * 5.0) * 0.05;
-                    pos.x += noiseFactor; // Jitter effect
-                    pos.z += noiseFactor;
-                    
-                    vStrength = smoothstep(0.0, 1.0, abs(noiseFactor));
-
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-                }
-            `,
-            fragmentShader: `
-                uniform vec3 color;
-                varying float vStrength;
-
-                void main() {
-                    float alpha = 1.0 - vStrength; // Modulate transparency based on movement
-                    gl_FragColor = vec4(color, alpha);
-                }
-            `,
-            transparent: true,
-        });
-        
-        const lightningMesh2 = new THREE.Mesh(geometry, this.lightningMaterial2);
-        //lightningMesh2.position.set(-10, 20, -10);
-        this.add(lightningMesh2);
-
-
-        // flickering electric ball
-        const sphereGeometry = new THREE.SphereGeometry(2, 32, 32);
-        this.sphereMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                time: { value: 0 },
-                color: { value: new THREE.Color(0x0000ff) }, // blue glow
-            },
-            vertexShader: `
-                varying vec3 vNormal;
-                varying vec2 vUv;
-
-                void main() {
-                    vUv = uv;
-                    vNormal = normal;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-            `,
-            fragmentShader: `
-                uniform float time;
-                uniform vec3 color;
-                varying vec3 vNormal;
-                varying vec2 vUv;
-
-                // Simple noise function
-                float noise(float x) {
-                    return fract(sin(x) * 43758.5453);
-                }
-
-                // Flickering effect
-                float flicker(float t) {
-                    return smoothstep(0.2, 0.8, sin(t * 10.0 + noise(t) * 5.0));
-                }
-
-                void main() {
-                    float glow = flicker(time);
-                    
-                    // Use normal direction for soft lighting effect
-                    float intensity = dot(vNormal, vec3(0.0, 0.0, 1.0)) * glow;
-                    
-                    gl_FragColor = vec4(color * intensity, 1.0);
-                }
-            `,
-            transparent: true,
-        });
-
         const sphere = new THREE.Mesh(sphereGeometry, this.sphereMaterial);
         sphere.position.set(15, 15, 15);
         this.add(sphere);
@@ -632,230 +463,11 @@ export default class GameScene extends THREE.Scene {
         */
 
         //this.addToParticleEmitters(new SmokeObject(this, this.explosionTexture, new THREE.Vector3(0, 0, 0), 5, 200000));
-
-        
-        const lightningMaterial3 = new THREE.LineBasicMaterial({ color: 0x00ffff, linewidth: 5 });
-        const points2 = [];
-        points2.push(this.player1.getPosition());
-        for (let i = 1; i < 10; i++) {
-            points2.push(new THREE.Vector3(10 + Math.random() * 0.5, 10 + Math.random() * 0.5, 10 + Math.random() * 0.5));
-        }
-        points2.push(this.player2.getPosition());
-        const geometry2 = new THREE.BufferGeometry().setFromPoints(points2);
-                
-        this.lightning = new THREE.Line(geometry2, lightningMaterial3);
-        this.add(this.lightning);
-
-
-        let lightningCylinderGeometry = new THREE.CylinderGeometry(10, 0.5, 20, 16, 64, true); // Tall & thin cylinder        
-        this.lightningCylinderMaterial = new THREE.ShaderMaterial({
-            vertexShader: `
-                varying vec2 vUv;
-                varying vec3 vPos;
-                uniform float time;
-
-                void main() {
-                    vUv = uv;
-                    vPos = position;
-
-                    vec3 pos = position;
-
-                    // Fast jittering like lightning arcs
-                    float distortion = sin(pos.y * 30.0 + time * 80.0) * 0.02;
-                    float distortion2 = sin(pos.y * 50.0 + time * 120.0) * 0.015;
-
-                    pos.x += distortion;
-                    pos.z += distortion2;
-
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-                }
-            `,
-            fragmentShader: `
-                varying vec2 vUv;
-                varying vec3 vPos;
-                uniform float time;
-
-                // Smoothstep-based lightning glow
-                void main() {
-                    float centerDist = length(vUv - vec2(0.5)); // radial distance
-                    float intensity = 1.0 - smoothstep(0.0, 0.25, centerDist); // core glow
-
-                    // Flicker effect
-                    float flicker = 0.8 + 0.2 * sin(time * 50.0 + vPos.y * 10.0);
-
-                    // Color: white core to blue edge
-                    vec3 color = mix(vec3(1.0), vec3(0.2, 0.6, 1.0), centerDist);
-                    color *= intensity * flicker;
-
-                    float alpha = intensity * flicker;
-
-                    if (alpha < 0.02) discard;
-
-                    gl_FragColor = vec4(color, alpha);
-                }
-            `,
-            transparent: true,
-            side: THREE.DoubleSide,
-            uniforms: {
-                time: { value: 0.0 },
-            },
-        });
-
-        this.lightningCylinderMesh = new THREE.Mesh(lightningCylinderGeometry, this.lightningCylinderMaterial);
-        this.lightningCylinderMesh.position.set(0,5,0);
-        //this.add(this.lightningCylinderMesh);
-
-
-        
-        const start = new THREE.Vector3(-1, 0, 0);
-        const end = new THREE.Vector3(1, 0, 0);
-        const curve = this.generateLightningPath(start, end, 16, 0.3);
-
-        //const lightningCylinderGeometry2 = new THREE.CylinderGeometry(0.05, 0.05, 20, 32, 32, true);
-        const lightningCylinderGeometry2 = new THREE.TubeGeometry(curve, 64, 0.1, 64, true);
-        //lightningCylinderGeometry2.rotateZ(Math.PI / 2); // Horizontal lightning bolt
-
-        this.lightningCylinderMaterial2 = new THREE.ShaderMaterial({
-            vertexShader: `
-               varying vec3 vPos;
-                varying vec2 vUv;
-                uniform float time;
-
-                void main() {
-                    vPos = position;
-                    vUv = uv;
-
-                    vec3 pos = position;
-
-                    float freq1 = 40.0;
-                    float freq2 = 70.0;
-
-                    float amp1 = 0.05;
-                    float amp2 = 0.03;
-
-                    pos.x += sin(pos.y * freq1 + time * 20.0) * amp1;
-                    pos.z += cos(pos.y * freq2 + time * 30.0) * amp2;
-                    pos.y += sin(pos.y * 60.0 - time * 50.0) * 0.01;
-
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-                }
-            `,
-            fragmentShader: `
-                varying vec3 vPos;
-                varying vec2 vUv;
-                uniform float time;
-
-                void main() {
-                    // Flicker
-                    float flicker = sin(time * 100.0 + vPos.x * 10.0) * 0.2 + 0.8;
-
-                    // Taper edge using vUv.y (0–1 along side of cylinder)
-                    float taper = smoothstep(0.0, 0.3, vUv.y) * smoothstep(1.0, 0.7, vUv.y);
-
-                    // Lateral edge fade using vUv.x (around circumference)
-                    float rimFade = 1.0 - abs(vUv.x - 0.5) * 2.0; // 1 in center, 0 at rim
-
-                    // Combine for final intensity
-                    float intensity = mix(0.5, 1.0, rimFade * taper) * flicker;
-
-                    // Electric blue to white
-                    vec3 color = mix(vec3(0.2, 0.6, 1.0), vec3(1.0), rimFade * taper);
-
-                    float alpha = intensity;
-
-                    if (alpha < 0.05) discard;
-
-                    gl_FragColor = vec4(color, alpha);
-                }
-            `,
-            transparent: true,
-            side: THREE.DoubleSide,
-            uniforms: {
-                time: { value: 0.0 },
-            },
-        });
-
-        this.lightningCylinderMesh2 = new THREE.Mesh(lightningCylinderGeometry2, this.lightningCylinderMaterial2);
-        //this.lightningCylinderMesh2.position.set(0, 5, 0);
-        this.lightningMeshGroup.add(this.lightningCylinderMesh2);
-
-        this.add(this.lightningMeshGroup);
-        //this.add(this.lightningCylinderMesh2);
-
-        // Cylinder representing the base of the fire
-        let turboFireGeometry = new THREE.CylinderGeometry(0.05, 0.25, 5, 32, 1, true);
-        turboFireGeometry.rotateZ(Math.PI / 2); // Rotate to make horizontal
-
-        this.fireCylinderMaterial = new THREE.ShaderMaterial({
-        vertexShader: `
-            varying vec2 vUv;
-            varying vec3 vPosition;
-            uniform float time;
-
-            void main() {
-                vUv = uv;
-                vPosition = position;
-
-                vec3 pos = position;
-
-                // Flame-like distortion
-                float wave1 = sin(pos.x * 8.0 + time * 4.0) * 0.1;
-                float wave2 = sin(pos.x * 14.0 + time * 6.0 + pos.y * 2.0) * 0.05;
-
-                pos.y += wave1; // vertical flicker
-                pos.z += wave2; // lateral flicker
-
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-            }
-        `,
-
-        fragmentShader: `
-            varying vec2 vUv;
-            varying vec3 vPosition;
-            uniform float time;
-
-            vec3 fireGradient(float t) {
-                vec3 blue = vec3(0.2, 0.4, 1.0);
-                vec3 yellow = vec3(1.0, 1.0, 0.2);
-                return mix(yellow, blue, t);
-            }
-
-            // Smooth flame-shaped alpha mask
-            float flameMask(vec2 uv) {
-                float center = 1.0 - abs(uv.y - 0.5) * 2.0; // taper vertically
-                float round = 1.0 - pow(abs(uv.x - 0.5) * 2.0, 2.0); // taper horizontally
-                return clamp(center * round, 0.0, 1.0);
-            }
-
-            void main() {
-                float xNorm = (vPosition.x + 1.0) / 2.0;
-                float flicker = sin(vPosition.y * 10.0 + time * 5.0) * 0.05;
-                float intensity = clamp(xNorm + flicker, 0.0, 1.0);
-
-                vec3 color = fireGradient(intensity);
-
-                // Flame shape mask
-                float mask = flameMask(vUv);
-
-                // Base alpha with tapering
-                float alpha = mix(0.3, 0.6, intensity) * mask;
-
-                if (alpha < 0.01) discard; // Optional: discard fully transparent fragments
-
-                gl_FragColor = vec4(color, alpha);
-            }
-        `,
-            side: THREE.DoubleSide,
-            transparent: true,
-            uniforms: {
-                time: { value: 0.0 },
-            },
-        });
-
-        this.turboFireMesh = new THREE.Mesh(turboFireGeometry, this.fireCylinderMaterial);
-        this.turboFireMesh.position.set(20, 5, 20)
-        this.add(this.turboFireMesh);
-
+    
+        this.lightningWeapons.push(new Lightning(this, LightningType.Line, 5));
+        this.lightningWeapons.push(new Lightning(this, LightningType.Line, 5));
+        this.lightningWeapons.push(new Lightning(this, LightningType.CircleVertical, 1.5));
+        this.lightningWeapons.push(new Lightning(this, LightningType.CircleHorizontal, 1.5));
 
         //this.animatedSprites.push(new AnimatedSprite(this, 'assets/spritesheets/spritesheet-spark.png', 2, 3, 10, true, new THREE.Vector3(0, 5, 0)));
 
@@ -2065,84 +1677,29 @@ export default class GameScene extends THREE.Scene {
         this.sphere?.update();
         this.cylinder?.update();
 
-        if(this.turboFireMesh != null) {
-            //this.turboFireMesh.position.copy(this.player1.getPosition());
-            //this.turboFireMesh.quaternion.copy(this.player1.getModelQuaternion())
-        }
-        if(this.fireCylinderMaterial != null) {
-            this.fireCylinderMaterial.uniforms.time.value = performance.now() / 1000;
-        }
+        for(let i = 0; i < this.lightningWeapons.length; i++) {
+            
+            let worldPos = new THREE.Vector3();
 
-        if(this.lightningCylinderMesh != null) {
-            //this.turboFireMesh.position.copy(this.player1.getPosition());
-            //this.turboFireMesh.quaternion.copy(this.player1.getModelQuaternion())
-        }
-        if(this.lightningCylinderMaterial != null) {
-            this.lightningCylinderMaterial.uniforms.time.value = performance.now() / 1000;
-        }
-
-         if(this.lightningCylinderMesh2 != null) {
-
-            this.lightningMeshGroup.position.copy(this.player1.getPosition());
-            this.lightningMeshGroup.quaternion.copy(this.player1.getModelQuaternion());
-
-            //this.lightningBranchMeshes.forEach( x=> x.position.copy(this.player1.getPosition()));
-        }
-        if(this.lightningCylinderMaterial2 != null) {
-
-            const time = performance.now() / 1000;
-            this.lightningCylinderMaterial2.uniforms.time.value = time;
-
-            if (time - this.lightningCylinderLastStrikeTime > 0.05) { // strike every 0.25s
-                const start = new THREE.Vector3(0, 0, 0);
-                const end = new THREE.Vector3(-10, 0, 0);
-                const newCurve = this.generateLightningPath(start, end, 16, 0.3);
-                this.lightningCylinderMesh2.geometry.dispose();
-                this.lightningCylinderMesh2.geometry = new THREE.TubeGeometry(newCurve, 64, 0.03, 8, false);
-
-                 // Remove old branches
-                for (const b of this.lightningBranchMeshes) {
-                    this.lightningMeshGroup.remove(b);
-                    this.remove(b);
-                    b.geometry.dispose();
-                }
-                this.lightningBranchMeshes.length = 0;
-
-                // Generate new branches
-                const newPoints = newCurve.getPoints(32);
-                for (let i = 4; i < newPoints.length - 4; i += 8) {
-                    const basePoint = newPoints[i];
-                    const tangent = newCurve.getTangent(i / newPoints.length).normalize();
-                    const randDir = new THREE.Vector3(Math.random(), Math.random(), Math.random()).subScalar(0.5).normalize().cross(tangent).normalize();
-
-                    const branchCurve = this.generateBranchCurve(basePoint, randDir, 0.5 + Math.random() * 0.3);
-                    const branchGeometry = new THREE.TubeGeometry(branchCurve, 32, 0.015, 6, false);
-                    const branchMesh = new THREE.Mesh(branchGeometry, this.lightningCylinderMaterial2);
-                    //this.add(branchMesh);
-                    this.lightningBranchMeshes.push(branchMesh);
-                    this.lightningMeshGroup.add(branchMesh);
-                }
-
-                this.lightningCylinderLastStrikeTime = time;
+            switch(i) {
+                case 0:
+                    this.player1.headLights.mesh1.getWorldPosition(worldPos);
+                    break;
+                case 1:
+                    this.player1.headLights.mesh2.getWorldPosition(worldPos);
+                    break;
+                default:
+                    worldPos.copy(this.player1.getPosition());
+                    break;
             }
+            
+            this.lightningWeapons[i].update(this, worldPos, this.player1.getModelQuaternion());
         }
-
-        /*
-        this.lightningMaterial.uniforms.time.value += 0.02;
-        this.lightningMaterial2.uniforms.time.value += 0.02;
-        */
-        //this.sphereMaterial.uniforms.time.value += 0.02;
-
-        // Update sprite animation every 100ms (10 FPS)
-        //if (performance.now() % 1000 < 100) {
-            //this.animateSprite();
-        //}
 
         let time = this.clock.getDelta();
         
         this.animatedSprites.forEach(x => x.update(time));
         this.animatedSprites = this.animatedSprites.filter(x => x.isAlive);
-
     
         this.shaderAnimatedSprites.forEach(x => x.update(time))
         
@@ -2178,40 +1735,7 @@ export default class GameScene extends THREE.Scene {
         if(this.cube != null) 
         {
             //this.spotlight?.setPosition(this.cube?.mesh.position);
-        }
-
-        if(this.lightning != null ) {
-             // Update lightning geometry
-
-            const positions = this.lightning.geometry.attributes.position.array;
-            for (let i = 0; i < positions.length; i += 3) {
-                if(i == 0) {
-                    var position = this.player1.getPosition();
-                    positions[i] = position.x;
-                    positions[i+1] = position.y;
-                    positions[i+2] = position.z;
-                }
-                else if(i == positions.length - 4) {
-                    var position = this.player2.getPosition();
-                    positions[i] = position.x;
-                    positions[i+1] = position.y;
-                    positions[i+2] = position.z;
-                }
-                else {
-                    positions[i] += (Math.random() - 0.5) * 1;   // x
-                    positions[i + 1] += (Math.random() - 0.5) * 1; // y
-                    positions[i + 2] += (Math.random() - 0.5) * 1; // z
-                }                            
-            }
-         
-             // Notify Three.js that the position attribute has changed
-            this.lightning.geometry.attributes.position.needsUpdate = true;
-
-            /*
-            this.remove(this.lightning);
-            this.lightning.geometry.dispose();
-            */
-        }
+        }       
 
         this.spotlight?.update();
 
@@ -2406,67 +1930,5 @@ export default class GameScene extends THREE.Scene {
             
         //let textureCount = this.getAllLoadedTextures(this);
         //this.debugDivElementManager.updateElementText("TraverseTotalTextures", `Total Textures: ${textureCount}`);
-    }
-
-    generateLightningPath(start: THREE.Vector3, end: THREE.Vector3, segments = 8, spread = 5) {
-        const points: THREE.Vector3[] = [];
-
-        for (let i = 0; i <= segments; i++) {
-            const t = i / segments;
-            const pos = new THREE.Vector3().lerpVectors(start, end, t);
-
-            // Add randomness perpendicular to the path
-            const offset = new THREE.Vector3(
-                (Math.random() - 0.5) * spread,
-                (Math.random() - 0.5) * spread,
-                (Math.random() - 0.5) * spread
-            );
-
-            pos.add(offset);
-            points.push(pos);
-        }
-
-        return new THREE.CatmullRomCurve3(points);
-    }
-
-    generateBranchCurve(basePoint: THREE.Vector3, direction: THREE.Vector3, length = 5): THREE.CatmullRomCurve3 {
-        const segments = 4;
-        const points = [];
-
-        for (let i = 0; i <= segments; i++) {
-            const t = i / segments;
-            const point = basePoint.clone().addScaledVector(direction, t * length);
-            point.x += (Math.random() - 0.5) * 0.1;
-            point.y += (Math.random() - 0.5) * 0.1;
-            point.z += (Math.random() - 0.5) * 0.1;
-            points.push(point);
-        }
-
-        return new THREE.CatmullRomCurve3(points);
-    }
-
-    spawnBranchMeshes(mainCurve: THREE.CatmullRomCurve3): void {
-        
-        const mainPoints = mainCurve.getPoints(32);
-
-        for (let i = 4; i < mainPoints.length - 4; i += 8) {
-            const basePoint = mainPoints[i];
-            const tangent = mainCurve.getTangent(i / mainPoints.length).normalize();
-
-            // Random direction perpendicular to main path
-            const randomDir = new THREE.Vector3(
-                (Math.random() - 0.5),
-                (Math.random() - 0.5),
-                (Math.random() - 0.5)
-            ).normalize().cross(tangent).normalize();
-
-            const branchCurve = this.generateBranchCurve(basePoint, randomDir, 0.5 + Math.random() * 0.3);
-            const branchGeometry = new THREE.TubeGeometry(branchCurve, 32, 0.015, 6, false);
-            const branchMesh = new THREE.Mesh(branchGeometry, this.lightningCylinderMaterial2);
-            
-            this.lightningMeshGroup.add(branchMesh);
-            //this.add(branchMesh);
-            this.lightningBranchMeshes.push(branchMesh);
-        }
     }
 }

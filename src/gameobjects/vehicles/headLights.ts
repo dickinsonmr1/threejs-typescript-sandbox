@@ -24,6 +24,7 @@ export default class Headlights {
             fragmentShader: this.fragmentShader(),
             transparent: true, // Enable transparency,
             blending: THREE.AdditiveBlending,
+            depthWrite: true,
             side: THREE.DoubleSide
         });
         
