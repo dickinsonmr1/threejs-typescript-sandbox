@@ -112,8 +112,11 @@ export class Player {
     public currentShovelAngle: number = 0;
 
     flamethrowerBoundingBox: THREE.Mesh;
+    lightningBoundingMesh: THREE.Mesh;
     boundingMeshMaterial: THREE.MeshBasicMaterial;
+    
     flamethrowerActive: boolean = false;
+    lightningActive: boolean = false;
 
     shovelBoundingMesh: THREE.Mesh;
     
@@ -232,6 +235,11 @@ export class Player {
         this.boundingMeshMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
         this.flamethrowerBoundingBox = new THREE.Mesh(cylinderGeometry, this.boundingMeshMaterial);
         scene.add(this.flamethrowerBoundingBox);
+
+        const cylinderGeometry2 = new THREE.CylinderGeometry(0.6, 0.4, 5);
+        this.lightningBoundingMesh = new THREE.Mesh(cylinderGeometry2, this.boundingMeshMaterial);
+        scene.add(this.lightningBoundingMesh);
+        
 
         const BoxGeometry = new THREE.BoxGeometry(1.5, 1, 1.5);
         this.shovelBoundingMesh = new THREE.Mesh(BoxGeometry, this.boundingMeshMaterial);
@@ -407,7 +415,7 @@ export class Player {
         // flamethrower intersection mesh
         let offset = new THREE.Vector3(-2, 0, 0);
         offset.applyQuaternion(this.vehicleObject.getModel().quaternion);
-        var flamethrowerBoundingCylinderOffset = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), offset);
+        const flamethrowerBoundingCylinderOffset = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), offset);
         this.flamethrowerBoundingBox.position.set(flamethrowerBoundingCylinderOffset.x, flamethrowerBoundingCylinderOffset.y, flamethrowerBoundingCylinderOffset.z);
         this.flamethrowerBoundingBox.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2);
         this.flamethrowerBoundingBox.applyQuaternion(this.vehicleObject.getModel().quaternion);       
@@ -422,6 +430,27 @@ export class Player {
         else {
             this.flamethrowerBoundingBox.visible = false;            
         }
+
+        // lightning bounding mesh
+        offset = new THREE.Vector3(-3, 0, 0);
+        offset.applyQuaternion(this.vehicleObject.getModel().quaternion);
+        const lightningBoundingMeshOffset = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), offset);
+        this.lightningBoundingMesh.position.set(lightningBoundingMeshOffset.x, lightningBoundingMeshOffset.y, lightningBoundingMeshOffset.z);
+        this.lightningBoundingMesh.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2);
+        this.lightningBoundingMesh.applyQuaternion(this.vehicleObject.getModel().quaternion);       
+
+        if(this.lightningActive) {
+            if(this.isDebug) { 
+                this.lightningBoundingMesh.visible = true;
+            }
+
+            //this.flamethrowerActive = false;
+        }
+        else {
+            this.lightningBoundingMesh.visible = false;            
+        }
+
+
 
         // shovel intersection mesh
         offset = new THREE.Vector3(-1, 0.5, 0);
@@ -725,6 +754,14 @@ export class Player {
     }
 
     tryDamageWithFlamethrower(): void {
+        
+        this.currentHealth -= 0.5;
+
+        if(this.currentHealth <= 0)
+            this.tryKill();
+    }
+
+    tryDamageWithLightning(): void {
         
         this.currentHealth -= 0.5;
 
@@ -1079,6 +1116,15 @@ export class Player {
             return;
 
         this.shovelCooldownClock.start();
+    }
+
+    
+    tryFireLightning(): void {
+       this.lightningActive = true;
+    }
+
+    tryStopFireLightning() {
+        this.lightningActive = false;
     }
 
     tryFireSpecialWeapon() {

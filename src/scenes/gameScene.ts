@@ -565,15 +565,13 @@ export default class GameScene extends THREE.Scene {
 
         if(event.key === 'n') {            
             this.player1.tryFireTriRockets();
-        }
-        /*
-        /*
-        if (event.key === 'x')
+        }        
+        
+        if (event.key === 'c')
 		{            
-            let newProjectile = this.player1.createProjectile(ProjectileType.Bullet);
-            this.addNewProjectile(newProjectile);		
+            this.player1.tryStopFireLightning();
 		}
-        */
+        
         if (event.key === 'e')
 		{                        
             let newProjectile = this.player2.createProjectile(ProjectileType.Bullet);
@@ -681,6 +679,9 @@ export default class GameScene extends THREE.Scene {
         if (keyDown.has('z')) {
             this.player1.tryFireFlamethrower();
         }        
+        if(keyDown.has('c')) {
+            this.player1.tryFireLightning();
+        }
 
         if (keyDown.has('q')) {
             this.player2.tryFireFlamethrower();
@@ -1461,6 +1462,38 @@ export default class GameScene extends THREE.Scene {
         });
     }
 
+    checkLightningForCollision() {
+         this.allPlayers.forEach(player => {
+            
+            var anyHits = false;
+            if(player.lightningActive) {
+
+                var enemyPlayers = this.allPlayers.filter(x => x.playerId != player.playerId);
+                enemyPlayers.forEach(enemy => {
+                                        
+                    const boundingMesh = new THREE.Box3().setFromObject(player.lightningBoundingMesh);
+                    var enemyBoundingBox = new THREE.Box3().setFromObject(enemy.getVehicleObject().getChassis().mesh);
+
+                    if(boundingMesh != null && enemyBoundingBox != null && boundingMesh?.intersectsBox(enemyBoundingBox)){
+                        enemy.tryDamageWithLightning();
+                                                
+                        this.lightningWeapons[2].update(this, enemy.getPosition(), enemy.getModelQuaternion());                        
+                        this.lightningWeapons[2].meshGroup.visible = true;
+
+                        this.lightningWeapons[3].update(this, enemy.getPosition(), enemy.getModelQuaternion());                        this.lightningWeapons[3].meshGroup.visible = true;
+                        this.lightningWeapons[3].meshGroup.visible = true;
+
+                        player.boundingMeshMaterial.color.set(0xff0000);
+                        anyHits = true;
+                    }
+                });
+            }
+            if(!anyHits) {
+                player.boundingMeshMaterial.color.set(0xffffff);
+            }
+        });
+    }
+
     private checkKilldozerShovelForCollision() {
         this.allPlayers.forEach(player => {
             
@@ -1677,23 +1710,27 @@ export default class GameScene extends THREE.Scene {
         this.sphere?.update();
         this.cylinder?.update();
 
-        for(let i = 0; i < this.lightningWeapons.length; i++) {
-            
-            let worldPos = new THREE.Vector3();
-
-            switch(i) {
-                case 0:
-                    this.player1.headLights.mesh1.getWorldPosition(worldPos);
-                    break;
-                case 1:
-                    this.player1.headLights.mesh2.getWorldPosition(worldPos);
-                    break;
-                default:
-                    worldPos.copy(this.player1.getPosition());
-                    break;
+        if(this.player1.lightningActive) {
+            for(let i = 0; i < 2; i++) {                
+                let worldPos = new THREE.Vector3();
+                switch(i) {
+                    case 0:
+                        this.player1.headLights.mesh1.getWorldPosition(worldPos);
+                        break;
+                    case 1:
+                        this.player1.headLights.mesh2.getWorldPosition(worldPos);
+                        break;
+                    default:
+                        break;
+                        //worldPos.copy(this.player1.getPosition());
+                        //break;
+                }                
+                this.lightningWeapons[i].update(this, worldPos, this.player1.getModelQuaternion());
+                this.lightningWeapons[i].meshGroup.visible = true;
             }
-            
-            this.lightningWeapons[i].update(this, worldPos, this.player1.getModelQuaternion());
+        }
+        else {
+            this.lightningWeapons.forEach(x => x.meshGroup.visible = false);
         }
 
         let time = this.clock.getDelta();
@@ -1720,6 +1757,7 @@ export default class GameScene extends THREE.Scene {
 
         this.checkProjectilesForCollision();
         this.checkFlamethrowerForCollision();
+        this.checkLightningForCollision();
         this.checkKilldozerShovelForCollision();
         this.checkPickupsForCollisionWithPlayers();
         this.checkDumpstersForCollision();
