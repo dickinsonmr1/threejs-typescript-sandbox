@@ -1121,10 +1121,16 @@ export class Player {
     
     tryFireLightning(): void {
        this.lightningActive = true;
+
+       let gameScene = <GameScene>this.scene;
+       gameScene.getAudioManager().playLoopedSound('lightning', this.playerIndex);
     }
 
     tryStopFireLightning() {
         this.lightningActive = false;
+
+        let gameScene = <GameScene>this.scene;
+        gameScene.getAudioManager().stopSound('lightning', this.playerIndex);
     }
 
     tryFireSpecialWeapon() {
