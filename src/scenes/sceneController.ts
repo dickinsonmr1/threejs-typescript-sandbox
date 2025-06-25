@@ -336,16 +336,15 @@ export default class SceneController {
         let joystickManager : nipplejs.JoystickManager = nipplejs.create({
             zone: document.getElementById('joystickContainerDynamic')!,
             mode: 'dynamic',
+            dynamicPage: true,
             position: { left: '50%', top: '50%' },
             color: 'blue',
             restOpacity: 0.75
         });
 
-
         // listener to be triggered when the joystick moves
         joystickManager.on('move',  (data : nipplejs.EventData, output : nipplejs.JoystickOutputData) => {
-             
-            
+                         
             /*
             // get the force and don't let it be greater than 1
             let force : number = Math.min(output.force, 1);
@@ -377,7 +376,12 @@ export default class SceneController {
             //this.player.setVelocity(0, 0);
             this.gameScene?.player1.tryStopAccelerate();       
             this.gameScene?.player1.tryStopReverse();
-        })
+        });
+
+        const zone = document.getElementById('joystickContainerDynamic');
+        if (zone) {
+            zone.style.display = 'none';
+        }
     }
 
     public pollGamepadsForMenu() {
@@ -654,6 +658,12 @@ export default class SceneController {
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';
+        
+        const zone = document.getElementById('joystickContainerDynamic');
+        if (zone) {
+            zone.style.display = 'block';
+        }
+
         await this.gameScene?.initialize(player1VehicleType).then(x => {
 
             const worldConfigFolder = this.gui.addFolder( 'Level Config' );
