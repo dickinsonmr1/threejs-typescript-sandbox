@@ -277,9 +277,6 @@
 			font-size: 32px;
 			justify-items: left;
 		}
-		#startgameLevel1 { bottom: 2%; left: 25%; }
-		#startgameLevel2 { bottom: 2%; left: 75%; }
-
 		#gamePaused {top: 100px; left: 50%}
 
 		.health-container {
@@ -365,7 +362,6 @@
 		</div>
 	</div>
 	<div id="menuSceneDiv">
-		<div id="levelSelectionDiv"></div>
 		<div id="vehicleSelectionDiv">
 			<div id="previousMenu" class="control-button-medium">Back</div>
 			<div id="pageTitle" class="label-title" style="left: 0%;"><i class="fa-solid fa-car-burst"></i> CAR COMBAT</div>	
@@ -411,10 +407,13 @@
 					</td>
 				</tr>
 			</table>
-			<div id="mapSelectionTitle" class="label-subtitle" style="left: 0%;"><i class="fa-solid fa-map-location-dot"></i> Select Map to Start Game</div>	
-			<div id="startgameLevel1" class="menu-button-large" style="bottom: 1%; left: 20%; width:25%;"><i class="fa-solid fa-tree"></i> Arena</div>
-			<div id="startgameLevel2" class="menu-button-large" style="bottom: 1%; left: 50%; width:25%;"><i class="fa-solid fa-snowflake"></i> Field</div>
-			<div id="startgameLevel3" class="menu-button-large" style="bottom: 1%; left: 80%; width:25%;"><i class="fa-solid fa-mountain"></i> Mountain</div>						
+			<div id="mapSelectionTitle" class="label-subtitle" style="left: 0%;"><i class="fa-solid fa-map-location-dot"></i> Select Map to Start Game</div>				
+			<!-- replace this with dynamically generated buttons -->
+			<div id="levelSelectionDiv">
+				<div id="startgameLevel1" class="menu-button-large" style="bottom: 1%; left: 20%; width:25%;"><i class="fa-solid fa-tree"></i> Arena</div>
+				<div id="startgameLevel2" class="menu-button-large" style="bottom: 1%; left: 50%; width:25%;"><i class="fa-solid fa-snowflake"></i> Field</div>
+				<div id="startgameLevel3" class="menu-button-large" style="bottom: 1%; left: 80%; width:25%;"><i class="fa-solid fa-mountain"></i> Mountain</div>						
+			</div>
 		</div>
 	</div>
 	

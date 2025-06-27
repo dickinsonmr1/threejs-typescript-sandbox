@@ -1,0 +1,77 @@
+[
+    {
+        "name" : "arena",
+        "menuButtonIcon": "fa-solid fa-tree",
+        "heightMap": "assets/heightmaps/heightmap_arena_128x128.png",
+        "heightScale": 7.5,
+        "horizontalScale": 2,
+
+        "texture1": "assets/terrain/Sand 4.jpg",
+        "texture2": "assets/terrain/tileable_grass_00.png",
+        "texture3": "assets/terrain/tileable_grass_00.png",
+        "texture4": "assets/terrain/tileable_grass_01.png",
+        "texture5": "assets/terrain/tileable_grass_01.png",
+        
+        "skyTexture": "assets/skybox/industrial_sunset_puresky.jpg",
+
+        "precipitationType": 1,
+        
+        "waterY": 0.75,
+        
+        "grassBillboard": "assets/billboards/billboard_grass_32x32.png",
+        "grassBillboardStartY": 4,
+        "grassBillboardEndY": 6,
+
+        "fogColor": "#5b8195"
+    },
+    {
+        "name" : "field",
+        "menuButtonIcon": "fa-solid fa-snowflake",
+        "heightMap": "assets/heightmaps/heightmap_128x128.png",
+        "heightScale": 5,
+        "horizontalScale": 1,
+        
+        "texture1": "assets/terrain/Sand 4.jpg",
+        "texture2": "assets/terrain/snow.png",
+        "texture3": "assets/terrain/snow.png",
+        "texture4": "assets/terrain/snow.png",
+        "texture5": "assets/terrain/snow.png",
+
+        "skyTexture": "assets/skybox/overcast_soil_puresky.jpg",
+        
+        "precipitationType": 2,
+
+        "waterY": 1.5,
+
+        "grassBillboard": "assets/billboards/billboard_grass_32x32.png",
+        "grassBillboardStartY": 9,
+        "grassBillboardEndY": 10,
+        
+        "fogColor": "#aaaaaa"
+    },
+    {
+        "name" : "mountain",
+        "menuButtonIcon": "fa-solid fa-mountain",
+        "heightMap": "assets/heightmaps/mountain_512x512.png",
+        "heightScale": 15,
+        "horizontalScale": 1,
+        
+        "texture1": "assets/terrain/Sand 4.jpg",
+        "texture2": "assets/terrain/Sand 4.jpg",
+        "texture3": "assets/terrain/Sand 4.jpg",
+        "texture4": "assets/terrain/Sand 4.jpg",
+        "texture5": "assets/terrain/Sand 4.jpg",
+
+        "skyTexture": "assets/skybox/rosendal_park_sunset_puresky.jpg",
+        
+        "precipitationType": 0,
+
+        "waterY": 2.5,
+
+        "grassBillboard": "assets/billboards/billboard_grass_32x32.png",
+        "grassBillboardStartY": 7,
+        "grassBillboardEndY": 12,
+        
+        "fogColor": "#ffbf52"
+    }
+]

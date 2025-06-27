@@ -10,18 +10,22 @@ import { VehicleType } from "../gameobjects/player/player";
 import { WorldConfig } from "../gameobjects/world/worldConfig";
 import * as THREE from 'three'
 
-import arenaLevelJson from '../levelData/arena.json';
-import fieldLevelJson from '../levelData/field.json';
-import mountainLevelJson from '../levelData/mountain.json';
+import worldListJson from '../levelData/worldLibrary.json';
+//import arenaLevelJson from '../levelData/arena.json';
+//import fieldLevelJson from '../levelData/field.json';
+//import mountainLevelJson from '../levelData/mountain.json';
 import GUI from "lil-gui";
 import { GameConfig } from "../gameconfig";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 export default class SceneController {
 
-    arenaLevelConfig: WorldConfig = arenaLevelJson;
-    fieldLevelConfig: WorldConfig = fieldLevelJson;
-    mountainLevelConfig: WorldConfig = mountainLevelJson;
+    //arenaLevelConfig: WorldConfig = arenaLevelJson;
+    //fieldLevelConfig: WorldConfig = fieldLevelJson;
+    //mountainLevelConfig: WorldConfig = mountainLevelJson;
+
+    worldLibrary: WorldConfig[] = worldListJson;
+    levelStartButtons: HTMLElement[] = [];
 
     menuScene?: MenuScene;
     gameScene?: GameScene;
@@ -42,6 +46,41 @@ export default class SceneController {
                         
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
+
+        var levelSelectionDiv = this.getLevelSelectionDiv();
+
+        if (levelSelectionDiv) {
+            // Create the buttons
+
+            const maxButtonWidth = 100 / this.worldLibrary.length;
+            let i = maxButtonWidth;
+            this.worldLibrary.forEach(level => {
+
+                const button = document.createElement('button');
+                button.className = 'menu-button-large';
+                button.textContent = ` ${level.name.replace('.json','')}`;
+                button.style = `bottom: 10%; left: ${i}%; width:${maxButtonWidth}%;`;
+                button.id = `${level.name}_button`;
+                button.onclick = () => {
+                    alert(`${level.name} button clicked!`);
+                };
+
+                const icon = document.createElement('i');
+                icon.className = 'fa fa-star'; // Example Font Awesome icon
+
+                // Add icon before the text
+                button.prepend(icon); // or use append() to add after the text
+
+                button.addEventListener('click', () => {
+                    this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, level);
+                    button.style.visibility = "hidden";
+                });
+
+                // Append button to the div
+                levelSelectionDiv.appendChild(button);
+                i+=maxButtonWidth;
+            });            
+        }
     }
     
     public keyDown = new Set<string>();
@@ -123,6 +162,42 @@ export default class SceneController {
         return document.getElementById(name)!;
     }
 
+    getLevelSelectionDiv(): HTMLElement {
+        return document.getElementById('levelSelectionDiv')!;
+    }
+
+    configureMenuSceneButtons() {
+
+        // menu scene buttons
+        const menuLeftButton = this.getButton('menuLeft');
+        const menuRightButton = this.getButton('menuRight');
+
+        // menu scene buttons
+        if(menuLeftButton != null) {
+
+            menuLeftButton.addEventListener('touchstart', () => {
+                //this.menuScene?.selectPreviousVehicle();
+            });
+            menuLeftButton.addEventListener('click', () => {
+                this.menuScene?.selectPreviousVehicle();
+            });
+            menuLeftButton.addEventListener('touchend', () => {
+
+            });
+        }
+        if(menuRightButton != null) {
+            menuRightButton.addEventListener('touchstart', () => {
+                //this.menuScene?.selectNextVehicle();
+            });
+            menuRightButton.addEventListener('click', () => {
+                this.menuScene?.selectNextVehicle();
+            });
+            menuRightButton.addEventListener('touchend', () => {
+
+            });
+        }       
+    }
+
     setOnScreenControls() {
         
         // game scene buttons
@@ -140,12 +215,6 @@ export default class SceneController {
         const toggleDebugButton = this.getButton('toggledebug');
         const resetButton = this.getButton('reset');
 
-        // menu scene buttons
-        const startGameLevel1Button = this.getButton('startgameLevel1');
-        const startGameLevel2Button = this.getButton('startgameLevel2');
-        const startGameLevel3Button = this.getButton('startgameLevel3');
-        const menuLeftButton = this.getButton('menuLeft');
-        const menuRightButton = this.getButton('menuRight');
 
         this.gamePausedDivElement = document.getElementById('gamePausedDiv')!;
         this.inGameOnScreenControlsDiv = document.getElementById('inGameOnScreenControlsDiv')!;
@@ -256,70 +325,7 @@ export default class SceneController {
             });
         }
 
-        // menu scene buttons
-
-        if(menuLeftButton != null) {
-
-            menuLeftButton.addEventListener('touchstart', () => {
-                //this.menuScene?.selectPreviousVehicle();
-            });
-            menuLeftButton.addEventListener('click', () => {
-                this.menuScene?.selectPreviousVehicle();
-            });
-            menuLeftButton.addEventListener('touchend', () => {
-
-            });
-        }
-        if(menuRightButton != null) {
-            menuRightButton.addEventListener('touchstart', () => {
-                //this.menuScene?.selectNextVehicle();
-            });
-            menuRightButton.addEventListener('click', () => {
-                this.menuScene?.selectNextVehicle();
-            });
-            menuRightButton.addEventListener('touchend', () => {
-
-            });
-        }
-
-        if(startGameLevel1Button != null) {
-            startGameLevel1Button.addEventListener('touchstart', () => {
-                //this.switchToGameScene();
-                //startGameButton.style.visibility = "hidden";
-            });
-            startGameLevel1Button.addEventListener('click', () => {
-                this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, "arena");
-                startGameLevel1Button.style.visibility = "hidden";
-            });
-            startGameLevel1Button.addEventListener('touchend', () => {
-                //
-            });
-        }
-
-        if(startGameLevel2Button != null) {
-            startGameLevel2Button.addEventListener('touchstart', () => {
-                //this.switchToGameScene();
-                //startGameButton.style.visibility = "hidden";
-            });
-            startGameLevel2Button.addEventListener('click', () => {
-                this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, "field");
-                startGameLevel2Button.style.visibility = "hidden";
-            });
-            startGameLevel2Button.addEventListener('touchend', () => {
-                //
-            });
-        }
-
-        if(startGameLevel3Button != null) {
-            startGameLevel3Button.addEventListener('touchstart', () => {
-            });
-            startGameLevel3Button.addEventListener('click', () => {
-                this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, "mountain");
-                startGameLevel3Button.style.visibility = "hidden";
-            });
-            startGameLevel3Button.addEventListener('touchend', () => {
-            });
-        }
+      
 
         // static
         /*
@@ -412,7 +418,7 @@ export default class SceneController {
                     }               
                     if(buttonIndex == GamepadEnums.FACE_1 && !this.gamepadPrevious.buttons[GamepadEnums.FACE_1].pressed) {
                         console.log(`pressed: ${buttonIndex}`);                    
-                        this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, "arena");
+                        this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, this.worldLibrary.find(x => x.name == 'arena')!);
                     }     
                 }              
         });
@@ -634,23 +640,7 @@ export default class SceneController {
         document.getElementById('gameSceneDiv')!.style.visibility = 'hidden';
     }
 
-    async switchToGameScene(player1VehicleType: VehicleType, levelName: string) {
-
-                
-        let worldConfig: any;
-
-        switch(levelName) {
-            case "field":
-                worldConfig = this.fieldLevelConfig;
-                break;
-            case "arena":
-                worldConfig = this.arenaLevelConfig;
-                break;
-            case "mountain":
-            default:
-                worldConfig = this.mountainLevelConfig;
-                break;
-        }
+    async switchToGameScene(player1VehicleType: VehicleType, worldConfig: WorldConfig) {
 
         this.gameScene?.preloadMapData(<WorldConfig>worldConfig);
         this.gameScene?.preloadSkybox(<WorldConfig>worldConfig);

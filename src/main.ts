@@ -112,6 +112,7 @@ environment.dispose();
 // scene controller 
 sceneController.init(menuScene, gameScene, sceneOrtho);
 sceneController.switchToMenuScene();
+sceneController.configureMenuSceneButtons();
 sceneController.setOnScreenControls();
 
 var gamepads = navigator.getGamepads();

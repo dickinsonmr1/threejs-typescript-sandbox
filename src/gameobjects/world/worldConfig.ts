@@ -2,6 +2,7 @@ import { PrecipitationType } from "./precipitationSystem";
 
 export interface WorldConfig {
     name: string;
+    menuButtonIcon: string;
     heightMap: string;
     heightScale: number;
     horizontalScale: number;
@@ -24,3 +25,8 @@ export interface WorldConfig {
 
     fogColor: string;
 }  
+
+
+export interface WorldLibrary {
+    items: WorldConfig[];
+}
