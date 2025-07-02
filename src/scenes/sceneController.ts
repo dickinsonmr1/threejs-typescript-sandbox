@@ -3,7 +3,6 @@ import GameScene from "./gameScene";
 import HudScene from "./hudScene";
 import MenuScene from "./menuScene";
 import { GamepadControlScheme, GamepadEnums } from "./gamePadEnums";
-import { ProjectileType } from "../gameobjects/weapons/projectileType";
 import nipplejs from 'nipplejs';
 import { Scene } from "three";
 import { VehicleType } from "../gameobjects/player/player";
@@ -11,18 +10,12 @@ import { WorldConfig } from "../gameobjects/world/worldConfig";
 import * as THREE from 'three'
 
 import worldListJson from '../levelData/worldLibrary.json';
-//import arenaLevelJson from '../levelData/arena.json';
-//import fieldLevelJson from '../levelData/field.json';
-//import mountainLevelJson from '../levelData/mountain.json';
+
 import GUI from "lil-gui";
 import { GameConfig } from "../gameconfig";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 export default class SceneController {
-
-    //arenaLevelConfig: WorldConfig = arenaLevelJson;
-    //fieldLevelConfig: WorldConfig = fieldLevelJson;
-    //mountainLevelConfig: WorldConfig = mountainLevelJson;
 
     worldLibrary: WorldConfig[] = worldListJson;
     levelStartButtons: HTMLElement[] = [];
@@ -48,25 +41,31 @@ export default class SceneController {
         document.addEventListener('keyup', this.handleKeyUp);
 
         var levelSelectionDiv = this.getLevelSelectionDiv();
-
         if (levelSelectionDiv) {
             // Create the buttons
 
-            const maxButtonWidth = 100 / this.worldLibrary.length;
-            let i = maxButtonWidth;
+            const maxButtonWidth = 100 / (this.worldLibrary.length + 1);
+            const maxButtonSpacing = 100 / (this.worldLibrary.length);
+
+            let i = 0;
+            const startLeft = 100 / (this.worldLibrary.length + 2);
+
+
             this.worldLibrary.forEach(level => {
 
                 const button = document.createElement('button');
                 button.className = 'menu-button-large';
                 button.textContent = ` ${level.name.replace('.json','')}`;
-                button.style = `bottom: 10%; left: ${i}%; width:${maxButtonWidth}%;`;
+                button.style = `
+                    bottom: 1%;
+                    left: ${((i + 1) / (this.worldLibrary.length + 1)) * 100}%;
+                    width:${maxButtonWidth}%;
+                    translateX(-50%);
+                `;
                 button.id = `${level.name}_button`;
-                button.onclick = () => {
-                    alert(`${level.name} button clicked!`);
-                };
-
+                
                 const icon = document.createElement('i');
-                icon.className = 'fa fa-star'; // Example Font Awesome icon
+                icon.className = level.menuButtonIcon; // Example Font Awesome icon
 
                 // Add icon before the text
                 button.prepend(icon); // or use append() to add after the text
@@ -78,7 +77,7 @@ export default class SceneController {
 
                 // Append button to the div
                 levelSelectionDiv.appendChild(button);
-                i+=maxButtonWidth;
+                i += 1;//maxButtonSpacing -// + 1.75 * this.worldLibrary.length;
             });            
         }
     }
@@ -214,7 +213,6 @@ export default class SceneController {
 
         const toggleDebugButton = this.getButton('toggledebug');
         const resetButton = this.getButton('reset');
-
 
         this.gamePausedDivElement = document.getElementById('gamePausedDiv')!;
         this.inGameOnScreenControlsDiv = document.getElementById('inGameOnScreenControlsDiv')!;
@@ -648,6 +646,7 @@ export default class SceneController {
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';
+            document.getElementById('inGameOnScreenControlsDiv')!.style.visibility = 'visible';
         
         const zone = document.getElementById('joystickContainerDynamic');
         if (zone) {

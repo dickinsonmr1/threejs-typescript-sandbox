@@ -1,6 +1,6 @@
 [
     {
-        "name" : "arena",
+        "name" : "Arena",
         "menuButtonIcon": "fa-solid fa-tree",
         "heightMap": "assets/heightmaps/heightmap_arena_128x128.png",
         "heightScale": 7.5,
@@ -25,7 +25,7 @@
         "fogColor": "#5b8195"
     },
     {
-        "name" : "field",
+        "name" : "Field",
         "menuButtonIcon": "fa-solid fa-snowflake",
         "heightMap": "assets/heightmaps/heightmap_128x128.png",
         "heightScale": 5,
@@ -50,7 +50,32 @@
         "fogColor": "#aaaaaa"
     },
     {
-        "name" : "mountain",
+        "name" : "Desert Peak",
+        "menuButtonIcon": "fa-solid fa-mountain",
+        "heightMap": "assets/heightmaps/mountain_512x512.png",
+        "heightScale": 15,
+        "horizontalScale": 1,
+        
+        "texture1": "assets/terrain/Sand 4.jpg",
+        "texture2": "assets/terrain/Sand 4.jpg",
+        "texture3": "assets/terrain/Sand 4.jpg",
+        "texture4": "assets/terrain/Sand 4.jpg",
+        "texture5": "assets/terrain/Sand 4.jpg",
+
+        "skyTexture": "assets/skybox/rosendal_park_sunset_puresky.jpg",
+        
+        "precipitationType": 0,
+
+        "waterY": 2.5,
+
+        "grassBillboard": "assets/billboards/billboard_grass_32x32.png",
+        "grassBillboardStartY": 7,
+        "grassBillboardEndY": 12,
+        
+        "fogColor": "#ffbf52"
+    },
+    {
+        "name" : "Mountain2",
         "menuButtonIcon": "fa-solid fa-mountain",
         "heightMap": "assets/heightmaps/mountain_512x512.png",
         "heightScale": 15,

@@ -91,7 +91,7 @@
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 1vw;
+            font-size: 1.25vw;
             text-align: center;
             line-height: 50px;
 			-webkit-touch-callout: none;
@@ -257,10 +257,10 @@
 
 		#score { top: 50px; left: 50px; }
 		#speed { top: 100px; left: 50px; }
-
-		#toggledebug { top: 20px; right: 20px; }
-		#reset { top: 20px; right: 75px; }
 		
+		#toggledebug { top: 10px; right: 400px; }
+		#reset { top: 10px; right: 275px; }
+
 		#pageTitle {top: 20px; left: 50%}
 		#vehicleSelectionTitle {top: 20px; left: 50%}
 		#vehicleName {top: 200px; left: 50%}
@@ -315,7 +315,7 @@
 		<div id="specialweapon" class="control-button">Y</div>
 		<div id="jump" class="control-button">A</div>
 		-->
-		<div id="inGameOnScreenControlsDiv" style="visibility: visible;">			
+		<div id="inGameOnScreenControlsDiv" style="visibility: hidden;">			
 			<div id="notificationDiv" class="label-notification" style="left: 0%; top:25%; opacity: 0%; visibility: visible;"><i class="fa-solid fa-skull"></i> Enemy Destroyed</div>	
 			<div id="score" class="inventory" style="background-color: rgba(80, 124, 177, 0.264);">
 				<img src="assets/hud/carIcon.png" style="width: 50px; height: 50px;"/>
@@ -408,11 +408,8 @@
 				</tr>
 			</table>
 			<div id="mapSelectionTitle" class="label-subtitle" style="left: 0%;"><i class="fa-solid fa-map-location-dot"></i> Select Map to Start Game</div>				
-			<!-- replace this with dynamically generated buttons -->
 			<div id="levelSelectionDiv">
-				<div id="startgameLevel1" class="menu-button-large" style="bottom: 1%; left: 20%; width:25%;"><i class="fa-solid fa-tree"></i> Arena</div>
-				<div id="startgameLevel2" class="menu-button-large" style="bottom: 1%; left: 50%; width:25%;"><i class="fa-solid fa-snowflake"></i> Field</div>
-				<div id="startgameLevel3" class="menu-button-large" style="bottom: 1%; left: 80%; width:25%;"><i class="fa-solid fa-mountain"></i> Mountain</div>						
+				<!-- dynamically generated buttons inserted here by SceneController based on records in worldLibrary.json -->
 			</div>
 		</div>
 	</div>
