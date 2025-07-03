@@ -33,6 +33,14 @@ export default class SceneController {
     renderer: THREE.WebGLRenderer;
     gui: GUI;
 
+    public buttonsHeld = new Map<string, boolean> ([
+        ['turbo', false],
+        ['jump', false],
+        ['primaryWeapon', false],
+        ['secondaryWeapon', false],
+        ['specialWeapon', false],
+    ]);
+
     constructor(renderer: THREE.WebGLRenderer, gui: GUI) {
         this.renderer = renderer;
         this.gui = gui;
@@ -56,12 +64,12 @@ export default class SceneController {
                 const button = document.createElement('button');
                 button.className = 'menu-button-large';
                 button.textContent = ` ${level.name.replace('.json','')}`;
-                button.style = `
-                    bottom: 1%;
-                    left: ${((i + 1) / (this.worldLibrary.length + 1)) * 100}%;
-                    width:${maxButtonWidth}%;
-                    translateX(-50%);
-                `;
+                
+                button.style.bottom = '1%';
+                button.style.left = `${((i + 1) / (this.worldLibrary.length + 1)) * 100}%`;
+                button.style.width = `${maxButtonWidth}%`;
+                button.style.transform = 'translateX(-50%)';
+
                 button.id = `${level.name}_button`;
                 
                 const icon = document.createElement('i');
@@ -198,7 +206,7 @@ export default class SceneController {
     }
 
     setOnScreenControls() {
-        
+ 
         // game scene buttons
         const leftButton = this.getButton('left');
         const rightButton = this.getButton('right');
@@ -215,7 +223,7 @@ export default class SceneController {
         const resetButton = this.getButton('reset');
 
         this.gamePausedDivElement = document.getElementById('gamePausedDiv')!;
-        this.inGameOnScreenControlsDiv = document.getElementById('inGameOnScreenControlsDiv')!;
+        this.inGameOnScreenControlsDiv = document.getElementById('inGameOnScreenControlsDiv')!;        
 
         if(leftButton != null) {
 
@@ -258,13 +266,21 @@ export default class SceneController {
             primaryWeaponButton.addEventListener('touchstart', () => {
                 this.gameScene?.player1.tryFireRocket();
             });
+            primaryWeaponButton.addEventListener('click', () => {
+                this.gameScene?.player1.tryFireRocket();
+            });
             primaryWeaponButton.addEventListener('touchend', () => {
                 //
             });
         }
 
         if(secondaryWeaponButton != null) {
+
+
             secondaryWeaponButton.addEventListener('touchstart', () => {
+                this.gameScene?.player1.tryFireBullets();
+            });
+            secondaryWeaponButton.addEventListener('click', () => {
                 this.gameScene?.player1.tryFireBullets();
             });
             secondaryWeaponButton.addEventListener('touchend', () => {
@@ -287,11 +303,24 @@ export default class SceneController {
             jumpButton.addEventListener('touchstart', () => {
                 this.gameScene?.player1.tryJump();
             });
+
+            jumpButton.addEventListener('click', () => {
+                this.gameScene?.player1.tryJump();
+            });
         }
 
         if(turboButton != null) {
-            turboButton.addEventListener('touchstart ', () => {
-                this.gameScene?.player1.tryTurbo();
+            turboButton.addEventListener('touchstart', (event) => {
+                event.preventDefault();
+                this.buttonsHeld.set("turbo", true);
+            });
+            
+            turboButton.addEventListener('touchend', () => {
+                this.buttonsHeld.set("turbo", false);
+            });
+
+            turboButton.addEventListener("touchmove", () => {
+                this.buttonsHeld.set("turbo", false);
             });
         }
 
@@ -416,7 +445,7 @@ export default class SceneController {
                     }               
                     if(buttonIndex == GamepadEnums.FACE_1 && !this.gamepadPrevious.buttons[GamepadEnums.FACE_1].pressed) {
                         console.log(`pressed: ${buttonIndex}`);                    
-                        this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, this.worldLibrary.find(x => x.name == 'arena')!);
+                        this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, this.worldLibrary.find(x => x.name == 'Arena')!);
                     }     
                 }              
         });
@@ -646,7 +675,7 @@ export default class SceneController {
         this.currentScene = this.gameScene;
         document.getElementById('menuSceneDiv')!.style.visibility = 'hidden';
         document.getElementById('gameSceneDiv')!.style.visibility = 'visible';
-            document.getElementById('inGameOnScreenControlsDiv')!.style.visibility = 'visible';
+        document.getElementById('inGameOnScreenControlsDiv')!.style.visibility = 'visible';
         
         const zone = document.getElementById('joystickContainerDynamic');
         if (zone) {

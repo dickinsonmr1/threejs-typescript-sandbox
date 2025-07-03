@@ -654,9 +654,18 @@ export default class GameScene extends THREE.Scene {
 
     public processInput(keyDown: Set<string>) {
 
+        if(!this.player1 || this.player1.isVehicleObjectNull()) return;
+
         this.sceneController.pollGamepadsForGameScene();
 
-        if(!this.player1 || this.player1.isVehicleObjectNull()) return;
+        // touch buttons
+        if(this.sceneController.buttonsHeld.get("turbo")) {
+            this.player1.tryTurbo();
+        }
+        else {
+            this.player1.tryStopTurbo();
+        }
+
 
         // player 1 vehicle controls
         if(keyDown.has('arrowup')) {
@@ -689,6 +698,8 @@ export default class GameScene extends THREE.Scene {
         if (keyDown.has('shift')) {
             this.player1.tryTurbo();
         }
+
+     
     }
 
     public pollGamepads(gamepad: Gamepad) {
@@ -1589,7 +1600,8 @@ export default class GameScene extends THREE.Scene {
 
         if(!this.player1 || this.player1.isVehicleObjectNull()) return;
 
-        //this.updateInput(this.sceneController.keyDown);          
+        //this.updateInput(this.sceneController.keyDown);        
+        
 
         var cpuPlayers = this.allPlayers.filter(x => x.isCpuPlayer);// && x.playerState == PlayerState.Alive);
         for(var i = 0; i < cpuPlayers.length; i++) {

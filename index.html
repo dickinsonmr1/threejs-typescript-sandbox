@@ -17,12 +17,14 @@
 			-o-user-select: none;
 			user-select: none;	
 			z-index: 1;
+  			overscroll-behavior: none;  /* Prevent scroll chaining */
 		}
 		#app {
 			width: 100%;
 			height: 100%;
 			display: block;
 			z-index: 1;
+			touch-action: none; 
 		}
 		.control-button {
             position: absolute;
@@ -199,19 +201,20 @@
 			position: absolute;
             width: 120px;
             height: 50px;
-            background-color: rgba(255, 187, 0, 0.771);
             color: white;
             border: none;
             border-radius: 20px;
             font-size: 20px;
 
+			align-items: center;
+			gap: 8px;
+
             text-align: center;
             line-height: 50px;
 			text-align: center;
 			display: flex;
-            align-items: left;
             justify-content: center;
-            gap: 0px; /* Space between the image and text */
+
 			-webkit-touch-callout: none;
 			-webkit-user-select: none;
 			-khtml-user-select: none;
@@ -246,12 +249,12 @@
 		#y { bottom: 100px; right: 60px; color: yellow; }
         #a { bottom: 20px; right: 60px; color:green; }
 
-		#primaryweapon { bottom: 140px; right: 20px; color:red; }
-        #secondaryweapon { bottom: 80px; right: 20px; color: blue;  }		
-		#specialweapon { bottom: 20px; right: 20px; color: yellow; }
+		#primaryweapon { bottom: 140px; right: 20px; }
+        #secondaryweapon { bottom: 80px; right: 20px; }		
+		#specialweapon { bottom: 20px; right: 20px; }
 		
-        #jump { bottom: 20px; right: 150px; color:green; }
-		#turbo { bottom: 80px; right: 150px; color:green; }
+        #jump { bottom: 20px; right: 150px; }
+		#turbo { bottom: 80px; right: 150px; align-items: center; gap: 8px; color:white; }
 		
 		#ammoText { top: 20px; right: 200px; color:green; }
 
@@ -327,8 +330,11 @@
 			<div id="toggledebug" class="control-button">?</div>
 			<div id="reset" class="control-button-medium">Reset</div>	
 			<div id="specialweapon" class="inventory" style="background-color: rgba(255, 187, 0, 0.5)">
-				<img src="assets/hud/fire.png" style="width: 50px; height: 50px;"/>
-				<div class="text" style="color: white">999</div>
+				<!--
+					<img src="assets/hud/fire.png" style="width: 50px; height: 50px;"/>
+					<div class="text" style="color: white">999</div>
+				-->
+				<i class="fa-solid fa-bolt"></i> 999
 			</div>	
 			<div id="secondaryweapon" class="inventory" style="background-color: rgba(0, 177, 253, 0.5);">
 				<img src="assets/hud/bullets.png" style="width: 50px; height: 50px;"/>
@@ -339,10 +345,10 @@
 				<div class="text" style="color: white">999</div>
 			</div>	
 			<div id="jump" class="inventory" style="background-color: rgba(55, 255, 0, 0.5);">			
-				<div class="text" style="color: white">Jump</div>
+				<i class="fa-solid fa-angles-up"></i> Jump
 			</div>	
 			<div id="turbo" class="inventory" style="background-color: rgba(255, 251, 0, 0.5);">			
-				<img src="assets/hud/turboIcon.png" style="width: 50px; height: 50px; display: block;margin-left: auto; margin-right: auto;"/>
+				<i class="fa-solid fa-truck-fast"></i> Turbo
 			</div>	
 		</div>
 				<!--
