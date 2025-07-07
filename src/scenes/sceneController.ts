@@ -263,38 +263,43 @@ export default class SceneController {
         }
 
         if(primaryWeaponButton != null) {
-            primaryWeaponButton.addEventListener('touchstart', () => {
-                this.gameScene?.player1.tryFireRocket();
+            primaryWeaponButton.addEventListener('touchstart', (event) => {
+                event.preventDefault();
+                this.buttonsHeld.set("primaryWeapon", true);
             });
             primaryWeaponButton.addEventListener('click', () => {
-                this.gameScene?.player1.tryFireRocket();
+                this.buttonsHeld.set("primaryWeapon", false);
             });
             primaryWeaponButton.addEventListener('touchend', () => {
-                //
+                this.buttonsHeld.set("primaryWeapon", false);
             });
         }
 
         if(secondaryWeaponButton != null) {
-
-
-            secondaryWeaponButton.addEventListener('touchstart', () => {
-                this.gameScene?.player1.tryFireBullets();
+            secondaryWeaponButton.addEventListener('touchstart', (event) => {
+                event.preventDefault();
+                this.buttonsHeld.set("secondaryWeapon", true);
             });
             secondaryWeaponButton.addEventListener('click', () => {
-                this.gameScene?.player1.tryFireBullets();
+                this.buttonsHeld.set("secondaryWeapon", false);
             });
             secondaryWeaponButton.addEventListener('touchend', () => {
-                //
+                this.buttonsHeld.set("secondaryWeapon", false);
             });
         }
 
         if(specialWeaponButton != null) {
-            specialWeaponButton.addEventListener('touchstart', () => {
-                this.gameScene?.player1.tryFireFlamethrower();
+            specialWeaponButton.addEventListener('touchstart', (event) => {
+                event.preventDefault();
+                this.buttonsHeld.set("specialWeapon", true);
             });
+            
             specialWeaponButton.addEventListener('touchend', () => {
-                this.gameScene?.player1.tryStopFireFlamethrower();
-                //
+                this.buttonsHeld.set("specialWeapon", false);
+            });
+
+            specialWeaponButton.addEventListener("touchmove", () => {
+                this.buttonsHeld.set("specialWeapon", false);
             });
         }
 

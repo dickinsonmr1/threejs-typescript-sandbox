@@ -666,6 +666,17 @@ export default class GameScene extends THREE.Scene {
             this.player1.tryStopTurbo();
         }
 
+        if(this.sceneController.buttonsHeld.get("primaryWeapon")) {
+            this.player1.tryFirePrimaryWeapon();
+        }
+
+        if(this.sceneController.buttonsHeld.get("specialWeapon")) {
+            this.player1.tryFireSpecialWeapon();
+        }
+
+        if(this.sceneController.buttonsHeld.get("secondaryWeapon")) {
+            this.player1.tryFireSecondaryWeapon();
+        }
 
         // player 1 vehicle controls
         if(keyDown.has('arrowup')) {
