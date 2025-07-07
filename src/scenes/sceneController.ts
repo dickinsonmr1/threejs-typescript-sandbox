@@ -41,12 +41,19 @@ export default class SceneController {
         ['specialWeapon', false],
     ]);
 
+    public touchActivated: boolean = false;
+    public keyboardActivated: boolean = false;
+
     constructor(renderer: THREE.WebGLRenderer, gui: GUI) {
         this.renderer = renderer;
         this.gui = gui;
                         
         document.addEventListener('keydown', this.handleKeyDown);
-        document.addEventListener('keyup', this.handleKeyUp);
+        document.addEventListener('keyup', this.handleKeyUp);        
+
+        document.addEventListener('keydown', (event) => {
+            this.keyboardActivated = true;
+        });
 
         var levelSelectionDiv = this.getLevelSelectionDiv();
         if (levelSelectionDiv) {
@@ -120,7 +127,7 @@ export default class SceneController {
     brakeOrReverseGamepadIndex!: number;
     firePrimaryWeaponGamepadIndex!: number;
     fireSecondaryWeaponGamepadIndex!: number;
-    fireFlameThrowerGamepadIndex!: number;
+    fireSpecialWeaponGamepadIndex!: number;
     jumpGamepadIndex!: number;
 
     gamePausedDivElement!: HTMLElement;
@@ -146,7 +153,7 @@ export default class SceneController {
             this.brakeOrReverseGamepadIndex = GamepadEnums.LEFT_SHOULDER_BOTTOM;
             this.firePrimaryWeaponGamepadIndex = GamepadEnums.FACE_2;
             this.fireSecondaryWeaponGamepadIndex = GamepadEnums.FACE_4;
-            this.fireFlameThrowerGamepadIndex = GamepadEnums.FACE_3;
+            this.fireSpecialWeaponGamepadIndex = GamepadEnums.FACE_3;
             this.jumpGamepadIndex = GamepadEnums.FACE_1
         }
         else {
@@ -154,7 +161,7 @@ export default class SceneController {
             this.brakeOrReverseGamepadIndex = GamepadEnums.FACE_1
             this.firePrimaryWeaponGamepadIndex = GamepadEnums.RIGHT_SHOULDER_BOTTOM;
             this.fireSecondaryWeaponGamepadIndex = GamepadEnums.LEFT_SHOULDER_BOTTOM;
-            this.fireFlameThrowerGamepadIndex = GamepadEnums.FACE_2;
+            this.fireSpecialWeaponGamepadIndex = GamepadEnums.FACE_2;
             this.jumpGamepadIndex = GamepadEnums.RIGHT_SHOULDER;
         }
     }
@@ -206,6 +213,11 @@ export default class SceneController {
     }
 
     setOnScreenControls() {
+
+        document.addEventListener('touchstart', (event) => {
+            console.log('Touch started:', event.touches[0]);
+            this.touchActivated = true;
+        });
  
         // game scene buttons
         const leftButton = this.getButton('left');
@@ -590,7 +602,7 @@ export default class SceneController {
 
                         this.gameScene.player1.tryFireRocket();
                     }
-                    if(buttonIndex == this.fireFlameThrowerGamepadIndex) {
+                    if(buttonIndex == this.fireSpecialWeaponGamepadIndex) {
                         console.log(`pressed: ${buttonIndex}`);
                         this.gameScene?.player1.tryFireSpecialWeapon();
                     }
@@ -635,10 +647,9 @@ export default class SceneController {
                             this.gameScene?.player1.tryStopTurbo();
                     }
                     // stopped firing flamethrower
-                    if(this.gamepadPrevious.buttons[this.fireFlameThrowerGamepadIndex].pressed
-                        && buttonIndex == this.fireFlameThrowerGamepadIndex) {
-
-                            this.gameScene?.player1.tryStopFireFlamethrower();
+                    if(this.gamepadPrevious.buttons[this.fireSpecialWeaponGamepadIndex].pressed
+                        && buttonIndex == this.fireSpecialWeaponGamepadIndex) {
+                            this.gameScene?.player1.tryStopFireSpecialWeapon();
                     }                    
                 }
             }

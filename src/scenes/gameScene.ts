@@ -502,6 +502,8 @@ export default class GameScene extends THREE.Scene {
 
 	public handleKeyUp = (event: KeyboardEvent) => {
 
+
+        if(!this.sceneController.keyboardActivated) return;
 		//this.keyDown.delete(event.key.toLowerCase())
 
 		if (event.key === 'Control')
@@ -658,59 +660,63 @@ export default class GameScene extends THREE.Scene {
 
         this.sceneController.pollGamepadsForGameScene();
 
-        // touch buttons
-        if(this.sceneController.buttonsHeld.get("turbo")) {
-            this.player1.tryTurbo();
-        }
-        else {
-            this.player1.tryStopTurbo();
+        if(this.sceneController.touchActivated) {
+            // touch buttons
+            if(this.sceneController.buttonsHeld.get("turbo")) {
+                this.player1.tryTurbo();
+            }
+            else {
+                this.player1.tryStopTurbo();
+            }
+
+            if(this.sceneController.buttonsHeld.get("primaryWeapon")) {
+                this.player1.tryFirePrimaryWeapon();
+            }
+
+            if(this.sceneController.buttonsHeld.get("specialWeapon")) {
+                this.player1.tryFireSpecialWeapon();
+            }
+            else {
+                this.player1.tryStopFireSpecialWeapon();
+            }
+
+            if(this.sceneController.buttonsHeld.get("secondaryWeapon")) {
+                this.player1.tryFireSecondaryWeapon();
+            }
         }
 
-        if(this.sceneController.buttonsHeld.get("primaryWeapon")) {
-            this.player1.tryFirePrimaryWeapon();
-        }
+        if(this.sceneController.keyboardActivated) {
+            // player 1 vehicle controls
+            if(keyDown.has('arrowup')) {
+                this.player1.tryAccelerate(1.0);
+            }
+            else if(keyDown.has('arrowdown')) {
+                this.player1.tryReverse(1.0);
+            }
 
-        if(this.sceneController.buttonsHeld.get("specialWeapon")) {
-            this.player1.tryFireSpecialWeapon();
-        }
-        else {
-            this.player1.tryStopFireSpecialWeapon();
-        }
+            if(keyDown.has('arrowleft')) {
+                this.player1.tryTurn(1.0);
+            }
+            else if(keyDown.has('arrowright')) {
+                this.player1.tryTurn(-1.0);
+            }
+            
+            if (keyDown.has('x')) {
+                let newProjectile = this.player1.tryFireBullets();
+            }        
+            if (keyDown.has('z')) {
+                this.player1.tryFireFlamethrower();
+            }        
+            if(keyDown.has('c')) {
+                this.player1.tryFireLightning();
+            }
 
-        if(this.sceneController.buttonsHeld.get("secondaryWeapon")) {
-            this.player1.tryFireSecondaryWeapon();
-        }
-
-        // player 1 vehicle controls
-        if(keyDown.has('arrowup')) {
-            this.player1.tryAccelerate(1.0);
-        }
-        else if(keyDown.has('arrowdown')) {
-            this.player1.tryReverse(1.0);
-        }
-
-        if(keyDown.has('arrowleft')) {
-            this.player1.tryTurn(1.0);
-        }
-        else if(keyDown.has('arrowright')) {
-            this.player1.tryTurn(-1.0);
-        }
-        
-        if (keyDown.has('x')) {
-            let newProjectile = this.player1.tryFireBullets();
-        }        
-        if (keyDown.has('z')) {
-            this.player1.tryFireFlamethrower();
-        }        
-        if(keyDown.has('c')) {
-            this.player1.tryFireLightning();
-        }
-
-        if (keyDown.has('q')) {
-            this.player2.tryFireFlamethrower();
-        }
-        if (keyDown.has('shift')) {
-            this.player1.tryTurbo();
+            if (keyDown.has('q')) {
+                this.player2.tryFireFlamethrower();
+            }
+            if (keyDown.has('shift')) {
+                this.player1.tryTurbo();
+            }
         }
 
      
