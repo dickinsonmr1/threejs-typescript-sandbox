@@ -687,9 +687,67 @@ export default class SceneController {
             zone.style.display = 'block';
         }
 
+        const specialWeapon = document.getElementById('specialweapon');
+        if (specialWeapon) {
+
+            const icon = document.createElement('i');
+
+            switch(player1VehicleType) {
+                case VehicleType.Ambulance:
+                    icon.classList.add('fa-solid', 'fa-truck-medical');
+                    break;
+                case VehicleType.FireTruck:
+                    icon.classList.add('fa-solid', 'fa-fire');
+                    break;
+                case VehicleType.Harvester:
+                    icon.classList.add('fa-solid', 'fa-fire');
+                    break;
+                case VehicleType.Killdozer:                   
+                    icon.classList.add('fa-solid', 'fa-explosion'); 
+                    break;
+                case VehicleType.Offroader:
+                    icon.classList.add('fa-solid', 'fa-rocket');
+                    break;
+                case VehicleType.PickupTruck:
+                    icon.classList.add('fa-solid', 'fa-fire');
+                    break;
+                case VehicleType.Police:
+                    icon.classList.add('fa-solid', 'fa-bolt');
+                    break;
+                case VehicleType.PoliceTractor:
+                    icon.classList.add('fa-solid', 'fa-bolt');
+                    break;
+                case VehicleType.RaceCar:
+                    icon.classList.add('fa-solid', 'fa-fire');
+                    break;
+                case VehicleType.RaceCarRed:
+                    icon.classList.add('fa-solid', 'fa-fire');
+                    break;
+                case VehicleType.Taxi:
+                    icon.classList.add('fa-solid', 'fa-bolt');
+                    break;
+                case VehicleType.TrashTruck:
+                    icon.classList.add('fa-solid', 'fa-dumpster-fire');
+                    break;
+                default:
+                    icon.classList.add('fa-solid', 'fa-bolt');
+            }
+            
+            
+            specialWeapon.appendChild(icon);
+            specialWeapon.style.display = 'block';
+
+            const text = document.createTextNode(' 999');
+            specialWeapon.appendChild(text);
+        }
+
         await this.gameScene?.initialize(player1VehicleType).then(x => {
 
-            const worldConfigFolder = this.gui.addFolder( 'Level Config' );
+            const cpuFolder = this.gui.addFolder( 'CPU Player Config' );
+            cpuFolder.add(this.gameScene!, 'cpuPlayerBehavior', { Follow: 0, FollowAndAttack: 1, Stop: 2, StopAndAttack: 3, Flee: 4, Patrol: 5})
+                .listen();
+
+            const worldConfigFolder = this.gui.addFolder( 'Level Config' ).close();
             worldConfigFolder.add(worldConfig, 'name');
             worldConfigFolder.add(worldConfig, 'heightMap');
             worldConfigFolder.add(worldConfig, 'texture1');
@@ -735,11 +793,8 @@ export default class SceneController {
                 .listen();
 
             }
-            const cpuFolder = this.gui.addFolder( 'CPU Player Config' );
-            cpuFolder.add(this.gameScene!, 'cpuPlayerBehavior', { Follow: 0, FollowAndAttack: 1, Stop: 2, StopAndAttack: 3, Flee: 4, Patrol: 5})
-                .listen();
 
-            const playerFolder = this.gui.addFolder('Player 1 Config')
+            const playerFolder = this.gui.addFolder('Player 1 Config').close();
             // wheels
             playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'frictionSlip', 0, 10, 0.1).listen();
             playerFolder.add(this.gameScene!.player1.getVehicleObject().vehicleOverrideConfig, 'frictionSlipRear', 0, 10, 0.1).listen();

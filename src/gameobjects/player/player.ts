@@ -943,11 +943,11 @@ export class Player {
     }
 
     tryFirePrimaryWeapon(): void {
-
+        this.tryFireRocket();
     }
 
     tryFireSecondaryWeapon(): void {
-
+        this.tryFireBullets();
     }
 
     tryFireRocket(): void {
@@ -1139,10 +1139,10 @@ export class Player {
                 this.tryFireShovel();
                 break;
             case VehicleType.Taxi:
-                this.tryFireFlamethrower();
+                this.tryFireLightning();
                 break;
             case VehicleType.Ambulance:
-                this.tryFireFlamethrower();
+                this.tryFireLightning();
                 break;
             case VehicleType.RaceCar:
                 this.tryFireFlamethrower();
@@ -1163,7 +1163,7 @@ export class Player {
                 this.tryFireFlamethrower();
                 break;
             case VehicleType.PoliceTractor:
-                this.tryFireFlamethrower();
+                this.tryFireLightning();
                 break;
             case VehicleType.Harvester:
                 this.tryFireFlamethrower();
@@ -1171,6 +1171,34 @@ export class Player {
             case VehicleType.PickupTruck:
                 this.tryFireMegaGun();
                 break;
+        }
+    }
+
+    tryStopFireSpecialWeapon() {
+        switch(this.vehicleType) {
+            
+            case VehicleType.Taxi:
+                this.tryStopFireLightning();
+                break;
+            case VehicleType.Ambulance:
+                this.tryStopFireLightning();
+                break;
+            case VehicleType.RaceCar:
+                this.tryStopFireFlamethrower();
+                break;
+            case VehicleType.RaceCarRed:
+                this.tryStopFireFlamethrower();
+                break;
+            case VehicleType.FireTruck:
+                this.tryStopFireFlamethrower();
+                break;
+            case VehicleType.PoliceTractor:
+                this.tryStopFireLightning();
+                break;
+            case VehicleType.Harvester:
+                this.tryStopFireFlamethrower();
+                break;
+            default:
         }
     }
     

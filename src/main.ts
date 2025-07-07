@@ -60,6 +60,10 @@ const gameScene = new GameScene(mainCamera, debugOrbitCamera, debugOrbitControls
 
 // set up lil-gui debug panel
 const gameConfigFolder = gui.addFolder( 'Game Config' );
+
+if(!gameConfig.isDebug)
+  gameConfigFolder.close();
+
 gameConfigFolder.add(gameConfig, 'isDebug').listen();
 gameConfigFolder.add(gameConfig, 'controlType', { 'Car Combat': 0, 'Racing': 1 } )
   .onChange((value: number) =>{

@@ -673,6 +673,9 @@ export default class GameScene extends THREE.Scene {
         if(this.sceneController.buttonsHeld.get("specialWeapon")) {
             this.player1.tryFireSpecialWeapon();
         }
+        else {
+            this.player1.tryStopFireSpecialWeapon();
+        }
 
         if(this.sceneController.buttonsHeld.get("secondaryWeapon")) {
             this.player1.tryFireSecondaryWeapon();
