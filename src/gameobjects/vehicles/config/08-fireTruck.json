@@ -7,6 +7,8 @@
     "speed": 25,
     "defensiveSpecial": 50,
 
+    "specialTypeEnum": 1,
+
     "comment": "backdraft", 
 
     "frontWheelHeight": 0.25,

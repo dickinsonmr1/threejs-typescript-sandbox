@@ -7,6 +7,8 @@
     "speed": 25,
     "defensiveSpecial": 25,
 
+    "specialTypeEnum": 5,
+
     "comment": "compactor", 
 
     "frontWheelHeight": 0.3,

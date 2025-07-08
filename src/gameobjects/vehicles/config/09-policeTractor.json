@@ -7,6 +7,8 @@
     "speed": 50,
     "defensiveSpecial": 75,
 
+    "specialTypeEnum": 4,
+
     "comment": "policeTractor", 
 
     "frontWheelHeight": 0.25,

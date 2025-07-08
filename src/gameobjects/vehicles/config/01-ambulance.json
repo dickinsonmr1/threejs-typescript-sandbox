@@ -6,6 +6,8 @@
     "special": 50,
     "speed": 50,
     "defensiveSpecial": 25,
+    
+    "specialTypeEnum": 4,
 
     "comment": "ambulance", 
 

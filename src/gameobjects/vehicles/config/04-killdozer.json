@@ -7,6 +7,8 @@
     "speed": 25,
     "defensiveSpecial": 25,    
 
+    "specialTypeEnum": 6,
+
     "comment": "killdozer", 
 
     "frontWheelHeight": 0.5,

@@ -7,6 +7,8 @@
     "speed": 25,
     "defensiveSpecial": 75,    
 
+    "specialTypeEnum": 1,
+
     "comment": "harvester", 
 
     "frontWheelHeight": 0.25,

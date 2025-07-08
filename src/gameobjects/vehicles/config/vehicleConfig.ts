@@ -9,6 +9,8 @@ export interface VehicleConfig {
     special: number;
     speed: number;
     defensiveSpecial: number;
+
+    specialTypeEnum: number;
     
     comment: string;
     

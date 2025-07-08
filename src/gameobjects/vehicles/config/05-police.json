@@ -7,6 +7,8 @@
     "speed": 75,
     "defensiveSpecial": 100,
 
+    "specialTypeEnum": 5,
+
     "comment": "police", 
 
     "frontWheelHeight": 0.25,

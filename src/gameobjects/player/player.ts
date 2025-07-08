@@ -56,6 +56,16 @@ export enum VehicleType {
     PickupTruck = 11
 }
 
+export enum SpecialType {
+    TriRockets = 0,
+    Flamethrower = 1,
+    SonicPulse = 2,
+    MegaGun = 3,
+    Lightning = 4,
+    Dumpster = 5,
+    Shovel = 6
+}
+
 export enum PlayerTeam {
     Red,
     Blue,
@@ -137,6 +147,7 @@ export class Player {
     private readonly deadzoneX: number;
 
     vehicleType: VehicleType;
+    specialType: SpecialType;
 
     constructor(scene: THREE.Scene,
         public playerIndex: number,
@@ -190,6 +201,8 @@ export class Player {
         }
        
         this.playerName = vehicleConfig.vehicleName;
+        this.specialType = vehicleConfig.specialTypeEnum;
+
         let gameScene = <GameScene>scene;
 
         let material = new THREE.SpriteMaterial({
@@ -1134,72 +1147,43 @@ export class Player {
     }
 
     tryFireSpecialWeapon() {
-        switch(this.vehicleType) {
-            case VehicleType.Killdozer:
-                this.tryFireShovel();
-                break;
-            case VehicleType.Taxi:
-                this.tryFireLightning();
-                break;
-            case VehicleType.Ambulance:
-                this.tryFireLightning();
-                break;
-            case VehicleType.RaceCar:
-                this.tryFireFlamethrower();
-                break;
-            case VehicleType.RaceCarRed:
-                this.tryFireFlamethrower();
-                break;
-            case VehicleType.Police:
-                this.tryFireSonicPulse();
-                break;
-            case VehicleType.TrashTruck:
-                this.tryFireDumpster();
-                break;
-            case VehicleType.Offroader:
+        switch(this.specialType) {
+            case SpecialType.TriRockets:
                 this.tryFireTriRockets();
                 break;
-            case VehicleType.FireTruck:
+            case SpecialType.Flamethrower:
                 this.tryFireFlamethrower();
                 break;
-            case VehicleType.PoliceTractor:
+            case SpecialType.SonicPulse:
+                this.tryFireSonicPulse();
+                break;
+            case SpecialType.MegaGun:
+                this.tryFireMegaGun;
+                break;
+            case SpecialType.Lightning:
                 this.tryFireLightning();
                 break;
-            case VehicleType.Harvester:
-                this.tryFireFlamethrower();
+            case SpecialType.Dumpster:
+                this.tryFireDumpster();
                 break;
-            case VehicleType.PickupTruck:
-                this.tryFireMegaGun();
+            case SpecialType.Shovel:
+                this.tryFireDumpster();
                 break;
         }
     }
 
     tryStopFireSpecialWeapon() {
-        switch(this.vehicleType) {
-            
-            case VehicleType.Taxi:
-                this.tryStopFireLightning();
+
+        switch(this.specialType) {            
+            case SpecialType.Flamethrower:
+                this.tryFireFlamethrower();
                 break;
-            case VehicleType.Ambulance:
-                this.tryStopFireLightning();
-                break;
-            case VehicleType.RaceCar:
-                this.tryStopFireFlamethrower();
-                break;
-            case VehicleType.RaceCarRed:
-                this.tryStopFireFlamethrower();
-                break;
-            case VehicleType.FireTruck:
-                this.tryStopFireFlamethrower();
-                break;
-            case VehicleType.PoliceTractor:
-                this.tryStopFireLightning();
-                break;
-            case VehicleType.Harvester:
-                this.tryStopFireFlamethrower();
+            case SpecialType.Lightning:
+                this.tryFireLightning();
                 break;
             default:
-        }
+                break;
+        }      
     }
     
     // TODO: try fire additional weapons

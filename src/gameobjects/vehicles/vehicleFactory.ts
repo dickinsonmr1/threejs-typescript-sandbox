@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { DriveSystem, RaycastVehicleObject } from "./raycastVehicle/raycastVehicleObject";
-import { Player, PlayerTeam, VehicleType } from "../player/player";
+import { Player, PlayerTeam, SpecialType, VehicleType } from "../player/player";
 import * as CANNON from 'cannon-es'
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GameScene from "../../scenes/gameScene";
@@ -19,6 +19,7 @@ import vehicleConfigPickupTruck from './config/11-pickupTruck.json'
 import vehicleConfigPoliceTractor from './config/09-policeTractor.json'
 import vehicleConfigKilldozer from './config/04-killdozer.json'
 import vehicleConfigHarvester from './config/10-harvester.json'
+import { SepiaShader } from "three/examples/jsm/Addons.js";
 export class VehicleFactory {
     
     crosshairTexture: THREE.Texture;
@@ -42,7 +43,7 @@ export class VehicleFactory {
         playerIndex: number,
         isDebug: boolean,
         world: CANNON.World, isCpuPlayer: boolean,
-        vehicleType: VehicleType, playerColor: THREE.Color,        
+        vehicleType: VehicleType, playerColor: THREE.Color,       
         deadzoneX: number,
         wheelMaterial: CANNON.Material
         ) : Player {
@@ -236,7 +237,7 @@ export class VehicleFactory {
             playerIndex,
             isDebug,
             isCpuPlayer,
-            vehicleType,
+            vehicleType,            
             playerColor,
             this.crosshairTexture,
             this.markerTexture,

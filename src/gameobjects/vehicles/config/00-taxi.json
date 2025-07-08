@@ -7,6 +7,8 @@
     "speed": 75,
     "defensiveSpecial": 25,
 
+    "specialTypeEnum": 4,
+
     "comment": "taxi", 
 
     "frontWheelHeight": 0.25,
