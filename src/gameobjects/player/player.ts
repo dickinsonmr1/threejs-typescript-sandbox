@@ -1008,6 +1008,7 @@ export class Player {
                 gameScene.addNewProjectile(projectile);
 
                 this.airstrikeCooldownClock.start();
+                gameScene.getAudioManager().playSound('bomber', true, this.playerIndex);
             }
             else {
                 this.activeAirstrike.detonate();

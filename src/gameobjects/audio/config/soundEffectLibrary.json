@@ -78,5 +78,25 @@
         "loop": true,
         "createInstancePerPlayer": true,
         "comment": "https://pixabay.com/sound-effects/electricity-6353/"
+    },
+    {
+        "soundKey": "explosionLarge",
+        "asset": "assets/audio/medium-explosion-40472.ogg",
+        "volume": 1.00,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": false,
+        "createInstancePerPlayer": true,
+        "comment": "https://pixabay.com/sound-effects/medium-explosion-40472/"
+    },
+    {
+        "soundKey": "bomber",
+        "asset": "assets/audio/bomber-222738-short.ogg",
+        "volume": 0.50,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": false,
+        "createInstancePerPlayer": true,
+        "comment": "https://pixabay.com/sound-effects/medium-explosion-40472/"
     }
 ]

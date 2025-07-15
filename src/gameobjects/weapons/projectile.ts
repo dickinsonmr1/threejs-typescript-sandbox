@@ -9,6 +9,7 @@ import { ParticleEmitter } from "../fx/particleEmitter";
 import { ParticleTrailPointsShaderObject } from "../fx/particleTrailPointsShaderObject";
 import { Target } from "../target";
 import GameScene from "../../scenes/gameScene";
+import { AudioManager } from "../audio/audioManager";
 
 export enum ProjectileLaunchLocation {
     Left,
@@ -58,6 +59,8 @@ export class Projectile extends SphereObject {
     private detonationClock: THREE.Clock  = new THREE.Clock(false);
     private detonationLifetimeClock: THREE.Clock  = new THREE.Clock(false);
 
+    private audioManager: AudioManager;
+
     constructor(scene: THREE.Scene,
         isDebug: boolean,
         playerId: string,
@@ -96,6 +99,8 @@ export class Projectile extends SphereObject {
         this.group.position.set(position.x, position.y, position.z);
 
         let gameScene = <GameScene>scene;
+
+        this.audioManager = gameScene.getAudioManager();
 
         if(this.projectileType == ProjectileType.Bullet) {
                         
@@ -411,6 +416,8 @@ export class Projectile extends SphereObject {
                     new THREE.Color('orange'),
                     new THREE.Color('red')
                 );
+
+                this.audioManager.playSound("explosionLarge", true, 0);
 
                 //gameScene.generateSmoke(this.airstrikeTarget.groundTargetMesh.position);
 
