@@ -68,10 +68,15 @@ export class AudioManager {
     
         return positionalAudio;
     }    
+
+    private generatePlayerSpecificPrefix(playerIndex: number): string {
+      return `player${playerIndex+1}-`;
+    }
+    
     private generateSoundKey(key: string, playerIndex?: number): string {
       let prefix = '';
       if(playerIndex != null)
-        prefix = `player${playerIndex+1}-`;
+        prefix = this.generatePlayerSpecificPrefix(playerIndex+1);
 
       return `${prefix}${key}`;
     }
@@ -127,6 +132,15 @@ export class AudioManager {
       const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
       if(sound && sound.isPlaying)
           sound.stop();        
+    }
+
+    
+    public stopAllSoundsForPlayer(playerIndex: number) {      
+      const matchingValues = Array.from(this.positionalSounds.entries())
+        .filter(([key]) => key.includes(this.generatePlayerSpecificPrefix(playerIndex)))
+        .map(([_, value]) => value);
+
+      matchingValues.forEach(x => x.stop());
     }
 
     update(newListenerPosition: THREE.Vector3): void {

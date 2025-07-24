@@ -96,6 +96,8 @@ export class Player {
 
     private vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
+    leftRearWheelDustEmitter: ParticleTrailObject;
+    rightRearWheelDustEmitter: ParticleTrailObject;
 
     flamethrowerEmitter: FlamethrowerEmitter;
 
@@ -223,6 +225,32 @@ export class Player {
 
         this.turboParticleEmitter.pause();
         gameScene.addToParticleEmitters(this.turboParticleEmitter);
+
+        this.leftRearWheelDustEmitter = new ParticleTrailObject(
+            scene,
+            ParticleEmitterType.SmokeEmit,
+            new THREE.Color('brown'),
+            new THREE.Color('brown'),
+            new THREE.Color('brown'),
+            new THREE.Color('brown'),
+            1,
+            0.02,
+            material);
+        this.leftRearWheelDustEmitter.pause();
+        gameScene.addToParticleEmitters(this.leftRearWheelDustEmitter);
+
+        this.rightRearWheelDustEmitter = new ParticleTrailObject(
+            scene,
+            ParticleEmitterType.SmokeEmit,
+            new THREE.Color('brown'),
+            new THREE.Color('brown'),
+            new THREE.Color('brown'),
+            new THREE.Color('brown'),
+            1,
+            0.02,
+            material);
+        this.rightRearWheelDustEmitter.pause();
+        gameScene.addToParticleEmitters(this.rightRearWheelDustEmitter);
 
         this.flamethrowerEmitter = new FlamethrowerEmitter(gameScene,
             this.playerId,
@@ -520,8 +548,15 @@ export class Player {
         let turboOffset = new THREE.Vector3(1, 0, 0);
         turboOffset.applyQuaternion(this.vehicleObject.getModel().quaternion);
         let turboEmitPosition = Utility.ThreeVector3Add(Utility.CannonVec3ToThreeVec3(this.vehicleObject.getChassis().body.position), turboOffset);
-
         this.turboParticleEmitter.setEmitPosition(turboEmitPosition);
+       
+        let wheels = this.vehicleObject.getWheelModels();        
+
+        let leftRearWheelDustEmitPosition = wheels[2].position;
+        this.leftRearWheelDustEmitter.setEmitPosition(leftRearWheelDustEmitPosition);
+
+        let rightRearWheelDustEmitPosition = wheels[3].position;
+        this.rightRearWheelDustEmitter.setEmitPosition(rightRearWheelDustEmitPosition);
 
         this.fireObjects.forEach(x => x.setEmitPosition(this.getPosition()));
 
@@ -709,11 +744,15 @@ export class Player {
         this.vehicleObject.setDrifting();
         this.vehicleObject.tryReverse(joystickY);
         this.brakeLights.setVisible(true);
+        this.leftRearWheelDustEmitter.resume();
+        this.rightRearWheelDustEmitter.resume();
     }
 
     tryStopReverse(): void {
         this.vehicleObject.tryStopReverse();
         this.brakeLights.setVisible(false);
+        this.leftRearWheelDustEmitter.pause();
+        this.rightRearWheelDustEmitter.pause();
     }
 
     tryTurn(x: number): void {
@@ -918,6 +957,9 @@ export class Player {
         this.refillHealth();        
 
         this.fireObjects.forEach(x => x.kill());
+
+        let gameScene = <GameScene>this.scene;
+        gameScene.getAudioManager().stopAllSoundsForPlayer(this.playerIndex);
         
         this.playerState = PlayerState.Alive;        
         this.tryStopTurbo();
