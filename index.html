@@ -93,7 +93,7 @@
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 1.25vw;
+            font-size: 24px;
             text-align: center;
             line-height: 50px;
 			-webkit-touch-callout: none;
@@ -229,8 +229,8 @@
 		#up { bottom: 100px; left: 60px; }
         #down { bottom: 20px; left: 60px; }
 
-		#menuLeft { top: 50%; left: 27% }
-        #menuRight { top: 50%; right: 27% }
+		#menuLeft { top: 50%; left: 10% }
+        #menuRight { top: 50%; right: 10% }
 
 		#joystickContainerStatic {
 			height: 100%;
@@ -273,7 +273,7 @@
 			width: 500px;
 			border-width: 10px;
 			left: 50%;
-			transform: translateX(-50%);
+			transform: translateX(-50%) translateY(30%);
 			bottom: 20%;
 			position: fixed;
 			font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -300,7 +300,7 @@
 		}
 	</style>
 	<script src="https://kit.fontawesome.com/00bf9be869.js" crossorigin="anonymous"></script>
-    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-B-HUFqYw.js"></script>
+    <script type="module" crossorigin src="/threejs-typescript-sandbox/assets/index-Dyio5fx9.js"></script>
   </head>
   <body>
 	<!--<div id="joystickContainerStatic"></div>-->		
@@ -380,8 +380,8 @@
 			<div id="pageTitle" class="label-title" style="left: 0%;"><i class="fa-solid fa-car-burst"></i> CAR COMBAT</div>	
 			<div id="vehicleSelectionTitle" class="label-subtitle" style="top:10%;left: 0%;"><i class="fa-solid fa-car"></i> Select Vehicle</div>	
 			<div id="vehicleName" class="label-subtitle2" style="top:20%;left: 0%;"><i class="fa-solid fa-car"></i>**</div>	
-			<div id="menuLeft" class="control-button"><i class="fa-solid fa-arrow-left"></i></div>
-			<div id="menuRight" class="control-button"><i class="fa-solid fa-arrow-right"></i></div>
+			<div id="menuLeft" class="control-button" style="z-index: 1; font-size: 24px;"><i class="fa-solid fa-arrow-left"></i></div>
+			<div id="menuRight" class="control-button" style="z-index: 1; font-size: 24px;"><i class="fa-solid fa-arrow-right"></i></div>
 			<table id="statsTable" class="statsTable">
 				<tr>
 					<td><i class="fa-solid fa-heart"></i></td>
@@ -422,7 +422,7 @@
 			</table>
 			<div id="mapSelectionTitle" class="label-subtitle" style="left: 0%;"><i class="fa-solid fa-map-location-dot"></i> Select Map to Start Game</div>				
 			<div id="levelSelectionDiv">
-				<!-- dynamically generated buttons inserted here by SceneController based on records in worldLibrary.json -->
+				<!-- dynamically generated buttons (menu-button-large) inserted here by SceneController based on records in worldLibrary.json -->
 			</div>
 		</div>
 	</div>
