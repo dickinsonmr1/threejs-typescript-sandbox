@@ -50,7 +50,7 @@
         "fogColor": "#aaaaaa"
     },
     {
-        "name" : "Desert Peak",
+        "name" : "Desert",
         "menuButtonIcon": "fa-solid fa-mountain",
         "heightMap": "assets/heightmaps/mountain_512x512.png",
         "heightScale": 15,
@@ -81,11 +81,11 @@
         "heightScale": 15,
         "horizontalScale": 1,
         
-        "texture1": "assets/terrain/Sand 4.jpg",
-        "texture2": "assets/terrain/Sand 4.jpg",
-        "texture3": "assets/terrain/Sand 4.jpg",
-        "texture4": "assets/terrain/Sand 4.jpg",
-        "texture5": "assets/terrain/Sand 4.jpg",
+        "texture1": "assets/terrain/snow.png",
+        "texture2": "assets/terrain/snow.png",
+        "texture3": "assets/terrain/snow.png",
+        "texture4": "assets/terrain/snow.png",
+        "texture5": "assets/terrain/snow.png",
 
         "skyTexture": "assets/skybox/rosendal_park_sunset_puresky.jpg",
         
@@ -97,6 +97,6 @@
         "grassBillboardStartY": 7,
         "grassBillboardEndY": 12,
         
-        "fogColor": "#ffbf52"
+        "fogColor": "#eeeeee"
     }
 ]

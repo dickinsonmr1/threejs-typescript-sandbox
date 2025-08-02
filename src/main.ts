@@ -54,6 +54,8 @@ window.addEventListener("gamepaddisconnected", (event) => {
 
 const gui = new GUI();
 gui.title('Debug');
+if(!gameConfig.isDebug)
+  gui.close();
 
 var sceneController = new SceneController(renderer, gui);
 const gameScene = new GameScene(mainCamera, debugOrbitCamera, debugOrbitControls, sceneController, gameConfig);
