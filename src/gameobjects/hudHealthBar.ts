@@ -9,6 +9,9 @@ export enum HudBarType {
     TopCenterMain,
     TopCenterSecondary,
 
+    BottomCenterMain,
+    BottomCenterSecondary,
+
     UpperLeftMain,
     UpperLeftSecondary,    
     UpperRightMain,
@@ -87,6 +90,21 @@ export default class HudHealthBar {
                 iconSize = 48;
                 break;
 
+            case HudBarType.BottomCenterMain:
+                x = -iconSize * 1.5;//-this.hudWidth / 4;
+                y = -this.hudHeight;
+                xAlign = 0;
+                yAlign = 0.5;
+                break;
+
+            case HudBarType.BottomCenterSecondary:
+                x = -iconSize * 1.5;//this.hudWidth;
+                y = -this.hudHeight * 0.9;
+                xAlign = 0;
+                yAlign = 0.5;
+                iconSize = 48;
+                break;
+    
             case HudBarType.TopCenterMain:
                 x = -iconSize * 1.5;//-this.hudWidth / 4;
                 y = this.hudHeight;

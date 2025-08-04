@@ -410,9 +410,9 @@ export default class SceneController {
             */
            this.gameScene?.player1.tryTurn(-output.vector.x);
            
-            if(output.vector.y > 0.25)
+            if(output.vector.y > 0.1)
                 this.gameScene?.player1.tryAccelerate(output.vector.y);
-            else if (output.vector.y < -0.25)
+            else if (output.vector.y < -0.1)
                 this.gameScene?.player1.tryReverse(output.vector.y);
             else {
                 this.gameScene?.player1.tryStopAccelerate();           
