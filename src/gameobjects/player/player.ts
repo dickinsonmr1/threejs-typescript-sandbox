@@ -27,6 +27,7 @@ import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
 import { FireGpuParticleEmitter } from "../fx/fireGpuParticleEmitter";
 import { ExplosionGpuParticleEmitter } from "../fx/explosionGpuParticleEmitter";
 import { FireGpuParticleEmitter2 } from "../fx/fire/fireGpuParticleEmitter2";
+import { SpecialType } from "./specialType";
 
 export enum PlayerState {
     Alive,
@@ -56,15 +57,6 @@ export enum VehicleType {
     PickupTruck = 11
 }
 
-export enum SpecialType {
-    TriRockets = 0,
-    Flamethrower = 1,
-    SonicPulse = 2,
-    MegaGun = 3,
-    Lightning = 4,
-    Dumpster = 5,
-    Shovel = 6
-}
 
 export enum PlayerTeam {
     Red,
@@ -1210,7 +1202,7 @@ export class Player {
                 this.tryFireDumpster();
                 break;
             case SpecialType.Shovel:
-                this.tryFireDumpster();
+                this.tryFireShovel();
                 break;
         }
     }
