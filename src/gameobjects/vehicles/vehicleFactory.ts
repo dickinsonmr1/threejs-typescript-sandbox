@@ -59,194 +59,83 @@ export class VehicleFactory {
         let vehicle = null;
         let maxHealth = 100;
 
-        let leftHeadlightOffset = new THREE.Vector3(-2, 0, -0.3);
-        let rightHeadlightOffset = new THREE.Vector3(-2, 0, 0.3);
-
-        let leftBrakeLightOffset = new THREE.Vector3(1.15, 0.15, -0.3);
-        let rightBrakeLightOffset = new THREE.Vector3(1.15, 0.15, 0.3);
-
         let selectedVehicleConfig: VehicleConfig;
+        let vehicleModel: GLTF;
+        let wheelModel: GLTF = gameScene.wheelModel;
 
         switch(vehicleType) {
             case VehicleType.Taxi:
                 selectedVehicleConfig = vehicleConfigTaxi
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.taxiModel,             // model                            
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigTaxi
-                );
-                maxHealth = 100;
+                vehicleModel = gameScene.taxiModel;
                 break;
             case VehicleType.Ambulance:
                 selectedVehicleConfig = vehicleConfigAmbulance
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.ambulanceModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigAmbulance
-                );
-                maxHealth = 150;
+                vehicleModel = gameScene.ambulanceModel;
                 break;
             case VehicleType.RaceCar:
                 selectedVehicleConfig = vehicleConfigRaceCarBlue;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.raceCarBlueModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigRaceCarBlue
-                );
-                maxHealth = 50;
+                vehicleModel = gameScene.raceCarBlueModel;
                 break;
             case VehicleType.RaceCarRed:
                 selectedVehicleConfig = vehicleConfigRaceCarRed;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.raceCarRedModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigRaceCarRed
-                );
-                maxHealth = 50;
+                vehicleModel = gameScene.raceCarRedModel;
                 break;
             case VehicleType.Police:
                 selectedVehicleConfig = vehicleConfigPolice;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.policeModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigPolice
-                );
-                maxHealth = 125;
+                vehicleModel = gameScene.policeModel;
                 break; 
             case VehicleType.Harvester:
                 selectedVehicleConfig = vehicleConfigHarvester;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.tractorModel,             // model         
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigHarvester
-                );
-                maxHealth = 150;
+                vehicleModel = gameScene.tractorModel;
                 break;         
             case VehicleType.PoliceTractor:
                 selectedVehicleConfig = vehicleConfigPoliceTractor;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.policeTractorModel,             // model         
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigPoliceTractor
-                );
-                maxHealth = 150;
+                vehicleModel = gameScene.policeTractorModel;
+                break;
             case VehicleType.Killdozer:
                 selectedVehicleConfig = vehicleConfigKilldozer;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.killdozerModel,             // model         
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigKilldozer
-                );
-                maxHealth = 150;
+                vehicleModel = gameScene.killdozerModel;
                 break;
             case VehicleType.TrashTruck:
                 selectedVehicleConfig = vehicleConfigCompactor;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.trashTruckModel,             // model         
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigCompactor
-                );
-                maxHealth = 150;           
+                vehicleModel = gameScene.trashTruckModel;   
                 break;
             case VehicleType.Offroader:
                 selectedVehicleConfig = vehicleConfigOffroader;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.suvModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigOffroader
-                );
-                maxHealth = 100;
+                vehicleModel = gameScene.suvModel;   
                 break;
             case VehicleType.PickupTruck:
                 selectedVehicleConfig = vehicleConfigPickupTruck;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.pickupTruckModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigPickupTruck
-                );
-                maxHealth = 100;
+                vehicleModel = gameScene.pickupTruckModel
                 break;
             case VehicleType.FireTruck:
                 selectedVehicleConfig = vehicleConfigFireTruck;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.fireTruckModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigFireTruck
-                );
-                maxHealth = 150;
+                vehicleModel = gameScene.fireTruckModel
                 break;
             case VehicleType.Tank:
                 selectedVehicleConfig = vehicleConfigTank;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.tankModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigTank
-                );
-                maxHealth = 150;
+                vehicleModel = gameScene.tankModel
+                break;
             case VehicleType.Tanker:
                 selectedVehicleConfig = vehicleConfigTanker;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.tankerModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigTanker
-                );
-                maxHealth = 150;
+                vehicleModel = gameScene.tankerModel;
                 break;
             default:
                 selectedVehicleConfig = vehicleConfigDefault;
-                vehicle = new RaycastVehicleObject(
-                    scene, isDebug,
-                    world,            
-                    wheelMaterial,
-                    gameScene.sedanSportsModel,             // model        
-                    gameScene.wheelModel,       // wheel model
-                    vehicleConfigDefault
-                );
-                maxHealth = 100            
+                vehicleModel = gameScene.sedanSportsModel;
                 break;
         }
+
+        maxHealth = selectedVehicleConfig.health * 2;
+
+        vehicle = new RaycastVehicleObject(
+            scene, isDebug,
+            world,            
+            wheelMaterial,
+            vehicleModel,             // model        
+            wheelModel,               // wheel model
+            selectedVehicleConfig
+        );
         
         return new Player(scene,
             playerIndex,
