@@ -71,6 +71,9 @@ export default class GameScene extends THREE.Scene {
     public pickupTruckModel!: GLTF;
     public fireTruckModel!: GLTF;
 
+    public tankModel!: GLTF;
+    public tankerModel!: GLTF;
+
     public wheelModel!: GLTF;
     public dumpsterModel!: GLTF;
 
@@ -1099,7 +1102,7 @@ export default class GameScene extends THREE.Scene {
     private async loadVehicleAssets(): Promise<void> {
        
         this.taxiModel = await this.gameAssetModelLoader.loadTaxiModel();
-        this.policeModel = await this.gameAssetModelLoader.loadTankerModel();
+        this.policeModel = await this.gameAssetModelLoader.loadPoliceModel();
         this.ambulanceModel = await this.gameAssetModelLoader.loadAmbulanceModel();
         this.trashTruckModel = await this.gameAssetModelLoader.loadTrashTruckModel();
         this.sedanSportsModel = await this.gameAssetModelLoader.loadSedanSportsModel();
@@ -1112,6 +1115,9 @@ export default class GameScene extends THREE.Scene {
         this.suvModel = await this.gameAssetModelLoader.loadSuvModel();
         this.killdozerModel = await this.gameAssetModelLoader.loadKilldozerModel();
         this.fireTruckModel = await this.gameAssetModelLoader.loadFireTruckModel();
+
+        this.tankModel = await this.gameAssetModelLoader.loadTankModel();
+        this.tankerModel = await this.gameAssetModelLoader.loadTankerModel();
         
         this.wheelModel = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/wheel-racing.glb');
     }

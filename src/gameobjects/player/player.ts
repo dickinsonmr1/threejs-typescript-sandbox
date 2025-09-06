@@ -54,7 +54,10 @@ export enum VehicleType {
     PoliceTractor = 9,
     Harvester = 10,
     
-    PickupTruck = 11
+    PickupTruck = 11,
+
+    Tank = 12,
+    Tanker = 13
 }
 
 

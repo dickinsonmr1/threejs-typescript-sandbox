@@ -740,6 +740,12 @@ export default class SceneController {
                 case VehicleType.TrashTruck:
                     icon.classList.add('fa-solid', 'fa-dumpster-fire');
                     break;
+                case VehicleType.Tank:
+                    icon.classList.add('fa-solid', 'fa-rocket');
+                    break;
+                case VehicleType.Tanker:
+                    icon.classList.add('fa-solid', 'fa-fire');
+                    break;
                 default:
                     icon.classList.add('fa-solid', 'fa-bolt');
             }

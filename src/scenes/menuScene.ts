@@ -180,8 +180,9 @@ export default class MenuScene extends THREE.Scene {
 
     public handleKeyUp = (event: KeyboardEvent) => {
             
+        let vehicleType = this.getSelectedVehicleType();
         if (event.key === 'Enter') {
-            this.sceneController.switchToGameScene(this.getSelectedVehicleType() ?? VehicleType.Killdozer, this.sceneController.worldLibrary.find(x => x.name == 'Arena')!);
+            this.sceneController.switchToGameScene(vehicleType ?? VehicleType.Killdozer, this.sceneController.worldLibrary.find(x => x.name == 'Arena')!);
         }
         if(event.key === 'ArrowLeft') {
             this.selectPreviousVehicle();

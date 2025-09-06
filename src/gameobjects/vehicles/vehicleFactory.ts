@@ -5,7 +5,6 @@ import * as CANNON from 'cannon-es'
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GameScene from "../../scenes/gameScene";
 
-import { VehicleConfig } from './config/vehicleConfig';
 import vehicleConfigDefault from './config/99-default.json'
 import vehicleConfigOffroader from './config/07-offroader.json'
 import vehicleConfigTaxi from './config/00-taxi.json'
@@ -19,6 +18,11 @@ import vehicleConfigPickupTruck from './config/11-pickupTruck.json'
 import vehicleConfigPoliceTractor from './config/09-policeTractor.json'
 import vehicleConfigKilldozer from './config/04-killdozer.json'
 import vehicleConfigHarvester from './config/10-harvester.json'
+
+import vehicleConfigTank from './config/12-tank.json'
+import vehicleConfigTanker from './config/13-tanker.json'
+
+
 export class VehicleFactory {
     
     crosshairTexture: THREE.Texture;
@@ -212,6 +216,36 @@ export class VehicleFactory {
                     gameScene.fireTruckModel,             // model        
                     gameScene.wheelModel,       // wheel model
                     vehicleConfigFireTruck
+                );
+                maxHealth = 150;
+                leftHeadlightOffset = new THREE.Vector3(-3.0, 0.4, -0.45);
+                rightHeadlightOffset = new THREE.Vector3(-3.0, 0.4, 0.45);
+                leftBrakeLightOffset = new THREE.Vector3(2.0, 0.15, -0.6);
+                rightBrakeLightOffset = new THREE.Vector3(2.0, 0.15, 0.6);
+                break;
+            case VehicleType.Tank:
+                vehicle = new RaycastVehicleObject(
+                    scene, isDebug,
+                    world,            
+                    wheelMaterial,
+                    gameScene.tankModel,             // model        
+                    gameScene.wheelModel,       // wheel model
+                    vehicleConfigTank
+                );
+                maxHealth = 150;
+                leftHeadlightOffset = new THREE.Vector3(-3.0, 0.4, -0.45);
+                rightHeadlightOffset = new THREE.Vector3(-3.0, 0.4, 0.45);
+                leftBrakeLightOffset = new THREE.Vector3(2.0, 0.15, -0.6);
+                rightBrakeLightOffset = new THREE.Vector3(2.0, 0.15, 0.6);
+                break;
+            case VehicleType.Tanker:
+                vehicle = new RaycastVehicleObject(
+                    scene, isDebug,
+                    world,            
+                    wheelMaterial,
+                    gameScene.tankerModel,             // model        
+                    gameScene.wheelModel,       // wheel model
+                    vehicleConfigTanker
                 );
                 maxHealth = 150;
                 leftHeadlightOffset = new THREE.Vector3(-3.0, 0.4, -0.45);
