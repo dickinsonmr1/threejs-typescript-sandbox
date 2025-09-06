@@ -59,6 +59,11 @@
     "reverseTopSpeedForHigherTorque": 5,
     "driveSystem": 0,
 
+    "leftHeadlightOffset": [-2, -0.1, -0.3],
+    "rightHeadlightOffset": [-2, -0.1, 0.3],
+    "leftBrakeLightOffset": [1.15, 0.0, -0.2],
+    "rightBrakeLightOffset": [1.15, 0.0, 0.2],
+
     "dampingRelaxation": 6.0,
     "dampingCompression": 5.0,
     "maxSuspensionForce": 100000,

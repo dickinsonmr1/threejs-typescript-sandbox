@@ -67,6 +67,11 @@
     "offsetLeft2": [1.1, 0.85, 0.25],
     "offsetRight2": [1.1, 0.85, -0.25],
 
+    "leftHeadlightOffset": [-2, 0, -0.3],
+    "rightHeadlightOffset": [-2, 0, 0.3],
+    "leftBrakeLightOffset": [1.15, 0.15, -0.3],
+    "rightBrakeLightOffset": [1.15, 0.15, 0.3],
+
     "dampingRelaxation": 6.0,
     "dampingCompression": 5.0,
     "maxSuspensionForce": 100000,

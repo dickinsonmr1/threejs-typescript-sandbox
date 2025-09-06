@@ -60,6 +60,11 @@
     
     "driveSystem": 1,
 
+    "leftHeadlightOffset": [-2.25, 0.1, -0.3],
+    "rightHeadlightOffset": [-2.25, 0.1, 0.3],
+    "leftBrakeLightOffset": [1.15, 0.15, -0.3],
+    "rightBrakeLightOffset": [1.15, 0.15, 0.3],
+    
     "dampingRelaxation": 6.0,
     "dampingCompression": 5.0,
     "maxSuspensionForce": 100000,
