@@ -71,16 +71,44 @@ export default class GameAssetModelLoader {
         return model;
     }
 
-    async loadPoliceModel(): Promise<GLTF> {        
+    async loadPoliceModel(): Promise<GLTF> {                
 
-        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/hotrod-black-3.glb');        
-        //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
         var modelScene = model.scene;
 
         var body = modelScene.children.find(x => x.name == 'body');
-        //body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        body?.rotateY(Math.PI);
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
         body?.position.add(new THREE.Vector3(0, -0.5, 0));
+        
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+
+        return model;
+    }
+
+    async loadPoliceRetroModel(): Promise<GLTF> {        
+
+        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/hotrod-black-5.glb');        
+        //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
+        var modelScene = model.scene;
+        modelScene.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+
+        var body = modelScene.children.find(x => x.name == 'body');
+        
+        //body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        //body?.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 16);
+        //body?.rotateOnAxis(new THREE.Vector3(0, 0, 1), -Math.PI / 16);
+        //body?.position.add(new THREE.Vector3(0.15, -0.5, -1.5));
+        
+        //body?.rotateY(Math.PI);
+        
 
         var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
         var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
@@ -94,6 +122,65 @@ export default class GameAssetModelLoader {
 
         return model;
     }
+
+    async loadTankModel(): Promise<GLTF> {        
+
+        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/tank.glb');        
+        //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
+        var modelScene = model.scene;
+
+        var body = modelScene.children.find(x => x.name == 'body');
+        
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 16);
+        body?.rotateOnAxis(new THREE.Vector3(0, 0, 1), -Math.PI / 16);
+        body?.position.add(new THREE.Vector3(0.15, -0.5, -1.5));
+        
+        //body?.rotateY(Math.PI);
+        
+
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+
+        return model;
+    }
+
+     async loadTankerModel(): Promise<GLTF> {        
+
+        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/tanker.glb');        
+        //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
+        var modelScene = model.scene;
+
+        var body = modelScene.children.find(x => x.name == 'body');
+        
+        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        body?.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 16);
+        body?.rotateOnAxis(new THREE.Vector3(0, 0, 1), -Math.PI / 16);
+        //body?.position.add(new THREE.Vector3(0.15, -0.5, -1.5));
+        
+        //body?.rotateY(Math.PI);
+        
+
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+
+        return model;
+    }
+
 
     async loadAmbulanceModel(): Promise<GLTF> {        
 

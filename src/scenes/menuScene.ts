@@ -16,6 +16,9 @@ import vehicleConfigPickupTruck from '../gameobjects/vehicles/config/11-pickupTr
 import vehicleConfigPoliceTractor from '../gameobjects/vehicles/config/09-policeTractor.json'
 import vehicleConfigKilldozer from '../gameobjects/vehicles/config/04-killdozer.json'
 import vehicleConfigHarvester from '../gameobjects/vehicles/config/10-harvester.json'
+import vehicleConfigTank from '../gameobjects/vehicles/config/12-tank.json'
+import vehicleConfigTanker from '../gameobjects/vehicles/config/13-tanker.json'
+
 import { VehicleConfig } from '../gameobjects/vehicles/config/vehicleConfig';
 
 export default class MenuScene extends THREE.Scene {
@@ -95,6 +98,9 @@ export default class MenuScene extends THREE.Scene {
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigPoliceTractor, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigKilldozer, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigHarvester, modelPosition);
+
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigTank, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigTanker, modelPosition);
 
         this.add(this.group);
 

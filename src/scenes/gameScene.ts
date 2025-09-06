@@ -1099,7 +1099,7 @@ export default class GameScene extends THREE.Scene {
     private async loadVehicleAssets(): Promise<void> {
        
         this.taxiModel = await this.gameAssetModelLoader.loadTaxiModel();
-        this.policeModel = await this.gameAssetModelLoader.loadPoliceModel();
+        this.policeModel = await this.gameAssetModelLoader.loadTankerModel();
         this.ambulanceModel = await this.gameAssetModelLoader.loadAmbulanceModel();
         this.trashTruckModel = await this.gameAssetModelLoader.loadTrashTruckModel();
         this.sedanSportsModel = await this.gameAssetModelLoader.loadSedanSportsModel();

@@ -1,26 +1,26 @@
 {   
-    "vehicleTypeEnum": 5,
-    "vehicleName": "The Law",
-    "asset": "assets/kenney-vehicles-2/police.glb",
-    "health": 50,
-    "special": 25,
-    "speed": 75,
-    "defensiveSpecial": 100,
+    "vehicleTypeEnum": 12,
+    "vehicleName": "Tank",
+    "asset": "assets/vehicles-custom/tank.glb",
+    "health": 100,
+    "special": 75,
+    "speed": 50,
+    "defensiveSpecial": 25,
 
-    "specialTypeEnum": 5,
+    "specialTypeEnum": 3,
 
-    "comment": "police", 
+    "comment": "tank", 
 
-    "frontWheelHeight": 0.25,
-    "rearWheelHeight": 0.25,
+    "frontWheelHeight": 0.20,
+    "rearWheelHeight": 0.20,
 
-    "frontWheelRadius": 0.25,
-    "rearWheelRadius": 0.25,
+    "frontWheelRadius": 0.20,
+    "rearWheelRadius": 0.20,
 
     "frontWheelModelScale": [0.5, 0.75, 0.75],
     "rearWheelModelScale": [0.5, 0.75, 0.75],
 
-    "frontWheelOffset": [0.5, 0, 0],
+    "frontWheelOffset": [0.25, 0, 0],
     "rearWheelOffset": [0.5, 0, 0],
 
     "wheelMass": 20,
@@ -35,34 +35,30 @@
     "useCustomSlidingRotationalSpeed": false,
     "customSlidingRotationalSpeed": -30,
     "lateralMotionDampingMultiplier": 0.92,    
-    
+
     "suspensionStiffness": 100,
     "suspensionRestLength": 0.25,
 
-    "maxSteerVal": 0.4,
-    "driftingMaxSteerVal": 0.5,
+    "maxSteerVal": 0.7,
+    "driftingMaxSteerVal": 0.8,
 
-    "chassisDimensions": [1, 0.35, 0.4],
-    "centerOfMassAdjust": [0, 0.25, 0],
+    "chassisDimensions": [1, 0.5, 0.4],
+    "centerOfMassAdjust": [0, 0.4, 0],
 
-    "chassisMass": 750,
+    "chassisMass": 600,
 
     "modelScale": [0.7, 0.7, 0.7],
     "modelOffset": [0, 0, 0],
 
-    "lowSpeedForce": 5000,
-    "highSpeedForce": 1750,
+    "lowSpeedForce": 2000,
+    "highSpeedForce": 1000,
     "topSpeedForHigherTorque": 10,
     
     "reverseLowSpeedForce": 2000,
     "reverseHighSpeedForce": 1000,
-    "reverseTopSpeedForHigherTorque": 5,
-    
-    "driveSystem": 1,
+    "reverseTopSpeedForHigherTorque": 5,    
 
-    "hasEmergencyLights1": true,
-    "offsetLeft1": [0, 0.55, 0.2],
-    "offsetRight1": [0, 0.55, -0.2],
+    "driveSystem": 0,
 
     "dampingRelaxation": 6.0,
     "dampingCompression": 5.0,
