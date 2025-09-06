@@ -66,10 +66,10 @@ export interface VehicleConfig {
     offsetLeft2?: number[];
     offsetRight2?: number[];
 
-    leftHeadlightOffset?: number[];
-    rightHeadlightOffset?: number[];
-    leftBrakeLightOffset?: number[];
-    rightBrakeLightOffset?: number[];
+    leftHeadlightOffset: number[];
+    rightHeadlightOffset: number[];
+    leftBrakeLightOffset: number[];
+    rightBrakeLightOffset: number[];
     
     //
     lowSpeedForce: number; // max torque at low speed for faster acceleration

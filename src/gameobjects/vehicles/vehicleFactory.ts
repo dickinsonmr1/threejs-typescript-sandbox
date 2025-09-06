@@ -6,6 +6,7 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GameScene from "../../scenes/gameScene";
 import { Utility } from "../../utility";
 
+import { VehicleConfig } from "./config/vehicleConfig";
 import vehicleConfigDefault from './config/99-default.json'
 import vehicleConfigOffroader from './config/07-offroader.json'
 import vehicleConfigTaxi from './config/00-taxi.json'
@@ -64,8 +65,11 @@ export class VehicleFactory {
         let leftBrakeLightOffset = new THREE.Vector3(1.15, 0.15, -0.3);
         let rightBrakeLightOffset = new THREE.Vector3(1.15, 0.15, 0.3);
 
+        let selectedVehicleConfig: VehicleConfig;
+
         switch(vehicleType) {
             case VehicleType.Taxi:
+                selectedVehicleConfig = vehicleConfigTaxi
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -75,12 +79,9 @@ export class VehicleFactory {
                     vehicleConfigTaxi
                 );
                 maxHealth = 100;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigTaxi.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigTaxi.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigTaxi.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigTaxi.rightBrakeLightOffset);
                 break;
             case VehicleType.Ambulance:
+                selectedVehicleConfig = vehicleConfigAmbulance
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -90,12 +91,9 @@ export class VehicleFactory {
                     vehicleConfigAmbulance
                 );
                 maxHealth = 150;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigAmbulance.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigAmbulance.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigAmbulance.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigAmbulance.rightBrakeLightOffset);
                 break;
             case VehicleType.RaceCar:
+                selectedVehicleConfig = vehicleConfigRaceCarBlue;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -105,12 +103,9 @@ export class VehicleFactory {
                     vehicleConfigRaceCarBlue
                 );
                 maxHealth = 50;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigRaceCarBlue.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigRaceCarBlue.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigRaceCarBlue.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigRaceCarBlue.rightBrakeLightOffset);
                 break;
             case VehicleType.RaceCarRed:
+                selectedVehicleConfig = vehicleConfigRaceCarRed;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -120,12 +115,9 @@ export class VehicleFactory {
                     vehicleConfigRaceCarRed
                 );
                 maxHealth = 50;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigRaceCarRed.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigRaceCarRed.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigRaceCarRed.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigRaceCarRed.rightBrakeLightOffset);
                 break;
             case VehicleType.Police:
+                selectedVehicleConfig = vehicleConfigPolice;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -135,12 +127,9 @@ export class VehicleFactory {
                     vehicleConfigPolice
                 );
                 maxHealth = 125;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigPolice.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigPolice.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigPolice.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigPolice.rightBrakeLightOffset);
                 break; 
             case VehicleType.Harvester:
+                selectedVehicleConfig = vehicleConfigHarvester;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -150,12 +139,9 @@ export class VehicleFactory {
                     vehicleConfigHarvester
                 );
                 maxHealth = 150;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigHarvester.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigHarvester.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigHarvester.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigHarvester.rightBrakeLightOffset);
                 break;         
             case VehicleType.PoliceTractor:
+                selectedVehicleConfig = vehicleConfigPoliceTractor;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -165,11 +151,8 @@ export class VehicleFactory {
                     vehicleConfigPoliceTractor
                 );
                 maxHealth = 150;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigPoliceTractor.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigPoliceTractor.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigPoliceTractor.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigPoliceTractor.rightBrakeLightOffset);                break;               
             case VehicleType.Killdozer:
+                selectedVehicleConfig = vehicleConfigKilldozer;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -179,12 +162,9 @@ export class VehicleFactory {
                     vehicleConfigKilldozer
                 );
                 maxHealth = 150;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigKilldozer.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigKilldozer.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigKilldozer.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigKilldozer.rightBrakeLightOffset);
                 break;
             case VehicleType.TrashTruck:
+                selectedVehicleConfig = vehicleConfigCompactor;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -194,16 +174,9 @@ export class VehicleFactory {
                     vehicleConfigCompactor
                 );
                 maxHealth = 150;           
-                //leftHeadlightOffset = new THREE.Vector3(-3, 0.55, -0.45);
-                //rightHeadlightOffset = new THREE.Vector3(-3, 0.55, 0.45);
-                //leftBrakeLightOffset = new THREE.Vector3(1.8, 0.5, -0.35);
-                //rightBrakeLightOffset = new THREE.Vector3(1.8, 0.5, 0.35);
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigPoliceTractor.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigPoliceTractor.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigPoliceTractor.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigPoliceTractor.rightBrakeLightOffset);
                 break;
             case VehicleType.Offroader:
+                selectedVehicleConfig = vehicleConfigOffroader;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -213,10 +186,9 @@ export class VehicleFactory {
                     vehicleConfigOffroader
                 );
                 maxHealth = 100;
-                leftHeadlightOffset = new THREE.Vector3(-2.25, 0.1, -0.3);
-                rightHeadlightOffset = new THREE.Vector3(-2.25, 0.1, 0.3);
                 break;
             case VehicleType.PickupTruck:
+                selectedVehicleConfig = vehicleConfigPickupTruck;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -226,12 +198,9 @@ export class VehicleFactory {
                     vehicleConfigPickupTruck
                 );
                 maxHealth = 100;
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigPolice.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigPolice.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigPolice.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigPolice.rightBrakeLightOffset);
                 break;
             case VehicleType.FireTruck:
+                selectedVehicleConfig = vehicleConfigFireTruck;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -241,16 +210,9 @@ export class VehicleFactory {
                     vehicleConfigFireTruck
                 );
                 maxHealth = 150;
-                //leftHeadlightOffset = new THREE.Vector3(-3.0, 0.4, -0.45);
-                //rightHeadlightOffset = new THREE.Vector3(-3.0, 0.4, 0.45);
-                //leftBrakeLightOffset = new THREE.Vector3(2.0, 0.15, -0.6);
-                //rightBrakeLightOffset = new THREE.Vector3(2.0, 0.15, 0.6);
-                leftHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigFireTruck.leftHeadlightOffset);
-                rightHeadlightOffset = Utility.ArrayToThreeVector3(vehicleConfigFireTruck.rightHeadlightOffset);
-                leftBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigFireTruck.leftBrakeLightOffset);
-                rightBrakeLightOffset = Utility.ArrayToThreeVector3(vehicleConfigFireTruck.rightBrakeLightOffset);
                 break;
             case VehicleType.Tank:
+                selectedVehicleConfig = vehicleConfigTank;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -260,12 +222,8 @@ export class VehicleFactory {
                     vehicleConfigTank
                 );
                 maxHealth = 150;
-                leftHeadlightOffset = new THREE.Vector3(-3.0, 0.4, -0.45);
-                rightHeadlightOffset = new THREE.Vector3(-3.0, 0.4, 0.45);
-                leftBrakeLightOffset = new THREE.Vector3(2.0, 0.15, -0.6);
-                rightBrakeLightOffset = new THREE.Vector3(2.0, 0.15, 0.6);
-                break;
             case VehicleType.Tanker:
+                selectedVehicleConfig = vehicleConfigTanker;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -275,12 +233,9 @@ export class VehicleFactory {
                     vehicleConfigTanker
                 );
                 maxHealth = 150;
-                leftHeadlightOffset = new THREE.Vector3(-3.2, 0.4, -0.35);
-                rightHeadlightOffset = new THREE.Vector3(-3.2, 0.4, 0.35);
-                leftBrakeLightOffset = new THREE.Vector3(2.0, 0.15, -0.3);
-                rightBrakeLightOffset = new THREE.Vector3(2.0, 0.15, 0.3);
                 break;
             default:
+                selectedVehicleConfig = vehicleConfigDefault;
                 vehicle = new RaycastVehicleObject(
                     scene, isDebug,
                     world,            
@@ -304,10 +259,10 @@ export class VehicleFactory {
             this.particleMaterial,
             vehicle,
             maxHealth,
-            leftHeadlightOffset,
-            rightHeadlightOffset,
-            leftBrakeLightOffset,
-            rightBrakeLightOffset,
+            Utility.ArrayToThreeVector3(selectedVehicleConfig.leftHeadlightOffset),
+            Utility.ArrayToThreeVector3(selectedVehicleConfig.rightHeadlightOffset),
+            Utility.ArrayToThreeVector3(selectedVehicleConfig.leftBrakeLightOffset),
+            Utility.ArrayToThreeVector3(selectedVehicleConfig.rightBrakeLightOffset),
             deadzoneX,
             vehicle.vehicleOverrideConfig
         );

@@ -1,11 +1,11 @@
 {   
-    "vehicleTypeEnum": 4,
+    "vehicleTypeEnum": 99,
     "vehicleName": "Placeholder Dummy Vehicle",
-    "asset": "assets/kenney-vehicles-2/tractor-shovel.glb",
+    "asset": "assets/kenney-vehicles-2/taxi.glb",
     "health": 50,
     "special": 50,
     "speed": 50,
-    "defensiveSpecial": 50,        
+    "defensiveSpecial": 50,
 
     "specialTypeEnum": 1,
 
@@ -16,12 +16,12 @@
 
     "frontWheelRadius": 5,
     "rearWheelRadius": 5,
+        
+    "frontWheelModelScale": [1, 1, 1],
+    "rearWheelModelScale": [1, 1, 1],
 
-    "frontWheelModelScale": [5, 5, 5],
-    "rearWheelModelScale": [5, 5, 5],
-
-    "frontWheelOffset": [5, 5, 5],
-    "rearWheelOffset": [5, 5, 5],
+    "frontWheelOffset": [1, 1, 1],
+    "rearWheelOffset": [1, 1, 1],
 
     "wheelMass": 20,
 
@@ -30,11 +30,11 @@
 
     "driftingFrictionSlipFront": 2.5,
     "driftingFrictionSlipRear": 1.5,
-        
+
     "rollInfluence": 0.01,
     "useCustomSlidingRotationalSpeed": false,
     "customSlidingRotationalSpeed": -30,
-    "lateralMotionDampingMultiplier": 0.92,    
+    "lateralMotionDampingMultiplier": 0.92,
 
     "suspensionStiffness": 100,
     "suspensionRestLength": 0.25,
@@ -42,23 +42,28 @@
     "maxSteerVal": 0.7,
     "driftingMaxSteerVal": 0.8,
 
-    "chassisDimensions": [5, 5, 5],
+    "chassisDimensions": [1, 1, 1],
     "centerOfMassAdjust": [0, 0, 0],
 
     "chassisMass": 750,
 
     "modelScale": [0.7, 0.7, 0.7],
     "modelOffset": [0, 0, 0],
-
+    
     "lowSpeedForce": 3000,
     "highSpeedForce": 1500,
     "topSpeedForHigherTorque": 10,
-    
+
     "reverseLowSpeedForce": 2000,
     "reverseHighSpeedForce": 1000,
     "reverseTopSpeedForHigherTorque": 5,
-    
+
     "driveSystem": 0,
+
+    "leftHeadlightOffset": [-2, 0, -0.3],
+    "rightHeadlightOffset": [-2, 0, 0.3],
+    "leftBrakeLightOffset": [1.15, 0.15, -0.3],
+    "rightBrakeLightOffset": [1.15, 0.15, 0.3],
 
     "dampingRelaxation": 2.5,
     "dampingCompression": 2.0,
