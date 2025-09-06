@@ -122,6 +122,7 @@ export default class MenuScene extends THREE.Scene {
         modelScene.userData['defensiveSpecial'] = config.defensiveSpecial;
 
         modelScene.userData['vehicleName'] = config.vehicleName;
+        modelScene.userData['specialIcon'] = config.specialIcon;
         //modelScene.rotateY(Math.PI / 2);
 
         this.camera.lookAt(modelPosition);
@@ -178,11 +179,21 @@ export default class MenuScene extends THREE.Scene {
         return this.group.children[this.selectedVehicleIndex].userData['vehicleType'];
     }
 
+    getSelectedVehicleSpecialIcon(): string {
+        return this.group.children[this.selectedVehicleIndex].userData['specialIcon'];
+    }
+
     public handleKeyUp = (event: KeyboardEvent) => {
             
         let vehicleType = this.getSelectedVehicleType();
+        let specialIcon = this.getSelectedVehicleSpecialIcon();
+
         if (event.key === 'Enter') {
-            this.sceneController.switchToGameScene(vehicleType ?? VehicleType.Killdozer, this.sceneController.worldLibrary.find(x => x.name == 'Arena')!);
+            this.sceneController.switchToGameScene(
+                vehicleType ?? VehicleType.Killdozer,
+                specialIcon,
+                this.sceneController.worldLibrary.find(x => x.name == 'Arena')!
+            );
         }
         if(event.key === 'ArrowLeft') {
             this.selectPreviousVehicle();

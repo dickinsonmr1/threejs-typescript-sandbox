@@ -8,6 +8,7 @@
     "defensiveSpecial": 25,
     
     "specialTypeEnum": 4,
+    "specialIcon": "fa-truck-medical",
 
     "comment": "ambulance", 
 

@@ -8,6 +8,7 @@
     "defensiveSpecial": 75,    
 
     "specialTypeEnum": 1,
+    "specialIcon": "fa-fire",
 
     "comment": "harvester", 
 

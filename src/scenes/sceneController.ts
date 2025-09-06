@@ -86,7 +86,11 @@ export default class SceneController {
                 button.prepend(icon); // or use append() to add after the text
 
                 button.addEventListener('click', () => {
-                    this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, level);
+                    this.switchToGameScene(
+                        this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer,
+                        this.menuScene!.getSelectedVehicleSpecialIcon(),
+                        level
+                    );
                     button.style.visibility = "hidden";
                 });
 
@@ -462,7 +466,11 @@ export default class SceneController {
                     }               
                     if(buttonIndex == GamepadEnums.FACE_1 && !this.gamepadPrevious.buttons[GamepadEnums.FACE_1].pressed) {
                         console.log(`pressed: ${buttonIndex}`);                    
-                        this.switchToGameScene(this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer, this.worldLibrary.find(x => x.name == 'Arena')!);
+                        this.switchToGameScene(
+                            this.menuScene!.getSelectedVehicleType() ?? VehicleType.Killdozer,
+                            this.menuScene!.getSelectedVehicleSpecialIcon(),
+                            this.worldLibrary.find(x => x.name == 'Arena')!
+                        );
                     }     
                 }              
         });
@@ -683,7 +691,7 @@ export default class SceneController {
         document.getElementById('gameSceneDiv')!.style.visibility = 'hidden';
     }
 
-    async switchToGameScene(player1VehicleType: VehicleType, worldConfig: WorldConfig) {
+    async switchToGameScene(player1VehicleType: VehicleType, specialIcon: string, worldConfig: WorldConfig) {
 
         this.gameScene?.preloadMapData(<WorldConfig>worldConfig);
         this.gameScene?.preloadSkybox(<WorldConfig>worldConfig);
@@ -702,55 +710,7 @@ export default class SceneController {
         if (specialWeapon) {
 
             const icon = document.createElement('i');
-
-            switch(player1VehicleType) {
-                case VehicleType.Ambulance:
-                    icon.classList.add('fa-solid', 'fa-truck-medical');
-                    break;
-                case VehicleType.FireTruck:
-                    icon.classList.add('fa-solid', 'fa-fire');
-                    break;
-                case VehicleType.Harvester:
-                    icon.classList.add('fa-solid', 'fa-fire');
-                    break;
-                case VehicleType.Killdozer:                   
-                    icon.classList.add('fa-solid', 'fa-explosion'); 
-                    break;
-                case VehicleType.Offroader:
-                    icon.classList.add('fa-solid', 'fa-rocket');
-                    break;
-                case VehicleType.PickupTruck:
-                    icon.classList.add('fa-solid', 'fa-fire');
-                    break;
-                case VehicleType.Police:
-                    icon.classList.add('fa-solid', 'fa-bolt');
-                    break;
-                case VehicleType.PoliceTractor:
-                    icon.classList.add('fa-solid', 'fa-bolt');
-                    break;
-                case VehicleType.RaceCar:
-                    icon.classList.add('fa-solid', 'fa-fire');
-                    break;
-                case VehicleType.RaceCarRed:
-                    icon.classList.add('fa-solid', 'fa-fire');
-                    break;
-                case VehicleType.Taxi:
-                    icon.classList.add('fa-solid', 'fa-bolt');
-                    break;
-                case VehicleType.TrashTruck:
-                    icon.classList.add('fa-solid', 'fa-dumpster-fire');
-                    break;
-                case VehicleType.Tank:
-                    icon.classList.add('fa-solid', 'fa-rocket');
-                    break;
-                case VehicleType.Tanker:
-                    icon.classList.add('fa-solid', 'fa-fire');
-                    break;
-                default:
-                    icon.classList.add('fa-solid', 'fa-bolt');
-            }
-            
-            
+            icon.classList.add('fa-solid', specialIcon);            
             specialWeapon.appendChild(icon);
             specialWeapon.style.display = 'block';
 

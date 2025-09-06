@@ -10,6 +10,7 @@
     "specialTypeEnum": 1,
 
     "comment": "racecar", 
+    "specialIcon": "fa-fire",
 
     "frontWheelHeight": 0.3,
     "rearWheelHeight": 0.3,

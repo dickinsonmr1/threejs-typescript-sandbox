@@ -11,9 +11,10 @@ export interface VehicleConfig {
     defensiveSpecial: number;
 
     specialTypeEnum: number;
-    
+    specialIcon: string;
+
     comment: string;
-    
+        
     // wheel properties
     frontWheelHeight: number;
     rearWheelHeight: number;

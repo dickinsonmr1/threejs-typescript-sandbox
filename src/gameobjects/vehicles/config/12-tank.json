@@ -10,6 +10,7 @@
     "specialTypeEnum": 3,
 
     "comment": "tank", 
+    "specialIcon": "fa-rocket",
 
     "frontWheelHeight": 0.20,
     "rearWheelHeight": 0.20,

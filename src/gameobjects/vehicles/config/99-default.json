@@ -8,6 +8,7 @@
     "defensiveSpecial": 50,
 
     "specialTypeEnum": 1,
+    "specialIcon": "fa-bolt",
 
     "comment": "default", 
 

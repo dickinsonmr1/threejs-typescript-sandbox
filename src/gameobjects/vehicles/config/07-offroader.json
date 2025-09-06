@@ -8,7 +8,8 @@
     "defensiveSpecial": 75,
 
     "specialTypeEnum": 0,
-    
+    "specialIcon": "fa-rocket",
+
     "comment": "offroader",
 
     "frontWheelHeight": 0.25,
