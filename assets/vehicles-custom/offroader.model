@@ -1,0 +1,37 @@
+# Made using Asset Forge (2.5.2)
+
+:materials
+
+[name:metalGreen;color:RGBA(0.014, 0.640, 0.157, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.35;valueB:0;]
+[name:dark;color:RGBA(0.196, 0.196, 0.196, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.35;valueB:0;]
+[name:metal;color:RGBA(0.169, 0.169, 0.169, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.35;valueB:0.25;]
+[name:glass;color:RGBA(0.600, 0.839, 1.000, 1.000);scale:(1.0, 1.0);shader:Unlit;mapping:0;]
+[name:lightRed;color:RGBA(1.000, 0.200, 0.200, 1.000);scale:(1.0, 1.0);shader:Unlit;mapping:0;]
+[name:metalLight;color:RGBA(0.655, 0.655, 0.655, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.35;valueB:0.25;]
+[name:_defaultMat;color:RGBA(0.939, 0.953, 1.000, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.35;valueB:0.25;]
+[name:metalOrange;color:RGBA(1.000, 0.702, 0.000, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.5;valueB:0.2;]
+[name:metalPurple;color:RGBA(0.498, 0.404, 0.933, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.35;valueB:0;]
+
+:models
+
+[name:;collection:Vehicles;type:wheel_coverStandard;position:(0.6918, 0.3300, 0.9418);rotation:(0.0000, 270.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark;]
+[name:;collection:Vehicles;type:bumper;position:(0.9418, 0.3000, -0.0582);rotation:(0.0000, 90.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalLight;]
+[name:;collection:Vehicles;type:wheel_ridges;position:(-1.0582, 0.3000, -0.6282);rotation:(0.0000, 90.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark+metal+metalLight;]
+[name:;collection:Vehicles;type:wheel_coverStandard;position:(-1.0582, 0.3300, -1.0582);rotation:(0.0000, 90.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark;]
+[name:;collection:Vehicles;type:detail_mirror;position:(-0.4582, 0.8600, 0.9118);rotation:(0.0000, 270.0000, 0.0000);scale:(-1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalGreen+glass;]
+[name:;collection:Vehicles;type:detail_mirror;position:(-0.4582, 0.8600, -1.0282);rotation:(0.0000, 270.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalGreen+glass;]
+[name:;collection:Vehicles;type:wheel_ridges;position:(0.6918, 0.3000, 0.5118);rotation:(0.0000, 270.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark+metal+metalLight;]
+[name:;collection:Vehicles;type:wheel_ridges;position:(-1.0582, 0.3000, 0.5118);rotation:(0.0000, 270.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark+metal+metalLight;]
+[name:;collection:Vehicles;type:wheel_coverStandard;position:(-1.0582, 0.3300, 0.9418);rotation:(0.0000, 270.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark;]
+[name:;collection:Vehicles;type:wheel_coverStandard;position:(0.6918, 0.3300, -1.0582);rotation:(0.0000, 90.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark;]
+[name:;collection:Vehicles;type:body_backBedClosed;position:(0.9418, -0.1800, -0.0582);rotation:(0.0000, 270.0000, 0.0000);scale:(1.1400, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metal+dark+metalGreen+lightRed;]
+[name:;collection:Mech;type:tank_single;position:(0.6418, 0.7000, 0.1418);rotation:(270.0000, 270.0000, 0.0000);scale:(0.8000, 1.0000, 0.8000);group:;locked:False;hidden:False;materials:metalOrange+_defaultMat;]
+[name:;collection:Vehicles;type:wheel_ridges;position:(1.4418, 0.7000, -0.0582);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark+metal+metalLight;]
+[name:;collection:Vehicles;type:detail_rollbarLarge;position:(0.8968, 0.4800, -0.0638);rotation:(0.0000, 270.0000, 0.0000);scale:(0.9072, 1.5400, 0.8100);group:;locked:False;hidden:False;materials:metalLight;]
+[name:;collection:Vehicles;type:bumper_detailed;position:(-1.0582, 0.3000, -0.0582);rotation:(0.0000, 270.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalLight;]
+[name:;collection:Mech;type:tank_single;position:(0.6419, 0.7000, -0.2582);rotation:(270.0000, 270.0000, 0.0000);scale:(0.8000, 1.0000, 0.8000);group:;locked:False;hidden:False;materials:metalOrange+_defaultMat;]
+[name:;collection:Vehicles;type:body_standard;position:(-0.0582, -0.1800, -0.0582);rotation:(0.0000, 270.0000, 0.0000);scale:(1.1400, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalGreen+dark;]
+[name:;collection:Vehicles;type:wheel_ridges;position:(0.6918, 0.3000, -0.6282);rotation:(0.0000, 90.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:dark+metal+metalLight;]
+[name:;collection:Vehicles;type:body_frontStandard;position:(-1.0582, -0.1800, -0.0582);rotation:(0.0000, 270.0000, 0.0000);scale:(1.1400, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metalGreen+metal+dark+glass;]
+[name:;collection:Vehicles;type:body_topSteep;position:(-0.0582, 0.8200, -0.0582);rotation:(0.0000, 270.0000, 0.0000);scale:(1.0000, 0.9800, 1.0000);group:;locked:False;hidden:False;materials:metalGreen+dark+glass;]
+[name:;collection:Mech;type:tank_single;position:(0.6419, 1.0000, -0.0582);rotation:(270.0000, 270.0000, 0.0000);scale:(0.8000, 1.0000, 0.8000);group:;locked:False;hidden:False;materials:metalOrange+_defaultMat;]
