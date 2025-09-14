@@ -261,7 +261,7 @@ export class Player {
         this.target = new Target(scene, crosshairTexture, playerColor, new THREE.Vector3(0,0,0), 0.075, true);
         this.playerMarker = new PlayerMarker(scene, markerTexture, playerColor, new THREE.Vector3(0,0,0), 0.05, false);
 
-        this.shield = new Shield(scene, this.getPosition());
+        //this.shield = new Shield(scene, this.getPosition());
 
         this.setVehicleObject(vehicle);
 

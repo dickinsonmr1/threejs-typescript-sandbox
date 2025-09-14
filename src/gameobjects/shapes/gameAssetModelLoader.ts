@@ -312,11 +312,13 @@ export default class GameAssetModelLoader {
 
         // vehicles v2 have wheels as separate children
         var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
+        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/offroader-wheelsrenamed.glb');
+        
         var modelScene = model.scene;
         
-        var body = modelScene.children.find(x => x.name == 'body');
-        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        body?.position.add(new THREE.Vector3(0, -0.5, 0));
+        //var body = modelScene.children.find(x => x.name == 'body');
+        //body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        //body?.position.add(new THREE.Vector3(0, -0.5, 0));
         
         var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
         var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
