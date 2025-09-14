@@ -1,7 +1,7 @@
 {   
     "vehicleTypeEnum": 0,
     "vehicleName": "Sideswipe",
-    "asset": "assets/kenney-vehicles-2/taxi.glb",
+    "asset": "assets/vehicles-custom/taxi-modern.glb",
     "health": 50,
     "special": 25,
     "speed": 75,
@@ -21,8 +21,8 @@
     "frontWheelModelScale": [0.5, 0.75, 0.75],
     "rearWheelModelScale": [0.5, 0.75, 0.75],
 
-    "frontWheelOffset": [0.5, 0, 0],
-    "rearWheelOffset": [0.5, 0, 0],
+    "frontWheelOffset": [0.25, 0, 0],
+    "rearWheelOffset": [0.25, 0, 0],
 
     "wheelMass": 20,
 
@@ -43,13 +43,13 @@
     "maxSteerVal": 0.7,
     "driftingMaxSteerVal": 0.8,
 
-    "chassisDimensions": [1, 0.5, 0.4],
+    "chassisDimensions": [1, 0.35, 0.4],
     "centerOfMassAdjust": [0, 0.4, 0],
 
     "chassisMass": 750,
 
     "modelScale": [0.7, 0.7, 0.7],
-    "modelOffset": [0, 0, 0],
+    "modelOffset": [0, -0.4, 0],
     
     "lowSpeedForce": 3500,
     "highSpeedForce": 2000,
