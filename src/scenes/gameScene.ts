@@ -1110,9 +1110,12 @@ export default class GameScene extends THREE.Scene {
         this.raceCarRedModel = await this.gameAssetModelLoader.loadRaceCarRedModel();       
         this.policeTractorModel = await this.gameAssetModelLoader.loadPoliceTractorModel();       
         this.tractorModel = await this.gameAssetModelLoader.loadTractorModel();       
-        this.pickupTruckModel = await this.gameAssetModelLoader.loadPickupTruckModel();       
+        
+        //this.pickupTruckModel = await this.gameAssetModelLoader.loadPickupTruckModel();       
+        this.pickupTruckModel = await this.gameAssetModelLoader.loadPoliceRetroModel();
 
         this.suvModel = await this.gameAssetModelLoader.loadSuvModel();
+        
         this.killdozerModel = await this.gameAssetModelLoader.loadKilldozerModel();
         this.fireTruckModel = await this.gameAssetModelLoader.loadFireTruckModel();
 

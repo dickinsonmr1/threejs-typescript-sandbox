@@ -1,7 +1,7 @@
 {   
     "vehicleTypeEnum": 11,
-    "vehicleName": "Redneck",
-    "asset": "assets/kenney-vehicles-2/truck.glb",
+    "vehicleName": "Noir",
+    "asset": "assets/vehicles-custom/police-retro-final.glb",
     "health": 50,
     "special": 100,
     "speed": 50,

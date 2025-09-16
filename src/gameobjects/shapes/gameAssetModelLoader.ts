@@ -74,7 +74,7 @@ export default class GameAssetModelLoader {
 
     async loadPoliceModel(): Promise<GLTF> {                
 
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
+        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');                
         var modelScene = model.scene;
 
         var body = modelScene.children.find(x => x.name == 'body');
@@ -96,7 +96,7 @@ export default class GameAssetModelLoader {
 
     async loadPoliceRetroModel(): Promise<GLTF> {        
 
-        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/hotrod-black-5.glb');        
+        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/police-retro-final.glb');        
         //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
         var modelScene = model.scene;
         modelScene.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
