@@ -5,7 +5,6 @@ import { Utility } from "../../utility";
 import Headlights from "../vehicles/headLights";
 import * as THREE from "three";
 import { v4 as uuidv4 } from 'uuid';
-import { FireCpuParticleEmitter } from "../fx/fireCpuParticleEmitter";
 import GameScene from "../../scenes/gameScene";
 import ProjectileFactory from "../weapons/projectileFactory";
 import { Projectile, ProjectileLaunchLocation } from "../weapons/projectile";
@@ -19,12 +18,11 @@ import { Shield } from "../vehicles/shield";
 import { ParticleEmitter } from "../fx/particleEmitter";
 import { SmokeObject2 } from "../fx/smokeObject2";
 import Brakelights from "../vehicles/brakeLights";
-import { randFloatSpread, randInt } from "three/src/math/MathUtils.js";
+import { randInt } from "three/src/math/MathUtils.js";
 import EmergencyLights from "../vehicles/emergencyLights";
 import { CpuPlayerPattern } from "./cpuPlayerPatternEnums";
 import { VehicleConfig } from "../vehicles/config/vehicleConfig";
 import { WeaponCoolDownClock } from "../weapons/weaponCooldownClock";
-import { FireGpuParticleEmitter } from "../fx/fireGpuParticleEmitter";
 import { ExplosionGpuParticleEmitter } from "../fx/explosionGpuParticleEmitter";
 import { FireGpuParticleEmitter2 } from "../fx/fire/fireGpuParticleEmitter2";
 import { SpecialType } from "./specialType";
@@ -54,7 +52,7 @@ export enum VehicleType {
     PoliceTractor = 9,
     Harvester = 10,
     
-    PickupTruck = 11,
+    PoliceSuv = 11,
 
     Tank = 12,
     Tanker = 13

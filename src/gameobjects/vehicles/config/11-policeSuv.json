@@ -1,7 +1,7 @@
 {   
     "vehicleTypeEnum": 11,
-    "vehicleName": "Noir",
-    "asset": "assets/vehicles-custom/police-retro-final.glb",
+    "vehicleName": "Patroleum",
+    "asset": "assets/vehicles-custom/police-suv.glb",
     "health": 50,
     "special": 100,
     "speed": 50,
@@ -10,7 +10,7 @@
     "specialTypeEnum": 3,
     "specialIcon": "fa-fire",
 
-    "comment": "truck", 
+    "comment": "suv", 
 
     "frontWheelHeight": 0.20,
     "rearWheelHeight": 0.20,
@@ -22,7 +22,7 @@
     "rearWheelModelScale": [0.5, 0.75, 0.75],
 
     "frontWheelOffset": [0.25, 0, 0],
-    "rearWheelOffset": [0.5, 0, 0],
+    "rearWheelOffset": [0.625, 0, 0],
 
     "wheelMass": 20,
 
@@ -43,13 +43,13 @@
     "maxSteerVal": 0.7,
     "driftingMaxSteerVal": 0.8,
 
-    "chassisDimensions": [1, 0.5, 0.4],
-    "centerOfMassAdjust": [0, 0.4, 0],
+    "chassisDimensions": [1, 0.4, 0.4],
+    "centerOfMassAdjust": [0, 0.35, 0],
 
     "chassisMass": 600,
 
     "modelScale": [0.7, 0.7, 0.7],
-    "modelOffset": [0, 0, 0],
+    "modelOffset": [0, -0.35, 0],
 
     "lowSpeedForce": 2000,
     "highSpeedForce": 1000,
@@ -60,9 +60,13 @@
     "reverseTopSpeedForHigherTorque": 5,    
 
     "driveSystem": 0,
+
+    "hasEmergencyLights1": true,
+    "offsetLeft1": [-0.25, 0.60, 0.20],
+    "offsetRight1": [-0.25, 0.60, -0.20],
     
-    "leftHeadlightOffset": [-2, 0, -0.3],
-    "rightHeadlightOffset": [-2, 0, 0.3],
+    "leftHeadlightOffset": [-2.5, 0, -0.3],
+    "rightHeadlightOffset": [-2.5, 0, 0.3],
     "leftBrakeLightOffset": [1.15, 0.15, -0.3],
     "rightBrakeLightOffset": [1.15, 0.15, 0.3],
     

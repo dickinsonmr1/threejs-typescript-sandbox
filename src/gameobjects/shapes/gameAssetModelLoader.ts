@@ -124,6 +124,36 @@ export default class GameAssetModelLoader {
         return model;
     }
 
+     async loadPoliceSuvModel(): Promise<GLTF> {        
+
+        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/police-suv-final.glb');        
+        var modelScene = model.scene;
+        modelScene.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+
+        //var body = modelScene.children.find(x => x.name == 'body');
+        
+        //body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+        //body?.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 16);
+        //body?.rotateOnAxis(new THREE.Vector3(0, 0, 1), -Math.PI / 16);
+        //body?.position.add(new THREE.Vector3(0.15, -0.5, -1.5));
+        
+        //body?.rotateY(Math.PI);
+        
+
+        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
+        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
+        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
+        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
+
+        wheel1?.removeFromParent();
+        wheel2?.removeFromParent();
+        wheel3?.removeFromParent();
+        wheel4?.removeFromParent();
+
+        return model;
+    }
+
+
     async loadTankModel(): Promise<GLTF> {        
 
         var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/tank.glb');        
@@ -308,10 +338,11 @@ export default class GameAssetModelLoader {
         return model;
     }
 
-    async loadSuvModel(): Promise<GLTF> {        
+    async loadOffroaderModel(): Promise<GLTF> {        
 
         // vehicles v2 have wheels as separate children
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
+        //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
+        //var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/offroader-wheelsrenamed.glb');
         var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/offroader-wheelsrenamed.glb');
         
         var modelScene = model.scene;

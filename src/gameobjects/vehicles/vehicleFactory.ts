@@ -16,7 +16,7 @@ import vehicleConfigRaceCarRed from './config/03-racecar-red.json'
 import vehicleConfigPolice from './config/05-police.json'
 import vehicleConfigCompactor from './config/06-trashTruck.json'
 import vehicleConfigFireTruck from './config/08-fireTruck.json'
-import vehicleConfigPickupTruck from './config/11-pickupTruck.json'
+import vehicleConfigPoliceSuv from './config/11-policeSuv.json'
 import vehicleConfigPoliceTractor from './config/09-policeTractor.json'
 import vehicleConfigKilldozer from './config/04-killdozer.json'
 import vehicleConfigHarvester from './config/10-harvester.json'
@@ -104,9 +104,9 @@ export class VehicleFactory {
                 selectedVehicleConfig = vehicleConfigOffroader;
                 vehicleModel = gameScene.suvModel;   
                 break;
-            case VehicleType.PickupTruck:
-                selectedVehicleConfig = vehicleConfigPickupTruck;
-                vehicleModel = gameScene.pickupTruckModel
+            case VehicleType.PoliceSuv:
+                selectedVehicleConfig = vehicleConfigPoliceSuv;
+                vehicleModel = gameScene.policeSuvModel
                 break;
             case VehicleType.FireTruck:
                 selectedVehicleConfig = vehicleConfigFireTruck;

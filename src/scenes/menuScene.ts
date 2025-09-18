@@ -12,7 +12,7 @@ import vehicleConfigRaceCarRed from '../gameobjects/vehicles/config/03-racecar-r
 import vehicleConfigPolice from '../gameobjects/vehicles/config/05-police.json'
 import vehicleConfigCompactor from '../gameobjects/vehicles/config/06-trashTruck.json'
 import vehicleConfigFireTruck from '../gameobjects/vehicles/config/08-fireTruck.json'
-import vehicleConfigPickupTruck from '../gameobjects/vehicles/config/11-pickupTruck.json'
+import vehicleConfigPoliceSuv from '../gameobjects/vehicles/config/11-policeSuv.json'
 import vehicleConfigPoliceTractor from '../gameobjects/vehicles/config/09-policeTractor.json'
 import vehicleConfigKilldozer from '../gameobjects/vehicles/config/04-killdozer.json'
 import vehicleConfigHarvester from '../gameobjects/vehicles/config/10-harvester.json'
@@ -94,7 +94,7 @@ export default class MenuScene extends THREE.Scene {
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigAmbulance, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigFireTruck, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigTaxi, modelPosition);
-        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigPickupTruck, modelPosition);
+        await this.loadVehicleModelAndStatsFromConfig(vehicleConfigPoliceSuv, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigPoliceTractor, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigKilldozer, modelPosition);
         await this.loadVehicleModelAndStatsFromConfig(vehicleConfigHarvester, modelPosition);

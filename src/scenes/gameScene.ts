@@ -68,7 +68,7 @@ export default class GameScene extends THREE.Scene {
     public killdozerModel!: GLTF;
     public policeTractorModel!: GLTF;    
     public tractorModel!: GLTF;
-    public pickupTruckModel!: GLTF;
+    public policeSuvModel!: GLTF;
     public fireTruckModel!: GLTF;
 
     public tankModel!: GLTF;
@@ -1112,9 +1112,9 @@ export default class GameScene extends THREE.Scene {
         this.tractorModel = await this.gameAssetModelLoader.loadTractorModel();       
         
         //this.pickupTruckModel = await this.gameAssetModelLoader.loadPickupTruckModel();       
-        this.pickupTruckModel = await this.gameAssetModelLoader.loadPoliceRetroModel();
+        this.policeSuvModel = await this.gameAssetModelLoader.loadPoliceSuvModel();
 
-        this.suvModel = await this.gameAssetModelLoader.loadSuvModel();
+        this.suvModel = await this.gameAssetModelLoader.loadOffroaderModel();
         
         this.killdozerModel = await this.gameAssetModelLoader.loadKilldozerModel();
         this.fireTruckModel = await this.gameAssetModelLoader.loadFireTruckModel();
