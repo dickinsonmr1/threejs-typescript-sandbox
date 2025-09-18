@@ -14,6 +14,7 @@ import worldListJson from '../levelData/worldLibrary.json';
 import GUI from "lil-gui";
 import { GameConfig } from "../gameconfig";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export default class SceneController {
 
@@ -43,8 +44,12 @@ export default class SceneController {
 
     public touchActivated: boolean = false;
     public keyboardActivated: boolean = false;
+       
+    public getGltfLoader(): GLTFLoader {
+        return this.gltfLoader;
+    }    
 
-    constructor(renderer: THREE.WebGLRenderer, gui: GUI) {
+    constructor(renderer: THREE.WebGLRenderer, gui: GUI, private gltfLoader: GLTFLoader) {
         this.renderer = renderer;
         this.gui = gui;
                         

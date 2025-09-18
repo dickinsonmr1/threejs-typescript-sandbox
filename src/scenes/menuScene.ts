@@ -26,8 +26,6 @@ export default class MenuScene extends THREE.Scene {
     camera: THREE.PerspectiveCamera;
     sceneController: SceneController;
 
-    private readonly gltfLoader = new GLTFLoader();
-
     private group: THREE.Group;
 
     private selectedMapIndex: number = 0;
@@ -109,7 +107,7 @@ export default class MenuScene extends THREE.Scene {
 
     private async loadVehicleModelAndStatsFromConfig(config: VehicleConfig, modelPosition: THREE.Vector3) {      
         
-        var model = await this.gltfLoader.loadAsync(config.asset);
+        var model = await this.sceneController.getGltfLoader().loadAsync(config.asset);
         var modelScene = model.scene.clone();        
         modelScene.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
         modelScene.scale.set(1, 1, 1);    

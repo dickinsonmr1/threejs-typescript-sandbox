@@ -228,7 +228,7 @@ export default class GameScene extends THREE.Scene {
         this.sceneController = sceneController;
         this.gameConfig = gameConfig;
 
-        this.gameAssetModelLoader = new GameAssetModelLoader(this.gltfLoader);
+        this.gameAssetModelLoader = new GameAssetModelLoader(sceneController.getGltfLoader());
     }
 
     preloadMapData(worldConfig: WorldConfig) {        

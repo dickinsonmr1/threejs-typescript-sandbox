@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import GameScene from './scenes/gameScene'
 import HudScene from './scenes/hudScene'
-import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader, RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import CannonDebugger from 'cannon-es-debugger';
 import SceneController from './scenes/sceneController';
 import { GamepadControlScheme } from './scenes/gamePadEnums';
@@ -57,7 +57,9 @@ gui.title('Debug');
 if(!gameConfig.isDebug)
   gui.close();
 
-var sceneController = new SceneController(renderer, gui);
+var glftLoader = new GLTFLoader();
+var sceneController = new SceneController(renderer, gui, glftLoader);
+
 const gameScene = new GameScene(mainCamera, debugOrbitCamera, debugOrbitControls, sceneController, gameConfig);
 
 // set up lil-gui debug panel
