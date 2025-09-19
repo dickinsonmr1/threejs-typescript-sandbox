@@ -12,8 +12,8 @@
 
     "comment": "ambulance", 
 
-    "frontWheelHeight": 0.25,
-    "rearWheelHeight": 0.25,
+    "frontWheelHeight": 0.3,
+    "rearWheelHeight": 0.3,
 
     "frontWheelRadius": 0.25,
     "rearWheelRadius": 0.25,
@@ -43,7 +43,7 @@
     "maxSteerVal": 0.7,
     "driftingMaxSteerVal": 0.8,
 
-    "chassisDimensions": [1, 0.5, 0.5],
+    "chassisDimensions": [1, 0.5, 0.42],
     "centerOfMassAdjust": [0, 0.4, 0],
 
     "chassisMass": 1000,

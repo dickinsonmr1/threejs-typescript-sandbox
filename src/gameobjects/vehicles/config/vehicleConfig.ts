@@ -83,5 +83,5 @@ export interface VehicleConfig {
 
     driveSystem: DriveSystem;
 
-    followCameraOverride?: number[];
+    followCameraOffset?: number[];
 }

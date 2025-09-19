@@ -1212,10 +1212,10 @@ export class Player {
 
         switch(this.specialType) {            
             case SpecialType.Flamethrower:
-                this.tryFireFlamethrower();
+                this.tryStopFireFlamethrower();
                 break;
             case SpecialType.Lightning:
-                this.tryFireLightning();
+                this.tryStopFireLightning();
                 break;
             default:
                 break;

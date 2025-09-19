@@ -1193,11 +1193,12 @@ export default class GameScene extends THREE.Scene {
         // attach follow camera to player 1
         this.player1.getVehicleObject().getModel()?.add(this.followCam);
 
-        let followCameraOverride = new THREE.Vector3(3, 2, 0);
-        if(this.player1.getVehicleObject().vehicleOverrideConfig.followCameraOverride != null) {
-            followCameraOverride.copy(Utility.ArrayToThreeVector3(this.player1.getVehicleObject().vehicleOverrideConfig.followCameraOverride!));
+        let followCameraOffset = new THREE.Vector3(3, 2, 0); // default
+
+        if(this.player1.getVehicleObject().vehicleOverrideConfig.followCameraOffset != null) {
+            followCameraOffset.copy(Utility.ArrayToThreeVector3(this.player1.getVehicleObject().vehicleOverrideConfig.followCameraOffset!));
         }
-        this.followCam.position.copy(followCameraOverride); // camera target offset related to car
+        this.followCam.position.copy(followCameraOffset); // camera target offset related to car
     }
 
     private generateMap(): void {
