@@ -44,6 +44,7 @@ import { SoundEffectConfig } from '../gameobjects/audio/config/soundEffectLibrar
 import { AnimatedShaderSprite } from '../gameobjects/fx/animatedShaderSprite';
 import { ExplosionGpuParticleEmitter } from '../gameobjects/fx/explosionGpuParticleEmitter';
 import { Lightning, LightningType } from '../gameobjects/weapons/lightning';
+import VehicleLibrary from '../gameobjects/vehicles/config/vehicleLibrary';
 
 
 // npm install cannon-es-debugger
@@ -228,7 +229,7 @@ export default class GameScene extends THREE.Scene {
         this.sceneController = sceneController;
         this.gameConfig = gameConfig;
 
-        this.gameAssetModelLoader = new GameAssetModelLoader(sceneController.getGltfLoader());
+        this.gameAssetModelLoader = new GameAssetModelLoader(sceneController.getGltfLoader(), new VehicleLibrary());
     }
 
     preloadMapData(worldConfig: WorldConfig) {        
@@ -1111,7 +1112,6 @@ export default class GameScene extends THREE.Scene {
         this.policeTractorModel = await this.gameAssetModelLoader.loadPoliceTractorModel();       
         this.tractorModel = await this.gameAssetModelLoader.loadTractorModel();       
         
-        //this.pickupTruckModel = await this.gameAssetModelLoader.loadPickupTruckModel();       
         this.policeSuvModel = await this.gameAssetModelLoader.loadPoliceSuvModel();
 
         this.suvModel = await this.gameAssetModelLoader.loadOffroaderModel();
@@ -1192,7 +1192,12 @@ export default class GameScene extends THREE.Scene {
         
         // attach follow camera to player 1
         this.player1.getVehicleObject().getModel()?.add(this.followCam);
-        this.followCam.position.set(3, 2, 0); // camera target offset related to car
+
+        let followCameraOverride = new THREE.Vector3(3, 2, 0);
+        if(this.player1.getVehicleObject().vehicleOverrideConfig.followCameraOverride != null) {
+            followCameraOverride.copy(Utility.ArrayToThreeVector3(this.player1.getVehicleObject().vehicleOverrideConfig.followCameraOverride!));
+        }
+        this.followCam.position.copy(followCameraOverride); // camera target offset related to car
     }
 
     private generateMap(): void {

@@ -82,4 +82,6 @@ export interface VehicleConfig {
     reverseTopSpeedForHigherTorque: number;
 
     driveSystem: DriveSystem;
+
+    followCameraOverride?: number[];
 }

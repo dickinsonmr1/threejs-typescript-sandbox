@@ -1,16 +1,10 @@
 import * as THREE from 'three'
-import { GltfObject, GltfObjectPhysicsObjectShape } from './gltfObject';
-import { GLTF, GLTFLoader, OrbitControls } from 'three/examples/jsm/Addons.js';
+import { GLTF, GLTFLoader } from 'three/examples/jsm/Addons.js';
+import VehicleLibrary from '../vehicles/config/vehicleLibrary';
 
 export default class GameAssetModelLoader {
 
-    /**
-     *
-     */
-
-    gltfLoader: GLTFLoader
-    constructor(gltfLoader: GLTFLoader) {
-        this.gltfLoader = gltfLoader;        
+    constructor(private gltfLoader: GLTFLoader, private vehicleLibrary: VehicleLibrary ){        
     }
 
     async generateWheelModel(): Promise<GLTF>{
@@ -52,7 +46,7 @@ export default class GameAssetModelLoader {
     async loadTaxiModel(): Promise<GLTF> {        
 
         //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/taxi.glb');
-        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/taxi-modern-wheelsrenamed.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Sideswipe'));
         var modelScene = model.scene;
         
         //var body = modelScene.children.find(x => x.name == 'body');
@@ -74,7 +68,7 @@ export default class GameAssetModelLoader {
 
     async loadPoliceModel(): Promise<GLTF> {                
 
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');                
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('The Law'));                
         var modelScene = model.scene;
 
         var body = modelScene.children.find(x => x.name == 'body');
@@ -126,7 +120,7 @@ export default class GameAssetModelLoader {
 
      async loadPoliceSuvModel(): Promise<GLTF> {        
 
-        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/police-suv-final.glb');        
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Patroleum'));        
         var modelScene = model.scene;
         modelScene.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
 
@@ -156,7 +150,7 @@ export default class GameAssetModelLoader {
 
     async loadTankModel(): Promise<GLTF> {        
 
-        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/tank.glb');        
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Tank'));        
         //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
         var modelScene = model.scene;
 
@@ -185,7 +179,7 @@ export default class GameAssetModelLoader {
 
      async loadTankerModel(): Promise<GLTF> {        
 
-        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/tanker.glb');        
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Tanker'));        
         //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/police.glb');        
         var modelScene = model.scene;
 
@@ -215,7 +209,7 @@ export default class GameAssetModelLoader {
 
     async loadAmbulanceModel(): Promise<GLTF> {        
 
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/ambulance.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('EMS'));
         var modelScene = model.scene;
 
         var body = modelScene.children.find(x => x.name == 'body');
@@ -245,7 +239,7 @@ export default class GameAssetModelLoader {
 
     async loadTrashTruckModel(): Promise<GLTF> {        
 
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/garbage-truck.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Compactor'));
         var modelScene = model.scene;
 
         var body = modelScene.children.find(x => x.name == 'body');
@@ -295,7 +289,7 @@ export default class GameAssetModelLoader {
     async loadRaceCarBlueModel(): Promise<GLTF> {        
 
         // vehicles v2 have wheels as separate children
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/race-future.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Zoomer Blue'));
         var modelScene = model.scene;
         
         var body = modelScene.children.find(x => x.name == 'body');
@@ -318,7 +312,7 @@ export default class GameAssetModelLoader {
     async loadRaceCarRedModel(): Promise<GLTF> {        
 
         // vehicles v2 have wheels as separate children
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/race.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Zoomer Red'));
         var modelScene = model.scene;
         
         var body = modelScene.children.find(x => x.name == 'body');
@@ -343,7 +337,7 @@ export default class GameAssetModelLoader {
         // vehicles v2 have wheels as separate children
         //var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/suv.glb');
         //var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/offroader-wheelsrenamed.glb');
-        var model = await this.gltfLoader.loadAsync('assets/vehicles-custom/offroader-wheelsrenamed.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Offroader'));
         
         var modelScene = model.scene;
         
@@ -367,7 +361,7 @@ export default class GameAssetModelLoader {
     async loadKilldozerModel(): Promise<GLTF> {
         
         // vehicles v2 have wheels as separate children
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/tractor-shovel.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Killdozer'));
         var modelScene = model.scene;
         
         var body = modelScene.children.find(x => x.name == 'body');
@@ -395,7 +389,7 @@ export default class GameAssetModelLoader {
     async loadPoliceTractorModel(): Promise<GLTF> {
         
         // vehicles v2 have wheels as separate children
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/tractor-police.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Rural Patrol'));
         var modelScene = model.scene;
         
         var body = modelScene.children.find(x => x.name == 'body');
@@ -418,30 +412,7 @@ export default class GameAssetModelLoader {
     async loadTractorModel(): Promise<GLTF> {
         
         // vehicles v2 have wheels as separate children
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/tractor.glb');
-        var modelScene = model.scene;
-        
-        var body = modelScene.children.find(x => x.name == 'body');
-        body?.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-        body?.position.add(new THREE.Vector3(0, -0.5, 0));
-        
-        var wheel1 = modelScene.children.find(x => x.name == 'wheel-back-left');
-        var wheel2 = modelScene.children.find(x => x.name == 'wheel-back-right');
-        var wheel3 = modelScene.children.find(x => x.name == 'wheel-front-left');
-        var wheel4 = modelScene.children.find(x => x.name == 'wheel-front-right');
-
-        wheel1?.removeFromParent();
-        wheel2?.removeFromParent();
-        wheel3?.removeFromParent();
-        wheel4?.removeFromParent();
-        
-        return model;
-    }
-
-    async loadPickupTruckModel(): Promise<GLTF> {
-        
-        // vehicles v2 have wheels as separate children
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/truck.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Harvester'));
         var modelScene = model.scene;
         
         var body = modelScene.children.find(x => x.name == 'body');
@@ -464,7 +435,7 @@ export default class GameAssetModelLoader {
     async loadFireTruckModel(): Promise<GLTF> {
         
         // vehicles v2 have wheels as separate children
-        var model = await this.gltfLoader.loadAsync('assets/kenney-vehicles-2/firetruck.glb');
+        var model = await this.gltfLoader.loadAsync(this.vehicleLibrary.getVehicleConfigAssetName('Backdraft'));
         var modelScene = model.scene;
         
         var body = modelScene.children.find(x => x.name == 'body');
