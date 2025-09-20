@@ -20,6 +20,7 @@ import vehicleConfigTank from '../gameobjects/vehicles/config/12-tank.json'
 import vehicleConfigTanker from '../gameobjects/vehicles/config/13-tanker.json'
 
 import { VehicleConfig } from '../gameobjects/vehicles/config/vehicleConfig';
+import KeyboardState from './keyboardState';
 
 export default class MenuScene extends THREE.Scene {
 
@@ -168,8 +169,7 @@ export default class MenuScene extends THREE.Scene {
     }
 
     update() {
-        this.sceneController.pollGamepadsForMenu();
-        
+        this.sceneController.pollGamepadsForMenu();        
         this.group.rotateOnAxis(new THREE.Vector3(0, 1, 0), -Math.PI / 64);       
     }
 
@@ -181,22 +181,24 @@ export default class MenuScene extends THREE.Scene {
         return this.group.children[this.selectedVehicleIndex].userData['specialIcon'];
     }
 
-    public handleKeyUp = (event: KeyboardEvent) => {
-            
+    public processInput(keyboardState: KeyboardState) {
+        if(!this.sceneController.keyboardActivated)
+            return;
+        
         let vehicleType = this.getSelectedVehicleType();
         let specialIcon = this.getSelectedVehicleSpecialIcon();
 
-        if (event.key === 'Enter') {
+        if (keyboardState.keysReleasedThisFrame['Enter']) {
             this.sceneController.switchToGameScene(
                 vehicleType ?? VehicleType.Killdozer,
                 specialIcon,
                 this.sceneController.worldLibrary.find(x => x.name == 'Arena')!
             );
         }
-        if(event.key === 'ArrowLeft') {
+        if(keyboardState.keysReleasedThisFrame['ArrowLeft']) {
             this.selectPreviousVehicle();
         }
-        else if(event.key === 'ArrowRight') {
+        else if(keyboardState.keysReleasedThisFrame['ArrowRight']) {
             this.selectNextVehicle();
         }
     }

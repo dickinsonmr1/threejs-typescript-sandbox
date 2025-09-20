@@ -126,16 +126,8 @@ export default class SceneController {
 	private handleKeyUp = (event: KeyboardEvent) => {
 
         this.keyboardState.keys[event.code] = false;
-        this.keyboardState.keysReleasedThisFrame[event.code] = true; // mark as "just released"
-
-        
+        this.keyboardState.keysReleasedThisFrame[event.code] = true; // mark as "just released"        
         this.keyDown.delete(event.key.toLowerCase());
-        if(this.currentScene instanceof GameScene ) {
-            //this.gameScene?.handleKeyUp(event);
-        }
-        if(this.currentScene instanceof MenuScene) {
-            this.menuScene?.handleKeyUp(event);
-        }
     }
 
     private resetKeyFrameStates(): void {
@@ -939,8 +931,10 @@ export default class SceneController {
             renderer.render(scene, debugOrbitCamera);
         }
         else if(scene instanceof MenuScene) {
-          scene.update();    
-          renderer.render(scene, menuCamera);
+            scene.processInput(this.keyboardState);
+            scene.update();    
+
+            renderer.render(scene, menuCamera);
         }
         
         this.resetKeyFrameStates();
@@ -959,7 +953,7 @@ export default class SceneController {
             this.gameScene?.updateQuadtreeTerrain5();            
         }
         else {
-            this.gameScene?.updateInputForDebug(this.keyDown);
+            this.gameScene?.processInputForPauseScreen(this.keyboardState);
             this.gameScene?.updateDebugDivElements();
             
             this.gameScene?.updateLODTerrain();

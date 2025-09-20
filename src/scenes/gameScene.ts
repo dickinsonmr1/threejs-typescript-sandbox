@@ -734,27 +734,26 @@ export default class GameScene extends THREE.Scene {
         this.debugOrbitControls.enabled = this.isPaused;        
     }
 
-    public updateInputForDebug(keyDown: Set<string>) {
+    public processInputForPauseScreen(keyboardState: KeyboardState) {
             
         let cameraMovement = 0.15;
 
         this.sceneController.pollGamepadsForGameScene();
 
-        if(keyDown.has('shift')) {
+        if(keyboardState.keys['ShiftLeft']) {
             cameraMovement = 0.9;
         }
 
         // forward
-        if(keyDown.has('w')) {
+        if(keyboardState.keys['KeyW']) {
             const moveDirection = new THREE.Vector3();
             this.debugCamera.getWorldDirection(moveDirection); // Get the current forward direction
             
             this.debugCamera.position.addScaledVector(moveDirection, cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(moveDirection, cameraMovement);
         }       
-
         // left
-        if(keyDown.has('a')) {
+        if(keyboardState.keys['KeyA']) {
             const forwardVector = new THREE.Vector3();
             this.debugCamera.getWorldDirection(forwardVector); // Get the current forward direction
 
@@ -764,9 +763,8 @@ export default class GameScene extends THREE.Scene {
             this.debugCamera.position.addScaledVector(leftVector, cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(leftVector, cameraMovement);
         }   
-
         // right
-        if(keyDown.has('d')) {
+        if(keyboardState.keys['KeyD']) {
             const forwardVector = new THREE.Vector3();
             this.debugCamera.getWorldDirection(forwardVector); // Get the current forward direction
 
@@ -776,64 +774,62 @@ export default class GameScene extends THREE.Scene {
             this.debugCamera.position.addScaledVector(leftVector, -cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(leftVector, -cameraMovement);
         } 
-
         // backwards
-        if(keyDown.has('s')) {
+        if(keyboardState.keys['KeyS']) {
             const moveDirection = new THREE.Vector3();
             this.debugCamera.getWorldDirection(moveDirection); // Get the current forward direction
             this.debugCamera.position.add(moveDirection.multiplyScalar(-cameraMovement)); // Move the camera forward by 1 unit
         }   
 
         // up
-        if(keyDown.has('q')) {
+        if(keyboardState.keys['KeyQ']) {
             const upVector = new THREE.Vector3(0, 1, 0);
 
             this.debugCamera.position.addScaledVector(upVector, cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(upVector, cameraMovement);
         }   
-
         // down
-        if(keyDown.has('z')) {
+        if(keyboardState.keys['KeyZ']) {
             const upVector = new THREE.Vector3(0, 1, 0);
 
             this.debugCamera.position.addScaledVector(upVector, -cameraMovement); // Move the camera forward by 1 unit
             this.debugOrbitControls.target.addScaledVector(upVector, -cameraMovement);
         }   
-
-         // down
-        if(keyDown.has('0')) {
+        
+        if(keyboardState.keys['Digit0']) {
             var targetPosition = this.debugCamera.position;
             //this.debugOrbitCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
-            this.debugOrbitControls.target = this.player1.getPosition();
-            
+            this.debugOrbitControls.target = this.player1.getPosition();            
         }   
-        // down
-        if(keyDown.has('1')) {
+        if(keyboardState.keys['Digit1']) {
             var targetPosition = this.player1.getPosition();
 
             this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
-            this.debugOrbitControls.target = this.player1.getPosition();
-            
+            this.debugOrbitControls.target = this.player1.getPosition();            
         }   
-        if(keyDown.has('2')) {
+        if(keyboardState.keys['Digit2']) {
             var targetPosition = this.player2.getPosition();
 
             this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
         }   
-        if(keyDown.has('3')) {
+        if(keyboardState.keys['Digit3']) {
             var targetPosition = this.player3.getPosition();
             this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
         }   
-        if(keyDown.has('4')) {
+        if(keyboardState.keys['Digit4']) {
             var targetPosition = this.player4.getPosition();
             this.debugCamera.position.copy(targetPosition).add(new THREE.Vector3(5, 2, 5));
             this.debugOrbitControls.target = targetPosition;
         }   
+
+        if (keyboardState.keysReleasedThisFrame['Escape']) {            
+            this.sceneController.tryTogglePauseMenu();
+        }
     }
 
-    updateCamera() {
+    private updateCamera() {
         if(this.followCam != null)
             this.camera.position.lerp(this.followCam?.getWorldPosition(new THREE.Vector3()), 0.1);
 		if(this.player1 != null && !this.player1.isModelNull())
