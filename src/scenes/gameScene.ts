@@ -45,6 +45,7 @@ import { AnimatedShaderSprite } from '../gameobjects/fx/animatedShaderSprite';
 import { ExplosionGpuParticleEmitter } from '../gameobjects/fx/explosionGpuParticleEmitter';
 import { Lightning, LightningType } from '../gameobjects/weapons/lightning';
 import VehicleLibrary from '../gameobjects/vehicles/config/vehicleLibrary';
+import KeyboardState from './keyboardState';
 
 
 // npm install cannon-es-debugger
@@ -504,166 +505,14 @@ export default class GameScene extends THREE.Scene {
         //this.keyDown.add(event.key.toLowerCase());
     //}
 
-	public handleKeyUp = (event: KeyboardEvent) => {
-
-
-        if(!this.sceneController.keyboardActivated) return;
-		//this.keyDown.delete(event.key.toLowerCase())
-
-		if (event.key === 'Control')
-		{            
-            //let newProjectile = this.player1.createProjectile(ProjectileType.Rocket);
-            //this.addNewProjectile(newProjectile);	            
-            this.player1.tryFireRocket();
-		}
-        if (event.key === 'c')
-		{			
-           
-		}
-        if (event.key === 'r') {			
-
-        }
-        if (event.key === 'p')
-        {			
-            this.generateRandomDebrisWheel();
-
-            let forwardVector = new THREE.Vector3(-10, 4, 0);
-            forwardVector.applyQuaternion(this.player1.getVehicleObject().getModel().quaternion);
-            let projectileLaunchVector = forwardVector; 
-
-            this.generateRandomDumpster(this.player1.playerId, this.player1.getPosition(), projectileLaunchVector);
-        }
-        if (event.key === 'o')
-        {			
-            this.player1.tryDamage(ProjectileType.Rocket, new THREE.Vector3(0,0,0));            
-            this.sceneController.updateHealthOnHud(this.player1.currentHealth);
-        }
-        if (event.key === 'y') {			
-            this.player2.tryKill();
-            this.player3.tryKill();
-            this.player4.tryKill();
-        }
-        if(event.key === 'u') {
-            this.player1.tryFireDumpster();
-        }
-        if(event.key === 't') {
-            this.player1.tryFireSonicPulse();
-        }
-        if(event.key === 'r') {            
-            this.player1.tryFireShovel();
-        }
-        if(event.key === 'h') {            
-            this.player1.tryGenerateRandomExplosionGpu();
-        }
-
-        if(event.key === 'm') {
-            //this.animatedSprites.push(new AnimatedSprite(this, this.animatedSpriteExplosionTexture, 8, 8, 120, false, this.player1.getPosition()));                
-            this.shaderAnimatedSprites.push(
-                new AnimatedShaderSprite(this, this.animatedSpriteExplosionTexture, this.player1.getPosition().clone().add(new THREE.Vector3(0, 1, 0)), false,
-                {
-                    columns: 8,
-                    rows: 8,
-                    fps: 30,
-                    scale: 1,
-                    camera: this.camera                    
-                }));
-        }
-
-        if(event.key === 'n') {            
-            this.player1.tryFireTriRockets();
-        }        
-        
-        if (event.key === 'c')
-		{            
-            this.player1.tryStopFireLightning();
-		}
-        
-        if (event.key === 'e')
-		{                        
-            let newProjectile = this.player2.createProjectile(ProjectileType.Bullet);
-            this.addNewProjectile(newProjectile);		
-		}
-        if (event.key === 'r')
-		{                        
-            let newProjectile = this.player2.createProjectile(ProjectileType.Rocket);
-            this.addNewProjectile(newProjectile);		
-		}
-        if (event.key === '1')
-		{
-            this.cpuPlayerBehavior = CpuPlayerPattern.Follow;
-		}
-        if (event.key === '2')
-		{
-            this.cpuPlayerBehavior = CpuPlayerPattern.FollowAndAttack;
-		}
-        if (event.key === '3')
-		{
-            this.cpuPlayerBehavior = CpuPlayerPattern.Stop;
-		}
-        if (event.key === '4')
-		{
-            this.cpuPlayerBehavior = CpuPlayerPattern.StopAndAttack;
-		}
-        if (event.key === '5')
-		{
-            this.cpuPlayerBehavior = CpuPlayerPattern.Flee;
-		}        
-        if (event.key === '6')
-		{
-            this.cpuPlayerBehavior = CpuPlayerPattern.Patrol;
-		}      
-        if (event.key === '7')
-		{
-
-		}      
-        if (event.key === 'Enter')
-		{
-			this.player1.tryResetPosition();
-		}
-
-        // player 1
-        if(event.key === 'ArrowUp') {
-            this.player1.tryStopAccelerate();
-        }
-        else if(event.key === 'ArrowDown') {
-            this.player1.tryStopReverse();
-        }
-
-        if(event.key === 'ArrowLeft') {
-            this.player1.resetTurn();
-        }
-        else if(event.key === 'ArrowRight') {
-            this.player1.resetTurn();
-        }
-
-        if(event.key === ' ') {
-            this.player1.tryJump();
-        }
-        if (event.key === 'Shift') {
-            this.player1.tryStopTurbo();
-        }
-
-        if (event.key === 'Escape') {
-            
-            this.sceneController.tryTogglePauseMenu();
-        }
-        if (event.key === 'q') {
-            this.player2.tryStopFireFlamethrower();
-        }
-        if (event.key === 'z') {
-            this.player1.tryStopFireFlamethrower();
-        }
-        if (event.key === 'Tab') {
-            this.player1.trySelectNextWeapon();
-        }
-	}
-
-    public processInput(keyDown: Set<string>) {
+    public processInput(keyboardState: KeyboardState) {
 
         if(!this.player1 || this.player1.isVehicleObjectNull()) return;
 
+        // gamepad
         this.sceneController.pollGamepadsForGameScene();
 
+        // touch
         if(this.sceneController.touchActivated) {
             // touch buttons
             if(this.sceneController.buttonsHeld.get("turbo")) {
@@ -687,43 +536,187 @@ export default class GameScene extends THREE.Scene {
             if(this.sceneController.buttonsHeld.get("secondaryWeapon")) {
                 this.player1.tryFireSecondaryWeapon();
             }
-        }
+        }     
 
         if(this.sceneController.keyboardActivated) {
-            // player 1 vehicle controls
-            if(keyDown.has('arrowup')) {
-                this.player1.tryAccelerate(1.0);
-            }
-            else if(keyDown.has('arrowdown')) {
-                this.player1.tryReverse(1.0);
-            }
+            this.processKeyboardStateChanges(keyboardState);
+        }
+    }
 
-            if(keyDown.has('arrowleft')) {
-                this.player1.tryTurn(1.0);
-            }
-            else if(keyDown.has('arrowright')) {
-                this.player1.tryTurn(-1.0);
-            }
-            
-            if (keyDown.has('x')) {
-                let newProjectile = this.player1.tryFireBullets();
-            }        
-            if (keyDown.has('z')) {
-                this.player1.tryFireFlamethrower();
-            }        
-            if(keyDown.has('c')) {
-                this.player1.tryFireLightning();
-            }
+    private processKeyboardStateChanges(keyboardState: KeyboardState) {
 
-            if (keyDown.has('q')) {
-                this.player2.tryFireFlamethrower();
-            }
-            if (keyDown.has('shift')) {
-                this.player1.tryTurbo();
-            }
+        //////////////////////////////////////
+        // key currently down this frame
+        //////////////////////////////////////
+        if(keyboardState.keys['ArrowUp']) {
+            this.player1.tryAccelerate(1.0);
+        }
+        else if(keyboardState.keys['ArrowDown']) {
+            this.player1.tryReverse(1.0);
         }
 
-     
+        if(keyboardState.keys['ArrowLeft']) {
+            this.player1.tryTurn(1.0);
+        }
+        else if(keyboardState.keys['ArrowRight']) {
+            this.player1.tryTurn(-1.0);
+        }
+        
+        if (keyboardState.keys['KeyX']) {
+            let newProjectile = this.player1.tryFireBullets();
+        }        
+        if (keyboardState.keys['KeyZ']) {
+            this.player1.tryFireFlamethrower();
+        }        
+        if(keyboardState.keys['KeyC']) {
+            this.player1.tryFireLightning();
+        }
+
+        if (keyboardState.keys['KeyQ']) {
+            this.player2.tryFireFlamethrower();
+        }
+        if (keyboardState.keys['ShiftLeft']) {
+            this.player1.tryTurbo();
+        }
+
+        //////////////////////////////////////
+        // key just pressed this frame
+        //////////////////////////////////////
+
+        //////////////////////////////////////
+        // key just released this frame
+        //////////////////////////////////////
+
+        if (keyboardState.keysReleasedThisFrame['ControlLeft'])	{            
+            //let newProjectile = this.player1.createProjectile(ProjectileType.Rocket);
+            //this.addNewProjectile(newProjectile);	            
+            this.player1.tryFireRocket();
+		}
+        if (keyboardState.keysReleasedThisFrame['KeyC']) {			
+           
+		}
+        if (keyboardState.keysReleasedThisFrame['KeyR']) {			
+
+        }
+        if (keyboardState.keysReleasedThisFrame['KeyP']) {			
+            this.generateRandomDebrisWheel();
+
+            let forwardVector = new THREE.Vector3(-10, 4, 0);
+            forwardVector.applyQuaternion(this.player1.getVehicleObject().getModel().quaternion);
+            let projectileLaunchVector = forwardVector; 
+
+            this.generateRandomDumpster(this.player1.playerId, this.player1.getPosition(), projectileLaunchVector);
+        }
+        if (keyboardState.keysReleasedThisFrame['KeyO'])
+        {			
+            this.player1.tryDamage(ProjectileType.Rocket, new THREE.Vector3(0,0,0));            
+            this.sceneController.updateHealthOnHud(this.player1.currentHealth);
+        }
+        if (keyboardState.keysReleasedThisFrame['KeyY']) {			
+            this.player2.tryKill();
+            this.player3.tryKill();
+            this.player4.tryKill();
+        }
+        if(keyboardState.keysReleasedThisFrame['KeyU']) {
+            this.player1.tryFireDumpster();
+        }
+        if(keyboardState.keysReleasedThisFrame['KeyT']) {
+            this.player1.tryFireSonicPulse();
+        }
+        if(keyboardState.keysReleasedThisFrame['KeyR']) {            
+            this.player1.tryFireShovel();
+        }
+        if(keyboardState.keysReleasedThisFrame['KeyH']) {            
+            this.player1.tryGenerateRandomExplosionGpu();
+        }
+
+        if(keyboardState.keysReleasedThisFrame['KeyM']) {
+            //this.animatedSprites.push(new AnimatedSprite(this, this.animatedSpriteExplosionTexture, 8, 8, 120, false, this.player1.getPosition()));                
+            this.shaderAnimatedSprites.push(
+                new AnimatedShaderSprite(this, this.animatedSpriteExplosionTexture, this.player1.getPosition().clone().add(new THREE.Vector3(0, 1, 0)), false,
+                {
+                    columns: 8,
+                    rows: 8,
+                    fps: 30,
+                    scale: 1,
+                    camera: this.camera                    
+                }));
+        }
+
+        if(keyboardState.keysReleasedThisFrame['KeyN']) {            
+            this.player1.tryFireTriRockets();
+        }        
+        
+        if (keyboardState.keysReleasedThisFrame['KeyC']) {            
+            this.player1.tryStopFireLightning();
+		}
+        
+        if (keyboardState.keysReleasedThisFrame['KeyE']) {                        
+            let newProjectile = this.player2.createProjectile(ProjectileType.Bullet);
+            this.addNewProjectile(newProjectile);		
+		}
+        if (keyboardState.keysReleasedThisFrame['KeyR']) {                        
+            let newProjectile = this.player2.createProjectile(ProjectileType.Rocket);
+            this.addNewProjectile(newProjectile);		
+		}
+        if (keyboardState.keysReleasedThisFrame['Digit1']) {
+            this.cpuPlayerBehavior = CpuPlayerPattern.Follow;
+		}
+        if (keyboardState.keysReleasedThisFrame['Digit2']) {
+            this.cpuPlayerBehavior = CpuPlayerPattern.FollowAndAttack;
+		}
+        if (keyboardState.keysReleasedThisFrame['Digit3']) {
+            this.cpuPlayerBehavior = CpuPlayerPattern.Stop;
+		}
+        if (keyboardState.keysReleasedThisFrame['Digit4']) {
+            this.cpuPlayerBehavior = CpuPlayerPattern.StopAndAttack;
+		}
+        if (keyboardState.keysReleasedThisFrame['Digit5']) {
+            this.cpuPlayerBehavior = CpuPlayerPattern.Flee;
+		}        
+        if (keyboardState.keysReleasedThisFrame['Digit6']) {
+            this.cpuPlayerBehavior = CpuPlayerPattern.Patrol;
+		}      
+        if (keyboardState.keysReleasedThisFrame['Digit7']) {
+
+		}      
+        if (keyboardState.keysReleasedThisFrame['Enter']) {
+			this.player1.tryResetPosition();
+		}
+
+        // player 1
+        if(keyboardState.keysReleasedThisFrame['ArrowUp']) {
+            this.player1.tryStopAccelerate();
+        }
+        else if(keyboardState.keysReleasedThisFrame['ArrowDown']) {
+            this.player1.tryStopReverse();
+        }
+        if(keyboardState.keysReleasedThisFrame['ArrowLeft']) {
+            this.player1.resetTurn();
+        }
+        else if(keyboardState.keysReleasedThisFrame['ArrowRight']) {
+            this.player1.resetTurn();
+        }
+        if(keyboardState.keysReleasedThisFrame['Space']) {
+            this.player1.tryJump();
+        }
+        if (keyboardState.keysReleasedThisFrame['ShiftLeft']) {
+            this.player1.tryStopTurbo();
+        }
+
+        if (keyboardState.keysReleasedThisFrame['Escape']) {
+            
+            this.sceneController.tryTogglePauseMenu();
+        }
+        if (keyboardState.keysReleasedThisFrame['KeyQ']) {
+            this.player2.tryStopFireFlamethrower();
+        }
+        if (keyboardState.keysReleasedThisFrame['KeyZ']) {
+            this.player1.tryStopFireFlamethrower();
+        }
+        if (keyboardState.keysReleasedThisFrame['Tab']) {
+            this.player1.trySelectNextWeapon();
+        }
     }
 
     public pollGamepads(gamepad: Gamepad) {

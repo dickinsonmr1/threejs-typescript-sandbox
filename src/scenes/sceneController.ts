@@ -15,6 +15,7 @@ import GUI from "lil-gui";
 import { GameConfig } from "../gameconfig";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import KeyboardState from "./keyboardState";
 
 export default class SceneController {
 
@@ -44,6 +45,8 @@ export default class SceneController {
 
     public touchActivated: boolean = false;
     public keyboardActivated: boolean = false;
+
+    public keyboardState: KeyboardState = new KeyboardState();
        
     public getGltfLoader(): GLTFLoader {
         return this.gltfLoader;
@@ -55,10 +58,6 @@ export default class SceneController {
                         
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);        
-
-        document.addEventListener('keydown', (event) => {
-            this.keyboardActivated = true;
-        });
 
         var levelSelectionDiv = this.getLevelSelectionDiv();
         if (levelSelectionDiv) {
@@ -108,27 +107,43 @@ export default class SceneController {
     
     public keyDown = new Set<string>();
     private handleKeyDown = (event: KeyboardEvent) => {        
+
+        this.keyboardActivated = true;
+
+        if (!this.keyboardState.keys[event.code]) {
+            this.keyboardState.keysPressedThisFrame[event.code] = true; // mark as "just pressed"
+        }
+        this.keyboardState.keys[event.code] = true;
+
         /*
         if (['w', 'a', 's', 'd'].includes(event.key)) {
             event.preventDefault();
             return;
         }            
         */
-        this.keyDown.add(event.key.toLowerCase());
     }
 
 	private handleKeyUp = (event: KeyboardEvent) => {
 
+        this.keyboardState.keys[event.code] = false;
+        this.keyboardState.keysReleasedThisFrame[event.code] = true; // mark as "just released"
+
+        
+        this.keyDown.delete(event.key.toLowerCase());
         if(this.currentScene instanceof GameScene ) {
-
-		    this.keyDown.delete(event.key.toLowerCase())
-
-            this.gameScene?.handleKeyUp(event);
+            //this.gameScene?.handleKeyUp(event);
         }
         if(this.currentScene instanceof MenuScene) {
-            this.keyDown.delete(event.key.toLowerCase())
-
             this.menuScene?.handleKeyUp(event);
+        }
+    }
+
+    private resetKeyFrameStates(): void {
+        for (const key in this.keyboardState.keysPressedThisFrame) {
+            delete this.keyboardState.keysPressedThisFrame[key];
+        }
+        for (const key in this.keyboardState.keysReleasedThisFrame) {
+            delete this.keyboardState.keysReleasedThisFrame[key];
         }
     }
 
@@ -927,6 +942,8 @@ export default class SceneController {
           scene.update();    
           renderer.render(scene, menuCamera);
         }
+        
+        this.resetKeyFrameStates();
     }
 
     private updateGameScene(isPaused: boolean) {
@@ -935,7 +952,7 @@ export default class SceneController {
             this.gameScene?.updatePrecipitation();
 
             this.gameScene?.preUpdate();
-            this.gameScene?.processInput(this.keyDown);
+            this.gameScene?.processInput(this.keyboardState);
             this.gameScene?.update();
                         
             this.gameScene?.updateLODTerrain();
