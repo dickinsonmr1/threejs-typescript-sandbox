@@ -6,7 +6,6 @@ import HudScene from './scenes/hudScene'
 import { GLTFLoader, RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import CannonDebugger from 'cannon-es-debugger';
 import SceneController from './scenes/sceneController';
-import { GamepadControlScheme } from './scenes/gamePadEnums';
 import MenuScene from './scenes/menuScene';
 import GUI from 'lil-gui'; 
 import { GameConfig } from './gameconfig';
@@ -21,7 +20,9 @@ const renderer = new THREE.WebGLRenderer({
   canvas: document.getElementById('app') as HTMLCanvasElement
 });
 
-renderer.setSize(width, height);
+renderer.setSize(gameConfig.renderResolutionOverrideX ?? window.innerWidth, gameConfig.renderResolutionOverrideY ?? window.innerHeight);
+renderer.domElement.style.width = "100%";  // scaled to window
+renderer.domElement.style.height = "100%";
 renderer.shadowMap.enabled = true;
 renderer.outputColorSpace = 'srgb';
 
@@ -95,8 +96,8 @@ gameScene.environment = pmremGenerator.fromScene( environment ).texture;
 environment.dispose();
 
 // hud scene and camera
-const aspect = window.innerWidth / window.innerHeight;
-const frustumSize = window.innerHeight;
+const aspect = width / height;
+const frustumSize = height;
 var cameraOrtho = new THREE.OrthographicCamera(
     -frustumSize * aspect/2,
     frustumSize * aspect/2,
@@ -109,7 +110,7 @@ cameraOrtho.position.z = 10;
 let sceneOrtho = new HudScene(cameraOrtho, sceneController);
 
 // menu scene and camera
-const menuCamera = new THREE.PerspectiveCamera(75, width/height, 0.1, 75);
+const menuCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 75);
 menuCamera.position.set(-5, 0, 0);
 
 const menuScene = new MenuScene(menuCamera, sceneController);
