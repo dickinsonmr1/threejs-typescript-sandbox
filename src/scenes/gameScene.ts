@@ -194,7 +194,7 @@ export default class GameScene extends THREE.Scene {
     player3!: Player;
     player4!: Player;
 
-    cpuPlayerBehavior: CpuPlayerPattern = CpuPlayerPattern.FollowAndAttack;
+    cpuPlayerBehavior: CpuPlayerPattern = CpuPlayerPattern.Stop;
 
     private followCam?: THREE.Object3D;
 

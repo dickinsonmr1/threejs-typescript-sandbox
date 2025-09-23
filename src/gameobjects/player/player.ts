@@ -89,6 +89,13 @@ export class Player {
 
     private vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
+    
+    engineSoundRate: number = 1;
+    static minEngineSoundRate: number = 1;
+    static maxAccelerateSoundRate: number = 1.5;
+    static maxTurboSoundRate: number = 2;
+
+
     leftRearWheelDustEmitter: ParticleTrailObject;
     rightRearWheelDustEmitter: ParticleTrailObject;
 
@@ -291,6 +298,7 @@ export class Player {
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('explosion', this.playerIndex)!);
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('flamethrower', this.playerIndex)!);
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('deathFire', this.playerIndex)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound('engine', this.playerIndex)!);
 
         //this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
         //this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
@@ -298,6 +306,10 @@ export class Player {
         //scene.add(this.bulletSoundMarker);
 
         this.deadzoneX = deadzoneX;
+
+        //if(!isCpuPlayer)
+        //if(this.playerIndex === 0)
+            gameScene.getAudioManager().playLoopedSound('engine', this.playerIndex);      
     }
 
     private getScene(): GameScene {
@@ -382,6 +394,9 @@ export class Player {
                 return;
         }     
         */   
+
+        let gameScene = <GameScene>this.scene;
+        gameScene.getAudioManager().updatePlaybackRate('engine', this.engineSoundRate, this.playerIndex);        
 
         if(!this.vehicleObject?.getChassis()?.body?.position) return;
 
@@ -727,9 +742,15 @@ export class Player {
     tryAccelerate(joystickY: number): void {
         this.vehicleObject.tryAccelerate(joystickY);
         this.brakeLights.setVisible(false);
+
+        if(this.engineSoundRate < Player.maxAccelerateSoundRate)
+            this.engineSoundRate += 0.05;
     }
 
-    tryStopAccelerate(): void {
+    tryStopAccelerate(): void {        
+        if(this.engineSoundRate > Player.minEngineSoundRate)
+            this.engineSoundRate -= 0.05;
+
         this.vehicleObject.tryStopAccelerate();
     }
         
@@ -774,9 +795,17 @@ export class Player {
     tryTurbo(): void {        
         this.vehicleObject.tryTurbo();
         this.turboParticleEmitter.resume();
+
+        
+        if(this.engineSoundRate < Player.maxTurboSoundRate)
+            this.engineSoundRate += 0.05;
     }
 
     tryStopTurbo(): void {
+
+        if(this.engineSoundRate > Player.maxAccelerateSoundRate)
+            this.engineSoundRate -= 0.05;
+        
         this.turboParticleEmitter.pause();
     }
     

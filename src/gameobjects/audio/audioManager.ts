@@ -128,6 +128,17 @@ export class AudioManager {
       }          
     }
 
+    public updatePlaybackRate(key: string, playbackRate: number, playerIndex?: number) {
+      const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
+      if(sound && this.isEnabled) {          
+        //if(!sound.isPlaying && this.isEnabled) {
+        //sound.play();          
+        //}
+        //alert('test');
+        sound.setPlaybackRate(playbackRate);
+      }          
+    }
+
     public stopSound(key: string, playerIndex?: number) {
       const sound = this.positionalSounds.get(this.generateSoundKey(key, playerIndex));
       if(sound && sound.isPlaying)

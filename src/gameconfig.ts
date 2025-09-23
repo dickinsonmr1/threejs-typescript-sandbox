@@ -17,4 +17,7 @@ export interface GameConfig {
     wheelGroundContactMaterialRestitution: number;
     contactEquationRelaxation: number;
     contactEquationStiffness: number;
+
+    renderResolutionOverrideX?: number;
+    renderResolutionOverrideY?: number;
 }
