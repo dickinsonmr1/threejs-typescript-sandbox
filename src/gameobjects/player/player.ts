@@ -90,10 +90,8 @@ export class Player {
     private vehicleObject!: IPlayerVehicle;    
     turboParticleEmitter: ParticleTrailObject;
     
-    engineSoundRate: number = 1;
-    static minEngineSoundRate: number = 1;
-    static maxAccelerateSoundRate: number = 1.5;
-    static maxTurboSoundRate: number = 2;
+    throttle: number = 0;
+    currentRate: number = 1.0; // idle pitch
 
 
     leftRearWheelDustEmitter: ParticleTrailObject;
@@ -309,7 +307,7 @@ export class Player {
 
         //if(!isCpuPlayer)
         //if(this.playerIndex === 0)
-            gameScene.getAudioManager().playLoopedSound('engine', this.playerIndex);      
+            //gameScene.getAudioManager().playLoopedSound('engine', this.playerIndex);      
     }
 
     private getScene(): GameScene {
@@ -396,7 +394,9 @@ export class Player {
         */   
 
         let gameScene = <GameScene>this.scene;
-        gameScene.getAudioManager().updatePlaybackRate('engine', this.engineSoundRate, this.playerIndex);        
+        if(this.playerIndex === 0)
+            this.updateEngine(this.throttle);
+            //gameScene.getAudioManager().updatePlaybackRate('engine', this.engineSoundRate, this.playerIndex);        
 
         if(!this.vehicleObject?.getChassis()?.body?.position) return;
 
@@ -743,15 +743,13 @@ export class Player {
         this.vehicleObject.tryAccelerate(joystickY);
         this.brakeLights.setVisible(false);
 
-        if(this.engineSoundRate < Player.maxAccelerateSoundRate)
-            this.engineSoundRate += 0.05;
+        this.throttle = 1;
     }
 
     tryStopAccelerate(): void {        
-        if(this.engineSoundRate > Player.minEngineSoundRate)
-            this.engineSoundRate -= 0.05;
-
         this.vehicleObject.tryStopAccelerate();
+
+        this.throttle = 0;
     }
         
     tryReverse(joystickY: number): void {
@@ -760,6 +758,8 @@ export class Player {
         this.brakeLights.setVisible(true);
         this.leftRearWheelDustEmitter.resume();
         this.rightRearWheelDustEmitter.resume();
+
+        this.throttle = 0.75;
     }
 
     tryStopReverse(): void {
@@ -767,6 +767,8 @@ export class Player {
         this.brakeLights.setVisible(false);
         this.leftRearWheelDustEmitter.pause();
         this.rightRearWheelDustEmitter.pause();
+
+        this.throttle = 0;
     }
 
     tryTurn(x: number): void {
@@ -796,16 +798,11 @@ export class Player {
         this.vehicleObject.tryTurbo();
         this.turboParticleEmitter.resume();
 
-        
-        if(this.engineSoundRate < Player.maxTurboSoundRate)
-            this.engineSoundRate += 0.05;
+        this.throttle = 1.25;
     }
 
     tryStopTurbo(): void {
-
-        if(this.engineSoundRate > Player.maxAccelerateSoundRate)
-            this.engineSoundRate -= 0.05;
-        
+        this.throttle = 0;
         this.turboParticleEmitter.pause();
     }
     
@@ -1284,6 +1281,26 @@ export class Player {
     trySelectNextWeapon(): void {
         this.selectedWeaponIndex++;
         this.getScene().sceneController.selectNextWeaponOnHud();
+    }
+
+    updateEngine(throttle: number) {
+
+        // throttle: 0 → idle, 1 → full rev, turbo is even higher
+        const minPitch = 0.8;
+        const maxPitch = 2.0;
+        const smoothness = 0.0125; // smaller = slower ramp
+
+        const targetRate = THREE.MathUtils.lerp(minPitch, maxPitch, throttle);
+        // smooth interpolation toward target
+        this.currentRate = THREE.MathUtils.lerp(this.currentRate, targetRate, smoothness);
+
+        let gameScene = <GameScene>this.scene;
+        let sound = gameScene.getAudioManager().getSound('engine', this.playerIndex);        
+        if(sound && !sound.isPlaying) {
+            sound.play();
+        }
+        if(sound)
+            sound.setPlaybackRate(this.currentRate);
     }
     
     tryResetPosition(): void {
