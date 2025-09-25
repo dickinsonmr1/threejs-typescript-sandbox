@@ -297,6 +297,7 @@ export class Player {
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('flamethrower', this.playerIndex)!);
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('deathFire', this.playerIndex)!);
         this.vehicleObject.getChassis().mesh.add(audioManager.getSound('engine', this.playerIndex)!);
+        this.vehicleObject.getChassis().mesh.add(audioManager.getSound('brake', this.playerIndex)!);
 
         //this.rocketSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
         //this.bulletSoundMarker = new THREE.Mesh(new THREE.SphereGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }));
@@ -759,6 +760,11 @@ export class Player {
         this.leftRearWheelDustEmitter.resume();
         this.rightRearWheelDustEmitter.resume();
 
+        let gameScene = <GameScene>this.scene;
+        let sound = gameScene.getAudioManager().getSound('brake', this.playerIndex);        
+        if(sound && !sound.isPlaying)
+            sound.play();
+
         this.throttle = 0.75;
     }
 
@@ -767,6 +773,11 @@ export class Player {
         this.brakeLights.setVisible(false);
         this.leftRearWheelDustEmitter.pause();
         this.rightRearWheelDustEmitter.pause();
+
+        let gameScene = <GameScene>this.scene;
+        let sound = gameScene.getAudioManager().getSound('brake', this.playerIndex);        
+        if(sound && sound.isPlaying)
+            sound.stop();
 
         this.throttle = 0;
     }

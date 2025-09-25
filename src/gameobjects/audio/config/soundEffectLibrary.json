@@ -99,7 +99,7 @@
         "createInstancePerPlayer": true,
         "comment": "https://pixabay.com/sound-effects/medium-explosion-40472/"
     },
-        {
+    {
         "soundKey": "engine",
         "asset": "assets/audio/engine-47745.mp3",
         "volume": 0.75,
@@ -108,5 +108,15 @@
         "loop": true,
         "createInstancePerPlayer": true,
         "comment": "https://pixabay.com/sound-effects/engine-47745/"
+    },
+    {
+        "soundKey": "brake",
+        "asset": "assets/audio/tire-squeal.ogg",
+        "volume": 0.75,
+        "refDistance": 25,
+        "maxDistance": 100,
+        "loop": true,
+        "createInstancePerPlayer": true,
+        "comment": "https://pixabay.com/sound-effects/car-accident-with-squeal-and-crash-6054/"
     }
 ]
